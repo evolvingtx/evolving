@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #7B65A4;
+      --purple-light: #B8A8D0;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #5A4580;
+      --cream:        #FDFBF9;
+      --warm-white:   #F7F4FB;
+      --text:         #2D2540;
+      --text-light:   #7A6E8A;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123, 101, 164, 0.08); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple) !important;
+      border: 1px solid var(--purple-light);
+      padding: 0.5rem 1.2rem;
+      border-radius: 2rem;
+      transition: all 0.3s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--purple) !important;
+      color: white !important;
+      border-color: var(--purple) !important;
+    }
+
+    .nav-cta::after { display: none !important; }
+
+    .nav-store {
+      color: var(--purple) !important;
+      font-weight: 500 !important;
+    }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-bg-circle-1 {
+      width: 600px; height: 600px;
+      right: -100px; top: -100px;
+      border: 1px solid rgba(184, 168, 208, 0.15);
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .hero-bg-circle-2 {
+      width: 400px; height: 400px;
+      right: 50px; top: 80px;
+      border: 1px solid rgba(184, 168, 208, 0.12);
+      animation: float 10s ease-in-out infinite reverse;
+    }
+
+    .hero-bg-circle-3 {
+      width: 200px; height: 200px;
+      left: -50px; bottom: 100px;
+      border: 1px solid rgba(184, 168, 208, 0.1);
+      animation: float 7s ease-in-out infinite 2s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-16px); }
+    }
+
+    .hero-content {
+      max-width: 540px;
+      animation: fadeUp 1s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-eyebrow {
+      font-family: var(--ff-body);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--purple-light);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--purple-light);
+    }
+
+    .hero-title {
+      font-family: var(--ff-display);
+      font-size: clamp(3rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--purple);
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-light);
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: var(--ff-body);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: white;
+      background: var(--purple);
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--purple-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(123, 101, 164, 0.3);
+    }
+
+    .btn-secondary {
+      font-family: var(--ff-body);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple);
+      background: transparent;
+      border: 1px solid var(--purple-light);
+      padding: 0.9rem 2rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--purple);
+      background: var(--purple-pale);
+      transform: translateY(-2px);
+    }
+
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: fadeUp 1s ease 0.3s both;
+    }
+
+    .hero-logo-container {
+      position: relative;
+      width: 360px; height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-orbit {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(184, 168, 208, 0.3);
+    }
+
+    .hero-orbit-1 { width: 340px; height: 340px; animation: spin 20s linear infinite; }
+    .hero-orbit-2 { width: 260px; height: 260px; animation: spin 15s linear infinite reverse; }
+    .hero-orbit-3 { width: 180px; height: 180px; border-color: rgba(184, 168, 208, 0.5); }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .hero-orbit-dot {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--purple-light);
+      top: -3px; left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hero-center-text {
+      position: relative;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .hero-center-text .big-e {
+      font-family: var(--ff-display);
+      font-size: 5rem;
+      font-weight: 300;
+      color: var(--purple);
+      opacity: 0.15;
+      line-height: 1;
+    }
+
+    /* ── SERVICES STRIP ──────────────────────────────── */
+    .services-strip {
+      background: var(--purple);
+      padding: 1.5rem 4rem;
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+    }
+
+    .strip-item {
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.95);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .strip-item::before {
+      content: '○';
+      color: rgba(255,255,255,0.6);
+      font-size: 0.5rem;
+    }
+
+    /* ── ABOUT ─────────────────────────────────────────── */
+    .about {
+      padding: 7rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--purple-light);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-eyebrow::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--purple-light);
+    }
+
+    .section-title {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--purple);
+    }
+
+    .section-body {
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .stat-box {
+      background: var(--warm-white);
+      border: 1px solid rgba(184,168,208,0.2);
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+
+    .stat-number {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--purple);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      text-transform: uppercase;
+    }
+
+    .about-image-area {
+      position: relative;
+    }
+
+    .about-card {
+      background: var(--warm-white);
+      border-radius: 2rem;
+      padding: 3rem;
+      border: 1px solid rgba(184,168,208,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-card::before {
+      content: '';
+      position: absolute;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      border: 1px solid rgba(184,168,208,0.15);
+      top: -60px; right: -60px;
+    }
+
+    .about-card-quote {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--purple);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-card-name {
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+    }
+
+    /* ── SERVICES ─────────────────────────────────────── */
+    .services {
+      padding: 7rem 4rem;
+      background: var(--warm-white);
+    }
+
+    .services-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .services-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      border: 1px solid rgba(184,168,208,0.15);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 48px rgba(123,101,164,0.1);
+      border-color: var(--purple-light);
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple-light), var(--purple));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+
+    .service-card:hover::after { transform: scaleX(1); }
+
+    .service-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--purple-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .service-title {
+      font-family: var(--ff-display);
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .service-desc {
+      font-size: 0.88rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-light);
+    }
+
+    .service-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple);
+      text-decoration: none;
+      margin-top: 1.5rem;
+      transition: gap 0.2s;
+    }
+
+    .service-link:hover { gap: 0.7rem; }
+
+    /* ── RESOURCES ─────────────────────────────────────── */
+    .resources {
+      padding: 7rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .resources-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .resource-card {
+      border-radius: 1.5rem;
+      overflow: hidden;
+      border: 1px solid rgba(184,168,208,0.15);
+      transition: all 0.3s;
+      background: white;
+    }
+
+    .resource-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(123,101,164,0.1);
+    }
+
+    .resource-card-top {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .resource-card-top.purple { background: var(--purple); }
+    .resource-card-top.lavender { background: var(--purple-pale); }
+    .resource-card-top.light { background: var(--warm-white); border-bottom: 1px solid rgba(184,168,208,0.15); }
+
+    .resource-card-icon {
+      font-size: 2.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .resource-card-top::before {
+      content: '';
+      position: absolute;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+      top: -20px; right: -20px;
+    }
+
+    .resource-card-body {
+      padding: 1.75rem;
+    }
+
+    .resource-tag {
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .resource-title {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+      line-height: 1.3;
+    }
+
+    .resource-desc {
+      font-size: 0.83rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-light);
+      margin-bottom: 1.25rem;
+    }
+
+    .resource-price {
+      font-family: var(--ff-display);
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--purple);
+    }
+
+    .resource-price span {
+      font-family: var(--ff-body);
+      font-size: 0.75rem;
+      color: var(--text-light);
+      font-weight: 300;
+    }
+
+    /* ── CONTACT ─────────────────────────────────────── */
+    .contact {
+      padding: 7rem 4rem;
+      background: var(--warm-white);
+    }
+
+    .contact-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .contact-title {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .contact-title em {
+      font-style: italic;
+      color: var(--purple);
+    }
+
+    .contact-desc {
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-light);
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-label {
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+    }
+
+    .form-input {
+      font-family: var(--ff-body);
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--text);
+      background: white;
+      border: 1px solid rgba(184,168,208,0.3);
+      border-radius: 0.75rem;
+      padding: 0.85rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus { border-color: var(--purple-light); }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-submit {
+      align-self: center;
+      margin-top: 0.5rem;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────── */
+    footer {
+      background: var(--text);
+      padding: 3rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.8); }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; text-align: center; }
+      .hero-eyebrow { justify-content: center; }
+      .hero-buttons { justify-content: center; }
+      .hero-visual { display: none; }
+      .about { grid-template-columns: 1fr; padding: 4rem 1.5rem; gap: 2.5rem; }
+      .services { padding: 4rem 1.5rem; }
+      .services-grid { grid-template-columns: 1fr; }
+      .resources { padding: 4rem 1.5rem; }
+      .resources-grid { grid-template-columns: 1fr; }
+      .contact { padding: 4rem 1.5rem; }
+      .form-row { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+      .services-strip { gap: 1.5rem; padding: 1.2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#resources" class="nav-store">Resource Center</a></li>
+      <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-circle hero-bg-circle-1"></div>
+    <div class="hero-bg-circle hero-bg-circle-2"></div>
+    <div class="hero-bg-circle hero-bg-circle-3"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Pediatric Therapy & Wellness</p>
+      <h1 class="hero-title">
+        Helping children <em>grow</em> into who they're meant to be
+      </h1>
+      <p class="hero-desc">
+        Occupational, speech, and physical therapy rooted in evidence, compassion, and a deep belief that every child has the capacity to evolve.
+      </p>
+      <div class="hero-buttons">
+        <a href="#contact" class="btn-primary">Request an Evaluation</a>
+        <a href="#services" class="btn-secondary">Our Services</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-logo-container">
+        <div class="hero-orbit hero-orbit-1"><div class="hero-orbit-dot"></div></div>
+        <div class="hero-orbit hero-orbit-2"><div class="hero-orbit-dot"></div></div>
+        <div class="hero-orbit hero-orbit-3"></div>
+        <div class="hero-center-text">
+          <div class="big-e">E</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES STRIP -->
+  <div class="services-strip">
+    <div class="strip-item">Occupational Therapy</div>
+    <div class="strip-item">Speech Therapy</div>
+    <div class="strip-item">Physical Therapy</div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div>
+      <p class="section-eyebrow">Our Approach</p>
+      <h2 class="section-title">
+        Therapy that <em>meets</em> your child where they are
+      </h2>
+      <p class="section-body">
+        At Evolving Therapy & Wellness, we believe that every child's journey is unique. Our team provides comprehensive pediatric therapy services that address the whole child — their sensory needs, motor development, communication, and daily living skills.
+      </p>
+      <p class="section-body">
+        We work closely with families to create meaningful, functional goals that carry from the therapy room into everyday life at home, school, and in the community.
+      </p>
+      <div class="about-stats">
+        <div class="stat-box">
+          <div class="stat-number">OT</div>
+          <div class="stat-label">Occupational Therapy</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">ST</div>
+          <div class="stat-label">Speech Therapy</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">PT</div>
+          <div class="stat-label">Physical Therapy</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Possibility</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-image-area">
+      <div class="about-card">
+        <p class="about-card-quote">"Every child deserves the opportunity to evolve into their fullest potential."</p>
+        <p class="about-card-name">Evolving Therapy & Wellness</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="services-inner">
+      <div class="services-header">
+        <p class="section-eyebrow" style="justify-content:center">What We Offer</p>
+        <h2 class="section-title">Comprehensive <em>pediatric</em> therapy services</h2>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">🖐️</div>
+          <h3 class="service-title">Occupational Therapy</h3>
+          <p class="service-desc">Fine motor, sensory processing, self-care, handwriting, visual perceptual skills, and more — helping children fully participate in the occupations of childhood.</p>
+          <a href="#contact" class="service-link">Learn more →</a>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">💬</div>
+          <h3 class="service-title">Speech Therapy</h3>
+          <p class="service-desc">Communication, language development, articulation, AAC, and feeding — supporting children in finding and sharing their voice.</p>
+          <a href="#contact" class="service-link">Learn more →</a>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🌱</div>
+          <h3 class="service-title">Physical Therapy</h3>
+          <p class="service-desc">Gross motor development, balance, strength, mobility, and functional movement — helping children move through their world with confidence.</p>
+          <a href="#contact" class="service-link">Learn more →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESOURCES -->
+  <section class="resources" id="resources">
+    <div class="resources-header">
+      <div>
+        <p class="section-eyebrow">For Parents & Therapists</p>
+        <h2 class="section-title">Resource <em>Center</em></h2>
+        <p style="font-size:0.9rem;font-weight:300;color:var(--text-light);margin-top:0.5rem;max-width:480px;">Tools for clinicians. Guides for families. Some free, some paid — all made with care.</p>
+      </div>
+      <a href="#" class="btn-secondary">View All Resources</a>
+    </div>
+    <div class="resources-grid">
+
+      <div class="resource-card">
+        <div class="resource-card-top purple">
+          <div class="resource-card-icon">📋</div>
+        </div>
+        <div class="resource-card-body">
+          <p class="resource-tag">For Therapists · Evaluation</p>
+          <h3 class="resource-title">Pediatric OT Eval Template Builder</h3>
+          <p class="resource-desc">Fully customizable eval template covering neuromotor, sensory, visual perceptual, feeding, and occupational performance domains. Select only what you need.</p>
+          <div class="resource-price">$30 <span>one-time</span></div>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card-top lavender">
+          <div class="resource-card-icon">🏃</div>
+        </div>
+        <div class="resource-card-body">
+          <p class="resource-tag">For Therapists · Home Programs</p>
+          <h3 class="resource-title">HEP Builder</h3>
+          <p class="resource-desc">Build customized home exercise programs by goal area, diagnosis, or age group. Printable and parent-friendly.</p>
+          <div class="resource-price">Coming Soon</div>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card-top light">
+          <div class="resource-card-icon">📓</div>
+        </div>
+        <div class="resource-card-body">
+          <p class="resource-tag">For Therapists & Parents · Organization</p>
+          <h3 class="resource-title">The Everything Notebook</h3>
+          <p class="resource-desc">All-in-one organizational tool for tracking therapy goals, session notes, home program progress, and appointments.</p>
+          <div class="resource-price">Coming Soon</div>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card-top lavender">
+          <div class="resource-card-icon">✏️</div>
+        </div>
+        <div class="resource-card-body">
+          <p class="resource-tag">For Therapists & Parents · Handwriting</p>
+          <h3 class="resource-title">Handwriting Paper Pack</h3>
+          <p class="resource-desc">Printable handwriting paper in multiple line sizes and formats — wide rule, narrow rule, raised line, and more. Great for home and clinic use.</p>
+          <div class="resource-price">Coming Soon</div>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card-top purple">
+          <div class="resource-card-icon">📝</div>
+        </div>
+        <div class="resource-card-body">
+          <p class="resource-tag">For Therapists · Documentation</p>
+          <h3 class="resource-title">SOAP Note Templates</h3>
+          <p class="resource-desc">Streamlined SOAP note templates designed for pediatric OT, ST, and PT practice. Save hours each week on documentation.</p>
+          <div class="resource-price">Coming Soon</div>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card-top light">
+          <div class="resource-card-icon">💜</div>
+        </div>
+        <div class="resource-card-body">
+          <p class="resource-tag">For Parents · Education</p>
+          <h3 class="resource-title">Parent Handouts by Diagnosis</h3>
+          <p class="resource-desc">Easy-to-understand handouts covering sensory processing, fine motor development, autism, ADHD, and more — designed for families.</p>
+          <div class="resource-price">Coming Soon</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <p class="section-eyebrow" style="justify-content:center">Reach Out</p>
+      <h2 class="contact-title">Let's talk about your <em>child</em></h2>
+      <p class="contact-desc">We'd love to hear from you. Fill out the form below and we'll be in touch within one business day.</p>
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" placeholder="Maria" />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" placeholder="Garcia" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="hello@example.com" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">How can we help?</label>
+          <textarea class="form-input form-textarea" placeholder="Tell us a little about your child and what brings you here..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary form-submit">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <ul class="footer-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#resources">Resource Center</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Form submit placeholder
+    function handleSubmit(e) {
+      e.preventDefault();
+      alert('Thank you! We will be in touch soon.');
+    }
+  </script>
+</body>
+</html>
