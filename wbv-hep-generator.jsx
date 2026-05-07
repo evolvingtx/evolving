@@ -1,0 +1,1339 @@
+import { useState, useEffect } from "react";
+
+/* ─── BRAND ───────────────────────────────────────────────────── */
+const B = {
+  purple:"#5C4490", purpleLight:"#9B88C4", purplePale:"#EDE8F5",
+  purpleDeep:"#3E2D6E", cream:"#FDFBF9", warmWhite:"#F7F4FB",
+  textDark:"#1E1830", textLight:"#5A4E72", green:"#4A8C6F",
+  greenPale:"#E8F5EF", border:"rgba(92,68,144,0.15)",
+};
+
+/* ─── CREDIT CODES (pre-generated per tier) ──────────────────── */
+// These codes are embedded in the PayPal return URL per tier.
+// Each is single-use per device. Rotate codes in PayPal settings as needed.
+const CREDIT_CODES = {
+  // Starter – 3 credits ($1.50)
+  "EVLS-K2M7":3,"EVLS-P9R4":3,"EVLS-X1N6":3,"EVLS-W8Q3":3,"EVLS-T5L2":3,
+  "EVLS-B4J9":3,"EVLS-D7F1":3,"EVLS-H3G8":3,"EVLS-V6C5":3,"EVLS-Y2A4":3,
+  // Standard – 6 credits ($3.00)
+  "EVLM-R8K1":6,"EVLM-Q4W2":6,"EVLM-J3X9":6,"EVLM-N7T5":6,"EVLM-C2G8":6,
+  "EVLM-A6F4":6,"EVLM-L1Y7":6,"EVLM-S5H3":6,"EVLM-E9B6":6,"EVLM-U4D2":6,
+  // Value – 10 credits ($5.00)
+  "EVLV-F2L9":10,"EVLV-G8M4":10,"EVLV-H1N7":10,"EVLV-J5O3":10,"EVLV-K9P6":10,
+  "EVLV-Q2R8":10,"EVLV-S4T1":10,"EVLV-U7V5":10,"EVLV-W3X9":10,"EVLV-Y6Z2":10,
+  // Pro – unlimited ($15/mo)
+  "EVLP-E3F6":999,"EVLP-G9H2":999,"EVLP-I5J8":999,"EVLP-K4L1":999,"EVLP-M7N3":999,
+};
+
+// PayPal return URL codes used per tier (change these as they get redeemed)
+const TIER_RETURN_CODES = {
+  starter:"EVLS-K2M7", standard:"EVLM-R8K1", value:"EVLV-F2L9", pro:"EVLP-E3F6",
+};
+
+const PAYPAL_EMAIL = "OT.Evolve@gmail.com";
+const NETLIFY_BASE = "https://evolving-therapy-wellness.netlify.app";
+
+function paypalUrl(tier) {
+  const items = {
+    starter:{name:"WBV HEP Starter – 3 Credits",amount:"1.50"},
+    standard:{name:"WBV HEP Standard – 6 Credits",amount:"3.00"},
+    value:{name:"WBV HEP Value Pack – 10 Credits",amount:"5.00"},
+    pro:{name:"WBV HEP Pro Monthly – Unlimited",amount:"15.00"},
+  };
+  const {name,amount} = items[tier];
+  const code = TIER_RETURN_CODES[tier];
+  const params = new URLSearchParams({
+    cmd:"_xclick", business:PAYPAL_EMAIL, item_name:name,
+    amount, currency_code:"USD", no_shipping:"1",
+    return:`${NETLIFY_BASE}/wbv-credits.html?tier=${tier}&code=${code}`,
+    cancel_return:`${NETLIFY_BASE}/shop.html`,
+  });
+  return `https://www.paypal.com/cgi-bin/webscr?${params}`;
+}
+
+/* ─── EXERCISE LIBRARY ────────────────────────────────────────── */
+const EXERCISES = [
+  // ── Pediatric-primary ──────────────────────────────────────────
+  { id:"bilateral-stance", emoji:"🧍", difficulty:"Beginner", recHz:"20–30 Hz",
+    defaultDuration:60, defaultSets:3, defaultRest:30, population:["pediatric","adult"],
+    en:{ name:"Bilateral Stance", category:"Lower Body · Static", position:"Standing",
+      description:"Stand with feet shoulder-width apart, slight knee bend (10–30°). Arms relaxed at sides or light fingertip support on a wall or chair.",
+      cueing:"Feel the vibration travel up from your feet. Keep knees soft — never locked.",
+      targetAreas:["proprioception","postural control","LE activation","core stability"] },
+    es:{ name:"Postura Bilateral", category:"Tren Inferior · Estático", position:"De pie",
+      description:"Párese con pies al ancho de hombros, rodillas ligeramente flexionadas (10–30°). Brazos relajados o apoyo leve en una silla o pared.",
+      cueing:"Siente la vibración subir desde tus pies. Mantén las rodillas suaves, nunca bloqueadas.",
+      targetAreas:["propiocepción","control postural","activación MMII","estabilidad central"] } },
+
+  { id:"tandem-stance", emoji:"🚶", difficulty:"Intermediate", recHz:"20–25 Hz",
+    defaultDuration:45, defaultSets:2, defaultRest:30, population:["pediatric","adult"],
+    en:{ name:"Tandem Stance", category:"Lower Body · Static", position:"Standing",
+      description:"One foot directly in front of the other heel-to-toe. Light fingertip support available.",
+      cueing:"Eyes forward. Swap foot positions each set. Engage core to avoid swaying.",
+      targetAreas:["balance","proprioception","ankle stability","vestibular processing"] },
+    es:{ name:"Postura en Tándem", category:"Tren Inferior · Estático", position:"De pie",
+      description:"Un pie directamente frente al otro (talón-punta). Apoyo leve con las puntas de los dedos.",
+      cueing:"Ojos al frente. Cambia posición de pies en cada serie. Activa el core.",
+      targetAreas:["equilibrio","propiocepción","estabilidad tobillo","procesamiento vestibular"] } },
+
+  { id:"single-leg-stance", emoji:"🦩", difficulty:"Advanced", recHz:"20–25 Hz",
+    defaultDuration:30, defaultSets:3, defaultRest:45, population:["pediatric","adult"],
+    fallPrevention:true,
+    en:{ name:"Single Leg Balance", category:"Lower Body · Static", position:"Standing",
+      description:"Stand on one leg, opposite knee slightly flexed. Keep a chair or wall within reach. Hold 10–30 seconds. Reduce grip on support as you improve.",
+      cueing:"Keep hips level. Alternate legs each set. Add challenge: close eyes or reach with opposite arm.",
+      targetAreas:["balance","hip stability","proprioception","fall prevention"] },
+    es:{ name:"Equilibrio en Un Pie", category:"Tren Inferior · Estático", position:"De pie",
+      description:"Párese en un pie, rodilla contraria ligeramente flexionada. Tenga una silla o pared cerca. Sostenga 10–30 seg. Reduzca el apoyo gradualmente.",
+      cueing:"Mantén caderas niveladas. Alterna piernas. Avanza: cierra ojos o alcanza con brazo opuesto.",
+      targetAreas:["equilibrio","estabilidad cadera","propiocepción","prevención de caídas"] } },
+
+  { id:"mini-squat", emoji:"🏋️", difficulty:"Intermediate", recHz:"25–35 Hz",
+    defaultDuration:60, defaultSets:3, defaultRest:45, population:["pediatric","adult"],
+    en:{ name:"Mini Squat", category:"Lower Body · Dynamic", position:"Standing",
+      description:"Feet shoulder-width apart. Slow, controlled squats to 20–45° knee flexion. Knees aligned with toes throughout.",
+      cueing:"Push through heels to rise. Chest tall, core engaged. Count 3 seconds down, 3 up.",
+      targetAreas:["LE strengthening","knee stability","core activation","proprioception"] },
+    es:{ name:"Mini Sentadilla", category:"Tren Inferior · Dinámico", position:"De pie",
+      description:"Pies al ancho de hombros. Sentadillas lentas y controladas, rodillas a 20–45°. Rodillas alineadas con los pies.",
+      cueing:"Empuja desde los talones para subir. Pecho erguido y core activado. Cuenta 3 seg abajo, 3 arriba.",
+      targetAreas:["fortalecimiento MMII","estabilidad rodilla","activación core","propiocepción"] } },
+
+  { id:"sit-to-stand", emoji:"⬆️", difficulty:"Intermediate", recHz:"20–30 Hz",
+    defaultDuration:60, defaultSets:3, defaultRest:45, population:["pediatric","adult"],
+    fallPrevention:true,
+    en:{ name:"Sit to Stands", category:"Lower Body · Dynamic", position:"Seated → Standing",
+      description:"Variation A (easier): Chair on the floor, feet on the plate — stand up and sit down slowly. Variation B (harder, needs large platform): Chair on the plate with feet — full vibration through the movement. Hold armrests or a rail as needed. No rushing.",
+      cueing:"Lean forward slightly before rising. The slow controlled descent builds the most strength. Great for kids and adults alike.",
+      targetAreas:["LE strengthening","functional mobility","fall prevention","core activation"] },
+    es:{ name:"Levantarse de la Silla", category:"Tren Inferior · Dinámico", position:"Sentado → De pie",
+      description:"Variación A (más fácil): Silla en el suelo, pies sobre la plataforma — levántese y siéntese lentamente. Variación B (más difícil, necesita plataforma grande): Silla sobre la plataforma con pies — vibración completa durante el movimiento. Use los apoyabrazos si es necesario.",
+      cueing:"Inclínate ligeramente hacia adelante antes de levantarte. El descenso lento es donde más se fortalece. Excelente para niños y adultos.",
+      targetAreas:["fortalecimiento MMII","movilidad funcional","prevención de caídas","activación core"] } },
+
+  { id:"calf-raises", emoji:"👟", difficulty:"Beginner", recHz:"20–30 Hz",
+    defaultDuration:60, defaultSets:3, defaultRest:30, population:["pediatric","adult"],
+    fallPrevention:true,
+    en:{ name:"Heel Raises", category:"Lower Body · Dynamic", position:"Standing",
+      description:"Rise slowly onto tiptoes, hold 2 seconds, lower with control. Fingertip support on a wall or chair back if needed.",
+      cueing:"Equal weight through both feet. Slow movement maximizes WBV input.",
+      targetAreas:["ankle stability","calf strength","proprioception","fall prevention"] },
+    es:{ name:"Elevación de Talones", category:"Tren Inferior · Dinámico", position:"De pie",
+      description:"Sube lentamente de puntillas, mantén 2 segundos, baja con control. Apoyo con puntas de los dedos en pared o silla si es necesario.",
+      cueing:"Peso igual en ambos pies. El movimiento lento maximiza el efecto de la vibración.",
+      targetAreas:["estabilidad tobillo","fuerza pantorrilla","propiocepción","prevención de caídas"] } },
+
+  { id:"side-leg-raise", emoji:"🦵", difficulty:"Intermediate", recHz:"20–25 Hz",
+    defaultDuration:60, defaultSets:2, defaultRest:30, population:["pediatric","adult"],
+    fallPrevention:true,
+    en:{ name:"Side Leg Raises", category:"Lower Body · Dynamic", position:"Standing",
+      description:"Stand on the plate holding a chair or wall for support. Slowly lift one leg straight out to the side, then lower gently. Complete your set on one side, then switch.",
+      cueing:"Keep your trunk upright — no leaning. Lift to hip height only. Move slowly and controlled.",
+      targetAreas:["hip abductor strength","lateral stability","balance","fall prevention"] },
+    es:{ name:"Elevación Lateral de Pierna", category:"Tren Inferior · Dinámico", position:"De pie",
+      description:"Párese en la plataforma sosteniendo una silla o pared. Eleve lentamente una pierna hacia el lado, luego baje con suavidad. Complete el set de un lado y luego cambie.",
+      cueing:"Tronco erguido — no te inclines. Eleva solo hasta la altura de la cadera. Movimiento lento y controlado.",
+      targetAreas:["fuerza abductores cadera","estabilidad lateral","equilibrio","prevención de caídas"] } },
+
+  { id:"lateral-weight-shift", emoji:"↔️", difficulty:"Beginner", recHz:"20–25 Hz",
+    defaultDuration:60, defaultSets:2, defaultRest:30, population:["pediatric","adult"],
+    fallPrevention:true,
+    en:{ name:"Weight Shifts", category:"Lower Body · Dynamic", position:"Standing",
+      description:"Stand with both feet on the plate. Slowly shift weight from left foot to right foot. Find a comfortable rhythm — this mimics the motion of walking.",
+      cueing:"Keep movements slow and deliberate. Feel loading and unloading each leg.",
+      targetAreas:["balance","lateral stability","weight transfer","fall prevention"] },
+    es:{ name:"Desplazamiento de Peso", category:"Tren Inferior · Dinámico", position:"De pie",
+      description:"Párese con ambos pies en la plataforma. Desplace el peso lentamente del pie izquierdo al derecho. Encuentra un ritmo cómodo — imita el movimiento al caminar.",
+      cueing:"Movimientos lentos y deliberados. Siente la carga y descarga de cada pierna.",
+      targetAreas:["equilibrio","estabilidad lateral","transferencia de peso","prevención de caídas"] } },
+
+  { id:"march-in-place", emoji:"🥁", difficulty:"Intermediate", recHz:"25–30 Hz",
+    defaultDuration:60, defaultSets:2, defaultRest:30, population:["pediatric","adult"],
+    en:{ name:"March in Place", category:"Lower Body · Dynamic", position:"Standing",
+      description:"Alternate lifting knees to hip height. Coordinate with opposite arm swing. Keep trunk upright throughout.",
+      cueing:"Maintain rhythm and core engagement. Keep the movement controlled — not a race.",
+      targetAreas:["coordination","hip flexor strength","motor planning","bilateral integration"] },
+    es:{ name:"Marcha en el Lugar", category:"Tren Inferior · Dinámico", position:"De pie",
+      description:"Alterna levantando rodillas a la altura de la cadera con balanceo de brazo opuesto. Tronco erguido en todo momento.",
+      cueing:"Mantén ritmo y core activado. Movimiento controlado, no es una carrera.",
+      targetAreas:["coordinación","fuerza flexor cadera","planificación motora","integración bilateral"] } },
+
+  { id:"seated-upright", emoji:"🪑", difficulty:"Beginner", recHz:"20–30 Hz",
+    defaultDuration:60, defaultSets:3, defaultRest:30, population:["pediatric","adult"],
+    fallPrevention:true,
+    en:{ name:"Seated Warm-Up", category:"Seated", position:"Seated",
+      description:"Sit in a chair with both feet flat on the vibration plate. Stay relaxed for 1–3 minutes. This lets your body adjust to the vibration before standing.",
+      cueing:"Sit tall — imagine a string lifting you from the crown of your head. Feet flat and grounded.",
+      targetAreas:["core stability","postural control","sensory preparation","circulation"] },
+    es:{ name:"Calentamiento Sentado", category:"Sentado", position:"Sentado",
+      description:"Siéntese en una silla con ambos pies planos sobre la plataforma. Permanezca relajado 1–3 minutos. Esto permite que el cuerpo se adapte antes de pararse.",
+      cueing:"Siéntate erguido — imagina un hilo que te jala hacia arriba. Pies firmes y planos.",
+      targetAreas:["estabilidad central","control postural","preparación sensorial","circulación"] } },
+
+  { id:"seated-forward-lean", emoji:"🙇", difficulty:"Intermediate", recHz:"20–30 Hz",
+    defaultDuration:45, defaultSets:2, defaultRest:30, population:["pediatric"],
+    en:{ name:"Seated Forward Lean", category:"Seated", position:"Seated",
+      description:"Seated on platform, hinge 10–15° forward from hips with flat back. Hands rest on thighs.",
+      cueing:"Back straight — not rounded. This position increases core demand significantly.",
+      targetAreas:["deep core activation","trunk control","hip stability"] },
+    es:{ name:"Inclinación Hacia Adelante Sentado", category:"Sentado", position:"Sentado",
+      description:"Sentado en la plataforma, inclínate 10–15° hacia adelante desde las caderas con espalda recta.",
+      cueing:"Espalda recta, no redondeada. Esta posición aumenta significativamente la demanda del core.",
+      targetAreas:["activación core profundo","control del tronco","estabilidad de cadera"] } },
+
+  { id:"quadruped", emoji:"🐾", difficulty:"Beginner", recHz:"20–25 Hz",
+    defaultDuration:45, defaultSets:3, defaultRest:30, population:["pediatric"],
+    en:{ name:"Quadruped (Hands & Knees)", category:"UE Weight Bearing", position:"Quadruped",
+      description:"Hands and knees on platform. Wrists under shoulders, knees under hips. Hold static position.",
+      cueing:"Flat back like a table. Weight evenly distributed. Progress by lifting opposite arm/leg.",
+      targetAreas:["UE weight bearing","shoulder stability","core activation","bilateral coordination"] },
+    es:{ name:"Cuadrúpedo (Manos y Rodillas)", category:"Carga de Peso MMSS", position:"Cuadrúpedo",
+      description:"Manos y rodillas sobre la plataforma. Muñecas bajo hombros, rodillas bajo caderas. Mantén posición estática.",
+      cueing:"Espalda plana como una mesa. Peso distribuido uniformemente. Avanza levantando brazo/pierna opuestos.",
+      targetAreas:["carga de peso MMSS","estabilidad hombro","activación core","coordinación bilateral"] } },
+
+  { id:"prone-on-elbows", emoji:"💪", difficulty:"Intermediate", recHz:"20–25 Hz",
+    defaultDuration:30, defaultSets:3, defaultRest:45, population:["pediatric"],
+    en:{ name:"Prone on Elbows", category:"UE Weight Bearing", position:"Prone",
+      description:"Lie face-down with forearms on platform, elbows under shoulders. Maintain plank hold.",
+      cueing:"Press firmly through forearms. Hips level with shoulders — no sagging.",
+      targetAreas:["shoulder stability","core activation","UE weight bearing","neck/trunk extension"] },
+    es:{ name:"Prono sobre Codos", category:"Carga de Peso MMSS", position:"Prono",
+      description:"Acuéstese boca abajo con antebrazos sobre la plataforma, codos bajo los hombros. Mantén la posición.",
+      cueing:"Presiona firmemente con los antebrazos. Caderas al nivel de los hombros, sin hundirse.",
+      targetAreas:["estabilidad hombro","activación core","carga de peso MMSS","extensión cuello/tronco"] } },
+
+  { id:"half-kneeling", emoji:"🧎", difficulty:"Intermediate", recHz:"20–25 Hz",
+    defaultDuration:45, defaultSets:2, defaultRest:30, population:["pediatric"],
+    en:{ name:"Half Kneeling", category:"Lower Body · Static", position:"Half-Kneeling",
+      description:"One knee on platform, opposite foot flat in lunge position. Maintain upright trunk.",
+      cueing:"Square hips forward. Squeeze glutes on kneeling side. Alternate sides each set.",
+      targetAreas:["hip flexor flexibility","hip stability","core control","balance"] },
+    es:{ name:"Semirodilla", category:"Tren Inferior · Estático", position:"Semirodilla",
+      description:"Una rodilla sobre la plataforma, pie opuesto plano en posición de zancada. Tronco erguido.",
+      cueing:"Caderas al frente. Aprieta glúteos del lado arrodillado. Alterna lados en cada serie.",
+      targetAreas:["flexibilidad flexor cadera","estabilidad cadera","control core","equilibrio"] } },
+
+  { id:"hand-wb", emoji:"🤲", difficulty:"Beginner", recHz:"20–30 Hz",
+    defaultDuration:45, defaultSets:3, defaultRest:30, population:["pediatric"],
+    en:{ name:"Hand Weight Bearing on Platform", category:"UE Weight Bearing", position:"Standing",
+      description:"Stand beside platform, hands flat on surface. Apply firm downward pressure through extended arms.",
+      cueing:"Elbows slightly soft. Press evenly through both palms. Excellent shoulder proprioception input.",
+      targetAreas:["UE proprioception","shoulder stability","grip strength","sensory processing"] },
+    es:{ name:"Carga de Peso en Manos", category:"Carga de Peso MMSS", position:"De pie",
+      description:"Párese junto a la plataforma, manos planas sobre la superficie. Aplica presión firme hacia abajo.",
+      cueing:"Codos ligeramente flexionados. Presiona uniformemente con ambas palmas.",
+      targetAreas:["propiocepción MMSS","estabilidad hombro","fuerza agarre","procesamiento sensorial"] } },
+
+  { id:"ue-reach", emoji:"🙌", difficulty:"Intermediate", recHz:"20–30 Hz",
+    defaultDuration:60, defaultSets:2, defaultRest:30, population:["pediatric"],
+    en:{ name:"Standing UE Reach Patterns", category:"Upper Body", position:"Standing",
+      description:"From bilateral stance, perform controlled reaching (forward, diagonal, overhead) with one or both arms.",
+      cueing:"Stable base. Move arms slowly and with control. Add light weights for challenge.",
+      targetAreas:["shoulder mobility","bilateral coordination","postural stability","motor planning"] },
+    es:{ name:"Alcances de MMSS de Pie", category:"Tren Superior", position:"De pie",
+      description:"Desde postura bilateral, realiza alcances controlados (adelante, diagonal, arriba) con los brazos.",
+      cueing:"Base estable. Mueve los brazos lentamente y con control.",
+      targetAreas:["movilidad hombro","coordinación bilateral","estabilidad postural","planificación motora"] } },
+];
+
+/* ─── UI STRINGS ──────────────────────────────────────────────── */
+const T = {
+  en:{
+    appName:"WBV HEP Generator",
+    tagline:"Whole Body Vibration · Home Exercise Program",
+    credits:"credits", buyCredits:"Buy Credits", savedHEPs:"Saved HEPs",
+    steps:["Client Info","AI Review","Customize","Preview HEP"],
+    // Email gate
+    gateTitle:"Get Started",
+    gateSub:"Enter your email to unlock 2 free HEP credits. No account creation needed.",
+    emailLabel:"Your Email Address",
+    emailPh:"therapist@example.com",
+    getFreeCTA:"Unlock 2 Free Credits →",
+    emailNote:"Your email is stored locally as your account ID. Credits are tied to this device.",
+    alreadyHave:"Already have a code?",
+    redeemInstead:"Redeem it here",
+    // Client Info
+    clientName:"Client Name", age:"Age",
+    diagnosis:"Diagnosis / Presentation", goals:"Treatment Goals",
+    addGoals:"Additional Goals (free text)", equipment:"WBV Equipment Type",
+    precautions:"Precautions / Contraindications",
+    therapistName:"Therapist Name", clinicName:"Practice Name",
+    getAI:"Get AI Recommendations →",
+    population:"Patient Population",
+    popAll:"All", popPeds:"Pediatric", popAdult:"Adult / Fall Prevention",
+    // AI step
+    aiTitle:"✦ AI Clinical Recommendations",
+    hzRec:"Frequency Recommendation",
+    selectEx:"Select Exercises",
+    aiSub:"AI suggestions are highlighted. Toggle any exercise to add or remove.",
+    browseAll:"Browse Full Library", showRec:"Show AI Picks",
+    back:"← Back", next:"Continue →",
+    setParams:"Customize Parameters",
+    fallBadge:"Fall Prevention",
+    // Customize
+    customTitle:"Customize Parameters",
+    customSub:"Adjust frequency, duration, sets, and rest time per exercise. Add clinical notes as needed.",
+    freqHz:"Freq (Hz)", durSec:"Duration (sec)", sets:"Sets", restSec:"Rest (sec)",
+    notesPh:"Clinical notes / modifications…",
+    // Preview
+    previewHEP:"Preview HEP →",
+    editBtn:"← Edit", copyBtn:"Copy as Text", printBtn:"Print / Save PDF",
+    saveBtn:"Save HEP",
+    hepSubtitle:"Whole Body Vibration — Home Exercise Program",
+    exercisesHdr:"Exercises",
+    precautionHdr:"⚠ Precautions",
+    footerNote:"Contact your therapist with questions or if any exercise causes discomfort.",
+    footerDiscl:"This program is for home use under therapist guidance only.",
+    copiedToast:"✓ Copied to clipboard!",
+    savedToast:"✓ HEP saved!",
+    // Credits
+    noCredits:"No credits remaining",
+    noCreditsSub:"Purchase a credit pack to continue.",
+    aiLoadMsg:"Analyzing clinical profile and selecting exercises…",
+    aiPow:"Powered by Claude AI",
+    aiErrTitle:"Could not connect to AI",
+    aiErrSub:"You can still manually select exercises below.",
+    noExSel:"No exercises selected. Go back to add some.",
+    // Payment modal
+    modalTitle:"Buy Credits",
+    modalSub:"Each credit = 1 complete WBV HEP program",
+    paypalBtn:"Pay with PayPal",
+    paypalNote:"Clicking Pay opens PayPal. After payment, you'll be redirected to a page showing your access code.",
+    codeLabel:"Enter Access Code",
+    codePh:"e.g. EVLS-K2M7",
+    redeemBtn:"Redeem Code",
+    codeSuccess:"Credits added!",
+    codeInvalid:"Code not found. Check the code on your receipt page.",
+    codeUsed:"This code has already been redeemed on this device.",
+    // Saved
+    savedTitle:"Saved HEPs", noSaved:"No saved HEPs yet.",
+    loadBtn:"Load", deleteBtn:"Remove",
+    preparedBy:"Prepared by",
+    unlimited:"Unlimited",
+    suggested:"Suggested",
+    agePh:"e.g. 7 years, or adult",
+    diagPh:"e.g. ASD, hypotonia, fall risk, CVA…",
+    goalsPh:"e.g. improve gait, body awareness, ankle strength…",
+    precPh:"e.g. recent fracture, cardiac device, seizure history…",
+    therPh:"Your name + credentials",
+    creditAdded:"credits added!",
+    unlimitedAdded:"Unlimited Pro activated!",
+  },
+  es:{
+    appName:"Generador de HEP con VCE",
+    tagline:"Vibración de Cuerpo Entero · Programa de Ejercicios en Casa",
+    credits:"créditos", buyCredits:"Comprar Créditos", savedHEPs:"HEPs Guardados",
+    steps:["Info del Cliente","Revisión IA","Personalizar","Vista Previa"],
+    gateTitle:"Comenzar",
+    gateSub:"Ingresa tu correo para obtener 2 créditos gratis. No se requiere crear cuenta.",
+    emailLabel:"Tu Correo Electrónico",
+    emailPh:"terapeuta@ejemplo.com",
+    getFreeCTA:"Obtener 2 Créditos Gratis →",
+    emailNote:"Tu correo se guarda localmente como identificador de cuenta en este dispositivo.",
+    alreadyHave:"¿Ya tienes un código?",
+    redeemInstead:"Canjéalo aquí",
+    clientName:"Nombre del Cliente", age:"Edad",
+    diagnosis:"Diagnóstico / Presentación", goals:"Objetivos de Tratamiento",
+    addGoals:"Objetivos adicionales (texto libre)", equipment:"Tipo de Equipo VCE",
+    precautions:"Precauciones / Contraindicaciones",
+    therapistName:"Nombre del Terapeuta", clinicName:"Nombre de la Práctica",
+    getAI:"Obtener Recomendaciones de IA →",
+    population:"Población de Paciente",
+    popAll:"Todos", popPeds:"Pediátrico", popAdult:"Adulto / Prevención de Caídas",
+    aiTitle:"✦ Recomendaciones Clínicas de IA",
+    hzRec:"Recomendación de Frecuencia",
+    selectEx:"Seleccionar Ejercicios",
+    aiSub:"Las sugerencias de IA están resaltadas. Toca para agregar o quitar.",
+    browseAll:"Ver Biblioteca Completa", showRec:"Ver Recomendados de IA",
+    back:"← Atrás", next:"Continuar →",
+    setParams:"Personalizar Parámetros",
+    fallBadge:"Prevención de Caídas",
+    customTitle:"Personalizar Parámetros",
+    customSub:"Ajusta frecuencia, duración, series y descanso. Agrega notas clínicas según sea necesario.",
+    freqHz:"Frec (Hz)", durSec:"Duración (seg)", sets:"Series", restSec:"Descanso (seg)",
+    notesPh:"Notas clínicas / modificaciones…",
+    previewHEP:"Vista Previa del HEP →",
+    editBtn:"← Editar", copyBtn:"Copiar como texto", printBtn:"Imprimir / Guardar PDF",
+    saveBtn:"Guardar HEP",
+    hepSubtitle:"Vibración de Cuerpo Entero — Programa de Ejercicios en Casa",
+    exercisesHdr:"Ejercicios",
+    precautionHdr:"⚠ Precauciones",
+    footerNote:"Comuníquese con su terapeuta si tiene preguntas o si algún ejercicio causa molestia.",
+    footerDiscl:"Este programa es para uso en casa bajo la supervisión del terapeuta.",
+    copiedToast:"✓ ¡Copiado al portapapeles!",
+    savedToast:"✓ ¡HEP guardado!",
+    noCredits:"Sin créditos disponibles",
+    noCreditsSub:"Adquiere un paquete de créditos para continuar.",
+    aiLoadMsg:"Analizando perfil clínico y seleccionando ejercicios…",
+    aiPow:"Impulsado por Claude IA",
+    aiErrTitle:"No se pudo conectar con la IA",
+    aiErrSub:"Aún puedes seleccionar ejercicios manualmente.",
+    noExSel:"Ningún ejercicio seleccionado. Regresa a elegir algunos.",
+    modalTitle:"Comprar Créditos",
+    modalSub:"Cada crédito = 1 programa HEP completo de VCE",
+    paypalBtn:"Pagar con PayPal",
+    paypalNote:"Al hacer clic se abre PayPal. Después del pago, serás redirigido a una página con tu código de acceso.",
+    codeLabel:"Ingresar Código de Acceso",
+    codePh:"ej. EVLS-K2M7",
+    redeemBtn:"Canjear Código",
+    codeSuccess:"¡Créditos añadidos!",
+    codeInvalid:"Código no encontrado. Revisa el código en tu página de recibo.",
+    codeUsed:"Este código ya fue canjeado en este dispositivo.",
+    savedTitle:"Tus HEPs Guardados", noSaved:"Aún no hay HEPs guardados.",
+    loadBtn:"Cargar", deleteBtn:"Eliminar",
+    preparedBy:"Preparado por",
+    unlimited:"Ilimitado",
+    suggested:"Sugerido",
+    agePh:"ej. 7 años o adulto",
+    diagPh:"ej. TEA, hipotonía, riesgo de caída, ACV…",
+    goalsPh:"ej. mejorar marcha, conciencia corporal, fuerza tobillo…",
+    precPh:"ej. fractura reciente, marcapasos, historial de convulsiones…",
+    therPh:"Tu nombre y credenciales",
+    creditAdded:"créditos añadidos!",
+    unlimitedAdded:"¡Pro Ilimitado activado!",
+  },
+};
+
+const GOALS = [
+  {en:"Core stability",es:"Estabilidad central"},
+  {en:"Balance & coordination",es:"Equilibrio y coordinación"},
+  {en:"Proprioception",es:"Propiocepción"},
+  {en:"Sensory modulation",es:"Modulación sensorial"},
+  {en:"Fall prevention",es:"Prevención de caídas"},
+  {en:"UE weight bearing",es:"Carga de peso MMSS"},
+  {en:"LE strengthening",es:"Fortalecimiento MMII"},
+  {en:"Postural control",es:"Control postural"},
+  {en:"Motor planning",es:"Planificación motora"},
+  {en:"Bone density",es:"Densidad ósea"},
+  {en:"Vestibular processing",es:"Procesamiento vestibular"},
+  {en:"Bilateral coordination",es:"Coordinación bilateral"},
+  {en:"Functional mobility",es:"Movilidad funcional"},
+  {en:"Hip stability",es:"Estabilidad de cadera"},
+  {en:"Shoulder stability",es:"Estabilidad de hombro"},
+];
+
+const EQUIPMENT = [
+  {value:"vertical",en:"Vertical (up-down)",es:"Vertical (arriba-abajo)"},
+  {value:"pivotal",en:"Pivotal (side-to-side)",es:"Pivote (lado a lado)"},
+  {value:"triplanar",en:"Tri-Planar",es:"Tri-Planar"},
+  {value:"handheld",en:"Handheld Device",es:"Dispositivo de mano"},
+  {value:"unspecified",en:"Not specified",es:"No especificado"},
+];
+
+/* ─── SVG FIGURES ─────────────────────────────────────────────── */
+const S = B.purple; const LW = 2.5; const LW2 = 2;
+const Plt = ({y=79,w=60,x=5}) => (
+  <>
+    <rect x={x} y={y} width={w} height="7" rx="3" fill={B.purplePale}/>
+    <path d={`M${x+3} ${y+3.5}Q${x+12} ${y-2} ${x+20} ${y+3.5}Q${x+28} ${y+8} ${x+36} ${y+3.5}Q${x+44} ${y-2} ${x+52} ${y+3.5}Q${x+60} ${y+8} ${x+66} ${y+3.5}`} stroke={B.purpleLight} strokeWidth="1.2" fill="none" opacity=".7"/>
+  </>
+);
+const Hd = (cx,cy,r=7) => <circle cx={cx} cy={cy} r={r} fill={B.purplePale} stroke={S} strokeWidth="2"/>;
+const Ln = (x1,y1,x2,y2,w=LW) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={S} strokeWidth={w} strokeLinecap="round"/>;
+
+const FIGS = {
+  "bilateral-stance":(<svg viewBox="0 0 70 90" fill="none">{Hd(35,10)}<Plt/>{Ln(35,17,35,52)}{Ln(35,29,20,43,LW2)}{Ln(35,29,50,43,LW2)}{Ln(35,52,25,67)}{Ln(35,52,45,67)}{Ln(25,67,22,79)}{Ln(45,67,48,79)}</svg>),
+  "tandem-stance":(<svg viewBox="0 0 70 90" fill="none">{Hd(35,10)}<Plt/>{Ln(35,17,35,52)}{Ln(35,29,21,43,LW2)}{Ln(35,29,49,43,LW2)}{Ln(35,52,31,67)}{Ln(35,52,39,67)}{Ln(31,67,27,79)}{Ln(39,67,43,79)}</svg>),
+  "single-leg-stance":(<svg viewBox="0 0 70 90" fill="none">{Hd(35,10)}<Plt/>{Ln(35,17,35,52)}{Ln(35,29,16,40,LW2)}{Ln(35,29,54,40,LW2)}{Ln(35,52,30,68)}{Ln(30,68,28,79)}{Ln(35,52,50,58)}{Ln(50,58,56,70)}</svg>),
+  "mini-squat":(<svg viewBox="0 0 70 90" fill="none">{Hd(35,15)}<Plt/>{Ln(35,22,35,54)}{Ln(35,33,18,40,LW2)}{Ln(35,33,52,40,LW2)}{Ln(35,54,22,65)}{Ln(35,54,48,65)}{Ln(22,65,18,79)}{Ln(48,65,52,79)}</svg>),
+  "sit-to-stand":(<svg viewBox="0 0 80 90" fill="none">{Hd(48,12)}
+    <rect x="5" y="55" width="38" height="5" rx="2" fill={B.purplePale}/>
+    {Ln(5,60,5,79,"1.5")}{Ln(43,60,43,79,"1.5")}<Plt x={22} y={79} w={42}/>
+    {Ln(48,19,44,55)}{Ln(36,35,56,30,LW2)}{Ln(44,45,28,55)}{Ln(44,45,52,62)}{Ln(52,62,55,79)}</svg>),
+  "calf-raises":(<svg viewBox="0 0 70 90" fill="none">{Hd(35,7)}<Plt/>{Ln(35,14,35,47)}{Ln(35,25,22,37,LW2)}{Ln(35,25,48,37,LW2)}{Ln(35,47,27,59)}{Ln(35,47,43,59)}{Ln(27,59,24,71)}{Ln(43,59,46,71)}{Ln(24,71,28,79)}{Ln(46,71,42,79)}</svg>),
+  "side-leg-raise":(<svg viewBox="0 0 80 90" fill="none">{Hd(35,10)}<Plt x={5} y={79} w={55}/>
+    {Ln(35,17,35,52)}{Ln(35,28,20,42,LW2)}{Ln(35,28,50,42,LW2)}
+    {Ln(35,52,30,67)}{Ln(30,67,27,79)}
+    {Ln(35,52,55,47)}{Ln(55,47,68,48)}</svg>),
+  "lateral-weight-shift":(<svg viewBox="0 0 70 90" fill="none">{Hd(38,10)}<Plt/>{Ln(38,17,36,52)}{Ln(37,29,22,43,LW2)}{Ln(37,29,52,43,LW2)}{Ln(36,52,24,67)}{Ln(36,52,48,67)}{Ln(24,67,20,79)}{Ln(48,67,52,79)}<path d="M10 46L6 42v8z" fill={B.purpleLight} opacity=".8"/><path d="M62 46L66 42v8z" fill={B.purpleLight} opacity=".8"/></svg>),
+  "march-in-place":(<svg viewBox="0 0 70 90" fill="none">{Hd(35,10)}<Plt/>{Ln(35,17,35,52)}{Ln(35,28,17,37,LW2)}{Ln(35,28,53,42,LW2)}{Ln(35,52,28,67)}{Ln(28,67,25,79)}{Ln(35,52,48,57)}{Ln(48,57,52,67)}</svg>),
+  "seated-upright":(<svg viewBox="0 0 80 90" fill="none">{Hd(40,11)}
+    <rect x="20" y="54" width="40" height="6" rx="2" fill={B.purplePale}/>
+    {Ln(25,60,22,79,"1.5")}{Ln(55,60,58,79,"1.5")}
+    <Plt x={18} y={79} w={44}/>
+    {Ln(40,18,40,54)}{Ln(40,31,26,47,LW2)}{Ln(40,31,54,47,LW2)}{Ln(34,54,28,71)}{Ln(46,54,52,71)}{Ln(28,71,22,79)}{Ln(52,71,58,79)}</svg>),
+  "seated-forward-lean":(<svg viewBox="0 0 80 90" fill="none">{Hd(44,12)}
+    <rect x="20" y="54" width="40" height="6" rx="2" fill={B.purplePale}/>
+    {Ln(25,60,22,79,"1.5")}{Ln(55,60,58,79,"1.5")}
+    <Plt x={18} y={79} w={44}/>
+    {Ln(42,19,38,54)}{Ln(40,31,26,45,LW2)}{Ln(40,31,54,45,LW2)}{Ln(33,54,27,71)}{Ln(43,54,49,71)}{Ln(27,71,22,79)}{Ln(49,71,55,79)}</svg>),
+  "quadruped":(<svg viewBox="0 0 100 80" fill="none">{Hd(75,20)}
+    <Plt x={5} y={68} w={90}/>
+    {Ln(68,24,40,32)}{Ln(40,32,30,42,LW2)}{Ln(40,32,50,42,LW2)}{Ln(30,42,25,68)}{Ln(50,42,46,68)}{Ln(40,32,62,44)}{Ln(62,44,67,68)}{Ln(62,44,76,68)}</svg>),
+  "prone-on-elbows":(<svg viewBox="0 0 110 68" fill="none">{Hd(90,22)}
+    <Plt x={5} y={56} w={100}/>
+    {Ln(83,25,28,37)}{Ln(66,28,56,40,LW2)}{Ln(56,40,46,56,LW2)}{Ln(52,32,40,42,LW2)}{Ln(40,42,28,56,LW2)}{Ln(28,37,18,44)}{Ln(18,44,10,56)}{Ln(28,37,22,51)}</svg>),
+  "half-kneeling":(<svg viewBox="0 0 70 90" fill="none">{Hd(38,11)}<Plt/>{Ln(38,18,38,54)}{Ln(38,31,24,45,LW2)}{Ln(38,31,52,45,LW2)}{Ln(38,54,52,63)}{Ln(52,63,55,79)}{Ln(38,54,26,64)}{Ln(26,64,20,79)}</svg>),
+  "hand-wb":(<svg viewBox="0 0 90 90" fill="none">{Hd(28,12)}
+    <rect x="56" y="37" width="28" height="6" rx="2" fill={B.purplePale}/>
+    {Ln(60,43,57,79,"1.5")}{Ln(80,43,83,79,"1.5")}
+    <Plt x={5} y={79} w={80}/>
+    {Ln(28,19,28,54)}{Ln(28,31,56,37,LW2)}{Ln(28,31,56,43,LW2)}{Ln(28,54,20,69)}{Ln(28,54,36,69)}{Ln(20,69,18,79)}{Ln(36,69,38,79)}</svg>),
+  "ue-reach":(<svg viewBox="0 0 70 95" fill="none">{Hd(35,11)}
+    <Plt x={5} y={84} w={60}/>
+    {Ln(35,18,35,58)}{Ln(35,29,15,13,LW2)}{Ln(35,29,55,13,LW2)}
+    <circle cx="15" cy="13" r="3.5" fill={B.purplePale} stroke={S} strokeWidth="1.5"/>
+    <circle cx="55" cy="13" r="3.5" fill={B.purplePale} stroke={S} strokeWidth="1.5"/>
+    {Ln(35,58,25,73)}{Ln(35,58,45,73)}{Ln(25,73,22,84)}{Ln(45,73,48,84)}</svg>),
+};
+
+function ExFig({id}) {
+  const fig = FIGS[id];
+  const ex = EXERCISES.find(e=>e.id===id);
+  if (!fig) return <div style={{fontSize:"2rem",display:"flex",alignItems:"center",justifyContent:"center",height:"100%"}}>{ex?.emoji}</div>;
+  return <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",padding:4}}>{fig}</div>;
+}
+
+/* ─── CSS ─────────────────────────────────────────────────────── */
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',sans-serif;background:${B.cream};color:${B.textDark}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:${B.purpleLight};border-radius:3px}
+.app{min-height:100vh;background:${B.cream}}
+
+/* TOP BAR */
+.topbar{background:${B.purpleDeep};color:#fff;padding:15px 28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;letter-spacing:-.01em;flex:1}
+.topbar-sub{font-size:.66rem;opacity:.6;margin-top:1px;font-weight:300}
+.lang-toggle{display:flex;background:rgba(255,255,255,.12);border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.18)}
+.lang-btn{padding:5px 12px;font-size:.7rem;font-weight:600;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.7);transition:all .15s}
+.lang-btn.on{background:rgba(255,255,255,.9);color:${B.purpleDeep};border-radius:20px;font-weight:700}
+.credits-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border-radius:20px;padding:5px 13px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.18);transition:all .15s;white-space:nowrap}
+.credits-pill:hover{background:rgba(255,255,255,.2)}
+.credits-pill.low{background:rgba(200,80,40,.3);border-color:rgba(255,160,100,.4)}
+.cred-num{font-size:.95rem;font-weight:700}
+.saved-pill{padding:5px 12px;font-size:.7rem;font-weight:600;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:20px;color:rgba(255,255,255,.85);cursor:pointer;transition:all .15s;white-space:nowrap}
+.saved-pill:hover{background:rgba(255,255,255,.2)}
+
+/* STEPS */
+.steps-bar{background:${B.warmWhite};border-bottom:1px solid ${B.border};padding:12px 28px;display:flex;gap:4px;align-items:center;overflow-x:auto}
+.sp{padding:5px 14px;border-radius:20px;font-size:.66rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+.sp.done{background:${B.green};color:#fff}
+.sp.active{background:${B.purple};color:#fff;box-shadow:0 2px 10px rgba(92,68,144,.3)}
+.sp.pending{background:#fff;color:${B.textLight};border:1.5px solid ${B.border}}
+.sp-dot{width:16px;height:1.5px;background:${B.border};flex-shrink:0}
+
+/* LAYOUT */
+.content{max-width:860px;margin:0 auto;padding:26px 20px}
+.card{background:#fff;border-radius:16px;padding:26px 30px;box-shadow:0 1px 12px ${B.border};margin-bottom:16px;border:1px solid ${B.border}}
+
+/* TYPOGRAPHY */
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:${B.purpleDeep};margin-bottom:4px}
+.sec-sub{font-size:.8rem;color:${B.textLight};margin-bottom:20px;line-height:1.55;font-weight:400}
+label{display:block;font-size:.65rem;font-weight:700;color:${B.textLight};letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+
+/* INPUTS */
+input,select,textarea{width:100%;padding:9px 13px;border:1.5px solid ${B.border};border-radius:8px;font-family:'Jost',sans-serif;font-size:.85rem;color:${B.textDark};background:#fff;outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:${B.purple}}
+textarea{resize:vertical;min-height:72px;line-height:1.55}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{margin-bottom:14px}.s2{grid-column:1/-1}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.chip{padding:5px 13px;border-radius:20px;font-size:.71rem;font-weight:600;cursor:pointer;border:1.5px solid ${B.border};background:#fff;color:${B.textLight};transition:all .15s;user-select:none}
+.chip.on{background:${B.purplePale};border-color:${B.purple};color:${B.purpleDeep};font-weight:700}
+.chip:hover{border-color:${B.purple}}
+
+/* BUTTONS */
+.btn{padding:10px 20px;border-radius:9px;font-family:'Jost',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:${B.purple};color:#fff}
+.btn-primary:not(:disabled):hover{background:${B.purpleDeep};transform:translateY(-1px);box-shadow:0 4px 14px rgba(92,68,144,.28)}
+.btn-outline{background:transparent;color:${B.purple};border:1.5px solid ${B.purple}}
+.btn-outline:hover{background:${B.purplePale}}
+.btn-ghost{background:transparent;color:${B.textLight};border:1.5px solid ${B.border}}
+.btn-ghost:hover{background:${B.warmWhite}}
+.btn-green{background:${B.green};color:#fff}
+.btn-green:hover{background:#3E7A5E}
+.btn-row{display:flex;gap:9px;justify-content:flex-end;margin-top:22px;align-items:center;flex-wrap:wrap}
+
+/* EMAIL GATE */
+.gate-wrap{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.gate-card{background:#fff;border-radius:20px;padding:36px 38px;max-width:440px;width:100%;box-shadow:0 4px 28px ${B.border};border:1px solid ${B.border};text-align:center}
+.gate-logo{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;color:${B.purpleDeep};margin-bottom:4px}
+.gate-tag{font-size:.72rem;color:${B.textLight};margin-bottom:28px;font-weight:300}
+.gate-free-badge{display:inline-flex;align-items:center;gap:6px;background:${B.greenPale};color:${B.green};border:1.5px solid ${B.green};border-radius:20px;padding:5px 16px;font-size:.75rem;font-weight:700;margin-bottom:20px}
+.gate-input{text-align:left;margin-bottom:14px}
+.gate-note{font-size:.69rem;color:${B.textLight};margin-top:10px;line-height:1.5}
+.gate-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:${B.textLight};font-size:.72rem}
+.gate-divider::before,.gate-divider::after{content:"";flex:1;height:1px;background:${B.border}}
+
+/* EXERCISE GRID */
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ex-card{border:1.5px solid ${B.border};border-radius:12px;padding:12px;cursor:pointer;transition:all .15s;position:relative;user-select:none;background:#fff}
+.ex-card:hover{border-color:${B.purple};background:${B.warmWhite}}
+.ex-card.sel{border-color:${B.purple};border-width:2px;background:${B.purplePale}}
+.ex-card.rec{border-color:${B.purpleLight};border-width:2px}
+.ex-card.rec.sel{border-color:${B.purple};background:${B.purplePale}}
+.ex-row{display:flex;gap:9px;align-items:flex-start}
+.ex-fig{width:50px;height:50px;background:${B.warmWhite};border-radius:8px;overflow:hidden;flex-shrink:0}
+.ex-body{flex:1;min-width:0}
+.ex-name{font-weight:600;font-size:.81rem;color:${B.textDark};margin-bottom:2px;line-height:1.3}
+.ex-cat{font-size:.64rem;color:${B.textLight};margin-bottom:5px}
+.ex-tags{display:flex;flex-wrap:wrap;gap:3px}
+.ex-tag{background:${B.purplePale};color:${B.purple};padding:2px 7px;border-radius:4px;font-size:.61rem;font-weight:600}
+.ex-tag.fall{background:${B.greenPale};color:${B.green}}
+.badge-ai{position:absolute;top:7px;right:7px;background:${B.purpleDeep};color:#fff;font-size:.57rem;font-weight:700;padding:2px 6px;border-radius:6px;letter-spacing:.03em}
+.badge-sel{position:absolute;top:7px;right:7px;background:${B.purple};color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem}
+.badge-fall{background:${B.greenPale};color:${B.green};border:1px solid ${B.green};font-size:.58rem;font-weight:700;padding:1px 6px;border-radius:5px;display:inline-block;margin-top:3px}
+
+/* AI BOX */
+.ai-box{background:${B.warmWhite};border:1.5px solid ${B.border};border-left:4px solid ${B.purple};border-radius:12px;padding:16px 20px;margin-bottom:16px}
+.ai-ttl{font-weight:700;color:${B.purpleDeep};margin-bottom:7px;font-size:.86rem;font-family:'Cormorant Garamond',serif;font-size:1.05rem}
+.ai-txt{font-size:.8rem;color:${B.textDark};line-height:1.65}
+.ai-note{margin-top:8px;background:#fff;border-radius:7px;padding:8px 13px;font-size:.76rem;color:${B.textLight};line-height:1.5;border-left:3px solid ${B.purpleLight}}
+
+/* SPINNER */
+.spin-wrap{text-align:center;padding:52px 20px}
+.spinner{width:42px;height:42px;border:3px solid ${B.purplePale};border-top-color:${B.purple};border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-msg{font-size:.83rem;color:${B.textLight}}
+.spin-pw{font-size:.7rem;color:${B.purpleLight};margin-top:4px}
+
+/* STEP TOGGLE */
+.sec-toggle{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.browse-btn{font-size:.7rem;font-weight:700;color:${B.purple};background:none;border:1.5px solid ${B.purple};padding:5px 13px;border-radius:18px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.browse-btn:hover{background:${B.purple};color:#fff}
+.pop-filter{display:flex;gap:6px;margin-bottom:14px}
+.pf-btn{padding:4px 12px;border-radius:14px;font-size:.69rem;font-weight:700;cursor:pointer;border:1.5px solid ${B.border};background:#fff;color:${B.textLight};transition:all .15s}
+.pf-btn.on{background:${B.purpleDeep};color:#fff;border-color:${B.purpleDeep}}
+
+/* PARAM CARDS */
+.p-card{border:1.5px solid ${B.border};border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.p-head{display:flex;align-items:flex-start;gap:11px;margin-bottom:11px}
+.p-fig{width:54px;height:54px;background:${B.warmWhite};border-radius:8px;overflow:hidden;flex-shrink:0}
+.p-name{font-weight:700;font-size:.88rem;margin-bottom:1px;color:${B.textDark}}
+.p-pos{font-size:.68rem;color:${B.textLight}}
+.p-inps{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.pig{display:flex;flex-direction:column;gap:2px}
+.pi-lbl{font-size:.6rem;font-weight:700;text-transform:uppercase;color:${B.textLight};letter-spacing:.05em}
+.pi-inp{width:86px;padding:7px 9px;border:1.5px solid ${B.border};border-radius:7px;font-family:'Jost',sans-serif;font-size:.82rem;text-align:center;color:${B.textDark};outline:none;background:${B.warmWhite}}
+.pi-inp:focus{border-color:${B.purple};background:#fff}
+.p-note{margin-top:9px}
+.p-note input{font-size:.78rem;padding:6px 11px;background:${B.warmWhite}}
+.p-note input:focus{background:#fff}
+.rm-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:${B.purpleLight};font-size:.95rem;padding:4px 7px;border-radius:5px;transition:all .15s}
+.rm-btn:hover{color:#C9603A;background:#FEF0EC}
+
+/* HEP PREVIEW */
+.hep-wrap{background:#fff;border-radius:16px;padding:34px 38px;box-shadow:0 2px 20px ${B.border};border:1px solid ${B.border}}
+.hep-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:2px solid ${B.purple};margin-bottom:22px}
+.hep-clinic{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:${B.purpleDeep}}
+.hep-tagline{font-size:.66rem;color:${B.textLight};margin-top:3px;font-weight:300}
+.hep-pt{text-align:right}
+.hep-pt-name{font-weight:700;font-size:.92rem;color:${B.textDark}}
+.hep-pt-meta{font-size:.7rem;color:${B.textLight};margin-top:3px;line-height:1.65}
+.hep-sec{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:${B.purpleDeep};margin-bottom:12px;padding-bottom:5px;border-bottom:1px solid ${B.border}}
+.hep-ex{display:grid;grid-template-columns:80px 1fr;gap:14px;padding:13px 0;border-bottom:1px solid ${B.border};align-items:start}
+.hep-ex:last-child{border-bottom:none}
+.hep-icon{background:${B.warmWhite};border-radius:10px;height:78px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid ${B.border}}
+.hep-en{font-weight:700;font-size:.87rem;color:${B.purpleDeep};margin-bottom:2px}
+.hep-desc{font-size:.75rem;color:${B.textDark};line-height:1.55;margin-bottom:4px}
+.hep-cue{font-size:.72rem;color:${B.green};font-style:italic;margin-bottom:7px}
+.hep-params{display:flex;gap:6px;flex-wrap:wrap}
+.hep-p{background:${B.purplePale};color:${B.purple};padding:3px 9px;border-radius:5px;font-size:.68rem;font-weight:700}
+.hep-note{font-size:.71rem;color:#7A4020;background:#FEF5EF;padding:3px 9px;border-radius:5px;margin-top:5px;display:inline-block}
+.hep-prec{background:#FEF5EF;border:1.5px solid #E8C2A8;border-radius:10px;padding:11px 15px;margin-bottom:18px;font-size:.77rem;color:#7A4020;line-height:1.6}
+.hep-prec strong{color:#C9603A}
+.hep-footer{margin-top:20px;padding-top:12px;border-top:1px solid ${B.border};text-align:center;font-size:.69rem;color:${B.textLight};line-height:1.75}
+.print-bar{display:flex;gap:9px;justify-content:flex-end;margin-bottom:16px;flex-wrap:wrap}
+
+/* PAYMENT MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(30,24,48,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:#fff;border-radius:18px;padding:26px 30px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(30,24,48,.2);border:1px solid ${B.border}}
+.modal-ttl{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:700;color:${B.purpleDeep};margin-bottom:3px}
+.modal-sub{font-size:.78rem;color:${B.textLight};margin-bottom:18px}
+.modal-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.modal-x{background:none;border:none;cursor:pointer;color:${B.textLight};font-size:1.2rem;padding:4px;border-radius:5px;transition:all .15s}
+.modal-x:hover{color:#C9603A;background:#FEF0EC}
+.tiers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.tier{border:1.5px solid ${B.border};border-radius:12px;padding:13px 15px;cursor:pointer;transition:all .15s;position:relative;text-align:left;background:#fff}
+.tier:hover{border-color:${B.purple};background:${B.warmWhite}}
+.tier.pop{border-color:${B.purple};background:${B.purplePale}}
+.tier-price{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:${B.purpleDeep};margin-bottom:2px}
+.tier-label{font-weight:700;font-size:.8rem;margin-bottom:2px;color:${B.textDark}}
+.tier-desc{font-size:.7rem;color:${B.textLight}}
+.tier-cred{font-size:.67rem;font-weight:700;color:${B.green};margin-top:4px}
+.tier-badge{position:absolute;top:-1px;right:10px;background:${B.purple};color:#fff;font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:0 0 8px 8px;letter-spacing:.03em}
+.paypal-bar{display:flex;align-items:center;gap:8px;background:#F0F7FF;border:1.5px solid #C8DCF5;border-radius:9px;padding:9px 13px;margin-bottom:14px}
+.code-section{background:${B.warmWhite};border-radius:10px;padding:14px 16px;margin-bottom:12px;border:1px solid ${B.border}}
+.code-row{display:flex;gap:8px;margin-top:8px}
+.code-row input{flex:1}
+.code-err{font-size:.72rem;color:#C9603A;margin-top:5px}
+.code-ok{font-size:.72rem;color:${B.green};font-weight:700;margin-top:5px}
+
+/* SAVED PANEL */
+.saved-panel{background:#fff;border-radius:14px;padding:18px 22px;box-shadow:0 1px 10px ${B.border};margin-bottom:16px;border:1px solid ${B.border}}
+.saved-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid ${B.border}}
+.saved-row:last-child{border-bottom:none}
+.saved-info{flex:1;min-width:0}
+.saved-name{font-weight:700;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.saved-meta{font-size:.68rem;color:${B.textLight};margin-top:1px}
+.s-load{padding:4px 11px;font-size:.7rem;font-weight:700;background:${B.purplePale};color:${B.purple};border:1.5px solid ${B.purple};border-radius:6px;cursor:pointer;transition:all .15s}
+.s-load:hover{background:${B.purple};color:#fff}
+.s-del{padding:4px 9px;font-size:.7rem;font-weight:700;background:none;color:${B.textLight};border:1.5px solid ${B.border};border-radius:6px;cursor:pointer;transition:all .15s}
+.s-del:hover{color:#C9603A;border-color:#E0935C;background:#FEF5EF}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:${B.purple};color:#fff;padding:9px 20px;border-radius:28px;font-size:.79rem;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.15);animation:fadeUp .3s ease;z-index:9999;white-space:nowrap}
+@keyframes fadeUp{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+
+@media(max-width:640px){.g2,.ex-grid,.tiers{grid-template-columns:1fr}.topbar{padding:12px 16px}.content{padding:16px 12px}.hep-wrap{padding:20px 16px}.hep-head{flex-direction:column;gap:8px}.hep-pt{text-align:left}.modal{padding:18px 16px}.gate-card{padding:24px 20px}}
+@media print{.no-print{display:none!important}.app{background:#fff}.topbar,.steps-bar,.print-bar,.btn-row{display:none!important}.content{padding:0;max-width:100%}.hep-wrap{box-shadow:none;border-radius:0;padding:18px;border:none}}
+`;
+
+/* ─── AI CALL ─────────────────────────────────────────────────── */
+async function callAI(info, lang) {
+  const list = EXERCISES.map(e=>`  id="${e.id}" | ${e.en.name} | targets: ${e.en.targetAreas.join(", ")} | population: ${e.population.join(", ")}${e.fallPrevention?" | fall prevention":""}`).join("\n");
+  const goals = [...info.selectedGoals, info.customGoals].filter(Boolean).join(", ");
+  const res = await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:900,
+      messages:[{role:"user",content:`You are a pediatric occupational therapist specializing in WBV (whole body vibration) therapy. Use the following evidence-based clinical guidelines to inform your recommendations:
+
+EVIDENCE-BASED WBV PARAMETERS BY DIAGNOSIS:
+- Cerebral Palsy / Spasticity: 7–18 Hz for immediate spasticity reduction (effects last ~30 min post-session); 11–20 Hz static for longer-term tone management; combined WBV + active exercise improves walking speed, step length, gross motor function. Prioritize positions that load the plantarflexors (standing, calf raises) for toe-walking/crouched gait.
+- ASD / Sensory Modulation: 20–30 Hz; shorter bouts (30–60 sec) work well for sensory regulation; WBV may reduce stereotypy by providing deep proprioceptive input; seated and bilateral stance positions typically well-tolerated; monitor for overstimulation and stop if distressed.
+- ADHD / Executive Function / Inhibitory Control: EVIDENCE-BASED PROTOCOL — 30 Hz, LOW amplitude (0.44–0.6 mm), 3-minute seated bouts × 3 repetitions (Den Heijer 2015; Fuermaier 2014). Acute effects on attention and inhibition are immediate but short-lasting, so position WBV BEFORE cognitive tasks or therapy as a warm-up. Medium effect size for attention in ADHD. Dynamic exercises (marching, weight shifts) engage attention better than static holds for active kids.
+- Down Syndrome / Low Bone Density: 25–30 Hz, 3x/week, 10 reps × 30–60 sec with 1-min rest; 20-week protocol showed significant BMD gains in lumbar spine and total body; benefits greatest in low-activity/low-bone-mass populations.
+- Hypotonia / Low Muscle Tone: 20–30 Hz; UE weight bearing (quadruped, hand WB) and seated positions activate trunk and shoulder musculature; progress from seated → quadruped → standing as tolerated.
+- Fall Prevention / Older Adults / Advanced Older Kids: 20–30 Hz; seated warm-up first, then progressive loading; sit-to-stands, heel raises, and weight shifts have strongest functional transfer to gait.
+- General Strengthening: 25–35 Hz for maximum muscle recruitment (higher Hz = greater motor unit activation); mini squats and dynamic exercises preferred.
+
+CRITICAL CLINICAL APPROACH — START WHERE THE CHILD IS COMFORTABLE:
+- ALWAYS start at the Hz level where the child is comfortable, not the highest evidence-based Hz. Sensory tolerance varies widely, especially in ASD and hypersensitive children. Start low (20–22 Hz), observe response, increase gradually over sessions.
+- AMPLITUDE matters as much as frequency. Lower amplitude (0.4–1 mm) = more neurological/sensory input with less mechanical load — better for sensory modulation, spasticity, cognition. Higher amplitude (2–4 mm) = more mechanical loading — better for strengthening and bone density. When in doubt, lower amplitude is safer to start.
+- FUNCTIONAL STRENGTHENING FIRST: prioritize exercises that transfer to functional tasks (sit-to-stand, weight shift, bilateral stance) before adding isolated strengthening or higher-challenge positions.
+- LOADING AS PROGRESSION: to increase muscle demand without increasing Hz or amplitude, add external load — weighted vest, holding a stuffed animal or small weight, light resistance band. This is preferable to rapidly increasing Hz in children with sensory sensitivities or low baseline strength.
+- PROGRESSION ORDER: Seated → Supported standing → Unsupported standing → Dynamic movements → Add loading → Increase Hz/amplitude only when tolerated.
+
+SAFETY NOTES: Contraindications include active fractures, pacemakers/cardiac devices, acute seizure disorder (evaluate individually, not absolute contraindication), thrombosis, severe osteoporosis. Low-frequency low-amplitude WBV is safe and well-tolerated in the pediatric population per published reviews. Always observe child's face and body for signs of discomfort or overstimulation.
+
+Patient: ${info.clientName||"Patient"}, Age: ${info.age||"unknown"}
+Population: ${info.population}
+Diagnosis: ${info.diagnosis||"Not provided"}
+Goals: ${goals||"General WBV"}
+Equipment: ${info.equipment}
+Precautions: ${info.precautions||"None"}
+
+Available exercises:
+${list}
+
+Select 4–6 most appropriate exercises for this patient's population, diagnosis, and goals. Return ONLY raw JSON, no markdown:
+{"recommendedIds":["id1","id2"],"rationale":"2–3 sentence evidence-informed clinical rationale citing relevant mechanisms (e.g. spasticity reduction, proprioceptive input, BMD).","precautions":"WBV-specific modifications or watchpoints for this patient.","hzNote":"Specific Hz range recommendation with clinical rationale based on diagnosis and goals."}`}]})
+  });
+  const d = await res.json();
+  const txt = d.content?.find(b=>b.type==="text")?.text||"";
+  return JSON.parse(txt.replace(/```json|```/g,"").trim());
+}
+
+/* ─── APP ─────────────────────────────────────────────────────── */
+export default function App() {
+  const [lang,       setLang]       = useState("en");
+  const [email,      setEmail]      = useState(null); // null = not set yet
+  const [emailInput, setEmailInput] = useState("");
+  const [showRedeem, setShowRedeem] = useState(false);
+  const [codeInput,  setCodeInput]  = useState("");
+  const [codeStatus, setCodeStatus] = useState(null); // null | "ok" | "invalid" | "used"
+  const [credits,    setCredits]    = useState(null);
+  const [usedCodes,  setUsedCodes]  = useState([]);
+  const [savedHEPs,  setSavedHEPs]  = useState([]);
+  const [showPay,    setShowPay]    = useState(false);
+  const [showSaved,  setShowSaved]  = useState(false);
+  const [step,       setStep]       = useState(0);
+  const [toast,      setToast]      = useState(null);
+  const [hepSaved,   setHepSaved]   = useState(false);
+  const [info,       setInfo]       = useState({
+    clientName:"",age:"",diagnosis:"",selectedGoals:[],customGoals:"",
+    equipment:"vertical",precautions:"",therapistName:"",clinicName:"Evolving Therapy & Wellness",
+    population:"all",
+    date:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),
+  });
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError,   setAiError]   = useState(null);
+  const [aiResult,  setAiResult]  = useState(null);
+  const [showAll,   setShowAll]   = useState(false);
+  const [selected,  setSelected]  = useState([]);
+
+  const t  = k => T[lang]?.[k] ?? T.en[k] ?? k;
+  const eL = (ex,f) => ex[lang]?.[f] ?? ex.en[f] ?? "";
+
+  /* ── Init storage ── */
+  useEffect(()=>{
+    (async()=>{
+      try { const r = await window.storage.get("wbv_email"); setEmail(r.value); } catch { setEmail(""); }
+      try { const r = await window.storage.get("wbv_credits"); setCredits(parseInt(r.value)); } catch {}
+      try { const r = await window.storage.get("wbv_used_codes"); setUsedCodes(JSON.parse(r.value)); } catch { setUsedCodes([]); }
+      try { const r = await window.storage.get("wbv_heps"); setSavedHEPs(JSON.parse(r.value)); } catch { setSavedHEPs([]); }
+    })();
+  },[]);
+
+  /* ── Helpers ── */
+  const showToast = msg => { setToast(msg); setTimeout(()=>setToast(null),2600); };
+  const setField  = (k,v) => setInfo(p=>({...p,[k]:v}));
+  const toggleGoal = g => setInfo(p=>({...p, selectedGoals:p.selectedGoals.includes(g)?p.selectedGoals.filter(x=>x!==g):[...p.selectedGoals,g]}));
+
+  /* ── Email submit → 2 free credits ── */
+  const submitEmail = async () => {
+    if (!emailInput.includes("@")) return;
+    setEmail(emailInput);
+    const startCredits = 2;
+    setCredits(startCredits);
+    try {
+      await window.storage.set("wbv_email", emailInput);
+      await window.storage.set("wbv_credits", String(startCredits));
+    } catch {}
+    showToast("🎉 2 free credits unlocked!");
+  };
+
+  /* ── Generate with credit check ── */
+  const handleGenerate = async () => {
+    if (!credits) { setShowPay(true); return; }
+    const next = credits >= 999 ? 999 : credits - 1;
+    setCredits(next);
+    try { await window.storage.set("wbv_credits", String(next)); } catch {}
+    setStep(1);
+  };
+
+  /* ── AI trigger ── */
+  useEffect(()=>{
+    if(step!==1) return;
+    setAiLoading(true); setAiError(null);
+    callAI(info, lang)
+      .then(res=>{
+        setAiResult(res);
+        const recs = EXERCISES.filter(e=>res.recommendedIds.includes(e.id));
+        setSelected(recs.map(e=>({...e,hz:e.recHz.split("–")[0],duration:e.defaultDuration,sets:e.defaultSets,rest:e.defaultRest,notes:""})));
+      })
+      .catch(err=>{
+        setAiError(err.message);
+        const ref = credits >= 999 ? 999 : (credits||0)+1;
+        setCredits(ref);
+        window.storage.set("wbv_credits",String(ref)).catch(()=>{});
+      })
+      .finally(()=>setAiLoading(false));
+  },[step]); // eslint-disable-line
+
+  /* ── Code redemption ── */
+  const redeemCode = async () => {
+    const code = codeInput.trim().toUpperCase();
+    if (!CREDIT_CODES[code]) { setCodeStatus("invalid"); return; }
+    if (usedCodes.includes(code)) { setCodeStatus("used"); return; }
+    const add = CREDIT_CODES[code];
+    const next = add >= 999 ? 999 : (credits||0) + add;
+    setCredits(next);
+    const newUsed = [...usedCodes, code];
+    setUsedCodes(newUsed);
+    try {
+      await window.storage.set("wbv_credits", String(next));
+      await window.storage.set("wbv_used_codes", JSON.stringify(newUsed));
+    } catch {}
+    setCodeStatus("ok");
+    setCodeInput("");
+    setTimeout(()=>{ setShowPay(false); setCodeStatus(null); showToast(add>=999?t("unlimitedAdded"):`+${add} ${t("creditAdded")}`); },1200);
+  };
+
+  /* ── Exercise toggle ── */
+  const toggleEx = ex => setSelected(prev=>{
+    const has = prev.find(s=>s.id===ex.id);
+    if(has) return prev.filter(s=>s.id!==ex.id);
+    return [...prev,{...ex,hz:ex.recHz.split("–")[0],duration:ex.defaultDuration,sets:ex.defaultSets,rest:ex.defaultRest,notes:""}];
+  });
+  const updateParam = (id,k,v) => setSelected(p=>p.map(s=>s.id===id?{...s,[k]:v}:s));
+
+  /* ── Filter exercises by population ── */
+  const filteredExercises = EXERCISES.filter(ex=>{
+    if(info.population==="all") return true;
+    if(info.population==="adult") return ex.population.includes("adult");
+    return ex.population.includes("pediatric");
+  });
+
+  /* ── Save HEP ── */
+  const saveHEP = async () => {
+    const hep={id:Date.now(),clientName:info.clientName||"Patient",date:info.date,exercises:selected,info,aiResult};
+    const nl=[hep,...savedHEPs].slice(0,20);
+    setSavedHEPs(nl); setHepSaved(true);
+    try { await window.storage.set("wbv_heps",JSON.stringify(nl)); } catch {}
+    showToast(t("savedToast"));
+  };
+  const loadHEP  = h => { setInfo(h.info); setSelected(h.exercises); setAiResult(h.aiResult||null); setStep(3); setShowSaved(false); };
+  const deleteHEP = async id => { const nl=savedHEPs.filter(h=>h.id!==id); setSavedHEPs(nl); try{ await window.storage.set("wbv_heps",JSON.stringify(nl)); }catch{} };
+
+  /* ── Copy ── */
+  const copyHEP = () => {
+    const lines = selected.map((e,i)=>`${i+1}. ${eL(e,"name")} — ${e.sets} sets × ${e.duration}s @ ${e.hz} Hz | Rest: ${e.rest}s${e.notes?" | "+e.notes:""}`).join("\n");
+    navigator.clipboard.writeText(`${t("hepSubtitle")}\n${info.clientName||"Patient"} | ${info.date} | ${info.therapistName}\n\n${lines}\n\n— ${info.clinicName}`);
+    showToast(t("copiedToast"));
+  };
+
+  const creditLow = credits!==null && credits<=1 && credits<999;
+  const isLoading = email === null || credits === null;
+
+  /* ─── RENDER ─── */
+  return (
+    <>
+      <style>{CSS}</style>
+      <div className="app">
+
+        {/* TOP BAR */}
+        <div className="topbar">
+          <div style={{flex:1}}>
+            <div className="topbar-brand">Evolving Therapy & Wellness</div>
+            <div className="topbar-sub">{t("tagline")}</div>
+          </div>
+          <div className="lang-toggle">
+            <button className={`lang-btn${lang==="en"?" on":""}`} onClick={()=>setLang("en")}>EN</button>
+            <button className={`lang-btn${lang==="es"?" on":""}`} onClick={()=>setLang("es")}>ES 🇨🇴</button>
+          </div>
+          {email && (
+            <button className={`credits-pill no-print${creditLow?" low":""}`} onClick={()=>setShowPay(true)}>
+              <span className="cred-num">{credits===null?"…":credits>=999?"∞":credits}</span>
+              <span>{t("credits")}</span>
+              <span style={{opacity:.55}}>·</span>
+              <span style={{opacity:.8}}>{t("buyCredits")}</span>
+            </button>
+          )}
+          {email && savedHEPs.length>0 && (
+            <button className="saved-pill no-print" onClick={()=>setShowSaved(s=>!s)}>
+              📂 {t("savedHEPs")} ({savedHEPs.length})
+            </button>
+          )}
+        </div>
+
+        {/* ══ LOADING ══ */}
+        {isLoading && (
+          <div className="spin-wrap"><div className="spinner"/><div className="spin-msg">Loading…</div></div>
+        )}
+
+        {/* ══ EMAIL GATE ══ */}
+        {!isLoading && !email && (
+          <div className="gate-wrap">
+            <div className="gate-card">
+              <div className="gate-logo">Evolving Therapy &amp; Wellness</div>
+              <div className="gate-tag">{t("appName")}</div>
+              <div className="gate-free-badge">✦ 2 {t("credits")} — Free to start</div>
+              {!showRedeem ? (
+                <>
+                  <div className="gate-input fg">
+                    <label>{t("emailLabel")}</label>
+                    <input type="email" value={emailInput} onChange={e=>setEmailInput(e.target.value)}
+                      placeholder={t("emailPh")} onKeyDown={e=>e.key==="Enter"&&submitEmail()}/>
+                  </div>
+                  <button className="btn btn-primary" style={{width:"100%",justifyContent:"center"}}
+                    onClick={submitEmail} disabled={!emailInput.includes("@")}>
+                    {t("getFreeCTA")}
+                  </button>
+                  <div className="gate-note">{t("emailNote")}</div>
+                  <div className="gate-divider">{t("alreadyHave")}</div>
+                  <button className="btn btn-outline" style={{width:"100%",justifyContent:"center",fontSize:".8rem"}}
+                    onClick={()=>setShowRedeem(true)}>{t("redeemInstead")}</button>
+                </>
+              ) : (
+                <>
+                  <div className="fg">
+                    <label>{t("codeLabel")}</label>
+                    <div className="code-row">
+                      <input value={codeInput} onChange={e=>{setCodeInput(e.target.value.toUpperCase());setCodeStatus(null);}} placeholder={t("codePh")}
+                        onKeyDown={e=>e.key==="Enter"&&redeemCode()}/>
+                      <button className="btn btn-primary" onClick={redeemCode}>{t("redeemBtn")}</button>
+                    </div>
+                    {codeStatus==="invalid"&&<div className="code-err">{t("codeInvalid")}</div>}
+                    {codeStatus==="used"&&<div className="code-err">{t("codeUsed")}</div>}
+                    {codeStatus==="ok"&&<div className="code-ok">✓ {t("codeSuccess")}</div>}
+                  </div>
+                  <div className="gate-divider">or</div>
+                  <button className="btn btn-ghost" style={{width:"100%",justifyContent:"center",fontSize:".8rem"}}
+                    onClick={()=>{setShowRedeem(false);setCodeStatus(null);}}>← {lang==="es"?"Volver atrás":"Go back"}</button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ══ MAIN APP (after email) ══ */}
+        {!isLoading && email && (
+          <>
+            {/* STEPS BAR */}
+            <div className="steps-bar no-print">
+              {t("steps").map((s,i)=>(
+                <span key={i} style={{display:"flex",alignItems:"center",gap:4}}>
+                  <span className={`sp ${i<step?"done":i===step?"active":"pending"}`}>
+                    {i<step?"✓ ":""}{s}
+                  </span>
+                  {i<3&&<span className="sp-dot"/>}
+                </span>
+              ))}
+            </div>
+
+            <div className="content">
+
+              {/* Saved panel */}
+              {showSaved && savedHEPs.length>0 && (
+                <div className="saved-panel no-print">
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                    <div className="sec-title" style={{fontSize:"1.1rem"}}>{t("savedTitle")}</div>
+                    <button className="btn btn-ghost" style={{padding:"5px 10px",fontSize:".75rem"}} onClick={()=>setShowSaved(false)}>✕</button>
+                  </div>
+                  {savedHEPs.map(h=>(
+                    <div key={h.id} className="saved-row">
+                      <div className="saved-info">
+                        <div className="saved-name">{h.clientName}</div>
+                        <div className="saved-meta">{h.date} · {h.exercises?.length||0} exercises</div>
+                      </div>
+                      <div style={{display:"flex",gap:6}}>
+                        <button className="s-load" onClick={()=>loadHEP(h)}>{t("loadBtn")}</button>
+                        <button className="s-del" onClick={()=>deleteHEP(h.id)}>{t("deleteBtn")}</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ── STEP 0: Client Info ── */}
+              {step===0 && (
+                <div className="card">
+                  <div className="sec-title">{t("steps")[0]}</div>
+                  <div className="sec-sub">{lang==="en"?"Fill in client details to guide AI recommendations and populate the printed HEP.":"Llena los datos del cliente para guiar las recomendaciones de IA y completar el HEP impreso."}</div>
+                  <div className="g2">
+                    <div className="fg">
+                      <label>{t("clientName")}</label>
+                      <input value={info.clientName} onChange={e=>setField("clientName",e.target.value)} placeholder="First Last"/>
+                    </div>
+                    <div className="fg">
+                      <label>{t("age")}</label>
+                      <input value={info.age} onChange={e=>setField("age",e.target.value)} placeholder={t("agePh")}/>
+                    </div>
+                    <div className="fg">
+                      <label>{t("population")}</label>
+                      <select value={info.population} onChange={e=>setField("population",e.target.value)}>
+                        <option value="all">{t("popAll")}</option>
+                        <option value="pediatric">{t("popPeds")}</option>
+                        <option value="adult">{t("popAdult")}</option>
+                      </select>
+                    </div>
+                    <div className="fg">
+                      <label>{t("equipment")}</label>
+                      <select value={info.equipment} onChange={e=>setField("equipment",e.target.value)}>
+                        {EQUIPMENT.map(o=><option key={o.value} value={o.value}>{o[lang]||o.en}</option>)}
+                      </select>
+                    </div>
+                    <div className="fg s2">
+                      <label>{t("diagnosis")}</label>
+                      <textarea value={info.diagnosis} onChange={e=>setField("diagnosis",e.target.value)} placeholder={t("diagPh")}/>
+                    </div>
+                    <div className="fg s2">
+                      <label>{t("goals")}</label>
+                      <div className="chips">
+                        {GOALS.map(g=>(
+                          <span key={g.en} className={`chip${info.selectedGoals.includes(g.en)?" on":""}`} onClick={()=>toggleGoal(g.en)}>
+                            {g[lang]||g.en}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="fg s2">
+                      <label>{t("addGoals")}</label>
+                      <input value={info.customGoals} onChange={e=>setField("customGoals",e.target.value)} placeholder={t("goalsPh")}/>
+                    </div>
+                    <div className="fg">
+                      <label>{t("precautions")}</label>
+                      <input value={info.precautions} onChange={e=>setField("precautions",e.target.value)} placeholder={t("precPh")}/>
+                    </div>
+                    <div className="fg">
+                      <label>{t("therapistName")}</label>
+                      <input value={info.therapistName} onChange={e=>setField("therapistName",e.target.value)} placeholder={t("therPh")}/>
+                    </div>
+                    <div className="fg s2">
+                      <label>{t("clinicName")}</label>
+                      <input value={info.clinicName} onChange={e=>setField("clinicName",e.target.value)}/>
+                    </div>
+                  </div>
+                  <div className="btn-row">
+                    <div style={{fontSize:".72rem",color:creditLow?"#C9603A":B.textLight}}>
+                      {credits>=999?"∞ "+t("unlimited"):credits} {t("credits")}{credits===0?" — "+t("noCredits"):""}
+                    </div>
+                    <button className="btn btn-primary" onClick={handleGenerate}>
+                      {t("getAI")}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ── STEP 1: AI Review ── */}
+              {step===1 && (
+                <>
+                  {aiLoading && (
+                    <div className="card"><div className="spin-wrap">
+                      <div className="spinner"/>
+                      <div className="spin-msg">{t("aiLoadMsg")}</div>
+                      <div className="spin-pw">{t("aiPow")}</div>
+                    </div></div>
+                  )}
+                  {aiError && (
+                    <div className="card">
+                      <div style={{color:"#C9603A",fontWeight:700,marginBottom:7}}>{t("aiErrTitle")}</div>
+                      <div style={{fontSize:".8rem",color:"#555",marginBottom:12}}>{aiError}</div>
+                      <div style={{fontSize:".75rem",color:B.textLight}}>{t("aiErrSub")}</div>
+                      <div className="btn-row">
+                        <button className="btn btn-ghost" onClick={()=>setStep(0)}>{t("back")}</button>
+                        <button className="btn btn-outline" onClick={()=>setShowAll(true)}>Browse All</button>
+                      </div>
+                    </div>
+                  )}
+                  {!aiLoading && aiResult && (
+                    <>
+                      <div className="ai-box">
+                        <div className="ai-ttl">{t("aiTitle")}</div>
+                        <div className="ai-txt">{aiResult.rationale}</div>
+                        {aiResult.hzNote&&<div className="ai-note">🔊 <strong>{t("hzRec")}:</strong> {aiResult.hzNote}</div>}
+                        {aiResult.precautions&&<div className="ai-note" style={{marginTop:7}}>⚠ <strong>{t("precautions")}:</strong> {aiResult.precautions}</div>}
+                      </div>
+                      <div className="card">
+                        <div className="sec-toggle">
+                          <div>
+                            <div className="sec-title">{t("selectEx")}</div>
+                            <div className="sec-sub" style={{marginBottom:0}}>
+                              {t("aiSub")}
+                              {selected.length>0&&<strong style={{color:B.purple}}> · {selected.length} {lang==="es"?"seleccionados":"selected"}</strong>}
+                            </div>
+                          </div>
+                          <button className="browse-btn" onClick={()=>setShowAll(s=>!s)}>
+                            {showAll?t("showRec"):t("browseAll")}
+                          </button>
+                        </div>
+
+                        {/* Population filter */}
+                        <div className="pop-filter">
+                          {[["all",t("popAll")],["pediatric",t("popPeds")],["adult",t("popAdult")]].map(([v,lbl])=>(
+                            <button key={v} className={`pf-btn${info.population===v?" on":""}`}
+                              onClick={()=>setField("population",v)}>{lbl}</button>
+                          ))}
+                        </div>
+
+                        <div className="ex-grid">
+                          {(showAll?filteredExercises:filteredExercises.filter(e=>
+                            aiResult.recommendedIds.includes(e.id)||selected.find(s=>s.id===e.id)
+                          )).map(ex=>{
+                            const isSel=!!selected.find(s=>s.id===ex.id);
+                            const isRec=aiResult.recommendedIds.includes(ex.id);
+                            return (
+                              <div key={ex.id} className={`ex-card${isSel?" sel":""}${isRec&&!isSel?" rec":""}`} onClick={()=>toggleEx(ex)}>
+                                {isSel?<span className="badge-sel">✓</span>:isRec&&<span className="badge-ai">AI ✦</span>}
+                                <div className="ex-row">
+                                  <div className="ex-fig"><ExFig id={ex.id}/></div>
+                                  <div className="ex-body">
+                                    <div className="ex-name">{eL(ex,"name")}</div>
+                                    <div className="ex-cat">{eL(ex,"category")}</div>
+                                    <div className="ex-tags">
+                                      {eL(ex,"targetAreas").slice(0,3).map(ta=>(
+                                        <span key={ta} className={`ex-tag${ta.includes("fall")||ta.includes("caída")?" fall":""}`}>{ta}</span>
+                                      ))}
+                                    </div>
+                                    {ex.fallPrevention&&<span className="badge-fall">🛡 {t("fallBadge")}</span>}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div className="btn-row">
+                          <button className="btn btn-ghost" onClick={()=>setStep(0)}>{t("back")}</button>
+                          <button className="btn btn-primary" onClick={()=>setStep(2)} disabled={selected.length===0}>
+                            {t("setParams")} ({selected.length}) →
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+
+              {/* ── STEP 2: Customize ── */}
+              {step===2 && (
+                <div className="card">
+                  <div className="sec-title">{t("customTitle")}</div>
+                  <div className="sec-sub">{t("customSub")}</div>
+                  {selected.map(ex=>(
+                    <div key={ex.id} className="p-card">
+                      <div className="p-head">
+                        <div className="p-fig"><ExFig id={ex.id}/></div>
+                        <div style={{flex:1}}>
+                          <div className="p-name">{eL(ex,"name")}</div>
+                          <div className="p-pos">{eL(ex,"position")} · {t("suggested")}: {ex.recHz}</div>
+                        </div>
+                        <button className="rm-btn" onClick={()=>setSelected(p=>p.filter(s=>s.id!==ex.id))}>✕</button>
+                      </div>
+                      <div className="p-inps">
+                        {[["hz",t("freqHz")],["duration",t("durSec")],["sets",t("sets")],["rest",t("restSec")]].map(([k,lbl])=>(
+                          <div key={k} className="pig">
+                            <span className="pi-lbl">{lbl}</span>
+                            <input className="pi-inp" value={ex[k]} onChange={e=>updateParam(ex.id,k,e.target.value)}/>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="p-note">
+                        <input value={ex.notes} onChange={e=>updateParam(ex.id,"notes",e.target.value)} placeholder={t("notesPh")}/>
+                      </div>
+                    </div>
+                  ))}
+                  {selected.length===0&&<div style={{textAlign:"center",padding:"28px 0",color:B.textLight,fontSize:".85rem"}}>{t("noExSel")}</div>}
+                  <div className="btn-row">
+                    <button className="btn btn-ghost" onClick={()=>setStep(1)}>{t("back")}</button>
+                    <button className="btn btn-primary" onClick={()=>{setHepSaved(false);setStep(3);}} disabled={selected.length===0}>{t("previewHEP")}</button>
+                  </div>
+                </div>
+              )}
+
+              {/* ── STEP 3: HEP Preview ── */}
+              {step===3 && (
+                <>
+                  <div className="print-bar no-print">
+                    <button className="btn btn-ghost" onClick={()=>setStep(2)}>{t("editBtn")}</button>
+                    <button className="btn btn-outline" onClick={copyHEP}>{t("copyBtn")}</button>
+                    {!hepSaved&&<button className="btn btn-green" onClick={saveHEP}>{t("saveBtn")}</button>}
+                    <button className="btn btn-primary" onClick={()=>window.print()}>{t("printBtn")}</button>
+                  </div>
+                  <div className="hep-wrap">
+                    <div className="hep-head">
+                      <div>
+                        <div className="hep-clinic">{info.clinicName||"Evolving Therapy & Wellness"}</div>
+                        <div className="hep-tagline">{t("hepSubtitle")}</div>
+                      </div>
+                      <div className="hep-pt">
+                        <div className="hep-pt-name">{info.clientName||"Patient"}</div>
+                        <div className="hep-pt-meta">
+                          {info.age&&<>{lang==="es"?"Edad":"Age"}: {info.age}<br/></>}
+                          {lang==="es"?"Fecha":"Date"}: {info.date}<br/>
+                          {info.therapistName&&<>{t("preparedBy")} {info.therapistName}</>}
+                        </div>
+                      </div>
+                    </div>
+                    {(info.precautions||(aiResult?.precautions))&&(
+                      <div className="hep-prec">
+                        <strong>{t("precautionHdr")}:</strong>{" "}
+                        {[info.precautions,aiResult?.precautions].filter(Boolean).join(" | ")}
+                      </div>
+                    )}
+                    <div className="hep-sec">{t("exercisesHdr")}</div>
+                    {selected.map((ex,i)=>(
+                      <div key={ex.id} className="hep-ex">
+                        <div className="hep-icon"><ExFig id={ex.id}/></div>
+                        <div>
+                          <div className="hep-en">{i+1}. {eL(ex,"name")}</div>
+                          <div className="hep-desc">{eL(ex,"description")}</div>
+                          <div className="hep-cue">💬 {eL(ex,"cueing")}</div>
+                          <div className="hep-params">
+                            <span className="hep-p">🔊 {ex.hz} Hz</span>
+                            <span className="hep-p">⏱ {ex.duration} {lang==="es"?"seg":"sec"}</span>
+                            <span className="hep-p">× {ex.sets} {lang==="es"?"series":"sets"}</span>
+                            <span className="hep-p">{lang==="es"?"Descanso":"Rest"} {ex.rest} {lang==="es"?"seg":"sec"}</span>
+                          </div>
+                          {ex.notes&&<div className="hep-note">📌 {ex.notes}</div>}
+                        </div>
+                      </div>
+                    ))}
+                    <div className="hep-footer">
+                      {t("preparedBy")} {info.therapistName||"your therapist"} · {info.clinicName||"Evolving Therapy & Wellness"}<br/>
+                      {t("footerNote")}<br/>
+                      <em style={{opacity:.7}}>{t("footerDiscl")}</em>
+                    </div>
+                  </div>
+                </>
+              )}
+
+            </div>{/* /content */}
+
+            {/* ══ PAYMENT MODAL ══ */}
+            {showPay && (
+              <div className="modal-bg" onClick={e=>{if(e.target===e.currentTarget){setShowPay(false);setCodeStatus(null);}}}>
+                <div className="modal">
+                  <div className="modal-hdr">
+                    <div>
+                      <div className="modal-ttl">{t("modalTitle")}</div>
+                      <div className="modal-sub">{t("modalSub")}</div>
+                    </div>
+                    <button className="modal-x" onClick={()=>{setShowPay(false);setCodeStatus(null);}}>✕</button>
+                  </div>
+
+                  {/* PayPal brand */}
+                  <div className="paypal-bar">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                      <path d="M7.5 21H4L6 9h5.5c3.5 0 6 1.5 5.5 5C16.5 17.5 13.5 21 7.5 21Z" fill="#003087"/>
+                      <path d="M10.5 15H7L9 3h5.5c3.5 0 6 1.5 5.5 5C19.5 11.5 16.5 15 10.5 15Z" fill="#009CDE"/>
+                    </svg>
+                    <div>
+                      <div style={{fontSize:".76rem",fontWeight:700,color:"#003087"}}>PayPal · OT.Evolve@gmail.com</div>
+                      <div style={{fontSize:".66rem",color:"#5A7A9A"}}>{t("paypalNote")}</div>
+                    </div>
+                  </div>
+
+                  {/* Tier buttons */}
+                  <div className="tiers">
+                    {[
+                      {id:"starter", price:"$1.50", credits:3,
+                       en:{label:"Starter",desc:"3 HEPs"},
+                       es:{label:"Básico",desc:"3 HEPs"}},
+                      {id:"standard",price:"$3.00",credits:6,
+                       en:{label:"Standard",desc:"6 HEPs"},
+                       es:{label:"Estándar",desc:"6 HEPs"}},
+                      {id:"value",   price:"$5.00",credits:10,pop:true,
+                       en:{label:"Value Pack",desc:"10 HEPs"},
+                       es:{label:"Paquete Valor",desc:"10 HEPs"}},
+                      {id:"pro",     price:"$15/mo",credits:999,
+                       en:{label:"Pro Monthly",desc:"Unlimited"},
+                       es:{label:"Pro Mensual",desc:"Ilimitado"}},
+                    ].map(tier=>(
+                      <div key={tier.id} className={`tier${tier.pop?" pop":""}`}
+                        onClick={()=>window.open(paypalUrl(tier.id),"_blank")}>
+                        {tier.pop&&<div className="tier-badge">⭐ {lang==="es"?"Popular":"Most Popular"}</div>}
+                        <div className="tier-price">{tier.price}</div>
+                        <div className="tier-label">{tier[lang]?.label||tier.en.label}</div>
+                        <div className="tier-desc">{tier[lang]?.desc||tier.en.desc}</div>
+                        <div className="tier-cred">{tier.credits>=999?t("unlimited"):tier.credits+" "+t("credits")}</div>
+                        <div style={{marginTop:6,fontSize:".66rem",color:"#003087",fontWeight:700,display:"flex",alignItems:"center",gap:3}}>
+                          <svg width="10" height="10" viewBox="0 0 24 24"><path d="M7.5 21H4L6 9h5.5c3.5 0 6 1.5 5.5 5C16.5 17.5 13.5 21 7.5 21Z" fill="#003087"/><path d="M10.5 15H7L9 3h5.5c3.5 0 6 1.5 5.5 5C19.5 11.5 16.5 15 10.5 15Z" fill="#009CDE"/></svg>
+                          {t("paypalBtn")} ↗
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Code redemption */}
+                  <div className="code-section">
+                    <label style={{marginBottom:6}}>{t("codeLabel")}</label>
+                    <div style={{fontSize:".72rem",color:B.textLight,marginBottom:8,lineHeight:1.5}}>
+                      {lang==="en"
+                        ? "After paying on PayPal you'll be taken to a page showing your access code. Enter it here."
+                        : "Después de pagar en PayPal verás una página con tu código de acceso. Ingrésalo aquí."}
+                    </div>
+                    <div className="code-row">
+                      <input value={codeInput} onChange={e=>{setCodeInput(e.target.value.toUpperCase());setCodeStatus(null);}}
+                        placeholder={t("codePh")} onKeyDown={e=>e.key==="Enter"&&redeemCode()}/>
+                      <button className="btn btn-primary" onClick={redeemCode} disabled={!codeInput.trim()}>
+                        {t("redeemBtn")}
+                      </button>
+                    </div>
+                    {codeStatus==="invalid"&&<div className="code-err">{t("codeInvalid")}</div>}
+                    {codeStatus==="used"&&<div className="code-err">{t("codeUsed")}</div>}
+                    {codeStatus==="ok"&&<div className="code-ok">✓ {t("codeSuccess")}</div>}
+                  </div>
+
+                  <button className="btn btn-ghost" style={{width:"100%",justifyContent:"center",fontSize:".83rem"}}
+                    onClick={()=>{setShowPay(false);setCodeStatus(null);}}>
+                    {lang==="es"?"Cerrar":"Close"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {toast&&<div className="toast">{toast}</div>}
+      </div>
+    </>
+  );
+}
