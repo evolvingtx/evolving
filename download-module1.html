@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Download Module 1 | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --purple:#5C4490;--purple-light:#9B88C4;--purple-pale:#EDE8F5;--purple-deep:#3E2D6E;
+      --cream:#FDFBF9;--warm-white:#F7F4FB;--text-dark:#1E1830;--text-light:#5A4E72;
+      --green:#4A8C6F;--green-pale:#E8F5EF;--border:rgba(92,68,144,0.15);--radius:1.25rem;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-dark);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;}
+    .card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:3rem 2.5rem;max-width:600px;width:100%;text-align:center;}
+    .icon{font-size:3rem;margin-bottom:1rem;}
+    h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:var(--purple);margin-bottom:0.5rem;}
+    .sub{color:var(--text-light);margin-bottom:2rem;font-size:0.95rem;}
+    .file-list{background:var(--warm-white);border-radius:0.75rem;padding:1.25rem 1.5rem;margin-bottom:2rem;text-align:left;}
+    .file-list p{font-size:0.8rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--purple-light);margin-bottom:0.6rem;}
+    .file-list li{list-style:none;font-size:0.88rem;color:var(--text-light);padding:0.25rem 0;border-bottom:1px solid var(--border);}
+    .file-list li:last-child{border-bottom:none;}
+    .file-list li::before{content:'↓ ';color:var(--green);font-weight:600;}
+    .btn{display:inline-block;background:var(--green);color:white;font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:600;padding:0.85rem 2rem;border-radius:99px;text-decoration:none;margin-bottom:0.75rem;transition:background 0.2s;}
+    .btn:hover{background:#3a7a5f;}
+    .note{font-size:0.8rem;color:var(--text-light);margin-bottom:2rem;}
+    .back{font-size:0.85rem;color:var(--purple-light);text-decoration:none;}
+    .back:hover{color:var(--purple);}
+    .disclaimer{font-size:0.78rem;color:var(--text-light);margin-top:1.5rem;line-height:1.6;}
+    @media(max-width:560px){.card{padding:2rem 1.25rem;}.btn{width:100%;text-align:center;}}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🎉</div>
+    <h1>Module 1 is Yours</h1>
+    <p class="sub">Business Setup &bull; 9 Documents &bull; Free</p>
+
+    <div class="file-list">
+      <p>Your files</p>
+      <ul>
+        <li>01 Private Practice Launch Checklist</li>
+        <li>02 Tax ID, NPI &amp; CAQH Setup Guide</li>
+        <li>03 LLC &amp; Business Structure Guide</li>
+        <li>04 Liability Insurance Checklist</li>
+        <li>05 Banking &amp; Business Finance Guide</li>
+        <li>06 Insurance Credentialing Guide</li>
+        <li>07 HIPAA-Compliant Tech &amp; Tools List</li>
+        <li>08 Contractor vs. Employee Guide</li>
+        <li>09 Contractor Onboarding Checklist</li>
+      </ul>
+    </div>
+
+    <!-- UPDATE THIS HREF to the actual ZIP file path once uploaded to Netlify -->
+    <a class="btn" href="files/Module_1_Business_Setup.zip" download>Download All 9 Files (.zip)</a>
+    <p class="note">ZIP file &bull; 9 fillable Word documents (.docx)</p>
+
+    <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1rem;">
+      Ready to go further? The complete bundle is on launch sale for $15.
+    </p>
+    <a class="btn" href="shop.html" style="background:var(--purple);font-size:0.85rem;padding:0.65rem 1.5rem;">See the Full Bundle &rarr;</a>
+
+    <br /><br />
+    <a class="back" href="shop.html">&larr; Back to Shop</a>
+
+    <p class="disclaimer">
+      These templates are clinical and administrative tools for educational purposes. They are not legal, financial, or HIPAA compliance advice. Consult a licensed attorney, CPA, and compliance specialist before use. Questions? <a href="mailto:admin@evolve-OT.com" style="color:var(--purple-light);">admin@evolve-OT.com</a>
+    </p>
+  </div>
+</body>
+</html>

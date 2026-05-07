@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Download Your Bundle | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root{--purple:#5C4490;--purple-light:#9B88C4;--purple-pale:#EDE8F5;--cream:#FDFBF9;--warm-white:#F7F4FB;--text-dark:#1E1830;--text-light:#5A4E72;--green:#4A8C6F;--green-pale:#E8F5EF;--border:rgba(92,68,144,0.15);--radius:1.25rem;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-dark);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;}
+    .card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:3rem 2.5rem;max-width:640px;width:100%;text-align:center;}
+    .icon{font-size:3rem;margin-bottom:1rem;}
+    h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:var(--purple);margin-bottom:0.4rem;}
+    .sub{color:var(--text-light);margin-bottom:2rem;font-size:0.95rem;}
+    .modules{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;text-align:left;}
+    .mod-block{background:var(--warm-white);border-radius:0.75rem;padding:1rem 1.25rem;}
+    .mod-block strong{display:block;color:var(--purple);font-size:0.78rem;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:0.5rem;}
+    .mod-block li{list-style:none;font-size:0.82rem;color:var(--text-light);padding:0.2rem 0;border-bottom:1px solid var(--border);}
+    .mod-block li:last-child{border-bottom:none;}
+    .mod-block li::before{content:'↓ ';color:var(--green);font-weight:600;}
+    .btn{display:block;font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:600;padding:0.85rem 2rem;border-radius:99px;text-decoration:none;margin-bottom:0.75rem;transition:background 0.2s,transform 0.2s;text-align:center;}
+    .btn:hover{transform:translateY(-2px);}
+    .btn-green{background:var(--green);color:white;}
+    .btn-green:hover{background:#3a7a5f;}
+    .btn-purple{background:var(--purple);color:white;}
+    .btn-purple:hover{background:#3E2D6E;}
+    .note{font-size:0.8rem;color:var(--text-light);margin-bottom:1.5rem;}
+    .back{font-size:0.85rem;color:var(--purple-light);text-decoration:none;display:inline-block;margin-top:1rem;}
+    .back:hover{color:var(--purple);}
+    .disclaimer{font-size:0.78rem;color:var(--text-light);margin-top:1.5rem;line-height:1.6;text-align:left;}
+    @media(max-width:560px){.card{padding:1.75rem 1.25rem;}.modules{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🎉</div>
+    <h1>Your Bundle is Ready</h1>
+    <p class="sub">Module 1: Business Setup &bull; Module 2: Client Intake Packet &bull; 20 documents</p>
+
+    <div class="modules">
+      <div class="mod-block">
+        <strong>Module 1 &bull; Free</strong>
+        <ul>
+          <li>Launch Checklist</li>
+          <li>Tax ID, NPI &amp; CAQH Guide</li>
+          <li>LLC &amp; Business Structure</li>
+          <li>Liability Insurance Checklist</li>
+          <li>Banking &amp; Finance Guide</li>
+          <li>Credentialing Guide</li>
+          <li>HIPAA Tech &amp; Tools List</li>
+          <li>Contractor vs. Employee Guide</li>
+          <li>Contractor Onboarding Checklist</li>
+        </ul>
+      </div>
+      <div class="mod-block">
+        <strong>Module 2 &bull; Client Intake</strong>
+        <ul>
+          <li>Welcome Letter</li>
+          <li>New Patient FAQ</li>
+          <li>Intake &amp; History Form</li>
+          <li>Consent to Evaluate &amp; Treat</li>
+          <li>Release of Information</li>
+          <li>Media Release</li>
+          <li>Telehealth Consent</li>
+          <li>Financial Agreement</li>
+          <li>Sliding Scale Agreement</li>
+          <li>Notice of Privacy Practices</li>
+          <li>Termination of Services Letter</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- UPDATE HREF to actual ZIP paths once uploaded to Netlify -->
+    <a class="btn btn-green" href="files/Module_1_Business_Setup.zip" download>Download Module 1 (.zip)</a>
+    <a class="btn btn-purple" href="files/Module_2_Client_Intake.zip" download>Download Module 2 (.zip)</a>
+    <p class="note">Fillable Word documents (.docx) &bull; Customize with your practice name before use</p>
+
+    <a class="back" href="shop.html">&larr; Back to Shop</a>
+
+    <p class="disclaimer">
+      Questions or download issues? Contact <a href="mailto:admin@evolve-OT.com" style="color:var(--purple-light);">admin@evolve-OT.com</a> within 48 hours of purchase.<br><br>
+      These templates are clinical and administrative tools for educational purposes only. They are not legal, financial, billing, or HIPAA compliance advice. Review all templates with a licensed attorney, CPA, and compliance specialist before use in your practice.
+    </p>
+  </div>
+</body>
+</html>
