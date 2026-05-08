@@ -4,145 +4,230 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Free Resources | Evolving Therapy &amp; Wellness</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
       --purple:       #5C4490;
-      --purple-med:   #7B6BB5;
-      --purple-lt:    #9B88C4;
+      --purple-light: #9B88C4;
       --purple-pale:  #EDE8F5;
       --purple-deep:  #3E2D6E;
       --cream:        #FDFBF9;
       --warm-white:   #F7F4FB;
-      --text-dark:    #1E1830;
+      --text:         #1E1830;
       --text-light:   #5A4E72;
       --green:        #4A8C6F;
       --green-pale:   #E8F5EF;
       --border:       rgba(92,68,144,0.15);
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: 'Jost', sans-serif;
-      background: var(--cream);
-      color: var(--text-dark);
-      font-size: 16px;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
     }
 
-    /* NAV */
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--ff-body); background: var(--cream); color: var(--text); font-size: 16px; line-height: 1.65; overflow-x: hidden; }
+
+    /* ── NAV (matches index.html exactly) ── */
     nav {
-      background: white;
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 72px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 1.2rem 4rem;
+      background: rgba(253,251,249,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184,168,208,0.2);
+      transition: box-shadow 0.3s;
     }
-    .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--purple-deep);
-      text-decoration: none;
-      letter-spacing: 0.02em;
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123,101,164,0.08); }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      flex-shrink: 0;
     }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      font-size: 0.85rem;
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
       font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
       color: var(--text-light);
       text-decoration: none;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
       transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
     }
     .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      font-size: 0.75rem !important;
+      font-weight: 400 !important;
+      letter-spacing: 0.12em !important;
+      color: var(--purple) !important;
+      border: 1px solid var(--purple-light);
+      padding: 0.5rem 1.2rem;
+      border-radius: 2rem;
+      transition: all 0.3s !important;
+    }
+    .nav-cta:hover { background: var(--purple) !important; color: white !important; border-color: var(--purple) !important; }
+    .nav-cta::after { display: none !important; }
+    .nav-store { color: var(--purple) !important; font-weight: 500 !important; }
+    .nav-active { color: var(--purple) !important; }
+    .nav-active::after { width: 100% !important; }
 
-    /* HERO */
+    /* ── PAGE HERO (matches index.html eyebrow style) ── */
     .page-hero {
-      background: var(--warm-white);
-      border-bottom: 1px solid var(--border);
-      padding: 5rem 2rem 4rem;
+      padding: 9rem 2rem 4rem;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    .page-tag {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      border: 1px solid rgba(184,168,208,0.12);
+      right: -100px; top: -80px;
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      border: 1px solid rgba(184,168,208,0.09);
+      left: -60px; bottom: -40px;
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: var(--ff-body);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--purple-lt);
+      color: var(--purple-light);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--purple-light);
+    }
+    .hero-title {
+      font-family: var(--ff-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      color: var(--text);
       margin-bottom: 1rem;
-      display: block;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
     }
-    .page-hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      color: var(--purple-deep);
-      line-height: 1.15;
-      margin-bottom: 1rem;
-    }
-    .page-hero h1 em {
-      font-style: italic;
-      color: var(--purple);
-    }
-    .page-hero p {
+    .hero-title em { font-style: italic; color: var(--purple); }
+    .hero-desc {
       font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.8;
       color: var(--text-light);
-      max-width: 560px;
+      max-width: 500px;
       margin: 0 auto;
-      line-height: 1.7;
-    }
-    .hero-rule {
-      width: 48px;
-      height: 2px;
-      background: var(--purple-lt);
-      margin: 1.5rem auto 0;
-      border-radius: 2px;
     }
 
-    /* GRID */
+    /* ── RESOURCES SECTION ── */
     .resources-section {
       max-width: 1080px;
       margin: 0 auto;
-      padding: 5rem 2rem 6rem;
+      padding: 3rem 2rem 5rem;
     }
-    .section-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
+    .section-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--purple-lt);
+      color: var(--purple-light);
       text-align: center;
       margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    .section-eyebrow::before, .section-eyebrow::after {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--purple-light);
     }
     .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-      font-weight: 700;
-      color: var(--purple-deep);
+      font-family: var(--ff-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      font-weight: 300;
+      color: var(--text);
       text-align: center;
       margin-bottom: 0.6rem;
       line-height: 1.2;
     }
+    .section-title em { font-style: italic; color: var(--purple); }
     .section-sub {
       text-align: center;
       color: var(--text-light);
       font-size: 0.95rem;
-      max-width: 500px;
+      font-weight: 300;
+      max-width: 480px;
       margin: 0 auto 3.5rem;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
+    /* ── RESOURCE CARDS ── */
     .resources-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 2rem;
     }
-
     .resource-card {
       background: white;
       border: 1px solid var(--border);
@@ -156,11 +241,10 @@
       transform: translateY(-5px);
       box-shadow: 0 12px 36px rgba(92,68,144,0.1);
     }
-
     .card-badge {
       display: inline-block;
       font-size: 0.7rem;
-      font-weight: 600;
+      font-weight: 500;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       padding: 0.3rem 0.75rem;
@@ -168,25 +252,13 @@
       margin-bottom: 1.2rem;
       width: fit-content;
     }
-    .badge-families {
-      background: var(--green-pale);
-      color: var(--green);
-    }
-    .badge-therapists {
-      background: var(--purple-pale);
-      color: var(--purple);
-    }
-
-    .card-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      line-height: 1;
-    }
-
+    .badge-families { background: var(--green-pale); color: var(--green); }
+    .badge-therapists { background: var(--purple-pale); color: var(--purple); }
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; line-height: 1; }
     .resource-card h3 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--ff-display);
       font-size: 1.35rem;
-      font-weight: 700;
+      font-weight: 500;
       color: var(--purple-deep);
       margin-bottom: 0.6rem;
       line-height: 1.2;
@@ -194,29 +266,28 @@
     .resource-card p {
       font-size: 0.9rem;
       color: var(--text-light);
+      font-weight: 300;
       line-height: 1.65;
       flex: 1;
       margin-bottom: 1.5rem;
     }
-
     .card-meta {
       font-size: 0.78rem;
-      color: var(--purple-lt);
+      color: var(--purple-light);
       margin-bottom: 1.4rem;
       display: flex;
       gap: 1.2rem;
+      flex-wrap: wrap;
     }
     .card-meta span::before {
       content: '';
       display: inline-block;
-      width: 4px;
-      height: 4px;
-      background: var(--purple-lt);
+      width: 4px; height: 4px;
+      background: var(--purple-light);
       border-radius: 50%;
       margin-right: 0.4rem;
       vertical-align: middle;
     }
-
     .download-btn {
       display: inline-flex;
       align-items: center;
@@ -224,30 +295,19 @@
       background: var(--purple);
       color: white;
       text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
+      font-size: 0.82rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
       padding: 0.7rem 1.4rem;
-      border-radius: 8px;
+      border-radius: 99px;
       transition: background 0.2s, transform 0.15s;
       align-self: flex-start;
     }
-    .download-btn:hover {
-      background: var(--purple-deep);
-      transform: translateY(-1px);
-    }
-    .download-btn svg {
-      width: 15px;
-      height: 15px;
-      flex-shrink: 0;
-    }
+    .download-btn:hover { background: var(--purple-deep); transform: translateY(-1px); }
+    .download-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-    /* DISCLAIMER */
-    .disclaimer {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 0 2rem 5rem;
-    }
+    /* ── DISCLAIMER ── */
+    .disclaimer { max-width: 1080px; margin: 0 auto; padding: 0 2rem 5rem; }
     .disclaimer-inner {
       background: var(--purple-pale);
       border-radius: 1rem;
@@ -257,54 +317,75 @@
       align-items: flex-start;
     }
     .disclaimer-inner .icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
-    .disclaimer-inner p {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      line-height: 1.65;
-    }
+    .disclaimer-inner p { font-size: 0.85rem; color: var(--text-light); font-weight: 300; line-height: 1.65; }
 
-    /* FOOTER */
+    /* ── FOOTER (matches index.html) ── */
     footer {
       background: var(--purple-deep);
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.6);
       text-align: center;
-      padding: 2.5rem 2rem;
-      font-size: 0.82rem;
+      padding: 3rem 2rem;
     }
-    footer a { color: rgba(255,255,255,0.9); text-decoration: none; }
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.08em;
+      margin-bottom: 1.5rem;
+    }
+    .footer-links { display: flex; justify-content: center; gap: 2rem; list-style: none; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .footer-links a {
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 400;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: rgba(255,255,255,0.9); }
+    .footer-copy { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
 
-    /* RESPONSIVE */
+    /* ── RESPONSIVE ── */
     @media (max-width: 700px) {
       .resources-grid { grid-template-columns: 1fr; }
+      nav { padding: 1rem 1.5rem; }
       .nav-links { display: none; }
       .download-btn { width: 100%; justify-content: center; }
+      .page-hero { padding-top: 7rem; }
     }
   </style>
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="index.html">Evolving Therapy &amp; Wellness</a>
+<nav id="navbar">
+  <a class="nav-logo" href="index.html">
+    <div class="nav-logo-circle"></div>
+    <div>
+      <span class="nav-logo-text">Evolving</span>
+      <span class="nav-logo-sub">Therapy &amp; Wellness</span>
+    </div>
+  </a>
   <ul class="nav-links">
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#services">Services</a></li>
-    <li><a href="shop.html">Shop</a></li>
-    <li><a href="free-resources.html" style="color:var(--purple)">Free Resources</a></li>
+    <li><a href="shop.html" class="nav-store">Shop</a></li>
+    <li><a href="free-resources.html" class="nav-active">Free Resources</a></li>
     <li><a href="index.html#partners">Partners</a></li>
-    <li><a href="index.html#contact">Get in Touch</a></li>
+    <li><a href="index.html#contact" class="nav-cta">Get in Touch</a></li>
   </ul>
 </nav>
 
 <section class="page-hero">
-  <span class="page-tag">Evolving Therapy &amp; Wellness</span>
-  <h1>Free <em>Resources</em> for Families</h1>
-  <p>Printable guides written by a pediatric OT, designed to help you understand your child's development and know when to ask for support.</p>
-  <div class="hero-rule"></div>
+  <p class="hero-eyebrow">Evolving Therapy &amp; Wellness</p>
+  <h1 class="hero-title">Free <em>Resources</em><br>for Families</h1>
+  <p class="hero-desc">Printable guides written by a pediatric OT, designed to help you understand your child's development and know when to ask for support.</p>
 </section>
 
 <section class="resources-section">
-  <p class="section-label">Download &amp; Print</p>
-  <h2 class="section-title">All resources are free.<br>No sign-up required.</h2>
+  <p class="section-eyebrow">Download &amp; Print</p>
+  <h2 class="section-title">All resources are <em>free</em>.<br>No sign-up required.</h2>
   <p class="section-sub">Click any button below to download the PDF directly to your device. Print at home or share with your child's care team.</p>
 
   <div class="resources-grid">
@@ -396,8 +477,22 @@
 </div>
 
 <footer>
-  <p>&copy; 2025 Evolving Therapy &amp; Wellness. All rights reserved. &nbsp;|&nbsp; <a href="index.html">Home</a> &nbsp;|&nbsp; <a href="mailto:admin@evolve-OT.com">admin@evolve-OT.com</a></p>
+  <div class="footer-logo">Evolving Therapy &amp; Wellness</div>
+  <ul class="footer-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="free-resources.html">Free Resources</a></li>
+    <li><a href="index.html#partners">Partners</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <p class="footer-copy">&copy; 2025 Evolving Therapy &amp; Wellness. All rights reserved.</p>
 </footer>
 
+<script>
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+  });
+</script>
 </body>
 </html>

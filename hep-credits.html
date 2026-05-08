@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Your HEP Credits — Evolving Therapy &amp; Wellness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --purple:#5C4490;--purple-light:#9B88C4;--purple-pale:#EDE8F5;
+    --purple-deep:#3E2D6E;--cream:#FDFBF9;--text:#1E1830;--text-light:#5A4E72;
+    --green:#4A8C6F;--green-pale:#E8F5EF;--border:rgba(92,68,144,0.15);
+    --ff-display:'Cormorant Garamond',Georgia,serif;--ff-body:'Jost',sans-serif;
+  }
+  body{font-family:var(--ff-body);background:var(--cream);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+  .card{background:#fff;border-radius:18px;padding:40px 44px;max-width:480px;width:100%;box-shadow:0 4px 28px rgba(92,68,144,.1);border:1px solid var(--border);text-align:center}
+  @media(max-width:520px){.card{padding:32px 24px}}
+  .brand{font-family:var(--ff-display);font-size:1.35rem;font-weight:500;color:var(--purple-deep);margin-bottom:2px;letter-spacing:0.06em}
+  .brand-tag{font-size:.7rem;color:var(--text-light);margin-bottom:28px;font-weight:300;letter-spacing:.05em}
+  .check{width:60px;height:60px;background:var(--green-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.8rem}
+  .thanks{font-family:var(--ff-display);font-size:1.7rem;font-weight:400;color:var(--purple-deep);margin-bottom:6px}
+  .thanks-sub{font-size:.85rem;color:var(--text-light);margin-bottom:28px;line-height:1.6;font-weight:300}
+  .tier-pill{display:inline-flex;align-items:center;gap:6px;background:var(--purple-pale);color:var(--purple);border-radius:20px;padding:5px 16px;font-size:.78rem;font-weight:500;margin-bottom:20px;border:1px solid var(--border);letter-spacing:0.04em}
+  .code-box{background:var(--purple-pale);border-radius:14px;padding:20px 24px;margin-bottom:20px;border:2px solid var(--purple-light)}
+  .code-label{font-size:.68rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:8px}
+  .code-value{font-family:var(--ff-display);font-size:2.4rem;font-weight:500;color:var(--purple-deep);letter-spacing:.08em;margin-bottom:10px}
+  .code-copy{display:inline-flex;align-items:center;gap:6px;background:var(--purple);color:#fff;border:none;padding:9px 20px;border-radius:99px;font-family:var(--ff-body);font-size:.8rem;font-weight:400;cursor:pointer;transition:all .2s;letter-spacing:0.06em}
+  .code-copy:hover{background:var(--purple-deep)}
+  .code-copy.copied{background:var(--green)}
+  .warning{background:#FEF8F0;border:1.5px solid rgba(201,123,46,0.3);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:.78rem;color:#7A4020;line-height:1.6;text-align:left;font-weight:300}
+  .warning strong{color:#C97B2E;font-weight:500}
+  .how{background:var(--cream);border-radius:10px;padding:16px 20px;margin-bottom:22px;text-align:left;border:1px solid var(--border)}
+  .how-title{font-size:.7rem;font-weight:500;color:var(--purple-deep);margin-bottom:10px;text-transform:uppercase;letter-spacing:.1em}
+  .how-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;font-size:.82rem;color:var(--text-light);line-height:1.55;font-weight:300}
+  .how-step:last-child{margin-bottom:0}
+  .how-num{background:var(--purple);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:500;flex-shrink:0;margin-top:1px}
+  .cta-btn{display:inline-block;background:var(--purple);color:#fff;padding:12px 28px;border-radius:99px;font-family:var(--ff-body);font-size:.88rem;font-weight:400;letter-spacing:0.08em;text-decoration:none;transition:all .2s;margin-bottom:12px}
+  .cta-btn:hover{background:var(--purple-deep);transform:translateY(-1px)}
+  .support{font-size:.72rem;color:var(--text-light);font-weight:300}
+  .support a{color:var(--purple)}
+  #no-code{display:none;text-align:center}
+  #no-code h2{font-family:var(--ff-display);font-size:1.5rem;color:var(--purple-deep);margin-bottom:8px;font-weight:400}
+  #no-code p{font-size:.85rem;color:var(--text-light);margin-bottom:16px;font-weight:300;line-height:1.65}
+</style>
+</head>
+<body>
+<div class="card" id="main-card">
+  <div class="brand">Evolving Therapy &amp; Wellness</div>
+  <div class="brand-tag">HEP Generator Credits</div>
+  <div class="check">✓</div>
+  <div class="thanks" id="thanks-msg">Payment Received!</div>
+  <div class="thanks-sub" id="thanks-sub">Your HEP credits are ready. Copy your access code below and enter it in the generator.</div>
+  <div class="tier-pill" id="tier-pill">✦ Loading…</div>
+  <div class="code-box">
+    <div class="code-label">Your Access Code</div>
+    <div class="code-value" id="code-display">—</div>
+    <button class="code-copy" id="copy-btn" onclick="copyCode()">📋 Copy Code</button>
+  </div>
+  <div class="warning">
+    <strong>⚠ Save this code now.</strong> This page is shown once after payment. Your code is also in your PayPal receipt. Codes never expire.
+  </div>
+  <div class="how">
+    <div class="how-title">How to redeem</div>
+    <div class="how-step"><span class="how-num">1</span><span>Go to the HEP Generator</span></div>
+    <div class="how-step"><span class="how-num">2</span><span>Click "Redeem Code" in the top bar</span></div>
+    <div class="how-step"><span class="how-num">3</span><span>Enter your code — credits are added instantly</span></div>
+  </div>
+  <a href="hep-generator.html" class="cta-btn">Go to HEP Generator →</a><br/>
+  <div class="support">Questions? <a href="mailto:admin@evolve-OT.com">admin@evolve-OT.com</a></div>
+</div>
+
+<div id="no-code" class="card">
+  <h2>No Code Found</h2>
+  <p>It looks like you arrived here without completing a purchase, or the link expired. If you completed payment and something went wrong, please contact us and we'll sort it out.</p>
+  <a href="mailto:admin@evolve-OT.com" style="color:var(--purple);font-size:.85rem;">admin@evolve-OT.com</a>
+</div>
+
+<script>
+  // ── TIER CONFIG ────────────────────────────────────────────────────────────
+  // Codes are pre-generated in hep-generator.html
+  // PayPal return URL passes ?tier=starter|pack|pro
+  // This page maps tier to label and picks a code from the list
+  // In production you would use a serverless function to generate codes
+  // For now: codes are shown from the URL param (set manually after purchase)
+  // or displayed as the tier name for manual email fulfillment.
+
+  const TIER_LABELS = {
+    starter: { label: 'Starter — 2 Credits',  credits: 2,  codes: ['HEP-S001','HEP-S002','HEP-S003','HEP-S004','HEP-S005','HEP-S006','HEP-S007','HEP-S008','HEP-S009','HEP-S010'] },
+    pack:    { label: 'Pack — 5 Credits',     credits: 5,  codes: ['HEP-P001','HEP-P002','HEP-P003','HEP-P004','HEP-P005','HEP-P006','HEP-P007','HEP-P008','HEP-P009','HEP-P010'] },
+    pro:     { label: 'Pro — 10 Credits',     credits: 10, codes: ['HEP-X001','HEP-X002','HEP-X003','HEP-X004','HEP-X005','HEP-X006','HEP-X007','HEP-X008','HEP-X009','HEP-X010'] },
+  };
+
+  function getParam(name) {
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  const tier   = getParam('tier');
+  const code   = getParam('code'); // optional: if passed directly from a serverless function
+
+  if (!tier && !code) {
+    document.getElementById('main-card').style.display = 'none';
+    document.getElementById('no-code').style.display   = 'block';
+  } else {
+    const t = TIER_LABELS[tier];
+
+    // If a code is passed in URL (from serverless function), use it
+    // Otherwise pick a random one from the tier's list for display
+    // NOTE: In production, hook this up to a serverless function for proper code delivery
+    const displayCode = code || (t ? t.codes[Math.floor(Math.random() * t.codes.length)] : '—');
+    document.getElementById('code-display').textContent = displayCode;
+
+    if (t) {
+      document.getElementById('tier-pill').textContent = '✦ ' + t.label;
+      document.getElementById('thanks-sub').textContent =
+        t.credits + ' HEP credit' + (t.credits > 1 ? 's' : '') + ' ready. Copy your access code below and enter it in the generator.';
+    }
+  }
+
+  function copyCode() {
+    const code = document.getElementById('code-display').textContent;
+    if (!code || code === '—') return;
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '📋 Copy Code'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

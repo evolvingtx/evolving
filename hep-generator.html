@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HEP Generator | Evolving Therapy &amp; Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:        #5C4490;
+      --purple-light:  #9B88C4;
+      --purple-pale:   #EDE8F5;
+      --purple-deep:   #3E2D6E;
+      --cream:         #FDFBF9;
+      --warm-white:    #F7F4FB;
+      --text:          #1E1830;
+      --text-light:    #5A4E72;
+      --green:         #4A8C6F;
+      --green-pale:    #E8F5EF;
+      --border:        rgba(92,68,144,0.15);
+      --warn:          #C97B2E;
+      --warn-bg:       rgba(201,123,46,0.08);
+      --warn-border:   rgba(201,123,46,0.25);
+      --ff-display:    'Cormorant Garamond', Georgia, serif;
+      --ff-body:       'Jost', sans-serif;
+      --radius:        1.25rem;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--ff-body); background: var(--cream); color: var(--text); font-size: 16px; line-height: 1.65; overflow-x: hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253,251,249,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184,168,208,0.2);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123,101,164,0.08); }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo-circle { width:36px; height:36px; border:1.5px solid var(--purple-light); border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative; flex-shrink:0; }
+    .nav-logo-circle::before { content:''; position:absolute; width:28px; height:28px; border:1px solid var(--purple-pale); border-radius:50%; }
+    .nav-logo-text { font-family:var(--ff-display); font-size:1.1rem; font-weight:500; color:var(--purple); letter-spacing:0.08em; text-transform:uppercase; }
+    .nav-logo-sub { font-family:var(--ff-body); font-size:0.62rem; font-weight:300; color:var(--purple-light); letter-spacing:0.2em; text-transform:uppercase; display:block; margin-top:-2px; }
+    .nav-links { display:flex; gap:2.5rem; list-style:none; }
+    .nav-links a { font-family:var(--ff-body); font-size:0.78rem; font-weight:400; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-light); text-decoration:none; transition:color 0.2s; position:relative; }
+    .nav-links a::after { content:''; position:absolute; bottom:-3px; left:0; width:0; height:1px; background:var(--purple); transition:width 0.3s; }
+    .nav-links a:hover { color:var(--purple); }
+    .nav-links a:hover::after { width:100%; }
+    .nav-cta { font-size:0.75rem !important; color:var(--purple) !important; border:1px solid var(--purple-light); padding:0.5rem 1.2rem; border-radius:2rem; transition:all 0.3s !important; }
+    .nav-cta:hover { background:var(--purple) !important; color:white !important; border-color:var(--purple) !important; }
+    .nav-cta::after { display:none !important; }
+    .nav-store { color:var(--purple) !important; font-weight:500 !important; }
+
+    /* ── CREDIT BAR ── */
+    .credit-bar {
+      margin-top: 72px;
+      background: var(--purple-pale);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .credit-display {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      color: var(--purple-deep);
+    }
+    .credit-count {
+      font-family: var(--ff-display);
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: var(--purple);
+      line-height: 1;
+    }
+    .credit-count.low { color: var(--warn); }
+    .credit-count.empty { color: #c0392b; }
+    .credit-bar-actions { display:flex; gap:0.75rem; align-items:center; }
+    .btn-redeem {
+      font-family: var(--ff-body);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--purple);
+      border: 1px solid var(--purple-light);
+      background: transparent;
+      padding: 0.4rem 1rem;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-redeem:hover { background: var(--purple); color: white; }
+    .btn-buy-more {
+      font-family: var(--ff-body);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: white;
+      background: var(--purple);
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 99px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-buy-more:hover { background: var(--purple-deep); }
+
+    /* ── MAIN LAYOUT ── */
+    .main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+    /* ── SECTION HEADERS ── */
+    .section-eyebrow {
+      font-size: 0.7rem; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--purple-light); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-eyebrow::before, .section-eyebrow::after { content:''; width:24px; height:1px; background:var(--purple-light); }
+    .section-title { font-family:var(--ff-display); font-size:2rem; font-weight:300; color:var(--text); margin-bottom:0.5rem; }
+    .section-title em { font-style:italic; color:var(--purple); }
+    .section-sub { font-size:0.9rem; font-weight:300; color:var(--text-light); margin-bottom:2rem; line-height:1.7; }
+
+    /* ── EMAIL GATE ── */
+    .email-gate {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .gate-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .email-gate h2 { font-family:var(--ff-display); font-size:1.8rem; font-weight:400; color:var(--purple-deep); margin-bottom:0.5rem; }
+    .email-gate p { font-size:0.9rem; color:var(--text-light); font-weight:300; max-width:400px; margin:0 auto 1.5rem; line-height:1.7; }
+    .email-input-row { display:flex; gap:0.75rem; max-width:380px; margin:0 auto; }
+    .email-input {
+      flex:1; padding:0.75rem 1rem; border:1px solid var(--border);
+      border-radius:99px; font-family:var(--ff-body); font-size:0.9rem;
+      color:var(--text); background:var(--warm-white); outline:none;
+      transition:border-color 0.2s;
+    }
+    .email-input:focus { border-color:var(--purple-light); background:white; }
+    .btn-start {
+      background:var(--purple); color:white; border:none; border-radius:99px;
+      font-family:var(--ff-body); font-size:0.85rem; font-weight:400; letter-spacing:0.06em;
+      padding:0.75rem 1.5rem; cursor:pointer; transition:background 0.2s; white-space:nowrap;
+    }
+    .btn-start:hover { background:var(--purple-deep); }
+    .gate-note { font-size:0.78rem; color:var(--text-light); font-weight:300; margin-top:0.75rem; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .field-label {
+      font-size: 0.72rem; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--purple-light); margin-bottom: 0.75rem; display: block;
+    }
+    .field-note { font-size: 0.75rem; color: var(--text-light); font-weight: 300; margin-left: 0.5rem; text-transform: none; letter-spacing: 0; }
+
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.5rem; }
+
+    input[type=text], textarea {
+      width:100%; padding:0.75rem 1rem;
+      border:1px solid var(--border); border-radius:0.75rem;
+      font-family:var(--ff-body); font-size:0.9rem; color:var(--text);
+      background:var(--warm-white); outline:none; transition:border-color 0.2s, background 0.2s;
+    }
+    input[type=text]:focus, textarea:focus { border-color:var(--purple-light); background:white; }
+    input[type=text]::placeholder, textarea::placeholder { color:var(--text-light); font-weight:300; }
+    textarea { resize:vertical; min-height:80px; }
+
+    .chips { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem; }
+    .chip {
+      padding:0.45rem 0.9rem; border-radius:99px;
+      border:1px solid var(--border); background:var(--warm-white);
+      font-family:var(--ff-body); font-size:0.82rem; font-weight:400; color:var(--text-light);
+      cursor:pointer; transition:all 0.15s; user-select:none;
+    }
+    .chip:hover { border-color:var(--purple-light); color:var(--purple); }
+    .chip.selected { background:var(--purple); border-color:var(--purple); color:white; }
+    .chip.disabled { opacity:0.4; cursor:not-allowed; }
+
+    .toggle-row {
+      display:flex; align-items:center; gap:1rem;
+      padding:0.9rem 1rem; background:var(--warm-white); border-radius:0.75rem;
+      border:1px solid var(--border); cursor:pointer; user-select:none;
+      transition:border-color 0.2s; margin-bottom:1.5rem;
+    }
+    .toggle-row:hover { border-color:var(--purple-light); }
+    .toggle-row.on { border-color:var(--purple-light); background:var(--purple-pale); }
+    .toggle-track { width:40px; height:22px; background:rgba(92,68,144,0.2); border-radius:11px; position:relative; flex-shrink:0; transition:background 0.2s; }
+    .toggle-track.on { background:var(--purple); }
+    .toggle-thumb { width:16px; height:16px; background:white; border-radius:50%; position:absolute; top:3px; left:3px; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+    .toggle-track.on .toggle-thumb { transform:translateX(18px); }
+    .toggle-label strong { display:block; font-size:0.88rem; color:var(--text); font-weight:400; }
+    .toggle-label span { font-size:0.75rem; color:var(--text-light); font-weight:300; }
+
+    /* RISK WARNING */
+    .risk-warning {
+      display:flex; gap:0.75rem; align-items:flex-start;
+      background:var(--warn-bg); border:1px solid var(--warn-border);
+      border-radius:0.75rem; padding:1rem 1.25rem; margin-bottom:1.5rem;
+    }
+    .risk-icon { font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+    .risk-text strong { display:block; font-size:0.82rem; color:var(--warn); margin-bottom:3px; font-weight:500; }
+    .risk-text span { font-size:0.8rem; color:var(--text-light); font-weight:300; line-height:1.6; }
+
+    /* GENERATE BUTTON */
+    .btn-generate {
+      width:100%; padding:1rem; background:var(--purple); color:white;
+      border:none; border-radius:99px; font-family:var(--ff-body);
+      font-size:0.95rem; font-weight:400; letter-spacing:0.1em; text-transform:uppercase;
+      cursor:pointer; transition:background 0.2s, transform 0.15s;
+    }
+    .btn-generate:hover:not(:disabled) { background:var(--purple-deep); transform:translateY(-1px); }
+    .btn-generate:disabled { opacity:0.4; cursor:not-allowed; }
+
+    .err { background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.2); color:#c0392b; border-radius:0.75rem; padding:0.75rem 1rem; font-size:0.85rem; font-weight:300; margin-bottom:1rem; }
+
+    /* OUTPUT */
+    .output-card {
+      background:white; border:1px solid var(--border); border-radius:var(--radius);
+      padding:2rem 2.5rem; margin-bottom:1.5rem;
+    }
+    .output-top { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .output-eyebrow { font-size:0.7rem; font-weight:400; letter-spacing:0.25em; text-transform:uppercase; color:var(--purple-light); margin-bottom:0.3rem; }
+    .output-title { font-family:var(--ff-display); font-size:1.6rem; font-weight:400; color:var(--purple-deep); }
+    .output-actions { display:flex; gap:0.75rem; flex-shrink:0; }
+    .btn-copy {
+      padding:0.5rem 1.1rem; background:transparent; border:1px solid var(--border);
+      border-radius:99px; font-family:var(--ff-body); font-size:0.78rem; font-weight:400;
+      color:var(--text-light); cursor:pointer; transition:all 0.15s; letter-spacing:0.05em;
+    }
+    .btn-copy:hover { border-color:var(--purple-light); color:var(--purple); }
+    .btn-new {
+      padding:0.5rem 1.1rem; background:var(--purple); border:none;
+      border-radius:99px; font-family:var(--ff-body); font-size:0.78rem; font-weight:400;
+      color:white; cursor:pointer; transition:background 0.15s; letter-spacing:0.05em;
+    }
+    .btn-new:hover { background:var(--purple-deep); }
+
+    .safety-note {
+      background:var(--purple-pale); border-radius:0.75rem; padding:0.9rem 1.1rem;
+      font-size:0.8rem; color:var(--text-light); font-weight:300; line-height:1.65;
+      margin-bottom:1.5rem;
+    }
+    .safety-note strong { color:var(--purple); font-weight:500; }
+
+    .output-body { font-size:0.9rem; line-height:1.85; color:var(--text-light); white-space:pre-wrap; font-weight:300; margin-bottom:1.5rem; }
+
+    /* CONSULT BANNER */
+    .consult-banner {
+      background:linear-gradient(135deg,var(--purple-pale),var(--green-pale));
+      border:1px solid var(--border); border-radius:var(--radius);
+      padding:1.75rem 2rem; display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;
+    }
+    .consult-banner h3 { font-family:var(--ff-display); font-size:1.4rem; font-weight:400; color:var(--purple-deep); margin-bottom:0.3rem; }
+    .consult-banner p { font-size:0.85rem; color:var(--text-light); font-weight:300; max-width:360px; line-height:1.6; }
+    .btn-consult {
+      padding:0.75rem 1.5rem; background:var(--purple); color:white;
+      border:none; border-radius:99px; font-family:var(--ff-body); font-size:0.85rem;
+      font-weight:400; letter-spacing:0.08em; cursor:pointer; text-decoration:none;
+      transition:background 0.2s; white-space:nowrap; flex-shrink:0;
+    }
+    .btn-consult:hover { background:var(--purple-deep); }
+
+    /* LOADING */
+    .loading-wrap { text-align:center; padding:3.5rem 1rem; }
+    .spinner {
+      width:40px; height:40px; border-radius:50%;
+      border:2px solid var(--border); border-top-color:var(--purple);
+      animation:spin 0.9s linear infinite; margin:0 auto 1.25rem;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-txt { font-size:0.9rem; color:var(--text-light); font-weight:300; }
+
+    /* REDEEM MODAL */
+    .modal-bg { position:fixed; inset:0; background:rgba(30,24,48,0.5); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
+    .modal {
+      background:white; border-radius:var(--radius); padding:2rem 2.5rem;
+      max-width:440px; width:100%; box-shadow:0 24px 64px rgba(30,24,48,0.2);
+    }
+    .modal h3 { font-family:var(--ff-display); font-size:1.5rem; font-weight:400; color:var(--purple-deep); margin-bottom:0.4rem; }
+    .modal p { font-size:0.85rem; color:var(--text-light); font-weight:300; margin-bottom:1.5rem; line-height:1.65; }
+    .code-row { display:flex; gap:0.75rem; margin-bottom:0.5rem; }
+    .code-input {
+      flex:1; padding:0.75rem 1rem; border:1px solid var(--border); border-radius:0.75rem;
+      font-family:var(--ff-body); font-size:0.95rem; font-weight:500; color:var(--text);
+      background:var(--warm-white); outline:none; letter-spacing:0.05em; text-transform:uppercase;
+    }
+    .code-input:focus { border-color:var(--purple-light); background:white; }
+    .code-input::placeholder { text-transform:none; font-weight:300; letter-spacing:0; color:var(--text-light); }
+    .btn-redeem-submit {
+      padding:0.75rem 1.25rem; background:var(--purple); color:white; border:none;
+      border-radius:0.75rem; font-family:var(--ff-body); font-size:0.85rem; font-weight:400;
+      cursor:pointer; transition:background 0.2s; white-space:nowrap;
+    }
+    .btn-redeem-submit:hover { background:var(--purple-deep); }
+    .btn-cancel { width:100%; padding:0.6rem; background:transparent; border:1px solid var(--border); border-radius:99px; font-family:var(--ff-body); font-size:0.82rem; color:var(--text-light); cursor:pointer; margin-top:0.75rem; transition:border-color 0.2s; }
+    .btn-cancel:hover { border-color:var(--purple-light); }
+    .modal-err { font-size:0.8rem; color:#c0392b; margin-bottom:0.5rem; }
+    .modal-ok { font-size:0.8rem; color:var(--green); margin-bottom:0.5rem; }
+
+    /* FOOTER */
+    footer { background:var(--purple-deep); color:rgba(255,255,255,0.6); text-align:center; padding:3rem 2rem; }
+    .footer-logo { font-family:var(--ff-display); font-size:1.3rem; font-weight:400; color:rgba(255,255,255,0.9); letter-spacing:0.08em; margin-bottom:1.5rem; }
+    .footer-links { display:flex; justify-content:center; gap:2rem; list-style:none; flex-wrap:wrap; margin-bottom:1.5rem; }
+    .footer-links a { color:rgba(255,255,255,0.55); text-decoration:none; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; font-weight:400; transition:color 0.2s; }
+    .footer-links a:hover { color:rgba(255,255,255,0.9); }
+    .footer-copy { font-size:0.75rem; color:rgba(255,255,255,0.3); }
+
+    /* RESPONSIVE */
+    @media (max-width:700px) {
+      nav { padding:1rem 1.5rem; }
+      .nav-links { display:none; }
+      .main { padding:2rem 1.25rem 4rem; }
+      .form-card { padding:1.5rem; }
+      .output-card { padding:1.5rem; }
+      .field-row { grid-template-columns:1fr; }
+      .email-input-row { flex-direction:column; }
+      .btn-start { width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a class="nav-logo" href="index.html">
+    <div class="nav-logo-circle"></div>
+    <div>
+      <span class="nav-logo-text">Evolving</span>
+      <span class="nav-logo-sub">Therapy &amp; Wellness</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="shop.html" class="nav-store">Shop</a></li>
+    <li><a href="free-resources.html">Free Resources</a></li>
+    <li><a href="index.html#partners">Partners</a></li>
+    <li><a href="index.html#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<!-- CREDIT BAR -->
+<div class="credit-bar" id="credit-bar">
+  <div class="credit-display">
+    <span id="credit-count" class="credit-count">—</span>
+    <span id="credit-label" style="font-size:0.85rem;color:var(--text-light);font-weight:300;">HEPs remaining</span>
+  </div>
+  <div class="credit-bar-actions">
+    <button class="btn-redeem" onclick="openRedeem()">Redeem Code</button>
+    <a class="btn-buy-more" href="shop.html#ai-tools">Buy More &rarr;</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- EMAIL GATE -->
+  <div id="email-gate" class="email-gate" style="display:none;">
+    <div class="gate-icon">✨</div>
+    <h2>Your First 2 HEPs are Free</h2>
+    <p>Enter your email to get started. No account needed. Your credits are saved to this browser so you can return anytime.</p>
+    <div class="email-input-row">
+      <input class="email-input" type="email" id="gate-email" placeholder="your@email.com" />
+      <button class="btn-start" onclick="startFree()">Start Free &rarr;</button>
+    </div>
+    <p class="gate-note">Already purchased credits? <button onclick="openRedeem()" style="background:none;border:none;color:var(--purple);cursor:pointer;font-family:var(--ff-body);font-size:0.78rem;font-weight:400;text-decoration:underline;">Redeem your code here</button></p>
+  </div>
+
+  <!-- FORM -->
+  <div id="generator-form" style="display:none;">
+
+    <div style="margin-bottom:2rem;">
+      <p class="section-eyebrow" style="justify-content:flex-start;">Pediatric HEP Generator</p>
+      <h1 style="font-family:var(--ff-display);font-size:2.2rem;font-weight:300;color:var(--text);line-height:1.15;margin-bottom:0.5rem;">Build a <em style="font-style:italic;color:var(--purple);">Home Program</em></h1>
+      <p style="font-size:0.9rem;font-weight:300;color:var(--text-light);line-height:1.7;">Fill in the details below and get a parent-friendly HEP in seconds. Powered by AI, guided by clinical expertise.</p>
+    </div>
+
+    <div class="form-card">
+      <!-- Child info -->
+      <div class="field-row" style="margin-bottom:1.5rem;">
+        <div>
+          <label class="field-label">Child's Name <span class="field-note">(optional)</span></label>
+          <input type="text" id="childName" placeholder="e.g. Sofia" />
+        </div>
+        <div>
+          <label class="field-label">Age *</label>
+          <input type="text" id="childAge" placeholder="e.g. 5 years or 9 months" />
+        </div>
+      </div>
+
+      <!-- Focus areas -->
+      <label class="field-label">Focus Area * <span class="field-note">pick up to 3</span></label>
+      <div class="chips" id="focus-chips">
+        <div class="chip" data-val="Fine Motor Skills">Fine Motor</div>
+        <div class="chip" data-val="Gross Motor Skills">Gross Motor</div>
+        <div class="chip" data-val="Sensory Processing">Sensory Processing</div>
+        <div class="chip" data-val="Self-Care / ADLs">Self-Care / ADLs</div>
+        <div class="chip" data-val="Visual Motor Integration">Visual Motor</div>
+        <div class="chip" data-val="Handwriting">Handwriting</div>
+        <div class="chip" data-val="Oral Motor / Feeding">Oral Motor / Feeding</div>
+        <div class="chip" data-val="Attention &amp; Regulation">Attention &amp; Regulation</div>
+      </div>
+
+      <!-- Risk warning (shown conditionally) -->
+      <div class="risk-warning" id="risk-warning" style="display:none;">
+        <span class="risk-icon">⚠️</span>
+        <div class="risk-text">
+          <strong>Professional guidance recommended</strong>
+          <span id="risk-msg">This area is best supported with a formal OT evaluation first. This tool will provide safe, general play-based ideas only.</span>
+        </div>
+      </div>
+
+      <!-- Setting -->
+      <label class="field-label">Setting *</label>
+      <div class="chips" id="setting-chips">
+        <div class="chip" data-val="Home">Home</div>
+        <div class="chip" data-val="School">School</div>
+        <div class="chip" data-val="Both">Both</div>
+      </div>
+
+      <!-- Equipment -->
+      <label class="field-label">Available Equipment</label>
+      <div class="chips" id="equipment-chips">
+        <div class="chip" data-val="No special equipment">No special equipment</div>
+        <div class="chip" data-val="Playdough / putty">Playdough / putty</div>
+        <div class="chip" data-val="Scissors & paper">Scissors &amp; paper</div>
+        <div class="chip" data-val="Pencils & crayons">Pencils &amp; crayons</div>
+        <div class="chip" data-val="Sensory bins">Sensory bins</div>
+        <div class="chip" data-val="Balls & movement toys">Balls &amp; toys</div>
+        <div class="chip" data-val="Household items only">Household items</div>
+        <div class="chip" data-val="Resistance bands">Resistance bands</div>
+      </div>
+
+      <!-- Frequency -->
+      <label class="field-label">Frequency</label>
+      <div class="chips" id="freq-chips">
+        <div class="chip selected" data-val="Daily">Daily</div>
+        <div class="chip" data-val="2–3x per week">2–3x per week</div>
+        <div class="chip" data-val="Once a week">Once a week</div>
+      </div>
+
+      <!-- Notes -->
+      <label class="field-label">Additional Notes <span class="field-note">(optional)</span></label>
+      <textarea id="notes" placeholder="e.g. loves dinosaurs, avoids loud textures, very short attention span, uses AAC device..." style="margin-bottom:1.5rem;"></textarea>
+
+      <!-- Bilingual toggle -->
+      <div class="toggle-row" id="spanish-toggle" onclick="toggleSpanish()">
+        <div class="toggle-track" id="spanish-track"><div class="toggle-thumb"></div></div>
+        <div class="toggle-label">
+          <strong>🇺🇸 🇨🇴 Include Spanish Translation</strong>
+          <span>Output will include both English and Spanish versions</span>
+        </div>
+      </div>
+
+      <div id="form-err" class="err" style="display:none;"></div>
+      <button class="btn-generate" id="generate-btn" onclick="generate()">✨ Generate Home Program</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading" style="display:none;">
+    <div class="form-card">
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <p class="loading-txt">Creating your personalized program…</p>
+        <p style="font-size:0.8rem;color:var(--text-light);font-weight:300;margin-top:0.4rem;">This takes about 10–15 seconds</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div id="output-section" style="display:none;">
+    <div class="output-card">
+      <div class="output-top">
+        <div>
+          <p class="output-eyebrow">Home Exercise Program</p>
+          <p class="output-title" id="output-title">Your Home Program</p>
+        </div>
+        <div class="output-actions">
+          <button class="btn-copy" id="copy-btn" onclick="copyOutput()">📋 Copy</button>
+          <button class="btn-new" onclick="newHEP()">+ New HEP</button>
+        </div>
+      </div>
+      <div class="safety-note">
+        <strong>📋 Important:</strong> This program provides general, play-based home support only. It does not replace a formal OT evaluation or individualized treatment plan. If your child has specific medical needs, check with your therapist before starting.
+      </div>
+      <div class="output-body" id="output-body"></div>
+    </div>
+
+    <!-- CONSULT BANNER -->
+    <div class="consult-banner">
+      <div>
+        <h3>Want personalized support?</h3>
+        <p>Our OT can create a fully individualized plan tailored to your child's specific needs, environment, and goals.</p>
+      </div>
+      <a class="btn-consult" href="index.html#contact">Request OT Consult &rarr;</a>
+    </div>
+  </div>
+
+  <!-- ZERO CREDITS -->
+  <div id="no-credits" style="display:none;">
+    <div class="form-card" style="text-align:center; padding:3rem;">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">✨</div>
+      <h2 style="font-family:var(--ff-display);font-size:1.8rem;font-weight:400;color:var(--purple-deep);margin-bottom:0.75rem;">You've used all your free HEPs</h2>
+      <p style="font-size:0.9rem;color:var(--text-light);font-weight:300;max-width:400px;margin:0 auto 2rem;line-height:1.7;">Credits never expire — pick up where you left off anytime.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="shop.html" class="btn-generate" style="text-decoration:none;display:inline-block;width:auto;padding:0.9rem 2rem;">Browse Credit Packs &rarr;</a>
+        <button class="btn-redeem" onclick="openRedeem()" style="padding:0.9rem 1.5rem;">Redeem a Code</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- REDEEM MODAL -->
+<div class="modal-bg" id="redeem-modal" style="display:none;" onclick="if(event.target===this)closeRedeem()">
+  <div class="modal">
+    <h3>Redeem Access Code</h3>
+    <p>Enter the code from your purchase confirmation. Codes never expire and are added to your current balance.</p>
+    <div id="modal-msg"></div>
+    <div class="code-row">
+      <input class="code-input" type="text" id="code-input" placeholder="e.g. HEP-S001" maxlength="20" />
+      <button class="btn-redeem-submit" onclick="redeemCode()">Redeem</button>
+    </div>
+    <button class="btn-cancel" onclick="closeRedeem()">Cancel</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Evolving Therapy &amp; Wellness</div>
+  <ul class="footer-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="free-resources.html">Free Resources</a></li>
+    <li><a href="index.html#partners">Partners</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <p class="footer-copy">&copy; 2025 Evolving Therapy &amp; Wellness. All rights reserved. &nbsp;|&nbsp; For educational purposes only.</p>
+</footer>
+
+<script>
+  // ── CONSTANTS ─────────────────────────────────────────────────────────────
+  const FREE_CREDITS  = 2;
+  const STORAGE_KEY   = 'evolveot_hep';
+  const HIGH_RISK     = ['Sensory Processing','Oral Motor / Feeding','Attention & Regulation'];
+  const CREDIT_VALUES = { 'HEP-S': 2, 'HEP-P': 5, 'HEP-X': 10 };
+
+  // ── PRE-GENERATED CODES — add more after purchases ────────────────────────
+  // Format: PREFIX-XXX = credits
+  // HEP-S### = 2 credits ($1.99), HEP-P### = 5 credits ($3.99), HEP-X### = 10 credits ($7.99)
+  const VALID_CODES = {
+    'HEP-S001':2,'HEP-S002':2,'HEP-S003':2,'HEP-S004':2,'HEP-S005':2,
+    'HEP-S006':2,'HEP-S007':2,'HEP-S008':2,'HEP-S009':2,'HEP-S010':2,
+    'HEP-P001':5,'HEP-P002':5,'HEP-P003':5,'HEP-P004':5,'HEP-P005':5,
+    'HEP-P006':5,'HEP-P007':5,'HEP-P008':5,'HEP-P009':5,'HEP-P010':5,
+    'HEP-X001':10,'HEP-X002':10,'HEP-X003':10,'HEP-X004':10,'HEP-X005':10,
+    'HEP-X006':10,'HEP-X007':10,'HEP-X008':10,'HEP-X009':10,'HEP-X010':10,
+  };
+
+  // ── CLINICAL GUARDRAILS ───────────────────────────────────────────────────
+  const GUARDRAILS = `
+CRITICAL SAFETY RULES — follow without exception:
+- NEVER recommend weighted vests, blankets, or any weighted equipment
+- NEVER recommend brushing protocols (Wilbarger or any sensory brushing)
+- NEVER recommend joint compression, traction, or manual therapy techniques
+- NEVER recommend rotatory input of any kind (spinning, swinging in circles, rotary vestibular activities)
+- NEVER recommend specific oral motor exercises, tongue exercises, or feeding techniques beyond relaxed general mealtime tips
+- NEVER prescribe a sensory diet or specific sensory schedule
+- NEVER recommend infant positioning without clearly noting it requires professional guidance
+- NEVER suggest deep pressure protocols that require professional training
+- ONLY recommend play-based, everyday activities a parent can safely do without professional training
+- If any activity might need modification, say "check with your OT first"
+- Keep all activities gentle, fun, and low-risk
+`;
+
+  // ── STATE ─────────────────────────────────────────────────────────────────
+  let selectedFocus    = [];
+  let selectedSetting  = null;
+  let selectedEquip    = [];
+  let selectedFreq     = 'Daily';
+  let spanishOn        = false;
+  let lastOutput       = '';
+
+  // ── STORAGE HELPERS ───────────────────────────────────────────────────────
+  function getData() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }
+    catch { return null; }
+  }
+  function saveData(d) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+  }
+  function getCredits() {
+    const d = getData();
+    return d ? d.credits : null;
+  }
+  function isCodeUsed(code) {
+    const d = getData();
+    return d && d.usedCodes && d.usedCodes.includes(code);
+  }
+  function markCodeUsed(code) {
+    const d = getData() || {};
+    if (!d.usedCodes) d.usedCodes = [];
+    d.usedCodes.push(code);
+    saveData(d);
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  function init() {
+    const d = getData();
+    if (!d || !d.email) {
+      show('email-gate');
+    } else {
+      show('generator-form');
+      updateCreditBar();
+      checkCredits();
+    }
+    // chip listeners
+    setupChips('focus-chips', 3, (vals) => {
+      selectedFocus = vals;
+      updateRiskWarning();
+    });
+    setupSingleChips('setting-chips', (val) => { selectedSetting = val; });
+    setupChips('equipment-chips', 8, (vals) => { selectedEquip = vals; });
+    setupSingleChips('freq-chips', (val) => { selectedFreq = val; }, 'Daily');
+  }
+
+  function show(id) {
+    ['email-gate','generator-form','loading','output-section','no-credits'].forEach(s => {
+      document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
+    });
+  }
+
+  // ── EMAIL GATE ────────────────────────────────────────────────────────────
+  function startFree() {
+    const email = document.getElementById('gate-email').value.trim();
+    if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+    const d = getData() || {};
+    if (!d.email) {
+      // First time — give free credits
+      d.email   = email;
+      d.credits = FREE_CREDITS;
+      d.usedCodes = [];
+    } else {
+      d.email = email;
+    }
+    saveData(d);
+    show('generator-form');
+    updateCreditBar();
+    checkCredits();
+  }
+
+  // ── CREDIT BAR ────────────────────────────────────────────────────────────
+  function updateCreditBar() {
+    const credits = getCredits() || 0;
+    const el      = document.getElementById('credit-count');
+    el.textContent = credits;
+    el.className   = 'credit-count' + (credits === 0 ? ' empty' : credits <= 1 ? ' low' : '');
+    document.getElementById('credit-label').textContent =
+      credits === 1 ? 'HEP remaining' : 'HEPs remaining';
+  }
+
+  function checkCredits() {
+    const credits = getCredits();
+    if (credits !== null && credits <= 0) {
+      show('no-credits');
+    }
+  }
+
+  // ── CHIPS ─────────────────────────────────────────────────────────────────
+  function setupChips(containerId, maxSelect, callback) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const val = chip.dataset.val;
+        const selected = Array.from(container.querySelectorAll('.chip.selected')).map(c => c.dataset.val);
+        if (chip.classList.contains('selected')) {
+          chip.classList.remove('selected');
+        } else if (selected.length < maxSelect) {
+          chip.classList.add('selected');
+        }
+        const newSelected = Array.from(container.querySelectorAll('.chip.selected')).map(c => c.dataset.val);
+        callback(newSelected);
+      });
+    });
+  }
+
+  function setupSingleChips(containerId, callback, defaultVal) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (defaultVal) {
+      container.querySelectorAll('.chip').forEach(c => {
+        if (c.dataset.val === defaultVal) c.classList.add('selected');
+      });
+    }
+    container.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        container.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        callback(chip.dataset.val);
+      });
+    });
+  }
+
+  // ── RISK WARNING ──────────────────────────────────────────────────────────
+  function updateRiskWarning() {
+    const riskAreas = selectedFocus.filter(f => HIGH_RISK.includes(f));
+    const el        = document.getElementById('risk-warning');
+    if (riskAreas.length > 0) {
+      document.getElementById('risk-msg').textContent =
+        riskAreas.join(' and ') + ' is best supported with a formal OT evaluation first. This tool provides safe, general play-based ideas only.';
+      el.style.display = 'flex';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
+  // ── SPANISH TOGGLE ────────────────────────────────────────────────────────
+  function toggleSpanish() {
+    spanishOn = !spanishOn;
+    document.getElementById('spanish-toggle').classList.toggle('on', spanishOn);
+    document.getElementById('spanish-track').classList.toggle('on', spanishOn);
+  }
+
+  // ── GENERATE ──────────────────────────────────────────────────────────────
+  async function generate() {
+    const age      = document.getElementById('childAge').value.trim();
+    const name     = document.getElementById('childName').value.trim();
+    const notes    = document.getElementById('notes').value.trim();
+    const errEl    = document.getElementById('form-err');
+
+    if (!age || selectedFocus.length === 0 || !selectedSetting) {
+      errEl.textContent = 'Please fill in age, at least one focus area, and setting.';
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+
+    // Deduct credit
+    const d = getData();
+    if (!d || d.credits <= 0) { show('no-credits'); return; }
+    d.credits -= 1;
+    saveData(d);
+    updateCreditBar();
+
+    show('loading');
+
+    const lang = spanishOn
+      ? 'Provide the full output in BOTH English and Spanish. Label sections: --- ENGLISH --- and --- ESPAÑOL ---'
+      : 'English only.';
+
+    const prompt = `You are a warm, expert pediatric occupational therapist creating a Home Exercise Program (HEP) for a parent.
+
+Child: ${name || 'the child'}, age ${age}
+Focus areas: ${selectedFocus.join(', ')} | Setting: ${selectedSetting}
+Equipment: ${selectedEquip.length ? selectedEquip.join(', ') : 'none specified'} | Frequency: ${selectedFreq}
+Notes: ${notes || 'none'}
+
+${GUARDRAILS}
+
+Create a warm, parent-friendly HEP with:
+1. A brief "Why This Matters" (1–2 encouraging sentences, no jargon)
+2. 4–5 safe, play-based activities — each with:
+   - 🎯 Activity name
+   - What you need
+   - Simple step-by-step (parent-friendly language)
+   - ✨ "Make it fun" tip
+3. A short encouraging closing note for the parent
+
+Use emojis for visual scanning. Warm, empowering tone. Zero clinical jargon.
+${lang}`;
+
+    try {
+      const res = await fetch('/.netlify/functions/wbv-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        show('generator-form');
+        errEl.textContent = 'API error: ' + (data?.error?.message || res.status);
+        errEl.style.display = 'block';
+        // Refund credit on error
+        const d2 = getData(); d2.credits += 1; saveData(d2); updateCreditBar();
+        return;
+      }
+      const text = (data.content || []).map(b => b.text || '').join('');
+      if (!text) {
+        show('generator-form');
+        errEl.textContent = 'Empty response — please try again.';
+        errEl.style.display = 'block';
+        const d2 = getData(); d2.credits += 1; saveData(d2); updateCreditBar();
+        return;
+      }
+      lastOutput = text;
+      document.getElementById('output-title').textContent =
+        name ? name + "'s Home Program" : 'Your Home Program';
+      document.getElementById('output-body').textContent = text;
+      show('output-section');
+    } catch (err) {
+      show('generator-form');
+      errEl.textContent = 'Error: ' + err.message;
+      errEl.style.display = 'block';
+      const d2 = getData(); d2.credits += 1; saveData(d2); updateCreditBar();
+    }
+  }
+
+  // ── COPY ──────────────────────────────────────────────────────────────────
+  function copyOutput() {
+    navigator.clipboard.writeText(lastOutput);
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  }
+
+  // ── NEW HEP ───────────────────────────────────────────────────────────────
+  function newHEP() {
+    checkCredits();
+    if (getCredits() > 0) show('generator-form');
+  }
+
+  // ── REDEEM MODAL ──────────────────────────────────────────────────────────
+  function openRedeem() {
+    document.getElementById('redeem-modal').style.display = 'flex';
+    document.getElementById('code-input').value = '';
+    document.getElementById('modal-msg').innerHTML = '';
+  }
+  function closeRedeem() {
+    document.getElementById('redeem-modal').style.display = 'none';
+  }
+  function redeemCode() {
+    const raw    = document.getElementById('code-input').value.trim().toUpperCase();
+    const msgEl  = document.getElementById('modal-msg');
+    const credits = VALID_CODES[raw];
+
+    if (!credits) {
+      msgEl.innerHTML = '<p class="modal-err">Code not recognized. Check for typos or contact admin@evolve-OT.com.</p>';
+      return;
+    }
+    if (isCodeUsed(raw)) {
+      msgEl.innerHTML = '<p class="modal-err">This code has already been redeemed on this device.</p>';
+      return;
+    }
+    // Add credits
+    const d = getData() || { email: 'user', credits: 0, usedCodes: [] };
+    d.credits += credits;
+    saveData(d);
+    markCodeUsed(raw);
+    updateCreditBar();
+    msgEl.innerHTML = `<p class="modal-ok">✓ ${credits} credit${credits > 1 ? 's' : ''} added! You now have ${d.credits} HEP${d.credits !== 1 ? 's' : ''} remaining.</p>`;
+    setTimeout(() => {
+      closeRedeem();
+      show('generator-form');
+    }, 1800);
+  }
+
+  // Enter key on code input
+  document.addEventListener('DOMContentLoaded', () => {
+    const ci = document.getElementById('code-input');
+    if (ci) ci.addEventListener('keydown', e => { if (e.key === 'Enter') redeemCode(); });
+    const ge = document.getElementById('gate-email');
+    if (ge) ge.addEventListener('keydown', e => { if (e.key === 'Enter') startFree(); });
+    init();
+  });
+
+  // Nav scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+  });
+</script>
+</body>
+</html>

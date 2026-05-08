@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Token Reward Chart | Evolving Therapy & Wellness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#5C4490;--purple-light:#9B88C4;--purple-pale:#EDE8F5;--purple-deep:#3E2D6E;
+  --cream:#FDFBF9;--warm-white:#F7F4FB;--text-dark:#1E1830;--text-light:#5A4E72;
+  --green:#4A8C6F;--green-pale:#E8F5EF;--red:#b91c1c;--red-pale:#fef2f2;
+  --border:rgba(92,68,144,0.15);--shadow-sm:0 2px 8px rgba(92,68,144,0.08);
+  --shadow-md:0 8px 28px rgba(92,68,144,0.13);--r:1.25rem;--r-sm:0.75rem;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--text-dark);min-height:100vh}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(253,251,249,0.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 1.5rem;height:68px;display:flex;align-items:center;justify-content:space-between;gap:2rem}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--purple);text-decoration:none;letter-spacing:.02em;white-space:nowrap}
+.nav-links{display:flex;align-items:center;gap:1.75rem;list-style:none}
+.nav-links a{font-size:.82rem;font-weight:500;color:var(--text-light);text-decoration:none;letter-spacing:.05em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--purple)}
+.nav-cta{background:var(--purple);color:#fff!important;padding:.45rem 1.1rem;border-radius:99px;transition:background .2s,transform .2s!important}
+.nav-cta:hover{background:var(--purple-deep)!important;transform:translateY(-1px)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--purple)}
+
+/* PAGE HEADER */
+.page-header{background:linear-gradient(135deg,var(--purple-deep) 0%,var(--purple) 100%);color:#fff;padding:3rem 1.5rem 2.5rem;text-align:center}
+.page-header .eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.6rem}
+.page-header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,2.8rem);font-weight:600;line-height:1.2;margin-bottom:.6rem}
+.page-header h1 em{font-style:italic;color:rgba(255,255,255,.72)}
+.page-header p{font-size:.95rem;color:rgba(255,255,255,.72);max-width:520px;margin:0 auto;line-height:1.65}
+
+/* LAYOUT */
+.wrap{max-width:740px;margin:0 auto;padding:2.25rem 1.25rem 4rem}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:1.1rem}
+.card-head{background:var(--purple-pale);padding:.9rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.card-head h2{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--purple-deep)}
+.card-body{padding:1.1rem 1.4rem}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;font-family:'Jost',sans-serif;font-size:.875rem;font-weight:600;border:none;border-radius:99px;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap;line-height:1}
+.btn-primary{background:var(--purple);color:#fff;padding:.65rem 1.5rem}
+.btn-primary:hover{background:var(--purple-deep);transform:translateY(-2px);box-shadow:0 4px 14px rgba(92,68,144,.28)}
+.btn-outline{background:#fff;color:var(--purple);border:1.5px solid var(--purple);padding:.6rem 1.35rem}
+.btn-outline:hover{background:var(--purple-pale);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text-light);padding:.35rem .75rem;font-size:.8rem}
+.btn-ghost:hover{color:var(--purple);background:var(--purple-pale);border-radius:8px}
+.btn-green{background:var(--green);color:#fff;padding:.65rem 1.5rem}
+.btn-green:hover{background:#3a7060;transform:translateY(-2px)}
+.btn-red{background:var(--red);color:#fff;padding:.5rem 1rem;font-size:.8rem}
+.btn-red:hover{background:#991b1b}
+.btn-sm{padding:.38rem .85rem;font-size:.78rem}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.btn-full{width:100%}
+
+/* FORM */
+.f-label{display:block;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-light);margin-bottom:.35rem}
+.f-input{width:100%;padding:.65rem 1rem;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Jost',sans-serif;font-size:.95rem;color:var(--text-dark);background:#fff;transition:border-color .2s;outline:none}
+.f-input:focus{border-color:var(--purple)}
+.f-row{margin-bottom:.9rem}
+.err{color:var(--red);font-size:.8rem;margin-top:.35rem;font-weight:500}
+
+/* TOKEN BANK */
+.bank{background:linear-gradient(135deg,var(--purple-deep),var(--purple));border-radius:var(--r);padding:1.6rem 1.5rem;color:#fff;text-align:center;margin-bottom:1.1rem;box-shadow:var(--shadow-md)}
+.bank-lbl{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.25rem}
+.bank-num{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:600;line-height:1;color:#fff}
+.bank-sub{font-size:.82rem;color:rgba(255,255,255,.6);margin-top:.2rem}
+
+/* CHORE ROW */
+.chore-row{display:flex;align-items:center;gap:.8rem;padding:.8rem 0;border-bottom:1px solid var(--border)}
+.chore-row:last-child{border-bottom:none}
+.chore-cb{width:26px;height:26px;border-radius:7px;border:2px solid var(--purple-light);background:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .15s;color:transparent;user-select:none}
+.chore-row.done .chore-cb{background:var(--purple);border-color:var(--purple);color:#fff}
+.chore-row.done .chore-name{text-decoration:line-through;color:var(--text-light);opacity:.55}
+.chore-em{font-size:1.35rem;flex-shrink:0}
+.chore-name{flex:1;font-size:.92rem;font-weight:500}
+.chore-badge{background:var(--purple-pale);color:var(--purple);font-size:.75rem;font-weight:700;padding:.18rem .55rem;border-radius:99px;flex-shrink:0}
+
+/* REWARD ROW */
+.reward-row{display:flex;align-items:center;gap:.8rem;padding:.8rem 0;border-bottom:1px solid var(--border)}
+.reward-row:last-child{border-bottom:none}
+.reward-em{font-size:1.5rem;flex-shrink:0}
+.reward-info{flex:1}
+.reward-name{font-size:.92rem;font-weight:600}
+.reward-cost{font-size:.78rem;color:var(--text-light);margin-top:1px}
+.r-actions{display:flex;gap:.4rem;align-items:center;flex-shrink:0}
+.r-pill{font-size:.72rem;font-weight:700;padding:.22rem .65rem;border-radius:99px}
+.r-pill.can{background:var(--green-pale);color:var(--green)}
+.r-pill.need{background:var(--purple-pale);color:var(--text-light)}
+
+/* TIP */
+.tip{background:linear-gradient(135deg,#fef9ec,#fef3c7);border:1.5px solid #fcd34d;border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.1rem}
+.tip-hd{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.tip-title{font-size:.82rem;font-weight:700;color:#92400e}
+.tip-tog{font-size:.78rem;color:#92400e}
+.tip-body{margin-top:.7rem;font-size:.82rem;color:#78350f;line-height:1.7}
+.tip-body p{margin-bottom:.4rem}
+.tip-body p:last-child{margin-bottom:0}
+
+/* DAY CHECKS */
+.day-checks{display:flex;gap:.25rem;flex-wrap:wrap}
+.dc{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--text-light);transition:all .15s;user-select:none}
+.dc.on{background:var(--purple);border-color:var(--purple);color:#fff}
+
+/* PIN */
+.pin-dots{display:flex;gap:.65rem;justify-content:center;margin:1.1rem 0}
+.pin-dot{width:44px;height:44px;border-radius:11px;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:all .15s}
+.pin-dot.on{background:var(--purple);border-color:var(--purple)}
+.pin-dot.on::after{content:'●';color:#fff;font-size:.7rem}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;max-width:220px;margin:0 auto}
+.pk{aspect-ratio:1;border-radius:11px;border:1.5px solid var(--border);background:#fff;font-family:'Jost',sans-serif;font-size:1.15rem;font-weight:600;color:var(--text-dark);cursor:pointer;transition:all .1s;display:flex;align-items:center;justify-content:center}
+.pk:hover{background:var(--purple-pale);border-color:var(--purple)}
+.pk:active{transform:scale(.93)}
+.pk.del{color:var(--text-light);font-size:.9rem}
+.pk-0{grid-column:2}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(30,24,48,.55);backdrop-filter:blur(5px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.25rem}
+.modal-box{background:#fff;border-radius:var(--r);box-shadow:0 24px 64px rgba(30,24,48,.22);padding:1.75rem;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
+.modal-box h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--purple-deep);margin-bottom:.4rem}
+.modal-box .modal-sub{font-size:.85rem;color:var(--text-light);line-height:1.6;margin-bottom:1rem}
+.modal-actions{display:flex;gap:.65rem;margin-top:1.1rem;flex-wrap:wrap}
+
+/* TABS */
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1.5rem;overflow-x:auto}
+.tab{font-family:'Jost',sans-serif;font-size:.82rem;font-weight:600;color:var(--text-light);background:none;border:none;padding:.7rem 1.1rem;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:color .15s;letter-spacing:.03em;white-space:nowrap}
+.tab.on{color:var(--purple);border-bottom-color:var(--purple)}
+.tab:hover{color:var(--purple)}
+
+/* DAY HEADER */
+.day-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.day-hd h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--purple-deep);line-height:1.2}
+.day-hd .date{font-size:.78rem;color:var(--text-light);margin-top:2px}
+
+/* SETUP CARD */
+.setup-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-md);padding:1.75rem}
+.setup-card h2{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:var(--purple-deep);margin-bottom:.35rem}
+.setup-card .sc-sub{font-size:.875rem;color:var(--text-light);line-height:1.65;margin-bottom:1.25rem}
+
+/* STEP DOTS */
+.step-dots{display:flex;align-items:center;gap:.4rem;justify-content:center;margin-bottom:1.75rem}
+.sd{width:9px;height:9px;border-radius:50%;background:var(--border);transition:background .2s}
+.sd.done{background:var(--green)}
+.sd.on{background:var(--purple)}
+.sd-line{width:20px;height:2px;background:var(--border)}
+
+/* CHORE BUILDER ROW */
+.cb-row{background:var(--warm-white);border:1px solid var(--border);border-radius:var(--r-sm);padding:.8rem .9rem;margin-bottom:.55rem}
+.cb-row-top{display:grid;grid-template-columns:60px 1fr 70px auto;gap:.55rem;align-items:center;margin-bottom:.55rem}
+.cb-row-days{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.cb-row-days .dc-lbl{font-size:.7rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em}
+
+/* EMPTY */
+.empty{text-align:center;padding:2rem 1rem;color:var(--text-light);font-size:.875rem}
+.empty-icon{font-size:2rem;margin-bottom:.5rem;display:block}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--purple-deep);color:#fff;padding:.7rem 1.4rem;border-radius:99px;font-size:.82rem;font-weight:600;z-index:300;transition:transform .3s ease;box-shadow:var(--shadow-md);pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+/* WELCOME */
+.welcome-wrap{max-width:560px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+.welcome-icon{font-size:4rem;text-align:center;margin-bottom:1rem}
+.welcome-wrap h2{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--purple-deep);text-align:center;margin-bottom:.7rem}
+.welcome-wrap .wlc-sub{font-size:.9rem;color:var(--text-light);line-height:1.7;text-align:center;margin-bottom:1.5rem}
+
+/* REWARD BUILDER INLINE */
+.rb-row{display:grid;grid-template-columns:60px 1fr 80px auto;gap:.5rem;align-items:center;margin-bottom:.5rem}
+
+/* FOOTER */
+footer{background:var(--purple-deep);color:rgba(255,255,255,.55);text-align:center;padding:2rem 1.5rem;font-size:.8rem}
+footer a{color:rgba(255,255,255,.65)}
+.ft-disc{margin-top:.75rem;font-size:.72rem;color:rgba(255,255,255,.3);max-width:600px;margin-left:auto;margin-right:auto;line-height:1.6}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:1rem 1.5rem;gap:1rem;z-index:99}
+  .nav-links.open{display:flex}
+  .nav-toggle{display:block}
+  .cb-row-top{grid-template-columns:50px 1fr 60px auto}
+  .rb-row{grid-template-columns:50px 1fr 65px auto}
+  .bank-num{font-size:3rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Evolving Therapy &amp; Wellness</a>
+    <button class="nav-toggle" onclick="document.getElementById('navL').classList.toggle('open')">☰</button>
+    <ul class="nav-links" id="navL">
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="/free-resources" class="active">Free Resources</a></li>
+      <li><a href="/#partners">Partners</a></li>
+      <li><a href="/#contact" class="nav-cta">Get in Touch</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<header class="page-header">
+  <p class="eyebrow">Free Interactive Tool</p>
+  <h1>Token Reward <em>Chart</em></h1>
+  <p>Customizable token economy system for building habits, independence, and money management skills — set up in minutes, runs in the browser.</p>
+</header>
+
+<!-- APP -->
+<div id="app"></div>
+<div id="modal-root"></div>
+<div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 Evolving Therapy &amp; Wellness · All rights reserved</p>
+  <p style="margin-top:.4rem"><a href="/free-resources">← Back to Free Resources</a> &nbsp;|&nbsp; <a href="mailto:admin@evolve-OT.com">admin@evolve-OT.com</a></p>
+  <p class="ft-disc">This tool is for educational and informational purposes only and is not a substitute for individualized therapy. All data is saved locally on this device only and is never transmitted to any server. Clearing your browser data will reset the chart.</p>
+</footer>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// STORAGE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const KEY = 'eot_tokenchart_v1';
+const DAY_NAMES = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function loadDB() {
+  try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch(e){}
+  return null;
+}
+function saveDB() {
+  try { localStorage.setItem(KEY, JSON.stringify(db)); } catch(e){}
+}
+function uid() { return Math.random().toString(36).slice(2,9); }
+
+const DB_DEFAULT = () => ({
+  pin: '', setupDone: false, childName: 'Explorer',
+  tokens: 0, completedToday: {}, lastDate: '',
+  rewards: [
+    {id:'r1', emoji:'📱', name:'10 min iPad', cost:5},
+    {id:'r2', emoji:'💵', name:'$1.00 cash', cost:4},
+    {id:'r3', emoji:'🎮', name:'30 min video games', cost:12},
+  ],
+  chores: [
+    {id:'c1', emoji:'⌨️', name:'Type for 5 minutes', tokens:2, days:[0,1,2,3,4,5,6]},
+    {id:'c2', emoji:'👟', name:'Tie both shoes', tokens:3, days:[0,1,2,3,4,5,6]},
+    {id:'c3', emoji:'📚', name:'Read 1 book', tokens:3, days:[0,1,2,3,4,5,6]},
+    {id:'c4', emoji:'🧺', name:'Help with laundry', tokens:2, days:[1,4]},
+    {id:'c5', emoji:'🍽️', name:'Help with dishes', tokens:2, days:[0,1,2,3,4,5,6]},
+  ]
+});
+
+let db = loadDB() || DB_DEFAULT();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// UI STATE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let ui = {
+  view: 'welcome',        // welcome | setup | daily | parent
+  step: 0,                // setup steps 0=pin 1=rewards 2=chores
+  tipOpen: false,
+  parentTab: 'chores',    // chores | rewards | tokens | settings
+  // PIN state
+  pinMode: null,          // null | 'access' | 'redeem' | 'setup' | 'setup-confirm'
+  pinVal: '',
+  pinFirst: '',
+  pinErr: '',
+  pinTarget: null,        // reward being redeemed
+  // Editing
+  editReward: null,       // null | reward object (id='' for new)
+  editChore: null,        // null | chore object (id='' for new)
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DATE MANAGEMENT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function todayDow() { return new Date().getDay(); }
+function todayLabel() {
+  return new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+}
+function checkDate() {
+  const t = todayStr();
+  if (db.lastDate !== t) { db.completedToday = {}; db.lastDate = t; saveDB(); }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// HELPERS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 2600);
+}
+function pinDots(val) {
+  return [0,1,2,3].map(i => `<div class="pin-dot${i < val.length ? ' on' : ''}"></div>`).join('');
+}
+function pinPad(action) {
+  return [1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k => {
+    if (k === '') return '<div></div>';
+    const cls = 'pk' + (k==='⌫' ? ' del' : k===0 ? ' pk-0' : '');
+    return `<button class="${cls}" data-a="${action}" data-k="${esc(k)}">${esc(k)}</button>`;
+  }).join('');
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// RENDER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function render() {
+  const app = document.getElementById('app');
+  const mod = document.getElementById('modal-root');
+
+  if (!db.setupDone) {
+    app.innerHTML = ui.view === 'setup' ? renderSetup() : renderWelcome();
+  } else {
+    app.innerHTML = ui.view === 'parent' ? renderParent() : renderDaily();
+  }
+
+  // modals
+  if (ui.pinMode) { mod.innerHTML = renderPinModal(); }
+  else if (ui.editReward !== null) { mod.innerHTML = renderEditReward(); }
+  else if (ui.editChore !== null) { mod.innerHTML = renderEditChore(); }
+  else { mod.innerHTML = ''; }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// VIEWS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function renderWelcome() {
+  return `<div class="welcome-wrap">
+    <div class="welcome-icon">🪙</div>
+    <h2>Token Reward Chart</h2>
+    <p class="wlc-sub">A simple token economy system to build habits and motivation. Your child earns tokens for completing tasks and spends them on rewards you choose together. Tokens carry over day to day — so they can save up for bigger prizes.</p>
+    <div style="text-align:center;margin-bottom:1.75rem">
+      <button class="btn btn-primary" style="font-size:1rem;padding:.85rem 2.2rem" data-a="goSetup">Set Up My Chart →</button>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>How It Works</h2></div>
+      <div class="card-body" style="font-size:.875rem;color:var(--text-light);line-height:1.75">
+        <p><strong style="color:var(--text-dark)">1. Quick 3-step setup.</strong> Create a parent PIN, add rewards with token costs, then assign tasks to days of the week.</p>
+        <p style="margin-top:.5rem"><strong style="color:var(--text-dark)">2. Your child earns tokens by completing tasks.</strong> Tokens accumulate across days — they can spend them anytime or save for a bigger reward.</p>
+        <p style="margin-top:.5rem"><strong style="color:var(--text-dark)">3. Parent approval required to spend.</strong> When your child wants a reward, you enter your PIN to approve. Tokens are deducted automatically.</p>
+        <p style="margin-top:.5rem"><strong style="color:var(--text-dark)">4. Fully editable.</strong> Change tasks, rewards, and token values anytime from the Parent Dashboard.</p>
+        <p style="margin-top:.75rem;color:var(--purple);font-weight:600;font-size:.82rem">All data stays on this device only. Nothing is stored on a server.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderSetup() {
+  const dots = [0,1,2].map((i) => {
+    const cls = 'sd' + (i < ui.step ? ' done' : i === ui.step ? ' on' : '');
+    return (i > 0 ? '<div class="sd-line"></div>' : '') + `<div class="${cls}"></div>`;
+  }).join('');
+
+  let body = '';
+  if (ui.step === 0) body = renderSetupPin();
+  if (ui.step === 1) body = renderSetupRewards();
+  if (ui.step === 2) body = renderSetupChores();
+
+  return `<div style="max-width:580px;margin:0 auto;padding:2.25rem 1.25rem 4rem">
+    <div class="step-dots">${dots}</div>
+    ${body}
+  </div>`;
+}
+
+function renderSetupPin() {
+  const isConfirm = ui.pinMode === 'setup-confirm';
+  return `<div class="setup-card" style="text-align:center">
+    <h2>${isConfirm ? 'Confirm Your PIN' : 'Create a Parent PIN'}</h2>
+    <p class="sc-sub">${isConfirm ? 'Enter the same 4-digit PIN again to confirm.' : 'Choose a 4-digit PIN. This protects your dashboard and approves reward redemptions. Keep it private from your child.'}</p>
+    <div class="pin-dots">${pinDots(ui.pinVal)}</div>
+    <div class="pin-pad">${pinPad('setupPin')}</div>
+    ${ui.pinErr ? `<p class="err" style="text-align:center;margin-top:.75rem">${esc(ui.pinErr)}</p>` : ''}
+    ${isConfirm ? `<button class="btn btn-ghost" data-a="setupPinReset" style="margin-top:.75rem">← Start over</button>` : ''}
+    <div style="margin-top:1.25rem"><button class="btn btn-ghost" data-a="backWelcome">Cancel setup</button></div>
+  </div>`;
+}
+
+function renderSetupRewards() {
+  const rows = db.rewards.map((r,i) => `
+    <div class="rb-row">
+      <input class="f-input" placeholder="🎁" value="${esc(r.emoji)}" data-a="setReward" data-f="emoji" data-i="${i}" style="text-align:center;font-size:1.1rem;padding:.55rem">
+      <input class="f-input" placeholder="Reward name" value="${esc(r.name)}" data-a="setReward" data-f="name" data-i="${i}" style="padding:.55rem">
+      <input class="f-input" type="number" min="1" max="99" value="${r.cost}" data-a="setReward" data-f="cost" data-i="${i}" style="text-align:center;padding:.55rem">
+      <button class="btn btn-ghost" data-a="removeReward" data-i="${i}" style="color:var(--red);padding:.3rem .5rem;font-size:1rem">✕</button>
+    </div>`).join('');
+
+  return `<div class="setup-card">
+    <h2>Set Up Rewards</h2>
+    <p class="sc-sub">Add rewards and how many tokens each one costs. Include at least one bigger reward that takes a few days to save up for — this builds goal-setting and money management skills.</p>
+    <div class="tip" style="margin-bottom:1.25rem">
+      <div class="tip-title">💡 Start Easy — Build Momentum First</div>
+      <div class="tip-body" style="margin-top:.4rem">
+        <p>When introducing this system, make it easy to win at first. Your child should be able to earn a small reward on day one. Early success builds the motivation to keep going. Once the routine is established, you can gradually increase the challenge.</p>
+      </div>
+    </div>
+    <label class="f-label">Rewards &nbsp;<span style="text-transform:none;font-weight:400;letter-spacing:0">(emoji · name · token cost)</span></label>
+    <div style="margin-bottom:.5rem">${rows}</div>
+    <button class="btn btn-outline btn-sm" data-a="addRewardSetup">+ Add Reward</button>
+    <div class="modal-actions" style="margin-top:1.5rem">
+      <button class="btn btn-ghost" data-a="stepBack">← Back</button>
+      <button class="btn btn-primary" data-a="stepNext">Next: Set Schedule →</button>
+    </div>
+  </div>`;
+}
+
+function renderSetupChores() {
+  const rows = db.chores.map((c,i) => {
+    const dds = DAY_NAMES.map((d,di) => `<div class="dc${c.days.includes(di)?' on':''}" data-a="setChoreDay" data-i="${i}" data-d="${di}">${d}</div>`).join('');
+    return `<div class="cb-row">
+      <div class="cb-row-top">
+        <input class="f-input" placeholder="📋" value="${esc(c.emoji)}" data-a="setChore" data-f="emoji" data-i="${i}" style="text-align:center;font-size:1rem;padding:.5rem">
+        <input class="f-input" placeholder="Task name" value="${esc(c.name)}" data-a="setChore" data-f="name" data-i="${i}" style="padding:.5rem">
+        <input class="f-input" type="number" min="1" max="20" value="${c.tokens}" data-a="setChore" data-f="tokens" data-i="${i}" style="text-align:center;padding:.5rem">
+        <button class="btn btn-ghost" data-a="removeChore" data-i="${i}" style="color:var(--red);padding:.3rem .5rem;font-size:1rem">✕</button>
+      </div>
+      <div class="cb-row-days"><span class="dc-lbl">Days:</span><div class="day-checks">${dds}</div></div>
+    </div>`;
+  }).join('');
+
+  return `<div class="setup-card">
+    <h2>Weekly Task Schedule</h2>
+    <p class="sc-sub">Choose which days each task appears. Daily habits show every day. Weekly chores like laundry can appear just once or twice a week.</p>
+    <label class="f-label">Tasks &nbsp;<span style="text-transform:none;font-weight:400;letter-spacing:0">(emoji · name · tokens)</span></label>
+    <div style="margin-bottom:.5rem">${rows}</div>
+    <button class="btn btn-outline btn-sm" data-a="addChoreSetup">+ Add Task</button>
+    <div class="f-row" style="margin-top:1.25rem;max-width:220px">
+      <label class="f-label">Child's Name <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <input class="f-input" id="childNameInp" value="${esc(db.childName)}" placeholder="Explorer">
+    </div>
+    <div class="modal-actions" style="margin-top:1.5rem">
+      <button class="btn btn-ghost" data-a="stepBack">← Back</button>
+      <button class="btn btn-green" data-a="finishSetup">Start the Chart 🚀</button>
+    </div>
+  </div>`;
+}
+
+function renderDaily() {
+  const dow = todayDow();
+  const todayChores = db.chores.filter(c => c.days.includes(dow));
+  const tkn = db.tokens;
+
+  const choreRows = todayChores.length === 0
+    ? `<div class="empty"><span class="empty-icon">✅</span>No tasks scheduled for today.</div>`
+    : todayChores.map(c => {
+        const done = db.completedToday[c.id] ? 'done' : '';
+        return `<div class="chore-row ${done}">
+          <div class="chore-cb" data-a="toggleChore" data-id="${c.id}">${done ? '✓' : ''}</div>
+          <span class="chore-em">${c.emoji}</span>
+          <span class="chore-name">${esc(c.name)}</span>
+          <span class="chore-badge">🪙 ${c.tokens}</span>
+        </div>`;
+      }).join('');
+
+  const rewardRows = db.rewards.map(r => {
+    const can = tkn >= r.cost;
+    return `<div class="reward-row">
+      <span class="reward-em">${r.emoji}</span>
+      <div class="reward-info">
+        <div class="reward-name">${esc(r.name)}</div>
+        <div class="reward-cost">🪙 ${r.cost} tokens${can ? '' : ` · need ${r.cost - tkn} more`}</div>
+      </div>
+      <div class="r-actions">
+        <span class="r-pill ${can ? 'can' : 'need'}">${can ? '✓ Ready' : `Save ${r.cost - tkn}`}</span>
+        ${can ? `<button class="btn btn-primary btn-sm" data-a="redeemReward" data-id="${r.id}">Redeem</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const tipBody = ui.tipOpen ? `<div class="tip-body">
+    <p><strong>Start easy so they win early.</strong> When first introducing this system, assign tasks your child can already do or nearly do. Early wins create the motivation to keep going. Once the habit is established, gradually add harder challenges.</p>
+    <p><strong>Saving tokens is a skill.</strong> The bigger the reward, the more tokens it costs. Talk about how saving across multiple days gets them something even better — this is money management in action.</p>
+    <p><strong>Mix daily and weekly tasks.</strong> Daily tasks build habits. Weekly chores like laundry teach responsibility without overwhelm.</p>
+    <p><strong>Tokens never expire.</strong> Unspent tokens roll over to the next day automatically. Encourage saving for the bigger reward!</p>
+  </div>` : '';
+
+  return `<div class="wrap">
+    <div class="day-hd">
+      <div>
+        <h2>${esc(db.childName)}'s Chart</h2>
+        <div class="date">${todayLabel()}</div>
+      </div>
+      <button class="btn btn-outline btn-sm" data-a="openParent">Parent Dashboard 🔒</button>
+    </div>
+
+    <div class="bank">
+      <div class="bank-lbl">Token Bank</div>
+      <div class="bank-num">${tkn}</div>
+      <div class="bank-sub">${tkn === 1 ? '1 token' : tkn + ' tokens'} saved up · carry over every day</div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-hd" data-a="toggleTip">
+        <span class="tip-title">💡 Tips for Caregivers</span>
+        <span class="tip-tog">${ui.tipOpen ? '▲ Hide' : '▼ Show'}</span>
+      </div>
+      ${tipBody}
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Today's Tasks</h2>
+        <span style="font-size:.78rem;color:var(--text-light)">Tap to complete</span>
+      </div>
+      <div class="card-body">${choreRows}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Rewards</h2>
+        <span style="font-size:.78rem;color:var(--text-light)">Tokens carry over!</span>
+      </div>
+      <div class="card-body">${rewardRows}</div>
+    </div>
+
+    <p style="font-size:.75rem;color:var(--text-light);text-align:center;margin-top:1rem;line-height:1.6">
+      Data is saved on this device only. Completed tasks reset each day — tokens never expire.
+    </p>
+  </div>`;
+}
+
+function renderParent() {
+  const t = ui.parentTab;
+  const tabs = ['chores','rewards','tokens','settings'].map(id =>
+    `<button class="tab${t===id?' on':''}" data-a="setTab" data-tab="${id}">${id==='chores'?'Tasks':id.charAt(0).toUpperCase()+id.slice(1)}</button>`
+  ).join('');
+
+  return `<div class="wrap">
+    <div class="day-hd">
+      <div><h2>Parent Dashboard</h2><div class="date">Manage chart settings</div></div>
+      <button class="btn btn-ghost" data-a="closeParent">← Back to Chart</button>
+    </div>
+    <div class="tabs">${tabs}</div>
+    ${t==='chores' ? renderParentChores() : ''}
+    ${t==='rewards' ? renderParentRewards() : ''}
+    ${t==='tokens' ? renderParentTokens() : ''}
+    ${t==='settings' ? renderParentSettings() : ''}
+  </div>`;
+}
+
+function renderParentChores() {
+  const rows = db.chores.map(c => {
+    const dds = DAY_NAMES.map((d,di) =>
+      `<div class="dc${c.days.includes(di)?' on':''}" data-a="toggleChoreDay" data-id="${c.id}" data-d="${di}">${d}</div>`
+    ).join('');
+    return `<div class="cb-row">
+      <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
+        <span style="font-size:1.3rem">${c.emoji}</span>
+        <span style="flex:1;font-weight:600;font-size:.9rem">${esc(c.name)}</span>
+        <span class="chore-badge">🪙 ${c.tokens}</span>
+        <button class="btn btn-ghost btn-sm" data-a="editChore" data-id="${c.id}">Edit</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--red)" data-a="delChore" data-id="${c.id}">✕</button>
+      </div>
+      <div class="cb-row-days"><span class="dc-lbl">Days:</span><div class="day-checks">${dds}</div></div>
+    </div>`;
+  }).join('');
+
+  return `<div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem">
+      <p style="font-size:.85rem;color:var(--text-light)">Toggle day squares to change when each task appears.</p>
+      <button class="btn btn-primary btn-sm" data-a="addChore">+ Add Task</button>
+    </div>
+    ${db.chores.length === 0 ? '<div class="empty"><span class="empty-icon">📋</span>No tasks yet. Add one above.</div>' : rows}
+  </div>`;
+}
+
+function renderParentRewards() {
+  const rows = db.rewards.map(r => `
+    <div class="reward-row">
+      <span class="reward-em">${r.emoji}</span>
+      <div class="reward-info">
+        <div class="reward-name">${esc(r.name)}</div>
+        <div class="reward-cost">🪙 ${r.cost} tokens</div>
+      </div>
+      <div class="r-actions">
+        <button class="btn btn-ghost btn-sm" data-a="editReward" data-id="${r.id}">Edit</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--red)" data-a="delReward" data-id="${r.id}">✕</button>
+      </div>
+    </div>`).join('');
+
+  return `<div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem">
+      <p style="font-size:.85rem;color:var(--text-light)">Tip: include one bigger reward that requires saving across several days.</p>
+      <button class="btn btn-primary btn-sm" data-a="addReward">+ Add Reward</button>
+    </div>
+    ${db.rewards.length === 0 ? '<div class="empty"><span class="empty-icon">🎁</span>No rewards yet.</div>'
+      : `<div class="card"><div class="card-body">${rows}</div></div>`}
+  </div>`;
+}
+
+function renderParentTokens() {
+  return `<div>
+    <div class="bank" style="max-width:300px;margin:0 auto 1.5rem">
+      <div class="bank-lbl">Current Token Bank</div>
+      <div class="bank-num">${db.tokens}</div>
+      <div class="bank-sub">${esc(db.childName)}'s tokens</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Adjust Tokens</h2></div>
+      <div class="card-body">
+        <p style="font-size:.85rem;color:var(--text-light);margin-bottom:1rem">Add or subtract tokens manually. Use this to correct a mistake or give a bonus.</p>
+        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:110px">
+            <label class="f-label">Amount</label>
+            <input class="f-input" type="number" id="tkAdj" value="0" min="-999" max="999" style="font-size:1.1rem;text-align:center">
+          </div>
+          <button class="btn btn-primary" data-a="applyTkAdj">Apply</button>
+          <button class="btn btn-red btn-sm" data-a="resetTokens">Reset to 0</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderParentSettings() {
+  return `<div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-head"><h2>Child's Name</h2></div>
+      <div class="card-body">
+        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1"><label class="f-label">Name on chart</label>
+            <input class="f-input" id="nameInp" value="${esc(db.childName)}" placeholder="Explorer"></div>
+          <button class="btn btn-primary" data-a="saveName">Save</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-head"><h2>Change PIN</h2></div>
+      <div class="card-body">
+        <p style="font-size:.85rem;color:var(--text-light);margin-bottom:1rem">You will verify your current PIN before setting a new one.</p>
+        <button class="btn btn-outline" data-a="changePin">Change Parent PIN</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2 style="color:var(--red)">Reset Everything</h2></div>
+      <div class="card-body">
+        <p style="font-size:.85rem;color:var(--text-light);margin-bottom:1rem">Deletes all tasks, rewards, tokens, and your PIN. Cannot be undone.</p>
+        <button class="btn btn-red" data-a="resetAll">Reset &amp; Start Over</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// MODALS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderPinModal() {
+  const isRedeem = ui.pinMode === 'redeem';
+  const isSetup = ui.pinMode === 'setup' || ui.pinMode === 'setup-confirm';
+  const r = ui.pinTarget;
+
+  let title = 'Parent PIN';
+  let sub = 'Enter your 4-digit PIN to continue.';
+  if (isRedeem && r) {
+    title = `Approve: ${r.emoji} ${esc(r.name)}`;
+    sub = `This costs <strong>${r.cost} tokens</strong>. ${esc(db.childName)} will have <strong>${db.tokens - r.cost}</strong> remaining. Enter your PIN to confirm.`;
+  }
+
+  return `<div class="modal-bg">
+    <div class="modal-box" style="text-align:center">
+      <h3>${title}</h3>
+      <p class="modal-sub">${sub}</p>
+      <div class="pin-dots">${pinDots(ui.pinVal)}</div>
+      <div class="pin-pad">${pinPad('pinKey')}</div>
+      ${ui.pinErr ? `<p class="err" style="text-align:center;margin-top:.75rem">${esc(ui.pinErr)}</p>` : ''}
+      <button class="btn btn-ghost" data-a="cancelPin" style="margin-top:1rem">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function renderEditReward() {
+  const r = ui.editReward;
+  const isNew = r.id === '';
+  return `<div class="modal-bg">
+    <div class="modal-box">
+      <h3>${isNew ? 'Add Reward' : 'Edit Reward'}</h3>
+      <div class="f-row">
+        <label class="f-label">Emoji</label>
+        <input class="f-input" id="erEmoji" value="${esc(r.emoji)}" placeholder="🎁" style="font-size:1.2rem;text-align:center;max-width:80px">
+      </div>
+      <div class="f-row">
+        <label class="f-label">Reward Name</label>
+        <input class="f-input" id="erName" value="${esc(r.name)}" placeholder="e.g. 10 min iPad">
+      </div>
+      <div class="f-row">
+        <label class="f-label">Token Cost</label>
+        <input class="f-input" id="erCost" type="number" min="1" max="99" value="${r.cost}" style="max-width:120px;text-align:center">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-a="cancelEditR">Cancel</button>
+        <button class="btn btn-primary" data-a="saveEditR">${isNew ? 'Add Reward' : 'Save Changes'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderEditChore() {
+  const c = ui.editChore;
+  const isNew = c.id === '';
+  const dds = DAY_NAMES.map((d,di) =>
+    `<div class="dc${c.days.includes(di)?' on':''}" data-a="toggleEditChoreDay" data-d="${di}">${d}</div>`
+  ).join('');
+  return `<div class="modal-bg">
+    <div class="modal-box">
+      <h3>${isNew ? 'Add Task' : 'Edit Task'}</h3>
+      <div class="f-row">
+        <label class="f-label">Emoji</label>
+        <input class="f-input" id="ecEmoji" value="${esc(c.emoji)}" placeholder="📋" style="font-size:1.2rem;text-align:center;max-width:80px">
+      </div>
+      <div class="f-row">
+        <label class="f-label">Task Name</label>
+        <input class="f-input" id="ecName" value="${esc(c.name)}" placeholder="e.g. Brush teeth">
+      </div>
+      <div class="f-row">
+        <label class="f-label">Tokens Earned</label>
+        <input class="f-input" id="ecTokens" type="number" min="1" max="20" value="${c.tokens}" style="max-width:120px;text-align:center">
+      </div>
+      <div class="f-row">
+        <label class="f-label">Which Days</label>
+        <div class="day-checks" style="margin-top:.4rem">${dds}</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-a="cancelEditC">Cancel</button>
+        <button class="btn btn-primary" data-a="saveEditC">${isNew ? 'Add Task' : 'Save Changes'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// PIN LOGIC
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function handleSetupPinKey(k) {
+  if (k === '⌫') { ui.pinVal = ui.pinVal.slice(0,-1); ui.pinErr = ''; }
+  else if (ui.pinVal.length < 4) {
+    ui.pinVal += k;
+    if (ui.pinVal.length === 4) {
+      if (ui.pinMode !== 'setup-confirm') {
+        ui.pinFirst = ui.pinVal;
+        ui.pinVal = '';
+        ui.pinMode = 'setup-confirm';
+      } else {
+        if (ui.pinVal === ui.pinFirst) {
+          db.pin = ui.pinVal;
+          ui.pinVal = ''; ui.pinFirst = ''; ui.pinMode = null; ui.pinErr = '';
+          ui.step = 1;
+        } else {
+          ui.pinErr = 'PINs did not match. Try again.';
+          ui.pinVal = ''; ui.pinMode = 'setup';
+        }
+      }
+    }
+  }
+  render();
+}
+
+function handlePinKey(k) {
+  if (k === '⌫') { ui.pinVal = ui.pinVal.slice(0,-1); ui.pinErr = ''; }
+  else if (ui.pinVal.length < 4) {
+    ui.pinVal += k;
+    if (ui.pinVal.length === 4) {
+      if (ui.pinVal === db.pin) {
+        const mode = ui.pinMode;
+        const target = ui.pinTarget;
+        ui.pinVal = ''; ui.pinErr = ''; ui.pinMode = null; ui.pinTarget = null;
+        if (mode === 'access') { ui.view = 'parent'; }
+        else if (mode === 'redeem' && target) {
+          db.tokens = Math.max(0, db.tokens - target.cost);
+          saveDB();
+          toast(`${target.emoji} Reward approved! ${target.cost} tokens spent.`);
+        } else if (mode === 'change-pin') {
+          ui.pinMode = 'setup'; ui.step = 0; ui.view = 'setup'; db.pin = '';
+        }
+      } else {
+        ui.pinErr = 'Incorrect PIN. Try again.';
+        ui.pinVal = '';
+      }
+    }
+  }
+  render();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// EVENT HANDLER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]');
+  if (!el) return;
+  const a = el.dataset.a;
+
+  switch(a) {
+    // Welcome / Setup nav
+    case 'goSetup': ui.view='setup'; ui.step=0; ui.pinMode='setup'; ui.pinVal=''; ui.pinFirst=''; ui.pinErr=''; render(); break;
+    case 'backWelcome': ui.view='welcome'; ui.pinMode=null; ui.pinVal=''; render(); break;
+    case 'setupPinReset': ui.pinMode='setup'; ui.pinVal=''; ui.pinFirst=''; ui.pinErr=''; render(); break;
+    case 'stepBack': if(ui.step>0){ui.step--;}else{ui.view='welcome';} render(); break;
+    case 'stepNext': ui.step=2; render(); break;
+    case 'finishSetup': {
+      const n = document.getElementById('childNameInp');
+      if (n) db.childName = n.value.trim() || 'Explorer';
+      db.setupDone = true; saveDB();
+      ui.view='daily'; render(); toast('Chart ready! 🚀'); break;
+    }
+
+    // Setup PIN keypad
+    case 'setupPin': handleSetupPinKey(el.dataset.k); break;
+
+    // Setup rewards
+    case 'addRewardSetup': db.rewards.push({id:uid(),emoji:'🎁',name:'',cost:5}); render(); break;
+    case 'removeReward': { const i=parseInt(el.dataset.i); db.rewards.splice(i,1); render(); break; }
+
+    // Setup chores
+    case 'addChoreSetup': db.chores.push({id:uid(),emoji:'📋',name:'',tokens:2,days:[0,1,2,3,4,5,6]}); render(); break;
+    case 'removeChore': { const i=parseInt(el.dataset.i); db.chores.splice(i,1); render(); break; }
+    case 'setChoreDay': {
+      const i=parseInt(el.dataset.i), d=parseInt(el.dataset.d);
+      const c=db.chores[i]; if(!c) break;
+      if(c.days.includes(d)) c.days=c.days.filter(x=>x!==d); else{c.days.push(d);c.days.sort((a,b)=>a-b);}
+      render(); break;
+    }
+
+    // Daily view
+    case 'toggleChore': {
+      const id=el.dataset.id; const c=db.chores.find(x=>x.id===id); if(!c) break;
+      if(db.completedToday[id]){delete db.completedToday[id];db.tokens=Math.max(0,db.tokens-c.tokens);}
+      else{db.completedToday[id]=true;db.tokens+=c.tokens;}
+      saveDB(); render(); break;
+    }
+    case 'toggleTip': ui.tipOpen=!ui.tipOpen; render(); break;
+    case 'openParent': ui.pinMode='access'; ui.pinVal=''; ui.pinErr=''; render(); break;
+    case 'redeemReward': {
+      const id=el.dataset.id; const r=db.rewards.find(x=>x.id===id); if(!r) break;
+      if(db.tokens < r.cost) break;
+      ui.pinMode='redeem'; ui.pinTarget=r; ui.pinVal=''; ui.pinErr=''; render(); break;
+    }
+
+    // PIN modal
+    case 'pinKey': handlePinKey(el.dataset.k); break;
+    case 'cancelPin': ui.pinMode=null; ui.pinVal=''; ui.pinErr=''; ui.pinTarget=null; render(); break;
+
+    // Parent dashboard
+    case 'closeParent': ui.view='daily'; render(); break;
+    case 'setTab': ui.parentTab=el.dataset.tab; render(); break;
+
+    case 'toggleChoreDay': {
+      const id=el.dataset.id, d=parseInt(el.dataset.d);
+      const c=db.chores.find(x=>x.id===id); if(!c) break;
+      if(c.days.includes(d)) c.days=c.days.filter(x=>x!==d); else{c.days.push(d);c.days.sort((a,b)=>a-b);}
+      saveDB(); render(); break;
+    }
+    case 'addChore': ui.editChore={id:'',emoji:'📋',name:'',tokens:2,days:[0,1,2,3,4,5,6]}; render(); break;
+    case 'editChore': { const c=db.chores.find(x=>x.id===el.dataset.id); if(c) ui.editChore={...c,days:[...c.days]}; render(); break; }
+    case 'delChore': { if(confirm('Remove this task?')){db.chores=db.chores.filter(c=>c.id!==el.dataset.id);saveDB();render();} break; }
+
+    case 'addReward': ui.editReward={id:'',emoji:'🎁',name:'',cost:5}; render(); break;
+    case 'editReward': { const r=db.rewards.find(x=>x.id===el.dataset.id); if(r) ui.editReward={...r}; render(); break; }
+    case 'delReward': { if(confirm('Remove this reward?')){db.rewards=db.rewards.filter(r=>r.id!==el.dataset.id);saveDB();render();} break; }
+
+    case 'applyTkAdj': {
+      const val=parseInt(document.getElementById('tkAdj')?.value)||0;
+      db.tokens=Math.max(0,db.tokens+val); saveDB(); render();
+      toast(`Tokens adjusted by ${val>0?'+':''}${val}`); break;
+    }
+    case 'resetTokens': { if(confirm('Reset token bank to 0?')){db.tokens=0;saveDB();render();toast('Token bank reset to 0');} break; }
+    case 'saveName': {
+      const n=document.getElementById('nameInp')?.value.trim()||'Explorer';
+      db.childName=n; saveDB(); render(); toast('Name saved!'); break;
+    }
+    case 'changePin': { ui.pinMode='change-pin'; ui.pinVal=''; ui.pinErr=''; render(); break; }
+    case 'resetAll': {
+      if(confirm('This will delete everything. Are you sure?')) {
+        localStorage.removeItem(KEY); db=DB_DEFAULT();
+        ui={view:'welcome',step:0,tipOpen:false,parentTab:'chores',pinMode:null,pinVal:'',pinFirst:'',pinErr:'',pinTarget:null,editReward:null,editChore:null};
+        render(); toast('Reset complete.');
+      } break;
+    }
+
+    // Edit chore modal
+    case 'toggleEditChoreDay': {
+      const d=parseInt(el.dataset.d); if(!ui.editChore) break;
+      if(ui.editChore.days.includes(d)) ui.editChore.days=ui.editChore.days.filter(x=>x!==d);
+      else{ui.editChore.days.push(d);ui.editChore.days.sort((a,b)=>a-b);}
+      render(); break;
+    }
+    case 'saveEditC': {
+      const emoji=document.getElementById('ecEmoji')?.value.trim()||'📋';
+      const name=document.getElementById('ecName')?.value.trim()||'';
+      const tokens=parseInt(document.getElementById('ecTokens')?.value)||2;
+      if(!name){alert('Please enter a task name.');break;}
+      if(ui.editChore.id===''){db.chores.push({id:uid(),emoji,name,tokens,days:[...ui.editChore.days]});}
+      else{const i=db.chores.findIndex(c=>c.id===ui.editChore.id);if(i>=0)db.chores[i]={id:ui.editChore.id,emoji,name,tokens,days:[...ui.editChore.days]};}
+      saveDB(); ui.editChore=null; render(); toast('Task saved!'); break;
+    }
+    case 'cancelEditC': ui.editChore=null; render(); break;
+
+    // Edit reward modal
+    case 'saveEditR': {
+      const emoji=document.getElementById('erEmoji')?.value.trim()||'🎁';
+      const name=document.getElementById('erName')?.value.trim()||'';
+      const cost=parseInt(document.getElementById('erCost')?.value)||5;
+      if(!name){alert('Please enter a reward name.');break;}
+      if(ui.editReward.id===''){db.rewards.push({id:uid(),emoji,name,cost});}
+      else{const i=db.rewards.findIndex(r=>r.id===ui.editReward.id);if(i>=0)db.rewards[i]={id:ui.editReward.id,emoji,name,cost};}
+      saveDB(); ui.editReward=null; render(); toast('Reward saved!'); break;
+    }
+    case 'cancelEditR': ui.editReward=null; render(); break;
+  }
+});
+
+// Input handlers for inline setup forms
+document.addEventListener('input', e => {
+  const el = e.target;
+  const a = el.dataset.a;
+  if (!a) return;
+  if (a === 'setReward') {
+    const i=parseInt(el.dataset.i), f=el.dataset.f;
+    if(db.rewards[i]) db.rewards[i][f] = f==='cost'?(parseInt(el.value)||1):el.value;
+  } else if (a === 'setChore') {
+    const i=parseInt(el.dataset.i), f=el.dataset.f;
+    if(db.chores[i]) db.chores[i][f] = f==='tokens'?(parseInt(el.value)||1):el.value;
+  }
+});
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// INIT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+checkDate();
+ui.view = db.setupDone ? 'daily' : 'welcome';
+render();
+</script>
+</body>
+</html>
