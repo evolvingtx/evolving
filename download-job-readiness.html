@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Download | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #5C4490;
+      --purple-light: #9B88C4;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #3E2D6E;
+      --cream:        #FDFBF9;
+      --text:         #1E1830;
+      --text-light:   #5A4E72;
+      --green:        #4A8C6F;
+      --green-pale:   #E8F5EF;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 1.25rem;
+      padding: 3rem 2.75rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 4px 28px rgba(92,68,144,0.1);
+      border: 1px solid rgba(92,68,144,0.12);
+      text-align: center;
+    }
+
+    .brand {
+      font-family: var(--ff-display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--purple-deep);
+      margin-bottom: 0.2rem;
+      letter-spacing: 0.06em;
+    }
+
+    .brand-tag {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-bottom: 1.75rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+
+    .check {
+      width: 60px;
+      height: 60px;
+      background: var(--green-pale);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 1.8rem;
+    }
+
+    .thanks {
+      font-family: var(--ff-display);
+      font-size: 1.7rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-bottom: 0.4rem;
+    }
+
+    .thanks-sub {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 1.75rem;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 1.2rem;
+      background: var(--purple);
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 0.75rem;
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 1.25rem;
+    }
+
+    .download-btn:hover {
+      background: var(--purple-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(92,68,144,0.2);
+    }
+
+    .note {
+      background: var(--cream);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      border: 1px solid rgba(92,68,144,0.12);
+    }
+
+    .note strong {
+      color: var(--text);
+    }
+
+    .back-link {
+      font-size: 0.85rem;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--purple-deep);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 560px) {
+      .card { padding: 2rem 1.5rem; }
+      .brand { font-size: 1.1rem; }
+      .thanks { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="brand">Evolving Therapy & Wellness</div>
+    <div class="brand-tag">Job Readiness Interactive Workbook</div>
+
+    <div class="check">✓</div>
+    
+    <div class="thanks">Download Ready!</div>
+    <div class="thanks-sub">Your Job Readiness Interactive Workbook is ready to download. Click below to save the PDF to your device.</div>
+
+    <a href="https://evolving-therapy-wellness.netlify.app/Job_Readiness_Interactive_Workbook.pdf" download class="download-btn">
+      📥 Download Workbook
+    </a>
+
+    <div class="note">
+      <strong>What's inside:</strong> Job readiness skills, interview prep, workplace communication, problem-solving, and professional behavior strategies for transition-age youth and young adults.
+    </div>
+
+    <div class="note">
+      <strong>💡 Tip:</strong> Save this file to your computer or cloud storage. You can print it, fill it digitally, or use it as a reference guide in sessions.
+    </div>
+
+    <p style="font-size: 0.8rem; color: var(--text-light);">Questions? <a href="mailto:admin@evolve-OT.com" style="color: var(--purple); text-decoration: none;">Contact us</a></p>
+  </div>
+</body>
+</html>

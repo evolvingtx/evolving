@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refer a Patient | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --purple: #5C4490; --purple-light: #9B88C4; --purple-pale: #EDE8F5; --purple-deep: #3E2D6E;
+      --cream: #FDFBF9; --warm-white: #F7F4FB; --text: #1E1830; --text-light: #5A4E72;
+      --ff-display: 'Cormorant Garamond', Georgia, serif; --ff-body: 'Jost', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--ff-body); background: var(--cream); color: var(--text); }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center;
+      justify-content: space-between; padding: 1.2rem 4rem; background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px); border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo-circle { width: 36px; height: 36px; border: 1.5px solid var(--purple-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+    .nav-logo-circle::before { content: ''; position: absolute; width: 28px; height: 28px; border: 1px solid var(--purple-pale); border-radius: 50%; }
+    .nav-logo-text { font-family: var(--ff-display); font-size: 1.1rem; font-weight: 500; color: var(--purple); letter-spacing: 0.08em; text-transform: uppercase; }
+    .nav-logo-sub { font-family: var(--ff-body); font-size: 0.62rem; font-weight: 300; color: var(--purple-light); letter-spacing: 0.2em; text-transform: uppercase; display: block; margin-top: -2px; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-family: var(--ff-body); font-size: 0.78rem; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--purple); }
+    main { margin-top: 100px; padding: 4rem; max-width: 700px; margin-left: auto; margin-right: auto; }
+    .page-header { text-align: center; margin-bottom: 2.5rem; }
+    .page-header h1 { font-family: var(--ff-display); font-size: 2.5rem; font-weight: 300; color: var(--text); margin-bottom: 0.5rem; }
+    .page-header p { font-size: 1rem; color: var(--text-light); line-height: 1.7; }
+    .form-container {
+      background: white; border: 1px solid rgba(92,68,144,0.12); border-radius: 1.25rem;
+      padding: 2rem; margin-bottom: 2rem;
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label { display: block; font-family: var(--ff-body); font-size: 0.9rem; font-weight: 500; color: var(--text); margin-bottom: 0.5rem; }
+    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], select, textarea {
+      width: 100%; padding: 0.75rem 1rem; border: 1px solid rgba(92,68,144,0.15); border-radius: 0.75rem;
+      font-family: var(--ff-body); font-size: 0.95rem; color: var(--text);
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(92,68,144,0.1);
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    .btn-submit {
+      width: 100%; padding: 1rem; background: var(--purple); color: white; border: none;
+      border-radius: 0.75rem; font-family: var(--ff-body); font-size: 1rem; font-weight: 500;
+      cursor: pointer; transition: all 0.3s;
+    }
+    .btn-submit:hover { background: var(--purple-deep); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(92,68,144,0.2); }
+    footer {
+      background: var(--purple-deep); color: rgba(255,255,255,0.6); padding: 2rem 4rem; text-align: center; margin-top: 4rem;
+    }
+    footer a { color: rgba(255,255,255,0.8); text-decoration: none; }
+    .footer-logo { font-family: var(--ff-display); font-size: 1.2rem; font-weight: 500; color: white; margin-bottom: 1rem; }
+    @media (max-width: 560px) {
+      nav { padding: 1rem 1.5rem; } .nav-links { display: none; } main { padding: 1.5rem; margin-top: 70px; }
+      .page-header h1 { font-size: 1.6rem; } footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Refer a Patient</h1>
+      <p>Know a child who could benefit from pediatric therapy? We'd love to help. Send us a referral and we'll contact the family within one business day.</p>
+    </div>
+
+    <div class="form-container">
+      <form action="mailto:admin@evolve-OT.com?subject=Patient%20Referral" method="post" enctype="text/plain">
+        
+        <h3 style="font-family: var(--ff-display); font-size: 1.2rem; color: var(--purple); margin-bottom: 1.5rem;">Child's Information</h3>
+
+        <div class="form-group">
+          <label class="form-label">Child's Name *</label>
+          <input type="text" name="child_name" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Date of Birth *</label>
+          <input type="date" name="dob" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Therapy Needed (check all that apply)</label>
+          <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="display: flex; align-items: center; font-weight: 400;"><input type="checkbox" name="therapy_ot" /> Occupational Therapy (OT)</label>
+            <label style="display: flex; align-items: center; font-weight: 400;"><input type="checkbox" name="therapy_slp" /> Speech-Language Pathology (SLP)</label>
+            <label style="display: flex; align-items: center; font-weight: 400;"><input type="checkbox" name="therapy_pt" /> Physical Therapy (PT)</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Areas of Concern</label>
+          <textarea name="concerns" placeholder="e.g., fine motor skills, speech delay, coordination, sensory processing, etc."></textarea>
+        </div>
+
+        <h3 style="font-family: var(--ff-display); font-size: 1.2rem; color: var(--purple); margin-top: 2rem; margin-bottom: 1.5rem;">Referral Source Information</h3>
+
+        <div class="form-group">
+          <label class="form-label">Your Name *</label>
+          <input type="text" name="referrer_name" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Title/Role</label>
+          <input type="text" name="referrer_title" placeholder="e.g., Pediatrician, Teacher, School Counselor, Parent" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Email *</label>
+          <input type="email" name="referrer_email" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Phone Number</label>
+          <input type="tel" name="referrer_phone" />
+        </div>
+
+        <h3 style="font-family: var(--ff-display); font-size: 1.2rem; color: var(--purple); margin-top: 2rem; margin-bottom: 1.5rem;">Parent/Caregiver Contact</h3>
+
+        <div class="form-group">
+          <label class="form-label">Parent/Guardian Name *</label>
+          <input type="text" name="parent_name" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Parent/Guardian Email</label>
+          <input type="email" name="parent_email" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Parent/Guardian Phone *</label>
+          <input type="tel" name="parent_phone" required />
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Referral</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-top: 1rem;">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+</body>
+</html>
