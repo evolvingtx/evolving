@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Handwriting Skills: Developmental Chart | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #5C4490;
+      --purple-light: #9B88C4;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #3E2D6E;
+      --cream:        #FDFBF9;
+      --warm-white:   #F7F4FB;
+      --text:         #1E1830;
+      --text-light:   #5A4E72;
+      --green:        #4A8C6F;
+      --green-pale:   #E8F5EF;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123, 101, 164, 0.08); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* MAIN */
+    main {
+      margin-top: 80px;
+      padding: 4rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .meta {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(92, 68, 144, 0.15);
+    }
+
+    /* CONTENT */
+    .content {
+      background: white;
+      border: 1px solid rgba(92, 68, 144, 0.12);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .content h2 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--purple-pale);
+    }
+
+    .content h2:first-child { margin-top: 0; }
+
+    .content h3 {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content p {
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .content ul {
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .content li {
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .content th, .content td {
+      border: 1px solid rgba(92, 68, 144, 0.15);
+      padding: 1rem;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--purple-pale);
+      font-weight: 600;
+      color: var(--purple-deep);
+    }
+
+    .content tr:nth-child(even) {
+      background: var(--warm-white);
+    }
+
+    /* DOWNLOAD SECTION */
+    .download-section {
+      text-align: center;
+      padding: 2rem;
+      background: var(--purple-pale);
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .download-section h3 {
+      font-size: 1.2rem;
+      color: var(--purple-deep);
+      margin-bottom: 1rem;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: var(--purple);
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 0.75rem;
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .download-btn:hover {
+      background: var(--purple-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(92, 68, 144, 0.2);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--purple-deep); }
+
+    /* FOOTER */
+    footer {
+      background: var(--purple-deep);
+      color: rgba(255,255,255,0.6);
+      padding: 2rem 4rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: white; }
+
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links li { font-size: 0.85rem; }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      main { padding: 2rem; }
+      .content { padding: 1.5rem; }
+    }
+
+    @media (max-width: 560px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      main { padding: 1.5rem; margin-top: 70px; }
+      .page-header h1 { font-size: 1.8rem; }
+      .content { padding: 1.25rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <a href="blog.html" class="back-link">← Back to Blog</a>
+
+    <div class="page-header">
+      <h1>Handwriting Skills: Developmental Chart</h1>
+      <p>Pre-writing strokes, pencil grasp development, and letter formation sequences based on Handwriting Without Tears framework.</p>
+      <div class="meta">Fine Motor • Development • Ages 1-5</div>
+    </div>
+
+    <div class="content">
+      <h2>How to Use This Chart</h2>
+      <p>Handwriting is a developmental skill. Children move through predictable stages. Rushing the process leads to compensatory habits that are very difficult to undo. Use this chart to identify where your child is and what comes next.</p>
+
+      <h2>Pre-Writing Stroke Development (Ages 1-5)</h2>
+      <p>Universal sequence: vertical, horizontal, circle, cross, square, diagonals, triangle. A child must be able to copy each stroke before formal letter instruction begins.</p>
+
+      <h3>Ages 1-2 Years: Random Scribbling</h3>
+      <p><strong>The Stroke:</strong> Spontaneous marks on paper. Crayon held in full fist. The goal is simply exploring and seeing marks appear. This is the true foundation.</p>
+      <p><strong>How to Support:</strong> Large crayons, chalk, or finger paint on unlined paper, chalkboard, vertical surfaces (easel or wall).</p>
+
+      <h3>Around 2 Years: Imitated Vertical Line</h3>
+      <p><strong>The Stroke:</strong> Child watches an adult draw a line, then imitates it. This is the first controlled, directional stroke.</p>
+      <p><strong>How to Support:</strong> "Down, down, down" — narrate the direction. Try finger in sand or shaving cream. Use large thick markers or water on a fence.</p>
+
+      <h3>Around 2.5 Years: Imitated Horizontal Line</h3>
+      <p><strong>The Stroke:</strong> Child imitates a side-to-side stroke after watching. Slightly harder than vertical because it requires controlled arm movement across the body.</p>
+      <p><strong>How to Support:</strong> "Across, across, across" — narrate the motion. Paint on flat horizontal surfaces or make full-arm chalk strokes on sidewalks.</p>
+
+      <h3>Around 2.5-3 Years: Imitated Circle</h3>
+      <p><strong>The Stroke:</strong> Child imitates a circular stroke. In Handwriting Without Tears, circles always start at the top and go counterclockwise.</p>
+      <p><strong>How to Support:</strong> "Big C that closes" — narrate the motion. Trace circles in sand or playdough. Make large sponge paintings in circular strokes.</p>
+
+      <h3>Around 3-3.5 Years: Copied Cross</h3>
+      <p><strong>The Stroke:</strong> Child copies a cross from a finished drawing. This is the first true copying milestone. Requires combining vertical and horizontal lines.</p>
+      <p><strong>How to Support:</strong> Train tracks or road stickers in plus shapes. Connect two dots in a cross shape. Arrange popsicle sticks into a cross.</p>
+
+      <h3>Around 3.5-4 Years: Copied Square</h3>
+      <p><strong>The Stroke:</strong> Requires connecting four lines at corners and stopping precisely. Precursor to letters with corners: E, F, H, L, T.</p>
+      <p><strong>How to Support:</strong> Build squares from sticks or blocks first. Trace square shapes with a finger. Draw houses (square base and triangle roof).</p>
+
+      <h3>Around 4-4.5 Years: Copied Diagonal Lines</h3>
+      <p><strong>The Strokes:</strong> Diagonals are the most difficult pre-writing strokes and the last to develop. Prerequisites for letters V, W, X, K, Z.</p>
+      <p><strong>How to Support:</strong> Practice on a vertical chalkboard. Connect two diagonal dots with a marker. Use full arm movement first, then reduce.</p>
+
+      <h3>Around 4.5-5 Years: Copied Triangle</h3>
+      <p><strong>The Stroke:</strong> Combines diagonal and horizontal lines with accurate corners at all three points. The most complex pre-writing shape and a signal that the child is ready for formal letter instruction.</p>
+      <p><strong>How to Support:</strong> Build triangles with pattern blocks or sticks. Trace sandpaper triangles with a finger. Narrate: "Slant down right, slant down left, across."</p>
+
+      <h2>Pencil Grasp Development</h2>
+      <p>All stages below are age-appropriate in their developmental window. Correcting a grasp before the hand has the strength for the mature grip creates tension and resistance. A functional grip by age 5-6 is the goal.</p>
+
+      <h3>18 months - 2 years: Palmar-Supinate</h3>
+      <p>Whole fist grip. Crayon held in palm with forearm rotated inward. Arm moves as one unit. <strong>This is normal and expected at this age.</strong></p>
+
+      <h3>2-3 years: Digital-Pronate</h3>
+      <p>Fingers begin to take over from the whole arm. Wrist still pronated (palm-down). Development is actively in progress.</p>
+
+      <h3>3-3.5 years: 4-Finger Static Tripod</h3>
+      <p>Crayon between thumb, index, and middle fingers. Grip is static, meaning the fingers do not yet move independently.</p>
+
+      <h3>3.5-4.5 years: Transitional Grips</h3>
+      <p>Child experiments with various grips. Lateral tripod, quadropod, and others are common and reflect normal development of hand coordination.</p>
+
+      <h3>4.5-6 years: Dynamic Tripod (Mature)</h3>
+      <p>Pencil rests on pads of thumb, index, and middle fingers. Ring and pinky fingers tucked in. Fingers move independently. Wrist rests on paper. <strong>This is the functional target.</strong></p>
+
+      <h2>The Three Writing Zones</h2>
+      <p>Handwriting Without Tears uses a three-zone model to teach letter placement. Children must internalize these zones before letter sizing and line adherence can become consistent.</p>
+
+      <p><strong>Tall Zone:</strong> Above the midline. For tall letters: b, d, f, h, k, l, t, and all capital letters.</p>
+      <p><strong>Middle Zone:</strong> Between baseline and midline. For most lowercase letters: a, c, e, m, n, o, r, s, u, v, w, x, z.</p>
+      <p><strong>Descender Zone:</strong> Below the baseline. For letters with tails that drop down: g, j, p, q, y.</p>
+
+      <h2>Capital Letter Formation: HWT Teaching Sequence</h2>
+      <p>HWT teaches capitals before lowercase because they are simpler: all the same height, no descenders, and clear stroke patterns. Letters are grouped by the strokes they share.</p>
+
+      <h3>Frog Jump Capitals: F E D P B R N M</h3>
+      <p>Start at the top-left corner. Draw a big line down, then jump back to the top to add parts. Taught first because the movement is clear and consistent.</p>
+      <p><strong>Tip:</strong> "Big line down. Jump back to the top." Then add horizontal or curved strokes.</p>
+
+      <h3>Starting Corner Capitals: H K L U V W X Y Z</h3>
+      <p>Start at the top-left and use a variety of strokes. Slightly more complex but all start at the top.</p>
+      <p><strong>Tip:</strong> Use a small sticker at the top-left corner to reinforce the consistent starting point.</p>
+
+      <h3>Magic C Capitals: C O Q G S</h3>
+      <p>The Magic C stroke is the foundation: start at the top, curve left, counterclockwise. The same motion builds O, Q, G, and S.</p>
+      <p><strong>Tip:</strong> Practice the Magic C in the air, in sand, or on a chalkboard before using paper.</p>
+
+      <h3>Remaining Capitals: A I T J</h3>
+      <p>Unique stroke combinations. By this stage, children have the full repertoire to build them.</p>
+      <p><strong>A:</strong> "Slant left, slant right, little line across the middle."</p>
+
+      <h2>Lowercase Letter Formation: HWT Teaching Sequence</h2>
+      <p>Lowercase letters are introduced after capitals are established. Grouped by shared movement patterns. Most letters fit in the middle zone.</p>
+
+      <h3>Magic C Lowercase: c o s v w</h3>
+      <p>Begin with or are built from the Magic C curve. Taught first to reinforce the counterclockwise movement before adding complexity.</p>
+      <p><strong>Tip:</strong> The Magic C starts at 2 o'clock on a clock face and curves left and down.</p>
+
+      <h3>C-Family Lowercase: a d g f</h3>
+      <p>All begin with a Magic C, then add a vertical stroke. The letters a, d, and g start identically and differ only in how the stroke finishes.</p>
+      <p><strong>Tip:</strong> "Every one of these starts the same way as c." This builds automaticity.</p>
+
+      <h3>Bump Letters: r n m h b</h3>
+      <p>Big line down first, then a bump (hump or arch) is added. The number of bumps distinguishes n from m.</p>
+      <p><strong>Tip:</strong> "Big line down. Bump!" Practice the pattern before applying it to actual letters.</p>
+
+      <h3>Tuck Tail Letters: i u j t y p</h3>
+      <p>Short letters or letters where the tail drops below the baseline. Teach the concept of below-the-line letters explicitly.</p>
+      <p><strong>Tip:</strong> Use three-zone paper with clearly visible zones to reinforce letter placement.</p>
+
+      <h3>Unique Letters: e l k q x z</h3>
+      <p>Unique stroke combinations that do not fit neatly into other groups. Introduced after core patterns are well established.</p>
+      <p><strong>e:</strong> "Start in the middle. Make a little shelf, then a Magic C."</p>
+
+      <h2>When to Seek an OT Evaluation</h2>
+      <ul>
+        <li>Child cannot copy a circle by age 3, or a cross by age 3.5</li>
+        <li>Still using a full fist (palmar) grasp past age 3</li>
+        <li>Handwriting is significantly less legible than peers after proper instruction</li>
+        <li>Complains of hand pain or fatigue during short writing tasks</li>
+        <li>Letters are highly inconsistent in size, spacing, or baseline adherence by age 6</li>
+        <li>Consistent letter reversals (b and d, p and q) persist after age 7</li>
+        <li>Avoids all drawing, coloring, or cutting activities</li>
+        <li>Writing speed is slow enough to interfere with school productivity</li>
+      </ul>
+
+      <p>A pediatric OT can evaluate pre-writing skills, pencil grasp, visual motor integration, and fine motor foundations to identify exactly where a child needs support.</p>
+    </div>
+
+    <div class="download-section">
+      <h3>Get the Full Reference Chart</h3>
+      <p>Download this handwriting guide as a PDF to print, save, or share with teachers and caregivers.</p>
+      <a href="https://evolving-therapy-wellness.netlify.app/1778373395634_handwriting_v4.pdf" download class="download-btn">📥 Download PDF</a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <ul class="footer-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+</body>
+</html>

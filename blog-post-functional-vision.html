@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>More Than 20/20: Understanding Functional Vision | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #5C4490;
+      --purple-light: #9B88C4;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #3E2D6E;
+      --cream:        #FDFBF9;
+      --warm-white:   #F7F4FB;
+      --text:         #1E1830;
+      --text-light:   #5A4E72;
+      --green:        #4A8C6F;
+      --green-pale:   #E8F5EF;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123, 101, 164, 0.08); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* MAIN */
+    main {
+      margin-top: 80px;
+      padding: 4rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .meta {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(92, 68, 144, 0.15);
+    }
+
+    /* CONTENT */
+    .content {
+      background: white;
+      border: 1px solid rgba(92, 68, 144, 0.12);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .content h2 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--purple-pale);
+    }
+
+    .content h2:first-child { margin-top: 0; }
+
+    .content h3 {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content p {
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .content ul {
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .content li {
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .content th, .content td {
+      border: 1px solid rgba(92, 68, 144, 0.15);
+      padding: 1rem;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--purple-pale);
+      font-weight: 600;
+      color: var(--purple-deep);
+    }
+
+    .content tr:nth-child(even) {
+      background: var(--warm-white);
+    }
+
+    /* DOWNLOAD SECTION */
+    .download-section {
+      text-align: center;
+      padding: 2rem;
+      background: var(--purple-pale);
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .download-section h3 {
+      font-size: 1.2rem;
+      color: var(--purple-deep);
+      margin-bottom: 1rem;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: var(--purple);
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 0.75rem;
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .download-btn:hover {
+      background: var(--purple-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(92, 68, 144, 0.2);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--purple-deep); }
+
+    /* FOOTER */
+    footer {
+      background: var(--purple-deep);
+      color: rgba(255,255,255,0.6);
+      padding: 2rem 4rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: white; }
+
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links li { font-size: 0.85rem; }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      main { padding: 2rem; }
+      .content { padding: 1.5rem; }
+    }
+
+    @media (max-width: 560px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      main { padding: 1.5rem; margin-top: 70px; }
+      .page-header h1 { font-size: 1.8rem; }
+      .content { padding: 1.25rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <a href="blog.html" class="back-link">← Back to Blog</a>
+
+    <div class="page-header">
+      <h1>More Than 20/20: Understanding Functional Vision</h1>
+      <p>What parents need to know about the 17 visual skills that affect learning, reading, sports, and daily life.</p>
+      <div class="meta">Vision & Learning • Development • School Performance</div>
+    </div>
+
+    <div class="content">
+      <h2>What Is Functional Vision?</h2>
+      <p>A standard vision screening checks whether your child can see clearly at a distance. That is important, but it only tells part of the story.</p>
+      <p>Functional vision describes how the two eyes work together as a team, how they move and track efficiently, and how the brain processes what the eyes see. A child can pass a standard screening and still have significant functional vision difficulties affecting learning, reading, sports, and daily life.</p>
+      <p><strong>20/20 means each eye sees clearly in isolation. It does not mean the two eyes are working together effectively.</strong></p>
+
+      <h2>The 17 Visual Skills Assessed in a Functional Eye Exam</h2>
+      <p>A comprehensive functional vision evaluation assesses all of the following. A standard eye chart or school screening checks only the first one.</p>
+
+      <h3>1. Central Visual Acuity</h3>
+      <p>Seeing clearly and accurately. This is what the 20/20 eye chart measures. Essential for all near and distance tasks, but only one of 17 skills.</p>
+
+      <h3>2. Peripheral Vision</h3>
+      <p>Seeing objects to the sides while looking straight ahead. Critical for spatial awareness, safe navigation, and sports.</p>
+
+      <h3>3. Depth Perception</h3>
+      <p>Understanding whether objects are near or far from each other. Requires both eyes working together. Affects stairs, sports, pouring, and fine motor tasks.</p>
+
+      <h3>4. Color Perception</h3>
+      <p>Distinguishing between colors accurately. Affects learning, reading charts and graphs, and many classroom activities.</p>
+
+      <h3>5. Eye-Movement Control</h3>
+      <p>Each eye's ability to move accurately and stay on a target. The foundation for all other oculomotor skills.</p>
+
+      <h3>6. Binocular Coordination</h3>
+      <p>Both eyes working together as a team to produce a single, clear image. When this breaks down, children may see double or suppress one eye entirely.</p>
+
+      <h3>7. Saccades</h3>
+      <p>Quick, accurate eye jumps between focal points. Used constantly in reading to move from word to word and line to line.</p>
+
+      <h3>8. Pursuits / Smooth Tracking</h3>
+      <p>Both eyes smoothly following a moving target together. Used for reading, sports, and following movement in the environment.</p>
+
+      <h3>9. Convergence</h3>
+      <p>Both eyes moving inward to focus on a nearby object. Convergence insufficiency causes blur or double vision during near work and is frequently missed on standard screenings.</p>
+
+      <h3>10. Accommodation Flexibility</h3>
+      <p>The eye's ability to continuously shift focus between near and far. Required for copying from the board to paper and back.</p>
+
+      <h3>11. Accommodation Endurance</h3>
+      <p>Maintaining clear near focus over sustained time. Poor endurance leads to fatigue, blur, and avoidance of reading tasks.</p>
+
+      <h3>12. Visual Memory</h3>
+      <p>Remembering just-seen images accurately. Supports letter recognition, sight word learning, spelling, and copying tasks.</p>
+
+      <h3>13. Visual Thinking</h3>
+      <p>Analyzing and processing visual and spatial information (picture thinking). Supports comprehension, math concepts, and visual-spatial reasoning.</p>
+
+      <h3>14. Gross Visual-Motor Skills</h3>
+      <p>Using visual information to direct the body's movements in a coordinated way. Affects sports, obstacle navigation, and body awareness in space.</p>
+
+      <h3>15. Fine Visual-Motor Skills</h3>
+      <p>Using visual information to control the movement of hands, fingers, and feet. Directly affects handwriting, coloring, cutting, and all fine motor tasks.</p>
+
+      <h3>16. Visual Perception</h3>
+      <p>Understanding and interpreting what is being seen, not just seeing it. Includes discrimination, figure-ground, closure, form constancy, and spatial relations.</p>
+
+      <h3>17. Visual Integration</h3>
+      <p>Using vision together with other senses (vestibular, proprioceptive, auditory) to perform complex tasks. Affects reading fluency, coordination, and sensory processing.</p>
+
+      <h2>Why It Matters for School, Play, and Daily Life</h2>
+
+      <h3>School Learning</h3>
+      <ul>
+        <li>Reading and tracking text across a page</li>
+        <li>Copying from board to paper (far to near)</li>
+        <li>Writing neatly and staying on lines</li>
+        <li>Sustained attention during reading tasks</li>
+        <li>Spelling and visual memory for words</li>
+      </ul>
+
+      <h3>Sports and Play</h3>
+      <ul>
+        <li>Catching and throwing accurately</li>
+        <li>Tracking a ball or moving target</li>
+        <li>Building with blocks and puzzles</li>
+        <li>Navigating obstacles confidently</li>
+        <li>Eye-hand coordination in all games</li>
+      </ul>
+
+      <h3>Daily Life</h3>
+      <ul>
+        <li>Dressing and managing fasteners</li>
+        <li>Finding objects in a cluttered space</li>
+        <li>Safe navigation in the environment</li>
+        <li>Screen use and near-task tolerance</li>
+        <li>Self-care and fine motor routines</li>
+      </ul>
+
+      <h2>Red Flags: When to Request a Functional Vision Evaluation</h2>
+
+      <h3>Reading and Near Work</h3>
+      <ul>
+        <li>Loses place frequently while reading</li>
+        <li>Skips lines or re-reads the same line</li>
+        <li>Holds books very close or very far away</li>
+        <li>Covers or closes one eye while reading</li>
+        <li>Complains of blurry or double vision</li>
+        <li>Headaches after reading or screen use</li>
+      </ul>
+
+      <h3>Attention and Behavior</h3>
+      <ul>
+        <li>Avoids reading or near-work tasks</li>
+        <li>Short attention span for desk work only</li>
+        <li>Labeled "not trying" or "easily distracted"</li>
+        <li>Rubs eyes frequently during near tasks</li>
+        <li>Tilts or turns head when looking at things</li>
+        <li>Squints or blinks excessively</li>
+      </ul>
+
+      <h3>Motor and Coordination</h3>
+      <ul>
+        <li>Difficulty catching a thrown ball</li>
+        <li>Frequently bumps into objects or people</li>
+        <li>Poor depth perception on stairs or curbs</li>
+        <li>Clumsy with fine motor tasks</li>
+        <li>Letters inconsistently sized or spaced</li>
+        <li>Difficulty copying from the board</li>
+      </ul>
+
+      <h2>It Can Look Like ADHD</h2>
+      <p>Several functional vision difficulties closely resemble ADHD, and the two can co-occur. A child who avoids reading, loses their place, or cannot sustain attention during desk work may be experiencing convergence insufficiency, accommodation fatigue, or tracking difficulties in addition to, or instead of, an attention disorder. If attention problems occur primarily during reading, writing, or near work, a functional vision evaluation is a worthwhile first step.</p>
+
+      <h2>The Toe-Walking Connection</h2>
+      <p>Toe walking is associated with sensory processing differences and has a documented connection to the vestibular and visual systems. The vestibular-ocular reflex links eye movement control to postural tone, and the vestibular system directly influences muscle tone throughout the body. Some children who toe-walk show improvement when underlying vestibular or visual processing issues are addressed. An OT evaluation with sensory and ocular motor screening can help identify whether functional vision may be a contributing factor.</p>
+
+      <h2>Three Very Different Eye Care Providers: Know the Difference</h2>
+
+      <h3>Regular Optometrist (OD)</h3>
+      <ul>
+        <li>Checks visual acuity: the standard 20/20 test</li>
+        <li>Diagnoses refractive errors: nearsighted, farsighted, astigmatism</li>
+        <li>Prescribes glasses and contact lenses</li>
+        <li>Does NOT typically evaluate how the eyes work together as a team</li>
+      </ul>
+
+      <h3>Ophthalmologist (MD/DO)</h3>
+      <ul>
+        <li>Medical doctor specializing in eye disease</li>
+        <li>Diagnoses and treats structural eye conditions; can perform eye surgery</li>
+        <li>Important for structural or medical eye concerns</li>
+        <li>Does NOT typically evaluate functional binocular vision</li>
+      </ul>
+
+      <h3>Developmental/Behavioral Optometrist</h3>
+      <ul>
+        <li>Assesses HOW the two eyes work together as a team</li>
+        <li>Evaluates all 17 visual skills listed in this guide</li>
+        <li>Can diagnose convergence insufficiency and binocular vision disorders</li>
+        <li>Provides vision therapy, an evidence-based treatment</li>
+        <li>This is who to request if you suspect functional vision difficulties</li>
+      </ul>
+
+      <h2>What You Can Do</h2>
+      <ol>
+        <li>Ask your pediatrician for a referral to a developmental or behavioral optometrist, especially if you see any of the red flags above.</li>
+        <li>Ask your occupational therapist to screen ocular motor and visual motor integration skills. OTs assess these areas routinely as part of a pediatric evaluation.</li>
+        <li>Do not rely on a school vision screening alone. These check only distance acuity and miss most functional vision problems.</li>
+        <li>If your child has been evaluated for ADHD or reading difficulties, add a developmental optometry evaluation to the list. The two frequently co-occur.</li>
+        <li>Early identification of functional vision difficulties can significantly improve performance in school, sports, and everyday tasks.</li>
+      </ol>
+
+      <p><em>Pediatric OT evaluation includes routine screening of ocular motor and visual motor skills. If concerns are identified, your OT will recommend a developmental optometrist evaluation.</em></p>
+    </div>
+
+    <div class="download-section">
+      <h3>Get the Full Guide</h3>
+      <p>Download this comprehensive vision guide as a PDF to print, save, or discuss with your healthcare provider.</p>
+      <a href="https://evolving-therapy-wellness.netlify.app/1778373395635_vision_v4.pdf" download class="download-btn">📥 Download PDF</a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <ul class="footer-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+</body>
+</html>

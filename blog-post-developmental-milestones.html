@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developmental Milestones: Birth to 3 Years | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #5C4490;
+      --purple-light: #9B88C4;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #3E2D6E;
+      --cream:        #FDFBF9;
+      --warm-white:   #F7F4FB;
+      --text:         #1E1830;
+      --text-light:   #5A4E72;
+      --green:        #4A8C6F;
+      --green-pale:   #E8F5EF;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123, 101, 164, 0.08); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* MAIN */
+    main {
+      margin-top: 80px;
+      padding: 4rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .meta {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(92, 68, 144, 0.15);
+    }
+
+    /* CONTENT */
+    .content {
+      background: white;
+      border: 1px solid rgba(92, 68, 144, 0.12);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .content h2 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--purple-pale);
+    }
+
+    .content h2:first-child { margin-top: 0; }
+
+    .content h3 {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content p {
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .content ul {
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .content li {
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .content th, .content td {
+      border: 1px solid rgba(92, 68, 144, 0.15);
+      padding: 1rem;
+      text-align: left;
+    }
+
+    .content th {
+      background: var(--purple-pale);
+      font-weight: 600;
+      color: var(--purple-deep);
+    }
+
+    .content tr:nth-child(even) {
+      background: var(--warm-white);
+    }
+
+    /* DOWNLOAD SECTION */
+    .download-section {
+      text-align: center;
+      padding: 2rem;
+      background: var(--purple-pale);
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .download-section h3 {
+      font-size: 1.2rem;
+      color: var(--purple-deep);
+      margin-bottom: 1rem;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: var(--purple);
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 0.75rem;
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .download-btn:hover {
+      background: var(--purple-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(92, 68, 144, 0.2);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--purple-deep); }
+
+    /* FOOTER */
+    footer {
+      background: var(--purple-deep);
+      color: rgba(255,255,255,0.6);
+      padding: 2rem 4rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: white; }
+
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links li { font-size: 0.85rem; }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      main { padding: 2rem; }
+      .content { padding: 1.5rem; }
+    }
+
+    @media (max-width: 560px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      main { padding: 1.5rem; margin-top: 70px; }
+      .page-header h1 { font-size: 1.8rem; }
+      .content { padding: 1.25rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <a href="blog.html" class="back-link">← Back to Blog</a>
+
+    <div class="page-header">
+      <h1>Developmental Milestones: Birth to 3 Years</h1>
+      <p>Track your child's development across five key domains: gross motor, fine motor, visual motor, language, and feeding.</p>
+      <div class="meta">Development • Parenting Guide • 36 Months</div>
+    </div>
+
+    <div class="content">
+      <h2>Understanding Your Child's Development</h2>
+      <p>This checklist is organized by age group across five developmental domains. Milestones represent typical age ranges, not strict deadlines. Children develop in sequence but timing varies. Check off skills your child has achieved. Concerns? Speak with your pediatrician.</p>
+
+      <h3>0-3 Months: The Foundation</h3>
+      <p><strong>Gross Motor:</strong> Head turning, 45-degree head lift in tummy time, symmetrical movements, supported sitting with head bob.</p>
+      <p><strong>Fine Motor:</strong> Hands fisted most of the time, palmar grasp reflex, momentary rattle hold (by 3 months), arms toward shown toys.</p>
+      <p><strong>Visual Motor:</strong> Focuses on faces at 8-12 inches, horizontal tracking, responds to high-contrast images, eyes follow faces in wide arc.</p>
+      <p><strong>Language:</strong> Different cries for different needs, cooing with soft vowel sounds, responsive smiling (by 2 months), quiets to familiar voice.</p>
+      <p><strong>Feeding:</strong> Coordinates suck-swallow-breathe, rooting reflex present, strong sucking reflex, 8-12 breast feeds or 6-8 bottle feeds daily.</p>
+
+      <h3>3-6 Months: Building Strength</h3>
+      <p><strong>Gross Motor:</strong> Lifts chest off surface during tummy time, pushes up onto straight arms, rolls belly to back (4-5 months), sits with slight support.</p>
+      <p><strong>Fine Motor:</strong> Reaches for and grasps objects, hands open most of the time (by 4 months), brings both hands together at midline (by 4 months), transfers between hands (5-6 months).</p>
+      <p><strong>Visual Motor:</strong> Tracks moving toys across 180 degrees, reaches accurately toward seen objects, watches own hands during play, looks between objects.</p>
+      <p><strong>Language:</strong> Babbles with ba, ma, da sounds, laughs and squeals, turns toward familiar voice, vocalizes for attention.</p>
+      <p><strong>Feeding:</strong> May begin exploring solids around 4-6 months, tongue thrust begins to fade, shows growing interest in watching others eat, holds bottle independently.</p>
+
+      <h3>6-9 Months: Crawling & Independence</h3>
+      <p><strong>Gross Motor:</strong> Sits independently, rolls back to belly, belly crawls with pivoting, crawls on hands and knees (7-10 months).</p>
+      <p><strong>Fine Motor:</strong> Rakes or scoops small objects into palm (7-8 months), feeds self small finger foods (8 months), early pincer grasp develops (7.5-10 months), pokes with index finger into small openings (9 months).</p>
+      <p><strong>Visual Motor:</strong> Looks for dropped objects, reaches for partially hidden objects, inspects objects by turning them, bangs objects together while watching.</p>
+      <p><strong>Language:</strong> Imitates sounds and facial expressions, responds to own name (6-7 months), babbles with varied consonant-vowel combinations, raises arms to be picked up (5-6 months).</p>
+      <p><strong>Feeding:</strong> Begins mashed and soft table foods, munching chewing pattern on soft solids, drinks from open cup with support, grasps and holds bottle.</p>
+
+      <h3>9-12 Months: Standing & First Words</h3>
+      <p><strong>Gross Motor:</strong> Pulls to stand at furniture, cruises sideways along furniture, stands momentarily without support, walks with both hands held.</p>
+      <p><strong>Fine Motor:</strong> True pincer grasp develops (10-12 months), puts 3+ objects into a container, claps hands together, points with index finger.</p>
+      <p><strong>Visual Motor:</strong> Finds fully hidden objects (object permanence), imitates simple gestures, places objects into containers while looking, emerging imitation of scribbles.</p>
+      <p><strong>Language:</strong> 1-3 true first words (beyond mama/dada), waves bye-bye, responds to "no", follows one-step commands with gesture.</p>
+      <p><strong>Feeding:</strong> Feeds self finger foods independently, drinks from straw (9-12 months), beginning spoon use with much spilling, chews soft solids with up-down jaw movement.</p>
+
+      <h3>12-18 Months: Walking & Vocabulary Explosion</h3>
+      <p><strong>Gross Motor:</strong> Walks independently (12-18 months), walks upstairs with hand held, runs (hurried walk; may fall), kicks a ball forward.</p>
+      <p><strong>Fine Motor:</strong> Stacks 2 blocks (by 14 months) to 6 blocks (by 18 months), scribbles with a crayon making clear marks, throws a small ball, points with index finger (12-16 months).</p>
+      <p><strong>Visual Motor:</strong> Imitates strokes after watching a model, places shapes into simple shape sorter, matches identical objects, completes simple 2-knob puzzle.</p>
+      <p><strong>Language:</strong> 5-20 words, points to request AND to share or comment, identifies 2-3 body parts on self or doll, beginning to name familiar people and objects.</p>
+      <p><strong>Feeding:</strong> Uses spoon with significant spilling, eats most soft family foods, uses open cup with assistance, emerging independence at mealtimes.</p>
+
+      <h3>18-24 Months: Climbing & Two-Word Phrases</h3>
+      <p><strong>Gross Motor:</strong> Runs fairly well; walks backward, walks downstairs with one hand held, squats in play without losing balance, climbs onto furniture.</p>
+      <p><strong>Fine Motor:</strong> Stacks 6 small blocks (22-24 months), holds crayon with thumb and fingers (23-25 months), turns book pages one at a time (21-24 months), imitates a vertical stroke.</p>
+      <p><strong>Visual Motor:</strong> Imitates vertical and circular scribbles, completes a 2-3 piece puzzle, matches colors and basic shapes, simple pretend play with objects.</p>
+      <p><strong>Language:</strong> 50 or more words, beginning 2-word combinations ("more milk," "daddy go"), names pictures in books, follows 2-step commands.</p>
+      <p><strong>Feeding:</strong> Uses spoon with less spillage (20 months), eats more varied textures, transitioning to open cup, good straw drinking established.</p>
+
+      <h3>24-30 Months: Jumping & Complex Play</h3>
+      <p><strong>Gross Motor:</strong> Jumps with both feet off the ground, walks up and down stairs (both feet per step, with rail), climbs playground equipment, rides a push toy without pedals.</p>
+      <p><strong>Fine Motor:</strong> Copies a circle (25-36 months), strings 1-inch beads (23-25 months), folds paper in half (24-30 months), imitates a 4-block train (27 months).</p>
+      <p><strong>Visual Motor:</strong> Imitates horizontal stroke and circular scribble, completes a 4-5 piece puzzle, sorts objects by shape or color, matches colors consistently.</p>
+      <p><strong>Language:</strong> 200 or more words, 2-3 word phrases consistently, asks "what's that?", uses words more than gestures to communicate.</p>
+      <p><strong>Feeding:</strong> Pours from a small container (32 months), uses a fork (30 months), eats most family foods with minor modifications, feeding largely self-directed.</p>
+
+      <h3>30-36 Months: Balancing & Complex Sentences</h3>
+      <p><strong>Gross Motor:</strong> Climbs stairs alternating feet (holding rail), balances on one foot for 2-3 seconds, rides a tricycle independently, throws a ball overhand with direction.</p>
+      <p><strong>Fine Motor:</strong> Copies a cross (+), makes continuous cuts across paper with scissors, draws a simple person with 2 or more body parts, stacks 9 small blocks (32-36 months).</p>
+      <p><strong>Visual Motor:</strong> Copies a circle independently, completes a 6-8 piece puzzle, draws simple recognizable shapes, sorts by multiple attributes.</p>
+      <p><strong>Language:</strong> 300 or more words; 3-4 word sentences, asks why and how questions, understood by unfamiliar listeners 75%+ of the time, uses pronouns: I, me, you, he, she.</p>
+      <p><strong>Feeding:</strong> Self-feeds complete meals with spoon and fork, drinks well from an open cup, food jags and strong preferences are normal and expected, beginning to spread with a butter knife.</p>
+
+      <h3>Key Note on Solid Foods</h3>
+      <p>Signs of readiness for solid foods include: sitting with minimal support, bringing hands to mouth, good head and neck control, showing interest in food when others eat, and tongue thrust fading. Some families choose to begin with purees; others use a baby-led approach with soft table foods. Both are valid. Either way, food preparation and texture matter. Consult your pediatrician for individualized guidance.</p>
+
+      <p><em>Sources: HELP Strands (Furuno et al.); Peabody Developmental Motor Scales (Folio and Fewell); CDC Learn the Signs Act Early guidelines. Crawling is retained as a key developmental milestone throughout this checklist.</em></p>
+    </div>
+
+    <div class="download-section">
+      <h3>Get the Full Reference Guide</h3>
+      <p>Download this checklist as a PDF to print, save, or share with your healthcare provider.</p>
+      <a href="https://evolving-therapy-wellness.netlify.app/1778373395633_dev_checklist_v4.pdf" download class="download-btn">📥 Download PDF</a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <ul class="footer-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+</body>
+</html>
