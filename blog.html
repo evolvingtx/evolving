@@ -278,16 +278,19 @@
 
     /* ── FOOTER ─────────────────────────────────────────── */
     footer {
-      background: var(--purple-deep);
-      color: rgba(255,255,255,0.6);
-      padding: 2rem 4rem;
-      text-align: center;
-      margin-top: 4rem;
+      background: var(--text);
+      padding: 3rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
     }
 
     footer a {
-      color: rgba(255,255,255,0.8);
+      color: rgba(255,255,255,0.6);
       text-decoration: none;
+      font-size: 0.75rem;
       transition: color 0.2s;
     }
 
@@ -297,30 +300,27 @@
 
     .footer-logo {
       font-family: var(--ff-display);
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: white;
-      margin-bottom: 1rem;
-      letter-spacing: 0.05em;
+      font-size: 1rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.1em;
     }
 
     .footer-links {
       display: flex;
-      justify-content: center;
       gap: 2rem;
-      flex-wrap: wrap;
       list-style: none;
-      margin-bottom: 1rem;
     }
 
     .footer-links li {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
     }
 
     .footer-copy {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.4);
-      margin-top: 1rem;
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.05em;
     }
 
     /* ── RESPONSIVE ─────────────────────────────────────────── */
