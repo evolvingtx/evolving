@@ -3,1131 +3,899 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Token & Reward Chart - Evolving Therapy & Wellness</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <title>Token & Reward Chart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --purple: #5C4490;
-      --purple-light: #9B88C4;
-      --purple-pale: #EDE8F5;
-      --purple-deep: #3E2D6E;
-      --cream: #FDFBF9;
-      --warm-white: #F7F4FB;
-      --text: #1E1830;
-      --text-light: #5A4E72;
-      --green: #4A8C6F;
-      --green-pale: #E8F5EF;
-      --ff-display: 'Cormorant Garamond', serif;
-      --ff-body: 'Jost', sans-serif;
+      --dark-bg: #0f0e1f;
+      --card-bg: #1a1838;
+      --card-border: #3d2e7a;
+      --purple: #7c5ceb;
+      --purple-light: #9b88d4;
+      --text-white: #ffffff;
+      --text-light: #a8a0c1;
+      --accent-yellow: #ffd700;
+      --accent-green: #4ade80;
+      --reward-gold: #f59e0b;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--ff-body);
-      background: var(--cream);
-      color: var(--text);
-      line-height: 1.6;
+      font-family: 'Fredoka', sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-white);
+      min-height: 100vh;
     }
 
-    /* NAV */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
+      background: rgba(26, 24, 56, 0.8);
+      padding: 1rem 2rem;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 1.2rem 4rem;
-      background: rgba(253, 251, 249, 0.92);
-      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
-    }
-
-    .nav-logo {
-      font-family: var(--ff-display);
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--purple);
-      text-decoration: none;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--text);
-      text-decoration: none;
-      font-size: 0.95rem;
-      transition: color 0.3s;
-    }
-
-    .nav-links a:hover {
-      color: var(--purple);
-    }
-
-    /* MAIN */
-    main {
-      margin-top: 100px;
-      min-height: calc(100vh - 200px);
-      padding: 2rem 4rem;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* WELCOME SCREEN */
-    .welcome-screen {
-      text-align: center;
-      padding: 3rem;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(92, 68, 144, 0.1);
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    .welcome-screen h1 {
-      font-family: var(--ff-display);
-      font-size: 2.2rem;
-      color: var(--purple);
-      margin-bottom: 1rem;
-    }
-
-    .welcome-screen p {
-      color: var(--text-light);
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-    }
-
-    .welcome-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .welcome-form input {
-      padding: 0.8rem;
-      border: 2px solid var(--purple-pale);
-      border-radius: 8px;
-      font-family: var(--ff-body);
-      font-size: 1rem;
-    }
-
-    .welcome-form input:focus {
-      outline: none;
-      border-color: var(--purple);
-    }
-
-    .welcome-form button {
-      padding: 0.8rem;
-      background: var(--purple);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-family: var(--ff-body);
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .welcome-form button:hover {
-      background: var(--purple-deep);
-    }
-
-    /* PAYWALL */
-    .paywall {
-      text-align: center;
-      padding: 3rem;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(92, 68, 144, 0.1);
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    .paywall h1 {
-      font-family: var(--ff-display);
-      font-size: 2rem;
-      color: var(--purple);
-      margin-bottom: 1rem;
-    }
-
-    .paywall-info {
-      background: var(--purple-pale);
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-    }
-
-    .paywall-info p {
-      color: var(--text);
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
-    }
-
-    .paywall-price {
-      font-family: var(--ff-display);
-      font-size: 2.5rem;
-      color: var(--green);
-      font-weight: bold;
-      margin: 1rem 0;
-    }
-
-    /* PIN MODAL */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
       align-items: center;
-      justify-content: center;
-      z-index: 200;
+      border-bottom: 1px solid var(--card-border);
     }
 
-    .modal-content {
-      background: white;
-      padding: 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    .nav-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      font-size: 1.5rem;
+      transition: color 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: var(--purple-light);
+    }
+
+    main {
+      padding: 1.5rem 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* PIN */
+    .pin-screen {
       text-align: center;
-      max-width: 400px;
-      width: 90%;
+      padding: 3rem 1rem;
     }
 
-    .modal-content h2 {
-      font-family: var(--ff-display);
+    .pin-title {
       font-size: 1.8rem;
-      color: var(--purple);
       margin-bottom: 0.5rem;
     }
 
-    .modal-content .subtitle {
+    .pin-subtitle {
       color: var(--text-light);
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
+      margin-bottom: 2rem;
     }
 
     .pin-display {
-      font-size: 2rem;
-      letter-spacing: 0.5rem;
-      color: var(--purple);
-      margin: 1.5rem 0;
-      min-height: 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
+      font-size: 2.5rem;
+      letter-spacing: 0.8rem;
+      color: var(--accent-yellow);
+      margin: 2rem 0;
+      font-weight: 700;
     }
 
     .pin-keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-      margin: 1.5rem 0;
+      gap: 0.8rem;
+      margin: 2rem 0;
     }
 
     .pin-key {
-      padding: 1rem;
-      background: var(--purple-pale);
-      border: none;
-      border-radius: 8px;
+      padding: 1.2rem;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      color: var(--text-white);
       font-size: 1.2rem;
-      font-weight: bold;
+      font-weight: 700;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s;
-      font-family: var(--ff-body);
+      font-family: 'Fredoka', sans-serif;
     }
 
     .pin-key:hover {
-      background: var(--purple-light);
-      transform: scale(1.05);
+      background: var(--purple);
+      border-color: var(--purple);
     }
 
     .pin-delete {
       grid-column: 1 / 4;
+      background: #ef4444;
+      border-color: #dc2626;
+    }
+
+    .pin-error {
+      color: #ff6b6b;
+      margin-bottom: 1rem;
+    }
+
+    /* CHILD VIEW */
+    .title-section {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .mission-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      background: linear-gradient(135deg, #ffd700, #ff69b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .progress-card {
+      background: linear-gradient(135deg, var(--card-bg), rgba(124, 92, 235, 0.1));
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-count {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-yellow);
+      text-align: right;
+      margin-bottom: 1rem;
+    }
+
+    .progress-bar-container {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      height: 16px;
+      overflow: hidden;
+      margin-bottom: 0.8rem;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, var(--purple), var(--accent-yellow));
+      height: 100%;
+      border-radius: 12px;
+      transition: width 0.3s;
+    }
+
+    .progress-text {
+      text-align: right;
+      color: var(--text-light);
+      font-size: 0.8rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .chore-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.2rem;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .chore-checkbox {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chore-checkbox.checked {
+      background: var(--purple);
+      border-color: var(--purple);
+    }
+
+    .chore-emoji {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .chore-info {
+      flex: 1;
+    }
+
+    .chore-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .chore-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .chore-value {
+      background: var(--purple);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .reward-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .reward-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reward-emoji {
+      font-size: 2.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .reward-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+
+    .reward-cost {
+      background: var(--reward-gold);
+      color: #000;
+      padding: 0.6rem;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    .reward-status {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-top: 0.6rem;
+    }
+
+    /* ADMIN PANEL */
+    .admin-container {
+      max-width: 100%;
+    }
+
+    .admin-section {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent-yellow);
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    input, textarea {
+      background: var(--dark-bg);
+      border: 2px solid var(--card-border);
+      color: var(--text-white);
       padding: 0.8rem;
-      background: #ff6b6b;
+      border-radius: 8px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--purple);
+    }
+
+    .day-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin: 0.5rem 0 1rem;
+    }
+
+    .day-btn {
+      padding: 0.6rem;
+      background: var(--dark-bg);
+      border: 2px solid var(--card-border);
+      color: var(--text-light);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .day-btn.selected {
+      background: var(--purple);
+      border-color: var(--purple);
       color: white;
     }
 
-    .pin-delete:hover {
-      background: #ff5252;
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .error-msg {
-      color: #ff6b6b;
-      font-size: 0.9rem;
-      margin-top: 1rem;
+    .btn-primary {
+      background: var(--purple);
+      color: white;
+      width: 100%;
     }
 
-    /* APP VIEW */
-    .child-view, .parent-view {
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 4px 24px rgba(92, 68, 144, 0.1);
+    .btn-primary:hover {
+      background: var(--purple-light);
     }
 
-    .view-title {
-      font-family: var(--ff-display);
-      font-size: 2rem;
-      color: var(--purple);
-      margin-bottom: 0.5rem;
+    .btn-secondary {
+      background: var(--dark-bg);
+      border: 2px solid var(--card-border);
+      color: var(--text-light);
+      width: 100%;
+      margin-top: 0.8rem;
     }
 
-    .token-count {
-      font-size: 1.5rem;
-      color: var(--green);
-      font-weight: bold;
-      margin-bottom: 2rem;
+    .btn-secondary:hover {
+      border-color: var(--purple);
     }
 
-    .sections-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-bottom: 2rem;
+    .btn-group {
+      display: flex;
+      gap: 0.8rem;
     }
 
-    @media (max-width: 768px) {
-      .sections-grid { grid-template-columns: 1fr; }
-    }
-
-    .section {
-      background: var(--purple-pale);
-      padding: 1.5rem;
-      border-radius: 12px;
-    }
-
-    .section h2 {
-      font-family: var(--ff-display);
-      font-size: 1.3rem;
-      color: var(--purple);
-      margin-bottom: 1rem;
+    .btn-group .btn {
+      flex: 1;
+      margin-top: 0;
     }
 
     .item-list {
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
+      margin-top: 1rem;
     }
 
     .item {
-      background: white;
-      padding: 0.8rem 1rem;
+      background: var(--dark-bg);
+      border: 1px solid var(--card-border);
+      padding: 0.8rem;
       border-radius: 8px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 1rem;
+      align-items: center;
     }
 
-    .item-name {
+    .item-info {
       flex: 1;
     }
 
-    .item-value {
-      background: var(--purple);
-      color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s;
+    .item-name {
+      font-size: 0.95rem;
+      font-weight: 600;
     }
 
-    .item-value:hover {
-      background: var(--purple-deep);
+    .item-meta {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 0.2rem;
     }
 
-    .btn {
-      padding: 0.8rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      font-family: var(--ff-body);
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-primary {
-      background: var(--purple);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--purple-deep);
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--purple);
-      border: 2px solid var(--purple);
-    }
-
-    .btn-secondary:hover {
-      background: var(--purple-pale);
+    .item-actions {
+      display: flex;
+      gap: 0.5rem;
     }
 
     .btn-sm {
       padding: 0.4rem 0.8rem;
-      font-size: 0.85rem;
-      margin-left: 0.5rem;
-    }
-
-    .btn-danger {
-      background: #ff6b6b;
-      color: white;
-    }
-
-    .btn-danger:hover {
-      background: #ff5252;
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    /* ADMIN PANEL */
-    .admin-panel {
-      background: var(--green-pale);
-      padding: 2rem;
-      border-radius: 12px;
-      margin-top: 2rem;
-    }
-
-    .admin-section {
-      margin-bottom: 2rem;
-      padding-bottom: 2rem;
-      border-bottom: 2px solid rgba(74, 140, 111, 0.2);
-    }
-
-    .admin-section:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .admin-section h3 {
-      font-family: var(--ff-display);
-      font-size: 1.2rem;
-      color: var(--green);
-      margin-bottom: 1rem;
-    }
-
-    .edit-form {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr auto;
-      gap: 0.75rem;
-      align-items: end;
-      margin-bottom: 1rem;
-    }
-
-    @media (max-width: 900px) {
-      .edit-form {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    .form-group label {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      font-weight: 500;
-    }
-
-    .form-group input {
-      padding: 0.6rem;
-      border: 2px solid rgba(74, 140, 111, 0.2);
-      border-radius: 6px;
-      font-family: var(--ff-body);
-      font-size: 0.95rem;
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--green);
-    }
-
-    .item-edit-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .item-edit {
-      background: white;
-      padding: 0.8rem 1rem;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      justify-content: space-between;
-    }
-
-    .item-edit-info {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .item-edit-value {
-      background: var(--green);
-      color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 4px;
       font-size: 0.8rem;
-      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
     }
 
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: var(--green);
+    .btn-edit {
+      background: var(--purple);
       color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      z-index: 999;
-      animation: slideIn 0.3s ease;
     }
 
-    @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    .trial-badge {
-      display: inline-block;
-      background: var(--green);
+    .btn-delete {
+      background: #ef4444;
       color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: bold;
-      margin-top: 0.5rem;
     }
 
-    /* FOOTER */
     footer {
-      background: var(--text);
-      color: rgba(255, 255, 255, 0.6);
-      padding: 2rem 4rem;
-      margin-top: 4rem;
       text-align: center;
-      font-size: 0.75rem;
+      padding: 2rem 1rem;
+      color: var(--text-light);
+      font-size: 0.8rem;
     }
 
-    footer a {
-      color: rgba(255, 255, 255, 0.6);
-      text-decoration: none;
-    }
+    @media (max-width: 480px) {
+      .reward-grid {
+        grid-template-columns: 1fr;
+      }
 
-    footer a:hover {
-      color: white;
+      .day-selector {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <a href="index.html" class="nav-logo">Evolving Therapy</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="patient-portal.html">Patient Portal</a></li>
-      <li><a href="resources.html">Resources</a></li>
-    </ul>
-  </nav>
+<nav>
+  <div class="nav-title">reward-chart</div>
+  <div class="nav-menu">
+    <button class="nav-btn" id="settingsBtn" onclick="goToAdmin()" title="Settings">⚙️</button>
+  </div>
+</nav>
 
-  <!-- MAIN -->
-  <main id="app"></main>
+<main id="app"></main>
 
-  <!-- FOOTER -->
-  <footer>
-    <p>&copy; 2024 Evolving Therapy & Wellness. All rights reserved.</p>
-  </footer>
+<footer>
+  © 2024 Evolving Therapy & Wellness
+</footer>
 
-  <script>
-    // ===== STATE =====
-    const state = {
-      view: 'welcome', // 'welcome' | 'paywall' | 'child' | 'parent' | 'admin'
-      pinMode: null,
-      pinValue: '',
-      pinError: '',
-      trialEmail: '',
-      trialValid: false,
-      trialDaysLeft: 0,
-      editChoreForm: { name: '', value: '', emoji: '' },
-      editRewardForm: { name: '', cost: '', emoji: '' },
-      db: {
-        pin: '1234',
-        tokens: 0,
-        chores: [
-          { id: 1, name: 'Brush teeth', value: 2, emoji: '🪥' },
-          { id: 2, name: 'Clean toys', value: 5, emoji: '🧸' },
-          { id: 3, name: 'Homework', value: 10, emoji: '📚' },
-          { id: 4, name: 'Help with laundry', value: 3, emoji: '👕' },
-        ],
-        rewards: [
-          { id: 1, name: 'Screen time (30 min)', cost: 10, emoji: '📱' },
-          { id: 2, name: 'Special snack', cost: 5, emoji: '🍪' },
-          { id: 3, name: 'Park trip', cost: 20, emoji: '🎪' },
-          { id: 4, name: 'Choose dinner', cost: 15, emoji: '🍕' },
-        ],
-      },
-      toast: '',
-      toastTimeout: null,
-    };
+<script>
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    // ===== STORAGE =====
-    function loadDB() {
-      const saved = localStorage.getItem('tokenChartDB');
-      if (saved) {
-        try {
-          const data = JSON.parse(saved);
-          Object.assign(state.db, data);
-        } catch (e) {
-          console.error('Failed to load DB:', e);
-        }
-      }
+const state = {
+  view: 'pin', // 'pin' | 'child' | 'admin'
+  pinValue: '',
+  pinError: '',
+  editingChoreId: null,
+  editingRewardId: null,
+  db: {
+    pin: '1234',
+    tokens: 0,
+    chores: [
+      { id: 1, name: 'Brush teeth', emoji: '🪥', value: 2, days: [0,1,2,3,4,5,6] },
+      { id: 2, name: 'Make bed', emoji: '🛏️', value: 3, days: [1,2,3,4,5] },
+      { id: 3, name: 'Take out trash', emoji: '🗑️', value: 5, days: [2,5] },
+    ],
+    rewards: [
+      { id: 1, name: '30 min screen time', emoji: '📱', cost: 10 },
+      { id: 2, name: 'Special snack', emoji: '🍪', cost: 5 },
+    ],
+    completedToday: {},
+  }
+};
+
+function loadDB() {
+  const saved = localStorage.getItem('tokenChartDB');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      Object.assign(state.db, data);
+    } catch (e) {
+      console.error('Load error:', e);
     }
+  }
+}
 
-    function saveDB() {
-      localStorage.setItem('tokenChartDB', JSON.stringify(state.db));
-    }
+function saveDB() {
+  localStorage.setItem('tokenChartDB', JSON.stringify(state.db));
+}
 
-    function showToast(msg) {
-      state.toast = msg;
-      render();
-      clearTimeout(state.toastTimeout);
-      state.toastTimeout = setTimeout(() => {
-        state.toast = '';
-        render();
-      }, 3000);
-    }
-
-    // ===== TRIAL SYSTEM =====
-    async function startTrial(email) {
-      try {
-        const response = await fetch('/.netlify/functions/validate-trial', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'generate', email }),
-        });
-        const data = await response.json();
-        if (data.token) {
-          localStorage.setItem('token-trial', data.token);
-          localStorage.setItem('trial-email', email);
-          state.trialEmail = email;
-          state.trialValid = true;
-          state.view = 'child';
-          showToast('✅ Trial activated!');
-          render();
-        } else {
-          showToast('❌ Error: ' + (data.error || 'Unknown error'));
-        }
-      } catch (err) {
-        console.error('Trial error:', err);
-        showToast('❌ Network error');
-      }
-    }
-
-    async function validateTrialOnLoad() {
-      const token = localStorage.getItem('token-trial');
-      const email = localStorage.getItem('trial-email');
-      
-      if (!token || !email) {
-        state.view = 'welcome';
-        render();
-        return;
-      }
-
-      try {
-        const response = await fetch('/.netlify/functions/validate-trial', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'validate', token, email }),
-        });
-        const data = await response.json();
-        
-        if (data.valid) {
-          state.trialEmail = email;
-          state.trialValid = true;
-          state.trialDaysLeft = data.daysLeft || 0;
-          state.view = 'child';
-        } else {
-          // Trial expired, show paywall
-          localStorage.removeItem('token-trial');
-          state.view = 'paywall';
-        }
-      } catch (err) {
-        console.error('Validation error:', err);
-        state.view = 'welcome';
-      }
-      render();
-    }
-
-    // ===== PIN HANDLERS =====
-    function handlePinKey(key) {
-      if (key === '⌫') {
-        state.pinValue = state.pinValue.slice(0, -1);
-        state.pinError = '';
-      } else if (state.pinValue.length < 4) {
-        state.pinValue += key;
-
-        if (state.pinValue.length === 4) {
-          if (state.pinValue === state.db.pin) {
-            state.pinValue = '';
-            state.pinError = '';
-            state.pinMode = null;
-            state.view = 'parent';
-            showToast('✅ Parent mode unlocked!');
-          } else {
-            state.pinError = 'Incorrect PIN. Try again.';
-            state.pinValue = '';
-          }
-        }
-      }
-      render();
-    }
-
-    function enterParentMode() {
-      state.pinMode = 'access';
-      state.pinValue = '';
-      state.pinError = '';
-      render();
-    }
-
-    function exitParentMode() {
-      state.view = 'child';
-      state.pinMode = null;
-      state.pinValue = '';
-      state.pinError = '';
-      render();
-    }
-
-    function openChangePinMode() {
-      state.pinMode = 'change-pin';
-      state.pinValue = '';
-      state.pinError = '';
-      render();
-    }
-
-    function changePin() {
-      if (state.pinValue.length === 4) {
-        state.db.pin = state.pinValue;
-        saveDB();
+// PIN
+function handlePinKey(key) {
+  if (key === '⌫') {
+    state.pinValue = state.pinValue.slice(0, -1);
+    state.pinError = '';
+  } else if (state.pinValue.length < 4) {
+    state.pinValue += key;
+    if (state.pinValue.length === 4) {
+      if (state.pinValue === state.db.pin) {
+        state.view = 'child';
         state.pinValue = '';
         state.pinError = '';
-        state.pinMode = null;
-        showToast('✅ PIN changed!');
       } else {
-        state.pinError = 'PIN must be 4 digits.';
+        state.pinError = 'Wrong PIN. Try again.';
+        state.pinValue = '';
       }
-      render();
     }
+  }
+  render();
+}
 
-    // ===== CHORE/REWARD HANDLERS =====
-    function addTokens(value, emoji, name) {
-      state.db.tokens += value;
-      saveDB();
-      showToast(`${emoji} +${value} tokens!`);
-      render();
+// CHILD VIEW
+function getTodayChores() {
+  const today = new Date().getDay();
+  return state.db.chores.filter(c => c.days && Array.isArray(c.days) && c.days.includes(today));
+}
+
+function getLowestRewardCost() {
+  if (!state.db.rewards || state.db.rewards.length === 0) return 10;
+  const costs = state.db.rewards.filter(r => r && r.cost).map(r => r.cost);
+  return costs.length > 0 ? Math.min(...costs) : 10;
+}
+
+function toggleChore(choreId) {
+  state.db.completedToday[choreId] = !state.db.completedToday[choreId];
+  saveDB();
+  render();
+}
+
+function redeemReward(rewardId) {
+  const reward = state.db.rewards.find(r => r.id === rewardId);
+  if (reward && state.db.tokens >= reward.cost) {
+    state.db.tokens -= reward.cost;
+    saveDB();
+    alert(`🎉 ${reward.emoji} ${reward.name} unlocked!`);
+    render();
+  }
+}
+
+// ADMIN
+function goToAdmin() {
+  state.view = 'admin';
+  state.editingChoreId = null;
+  state.editingRewardId = null;
+  render();
+}
+
+function backToChild() {
+  state.view = 'child';
+  render();
+}
+
+function saveChore(e) {
+  e.preventDefault();
+  const name = document.getElementById('choreName')?.value;
+  const emoji = document.getElementById('choreEmoji')?.value;
+  const value = parseInt(document.getElementById('choreValue')?.value);
+  const days = Array.from(document.querySelectorAll('.day-btn.selected')).map(el => parseInt(el.dataset.day));
+
+  if (!name || !emoji || !value || days.length === 0) {
+    alert('Fill all fields and select at least one day');
+    return;
+  }
+
+  if (state.editingChoreId) {
+    const chore = state.db.chores.find(c => c.id === state.editingChoreId);
+    if (chore) {
+      chore.name = name;
+      chore.emoji = emoji;
+      chore.value = value;
+      chore.days = days;
     }
+    state.editingChoreId = null;
+  } else {
+    const id = Math.max(...state.db.chores.map(c => c.id), 0) + 1;
+    state.db.chores.push({ id, name, emoji, value, days });
+  }
 
-    function redeemReward(cost, emoji, name) {
-      if (state.db.tokens >= cost) {
-        state.db.tokens -= cost;
-        saveDB();
-        showToast(`${emoji} Reward redeemed!`);
-      } else {
-        showToast(`❌ Not enough tokens (need ${cost})`);
-      }
-      render();
-    }
+  saveDB();
+  document.getElementById('choreForm').reset();
+  render();
+}
 
-    // ===== ADMIN HANDLERS =====
-    function goToAdmin() {
-      state.view = 'admin';
-      render();
-    }
+function editChore(choreId) {
+  state.editingChoreId = choreId;
+  render();
+}
 
-    function addChore() {
-      const form = state.editChoreForm;
-      if (!form.name || !form.value || !form.emoji) {
-        showToast('❌ Fill in all fields');
-        return;
-      }
-      const id = Math.max(...state.db.chores.map(c => c.id), 0) + 1;
-      state.db.chores.push({
-        id,
-        name: form.name,
-        value: parseInt(form.value),
-        emoji: form.emoji,
-      });
-      state.editChoreForm = { name: '', value: '', emoji: '' };
-      saveDB();
-      showToast(`✅ Chore added!`);
-      render();
-    }
+function deleteChore(choreId) {
+  if (confirm('Delete this chore?')) {
+    state.db.chores = state.db.chores.filter(c => c.id !== choreId);
+    saveDB();
+    render();
+  }
+}
 
-    function deleteChore(id) {
-      state.db.chores = state.db.chores.filter(c => c.id !== id);
-      saveDB();
-      showToast('✅ Chore deleted');
-      render();
-    }
+function saveReward(e) {
+  e.preventDefault();
+  const name = document.getElementById('rewardName')?.value;
+  const emoji = document.getElementById('rewardEmoji')?.value;
+  const cost = parseInt(document.getElementById('rewardCost')?.value);
 
-    function addReward() {
-      const form = state.editRewardForm;
-      if (!form.name || !form.cost || !form.emoji) {
-        showToast('❌ Fill in all fields');
-        return;
-      }
-      const id = Math.max(...state.db.rewards.map(r => r.id), 0) + 1;
-      state.db.rewards.push({
-        id,
-        name: form.name,
-        cost: parseInt(form.cost),
-        emoji: form.emoji,
-      });
-      state.editRewardForm = { name: '', value: '', emoji: '' };
-      saveDB();
-      showToast(`✅ Reward added!`);
-      render();
-    }
+  if (!name || !emoji || !cost) {
+    alert('Fill all fields');
+    return;
+  }
 
-    function deleteReward(id) {
-      state.db.rewards = state.db.rewards.filter(r => r.id !== id);
-      saveDB();
-      showToast('✅ Reward deleted');
-      render();
-    }
+  if (state.editingRewardId) {
+    const reward = state.db.rewards.find(r => r.id === state.editingRewardId);
+    Object.assign(reward, { name, emoji, cost });
+    state.editingRewardId = null;
+  } else {
+    const id = Math.max(...state.db.rewards.map(r => r.id), 0) + 1;
+    state.db.rewards.push({ id, name, emoji, cost });
+  }
 
-    function setTokens(amount) {
-      state.db.tokens = parseInt(amount) || 0;
-      saveDB();
-      showToast('✅ Tokens updated!');
-      render();
-    }
+  saveDB();
+  document.getElementById('rewardForm').reset();
+  render();
+}
 
-    // ===== RENDER =====
-    function render() {
-      const app = document.getElementById('app');
+function editReward(rewardId) {
+  state.editingRewardId = rewardId;
+  render();
+}
 
-      // WELCOME SCREEN
-      if (state.view === 'welcome') {
-        app.innerHTML = `
-          <div class="welcome-screen">
-            <h1>🎯 Token Chart</h1>
-            <p>Manage chores and rewards for your child</p>
-            <div class="welcome-form">
-              <input type="email" id="emailInput" placeholder="Enter your email" value="${state.trialEmail}">
-              <button onclick="startTrial(document.getElementById('emailInput').value)">Start Free Trial</button>
-            </div>
-            <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 1rem;">14-day free trial • No credit card needed</p>
+function deleteReward(rewardId) {
+  if (confirm('Delete this reward?')) {
+    state.db.rewards = state.db.rewards.filter(r => r.id !== rewardId);
+    saveDB();
+    render();
+  }
+}
+
+function addTokens() {
+  const amount = parseInt(document.getElementById('tokenAmount')?.value);
+  if (amount && amount > 0) {
+    state.db.tokens += amount;
+    saveDB();
+    document.getElementById('tokenAmount').value = '';
+    render();
+  }
+}
+
+function changePIN() {
+  const newPin = document.getElementById('newPin')?.value;
+  if (newPin && newPin.length === 4) {
+    state.db.pin = newPin;
+    saveDB();
+    document.getElementById('newPin').value = '';
+    alert('PIN updated!');
+  } else {
+    alert('PIN must be 4 digits');
+  }
+}
+
+function toggleDay(dayNum) {
+  const btn = document.querySelector(`.day-btn[data-day="${dayNum}"]`);
+  btn.classList.toggle('selected');
+}
+
+// RENDER
+function render() {
+  const app = document.getElementById('app');
+
+  if (state.view === 'pin') {
+    app.innerHTML = `
+      <div class="pin-screen">
+        <div class="pin-title">🔐 Unlock</div>
+        <div class="pin-subtitle">Enter PIN to continue</div>
+        <div class="pin-display">${'●'.repeat(state.pinValue.length)}${'○'.repeat(4 - state.pinValue.length)}</div>
+        ${state.pinError ? `<div class="pin-error">${state.pinError}</div>` : ''}
+        <div class="pin-keypad">
+          ${[1,2,3,4,5,6,7,8,9].map(n => `<button class="pin-key" onclick="handlePinKey('${n}')">${n}</button>`).join('')}
+          <button class="pin-key" onclick="handlePinKey('0')">0</button>
+          <button class="pin-delete" onclick="handlePinKey('⌫')">⌫</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if (state.view === 'child') {
+    const todayChores = getTodayChores();
+    const lowestReward = getLowestRewardCost();
+    const progress = Math.min(100, (state.db.tokens / lowestReward) * 100);
+
+    app.innerHTML = `
+      <div class="title-section">
+        <div class="mission-title">Mission: Token Launch! 🚀</div>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-count">🌙 ${state.db.tokens}</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: ${progress}%"></div>
+        </div>
+        <div class="progress-text">${Math.max(0, lowestReward - state.db.tokens)} more to unlock rewards!</div>
+      </div>
+
+      <div class="section-title">⭐ Today's Missions</div>
+      ${todayChores.length === 0 ? '<p style="color: var(--text-light);">No missions today!</p>' : ''}
+      ${todayChores.map(chore => `
+        <div class="chore-card">
+          <div class="chore-emoji">${chore.emoji}</div>
+          <div class="chore-info">
+            <div class="chore-name">${chore.name}</div>
+            <div class="chore-subtitle">Super skill challenge!</div>
           </div>
-        `;
-        return;
-      }
-
-      // PAYWALL
-      if (state.view === 'paywall') {
-        app.innerHTML = `
-          <div class="paywall">
-            <h1>Trial Expired</h1>
-            <p>Your trial has ended. Unlock Token Chart for unlimited use.</p>
-            <div class="paywall-info">
-              <p>One-time purchase</p>
-              <div class="paywall-price">$2.99</div>
-              <p>Full access forever</p>
-            </div>
-            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" style="display: inline;">
-              <input type="hidden" name="cmd" value="_xclick">
-              <input type="hidden" name="business" value="ot.evolve@gmail.com">
-              <input type="hidden" name="item_name" value="Token & Reward Chart">
-              <input type="hidden" name="amount" value="2.99">
-              <input type="hidden" name="currency_code" value="USD">
-              <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/thank-you.html">
-              <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/token-chart.html">
-              <input type="hidden" name="no_shipping" value="1">
-              <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">Unlock Now</button>
-            </form>
-            <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 1rem;">Secure payment via PayPal</p>
+          <div class="chore-checkbox ${state.db.completedToday[chore.id] ? 'checked' : ''}" onclick="toggleChore(${chore.id})">
+            ${state.db.completedToday[chore.id] ? '✓' : ''}
           </div>
-        `;
-        return;
-      }
+          <div class="chore-value">🌙 ${chore.value}</div>
+        </div>
+      `).join('')}
 
-      // PIN MODAL
-      if (state.pinMode) {
-        let title = 'Unlock Parent Mode';
-        if (state.pinMode === 'change-pin') title = 'Set New PIN';
-        
-        app.innerHTML = `
-          <div class="modal-overlay">
-            <div class="modal-content">
-              <h2>${title}</h2>
-              <p class="subtitle">Enter 4-digit PIN</p>
-              <div class="pin-display">
-                ${'●'.repeat(state.pinValue.length)}${'○'.repeat(4 - state.pinValue.length)}
-              </div>
-              <div class="pin-keypad">
-                ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => 
-                  `<button class="pin-key" onclick="handlePinKey('${n}')">${n}</button>`
-                ).join('')}
-                <button class="pin-key" onclick="handlePinKey('0')">0</button>
-                <button class="pin-delete" onclick="handlePinKey('⌫')">⌫ Delete</button>
-              </div>
-              ${state.pinError ? `<div class="error-msg">${state.pinError}</div>` : ''}
-              <div class="btn-group">
-                <button class="btn btn-secondary" onclick="exitParentMode()">Cancel</button>
-              </div>
-            </div>
+      <div class="section-title">🎁 Rewards Unlocked</div>
+      <div class="reward-grid">
+        ${state.db.rewards.map(reward => `
+          <div class="reward-card" onclick="redeemReward(${reward.id})">
+            <div class="reward-emoji">${reward.emoji}</div>
+            <div class="reward-name">${reward.name}</div>
+            <div class="reward-cost">🌙 ${reward.cost}</div>
+            <div class="reward-status">${state.db.tokens >= reward.cost ? '✓ Ready!' : `Need ${reward.cost - state.db.tokens} more`}</div>
           </div>
-        `;
-        return;
-      }
+        `).join('')}
+      </div>
+    `;
+    return;
+  }
 
-      // CHILD VIEW
-      if (state.view === 'child') {
-        app.innerHTML = `
-          <div class="child-view">
-            <h1 class="view-title">🎯 Token & Reward Chart</h1>
-            <div class="token-count">💰 ${state.db.tokens} Tokens</div>
-            ${state.trialValid ? `<span class="trial-badge">📅 Trial: ${state.trialDaysLeft} days left</span>` : ''}
-            
-            <div class="sections-grid">
-              <div class="section">
-                <h2>📋 Chores</h2>
-                <div class="item-list">
-                  ${state.db.chores.map(chore => `
-                    <div class="item">
-                      <span class="item-name">${chore.emoji} ${chore.name}</span>
-                      <span class="item-value">+${chore.value}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
+  if (state.view === 'admin') {
+    const editingChore = state.editingChoreId ? state.db.chores.find(c => c.id === state.editingChoreId) : null;
+    const editingReward = state.editingRewardId ? state.db.rewards.find(r => r.id === state.editingRewardId) : null;
 
-              <div class="section">
-                <h2>🎁 Rewards</h2>
-                <div class="item-list">
-                  ${state.db.rewards.map(reward => `
-                    <div class="item">
-                      <span class="item-name">${reward.emoji} ${reward.name}</span>
-                      <span class="item-value">${reward.cost}</span>
-                    </div>
-                  `).join('')}
-                </div>
+    app.innerHTML = `
+      <div class="admin-container">
+        <h1 style="color: var(--accent-yellow); margin-bottom: 1.5rem;">⚙️ Parent Controls</h1>
+
+        <!-- ADD/EDIT CHORE -->
+        <div class="admin-section">
+          <div class="admin-title">${state.editingChoreId ? '✏️ Edit Chore' : '➕ Add Chore'}</div>
+          <form id="choreForm" onsubmit="saveChore(event)">
+            <div class="form-group">
+              <label>Emoji</label>
+              <input type="text" id="choreEmoji" maxlength="2" placeholder="🪥" value="${editingChore?.emoji || ''}" required>
+            </div>
+            <div class="form-group">
+              <label>Chore Name</label>
+              <input type="text" id="choreName" placeholder="Brush teeth" value="${editingChore?.name || ''}" required>
+            </div>
+            <div class="form-group">
+              <label>Tokens Worth</label>
+              <input type="number" id="choreValue" min="1" placeholder="2" value="${editingChore?.value || ''}" required>
+            </div>
+            <div class="form-group">
+              <label>Select Days</label>
+              <div class="day-selector">
+                ${DAYS.map((day, i) => `
+                  <button type="button" class="day-btn ${editingChore?.days.includes(i) ? 'selected' : ''}" data-day="${i}" onclick="toggleDay(${i})">
+                    ${day}
+                  </button>
+                `).join('')}
               </div>
             </div>
+            <button type="submit" class="btn btn-primary">${state.editingChoreId ? 'Update Chore' : 'Add Chore'}</button>
+            ${state.editingChoreId ? `<button type="button" class="btn btn-secondary" onclick="state.editingChoreId = null; render()">Cancel</button>` : ''}
+          </form>
+        </div>
 
-            <div style="text-align: center;">
-              <button class="btn btn-primary" onclick="enterParentMode()">Parent Login</button>
-            </div>
+        <!-- CHORES LIST -->
+        <div class="admin-section">
+          <div class="admin-title">📋 Your Chores</div>
+          <div class="item-list">
+            ${state.db.chores.map(chore => `
+              <div class="item">
+                <div class="item-info">
+                  <div class="item-name">${chore.emoji} ${chore.name}</div>
+                  <div class="item-meta">🌙 ${chore.value} tokens • ${chore.days.map(d => DAYS[d]).join(', ')}</div>
+                </div>
+                <div class="item-actions">
+                  <button class="btn-sm btn-edit" onclick="editChore(${chore.id})">Edit</button>
+                  <button class="btn-sm btn-delete" onclick="deleteChore(${chore.id})">Delete</button>
+                </div>
+              </div>
+            `).join('')}
           </div>
-        `;
-        return;
-      }
+        </div>
 
-      // PARENT VIEW
-      if (state.view === 'parent') {
-        app.innerHTML = `
-          <div class="parent-view">
-            <h1 class="view-title">👨‍👩‍👧 Parent Dashboard</h1>
-            <div class="token-count">💰 ${state.db.tokens} Tokens</div>
+        <!-- ADD/EDIT REWARD -->
+        <div class="admin-section">
+          <div class="admin-title">${state.editingRewardId ? '✏️ Edit Reward' : '➕ Add Reward'}</div>
+          <form id="rewardForm" onsubmit="saveReward(event)">
+            <div class="form-group">
+              <label>Emoji</label>
+              <input type="text" id="rewardEmoji" maxlength="2" placeholder="📱" value="${editingReward?.emoji || ''}" required>
+            </div>
+            <div class="form-group">
+              <label>Reward Name</label>
+              <input type="text" id="rewardName" placeholder="30 min screen time" value="${editingReward?.name || ''}" required>
+            </div>
+            <div class="form-group">
+              <label>Tokens Cost</label>
+              <input type="number" id="rewardCost" min="1" placeholder="10" value="${editingReward?.cost || ''}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">${state.editingRewardId ? 'Update Reward' : 'Add Reward'}</button>
+            ${state.editingRewardId ? `<button type="button" class="btn btn-secondary" onclick="state.editingRewardId = null; render()">Cancel</button>` : ''}
+          </form>
+        </div>
 
-            <div class="sections-grid">
-              <div class="section">
-                <h2>📋 Chores</h2>
-                <div class="item-list">
-                  ${state.db.chores.map(chore => `
-                    <div class="item">
-                      <span class="item-name">${chore.emoji} ${chore.name}</span>
-                      <button class="item-value" onclick="addTokens(${chore.value}, '${chore.emoji}', '${chore.name}')" style="cursor: pointer; border: none;">+${chore.value}</button>
-                    </div>
-                  `).join('')}
+        <!-- REWARDS LIST -->
+        <div class="admin-section">
+          <div class="admin-title">🎁 Your Rewards</div>
+          <div class="item-list">
+            ${state.db.rewards.map(reward => `
+              <div class="item">
+                <div class="item-info">
+                  <div class="item-name">${reward.emoji} ${reward.name}</div>
+                  <div class="item-meta">🌙 ${reward.cost} tokens</div>
+                </div>
+                <div class="item-actions">
+                  <button class="btn-sm btn-edit" onclick="editReward(${reward.id})">Edit</button>
+                  <button class="btn-sm btn-delete" onclick="deleteReward(${reward.id})">Delete</button>
                 </div>
               </div>
-
-              <div class="section">
-                <h2>🎁 Rewards</h2>
-                <div class="item-list">
-                  ${state.db.rewards.map(reward => `
-                    <div class="item">
-                      <span class="item-name">${reward.emoji} ${reward.name}</span>
-                      <button class="item-value" onclick="redeemReward(${reward.cost}, '${reward.emoji}', '${reward.name}')" style="cursor: pointer; border: none;">${reward.cost}</button>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            </div>
-
-            <div class="admin-panel">
-              <h2 style="font-family: var(--ff-display); font-size: 1.3rem; color: var(--green); margin-bottom: 1.5rem;">⚙️ Settings</h2>
-              <div class="btn-group">
-                <button class="btn btn-primary" onclick="goToAdmin()">Customize Chores & Rewards</button>
-                <button class="btn btn-primary" onclick="openChangePinMode()">Change PIN</button>
-                <button class="btn btn-secondary" onclick="exitParentMode()">Exit</button>
-              </div>
-            </div>
+            `).join('')}
           </div>
-        `;
-        return;
-      }
+        </div>
 
-      // ADMIN VIEW
-      if (state.view === 'admin') {
-        app.innerHTML = `
-          <div class="parent-view">
-            <h1 class="view-title">⚙️ Customize Chores & Rewards</h1>
-            
-            <div class="admin-panel">
-              <!-- ADD CHORE -->
-              <div class="admin-section">
-                <h3>➕ Add Chore</h3>
-                <div class="edit-form">
-                  <div class="form-group">
-                    <label>Emoji</label>
-                    <input type="text" maxlength="2" placeholder="🪥" value="${state.editChoreForm.emoji}" onchange="state.editChoreForm.emoji = this.value; render()">
-                  </div>
-                  <div class="form-group">
-                    <label>Chore Name</label>
-                    <input type="text" placeholder="Brush teeth" value="${state.editChoreForm.name}" onchange="state.editChoreForm.name = this.value; render()">
-                  </div>
-                  <div class="form-group">
-                    <label>Tokens Earned</label>
-                    <input type="number" min="1" placeholder="2" value="${state.editChoreForm.value}" onchange="state.editChoreForm.value = this.value; render()">
-                  </div>
-                  <button class="btn btn-primary" onclick="addChore()">Add</button>
-                </div>
-              </div>
-
-              <!-- EXISTING CHORES -->
-              <div class="admin-section">
-                <h3>📋 Your Chores</h3>
-                <div class="item-edit-list">
-                  ${state.db.chores.map(chore => `
-                    <div class="item-edit">
-                      <div class="item-edit-info">
-                        <span style="font-size: 1.2rem;">${chore.emoji}</span>
-                        <span>${chore.name}</span>
-                        <span class="item-edit-value">+${chore.value}</span>
-                      </div>
-                      <button class="btn btn-danger btn-sm" onclick="deleteChore(${chore.id})">Delete</button>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-
-              <!-- ADD REWARD -->
-              <div class="admin-section">
-                <h3>➕ Add Reward</h3>
-                <div class="edit-form">
-                  <div class="form-group">
-                    <label>Emoji</label>
-                    <input type="text" maxlength="2" placeholder="📱" value="${state.editRewardForm.emoji}" onchange="state.editRewardForm.emoji = this.value; render()">
-                  </div>
-                  <div class="form-group">
-                    <label>Reward Name</label>
-                    <input type="text" placeholder="Screen time" value="${state.editRewardForm.name}" onchange="state.editRewardForm.name = this.value; render()">
-                  </div>
-                  <div class="form-group">
-                    <label>Tokens Cost</label>
-                    <input type="number" min="1" placeholder="10" value="${state.editRewardForm.cost}" onchange="state.editRewardForm.cost = this.value; render()">
-                  </div>
-                  <button class="btn btn-primary" onclick="addReward()">Add</button>
-                </div>
-              </div>
-
-              <!-- EXISTING REWARDS -->
-              <div class="admin-section">
-                <h3>🎁 Your Rewards</h3>
-                <div class="item-edit-list">
-                  ${state.db.rewards.map(reward => `
-                    <div class="item-edit">
-                      <div class="item-edit-info">
-                        <span style="font-size: 1.2rem;">${reward.emoji}</span>
-                        <span>${reward.name}</span>
-                        <span class="item-edit-value">${reward.cost}</span>
-                      </div>
-                      <button class="btn btn-danger btn-sm" onclick="deleteReward(${reward.id})">Delete</button>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-
-              <!-- SET TOKENS -->
-              <div class="admin-section">
-                <h3>💰 Manage Tokens</h3>
-                <div class="form-group" style="max-width: 200px;">
-                  <label>Current Tokens: ${state.db.tokens}</label>
-                  <input type="number" min="0" value="${state.db.tokens}" onchange="setTokens(this.value)">
-                </div>
-              </div>
-            </div>
-
-            <div class="btn-group">
-              <button class="btn btn-secondary" onclick="state.view = 'parent'; render()">Back to Dashboard</button>
-              <button class="btn btn-secondary" onclick="exitParentMode()">Exit Parent Mode</button>
+        <!-- QUICK CONTROLS -->
+        <div class="admin-section">
+          <div class="admin-title">⚡ Quick Controls</div>
+          <div class="form-group">
+            <label>Add Tokens to Account</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="number" id="tokenAmount" min="1" placeholder="Amount" style="flex: 1;">
+              <button type="button" class="btn btn-primary" onclick="addTokens()" style="flex: 0 0 auto; width: auto;">Add</button>
             </div>
           </div>
-        `;
-        return;
-      }
-    }
+        </div>
 
-    // ===== INIT =====
-    loadDB();
-    validateTrialOnLoad();
-  </script>
+        <!-- CHANGE PIN -->
+        <div class="admin-section">
+          <div class="admin-title">🔐 Change PIN</div>
+          <div class="form-group">
+            <label>New 4-digit PIN</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" id="newPin" maxlength="4" placeholder="1234" style="flex: 1;">
+              <button type="button" class="btn btn-primary" onclick="changePIN()" style="flex: 0 0 auto; width: auto;">Update</button>
+            </div>
+          </div>
+        </div>
 
-  <!-- TOAST DISPLAY -->
-  <script>
-    function displayToast() {
-      if (state.toast) {
-        const existing = document.querySelector('.toast');
-        if (!existing) {
-          const toast = document.createElement('div');
-          toast.className = 'toast';
-          toast.textContent = state.toast;
-          document.body.appendChild(toast);
-          setTimeout(() => toast.remove(), 3000);
-        }
-      }
-    }
-    
-    const originalRender = render;
-    render = function() {
-      originalRender.call(this);
-      displayToast();
-    };
-  </script>
+        <!-- BACK BUTTON -->
+        <button class="btn btn-secondary" onclick="backToChild()" style="width: 100%; margin-top: 1rem;">Back to Chart</button>
+      </div>
+    `;
+    return;
+  }
+}
+
+loadDB();
+render();
+</script>
 
 </body>
 </html>
