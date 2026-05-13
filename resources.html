@@ -363,7 +363,35 @@
       text-decoration: underline;
     }
 
-    /* ── FOOTER ─────────────────────────────────────────── */
+
+    /* ── DOC LIST (bullet points in cards) ─────────────────────────────────────── */
+    .doc-list {
+      list-style: none;
+      padding: 0.75rem 0 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .doc-list li {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      padding-left: 1.1rem;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .doc-list li::before {
+      content: '·';
+      position: absolute;
+      left: 0;
+      color: var(--purple-light);
+      font-size: 1.1rem;
+      line-height: 1.1;
+    }
+
+        /* ── FOOTER ─────────────────────────────────────────── */
     footer {
       background: var(--text);
       padding: 3rem 4rem;
@@ -407,9 +435,19 @@
     }
 
     /* ── RESPONSIVE ─────────────────────────────────────────── */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 0.5rem; }
+    .hamburger span { width: 24px; height: 2px; background: var(--purple); border-radius: 2px; transition: all 0.3s; }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(8px,8px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(8px,-8px); }
+
     @media (max-width: 900px) {
-      nav { padding: 1rem 2rem; }
-      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      nav { padding: 1rem 1.25rem; }
+      .hamburger { display: flex; }
+      .nav-links { position: absolute; top: 60px; left: 0; right: 0; flex-direction: column; gap: 0; background: rgba(253,251,249,0.98); backdrop-filter: blur(12px); padding: 1rem 1.25rem; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; border-bottom: 1px solid rgba(184,168,208,0.2); }
+      .nav-links.active { max-height: 500px; }
+      .nav-links li { padding: 0.75rem 0; border-bottom: 1px solid rgba(184,168,208,0.1); }
+      .nav-links li:last-child { border-bottom: none; }
       main { padding: 2rem; }
       .product-grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -440,7 +478,7 @@
     <ul class="nav-links">
       <li><a href="index.html#about">About</a></li>
       <li><a href="index.html#services">Services</a></li>
-      <li><a href="resources.html">Resources</a></li>
+      <li><a href="resources.html" style="color: var(--purple);">Resources</a></li>
       <li><a href="blog.html">Blog</a></li>
       <li><a href="index.html#discounts">Discounts</a></li>
       <li><a href="employment.html">Employment</a></li>
@@ -448,6 +486,9 @@
       <li><a href="patient-portal.html">Patient Portal</a></li>
       <li><a href="index.html#contact">Contact</a></li>
     </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <!-- MAIN CONTENT -->
@@ -457,63 +498,107 @@
       <p>Clinical templates, generators, and products for families and professionals.</p>
     </div>
 
-    <!-- TOOLS SECTION -->
+    <!-- ══ 1. SOCIAL STORIES ══ -->
     <section class="resource-section">
       <div class="section-header">
-        <h2>Home Exercise Program Generators</h2>
-        <p>Generate personalized HEPs, goals, and clinical content in seconds. All credits never expire.</p>
+        <h2>Social Stories</h2>
+        <p>Personalized picture stories that help children feel safe and prepared for new or challenging situations.</p>
       </div>
       <div class="product-grid">
 
-        <!-- HEP Generator -->
+        <a href="social-stories.html" style="text-decoration: none; color: inherit;" class="product-card">
+          <div class="product-image">📚</div>
+          <div class="product-content">
+            <p class="product-label">For Families &amp; Therapists</p>
+            <h3 class="product-title">Social Stories Library</h3>
+            <p class="product-desc">Customizable picture stories built on Carol Gray's Social Stories 10.4 criteria. Add your child's name, caregiver, and real photos. Flip through on your phone or print in full, half, or quarter-page size. Info and photos save automatically — no account needed.</p>
+            <div class="product-footer">
+              <span class="product-price" style="color: var(--green); font-family: var(--ff-body); font-size: 0.9rem; font-weight: 500;">Free &amp; Paid</span>
+              <span class="btn-primary">Explore →</span>
+            </div>
+          </div>
+        </a>
+
+        <div class="product-card coming-soon">
+          <div class="product-image">✨</div>
+          <div class="product-content">
+            <p class="product-label">Coming Soon</p>
+            <h3 class="product-title">AI Story Generator</h3>
+            <p class="product-desc">Tell us any situation your child needs to prepare for and we will generate a complete, clinically informed social story following the Social Stories 10.4 criteria. Any topic, any child, in minutes.</p>
+            <div class="product-footer">
+              <span class="product-price" style="font-family: var(--ff-body); font-size: 0.9rem; color: var(--text-light);">Subscription</span>
+              <button class="btn-primary" disabled>Notify Me</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ 2. TOKEN REWARD CHART ══ -->
+    <section class="resource-section">
+      <div class="section-header">
+        <h2>Token &amp; Reward Chart</h2>
+        <p>A browser-based token economy system for building habits, independence, and early money skills.</p>
+      </div>
+      <div class="product-grid">
+
+        <div class="product-card">
+          <div class="product-image">🎫</div>
+          <div class="product-content">
+            <p class="product-label">Behavior Tool — For Families</p>
+            <h3 class="product-title">Token &amp; Reward Chart</h3>
+            <p class="product-desc">Build a weekly chore schedule, set token values, and let your child earn and save toward custom rewards. PIN-protected parent controls keep settings secure. Works in the browser — bookmark it and come back daily.</p>
+            <ul class="doc-list">
+              <li>Weekly schedule with daily and recurring tasks</li>
+              <li>Fully editable rewards and token costs</li>
+              <li>Token bank carries over — kids can save up for bigger prizes</li>
+              <li>Parent PIN protects settings and approvals</li>
+              <li>Saves to this device automatically</li>
+            </ul>
+            <div class="product-footer" style="margin-top: 1rem;">
+              <span class="product-price" style="color: var(--green);">Free Trial</span>
+              <a href="token-chart.html" class="btn-primary">Try It Free &nbsp;<strong>PIN: 1234</strong></a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ 3. HEP GENERATORS ══ -->
+    <section class="resource-section">
+      <div class="section-header">
+        <h2>Home Exercise Program Generators</h2>
+        <p>Generate personalized HEPs in seconds. First 2 are always free. Credits never expire.</p>
+      </div>
+      <div class="product-grid">
+
         <div class="product-card">
           <div class="product-image">🏠</div>
           <div class="product-content">
             <h3 class="product-title">Pediatric HEP Generator</h3>
             <p class="product-desc">Generate personalized home exercise programs for any child — fine motor, gross motor, sensory, handwriting, self-care, and more. Parent-friendly language, bilingual option, and built-in clinical guardrails.</p>
-            <div class="product-tier">
-              <strong>First 2 HEPs are free.</strong> Credits never expire • Redeem code in the generator after purchase
-            </div>
+            <div class="product-tier"><strong>First 2 HEPs are free.</strong> Credits never expire • Redeem code in the generator after purchase</div>
             <div class="product-footer" style="flex-direction: column; gap: 0.75rem; margin-bottom: 0.5rem;">
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(92,68,144,0.05); border-radius: 0.5rem;">
                 <div style="font-size: 0.9rem;"><strong>2 HEPs</strong> — $1.99</div>
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                  <input type="hidden" name="cmd" value="_xclick" />
-                  <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                  <input type="hidden" name="item_name" value="HEP Generator — 2 Credits" />
-                  <input type="hidden" name="amount" value="1.99" />
-                  <input type="hidden" name="currency_code" value="USD" />
-                  <input type="hidden" name="no_shipping" value="1" />
-                  <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/hep-credits.html?tier=starter" />
-                  <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                  <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="HEP Generator — 2 Credits" /><input type="hidden" name="amount" value="1.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/hep-credits.html?tier=starter" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
                   <button type="submit" class="btn-primary" style="font-size: 0.65rem; padding: 0.4rem 0.8rem;">Buy</button>
                 </form>
               </div>
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(92,68,144,0.05); border-radius: 0.5rem;">
                 <div style="font-size: 0.9rem;"><strong>5 HEPs</strong> — $3.99</div>
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                  <input type="hidden" name="cmd" value="_xclick" />
-                  <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                  <input type="hidden" name="item_name" value="HEP Generator — 5 Credits" />
-                  <input type="hidden" name="amount" value="3.99" />
-                  <input type="hidden" name="currency_code" value="USD" />
-                  <input type="hidden" name="no_shipping" value="1" />
-                  <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/hep-credits.html?tier=pack" />
-                  <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                  <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="HEP Generator — 5 Credits" /><input type="hidden" name="amount" value="3.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/hep-credits.html?tier=pack" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
                   <button type="submit" class="btn-primary" style="font-size: 0.65rem; padding: 0.4rem 0.8rem;">Buy</button>
                 </form>
               </div>
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(92,68,144,0.05); border-radius: 0.5rem;">
                 <div style="font-size: 0.9rem;"><strong>10 HEPs</strong> — $7.99</div>
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                  <input type="hidden" name="cmd" value="_xclick" />
-                  <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                  <input type="hidden" name="item_name" value="HEP Generator — 10 Credits" />
-                  <input type="hidden" name="amount" value="7.99" />
-                  <input type="hidden" name="currency_code" value="USD" />
-                  <input type="hidden" name="no_shipping" value="1" />
-                  <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/hep-credits.html?tier=pro" />
-                  <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                  <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="HEP Generator — 10 Credits" /><input type="hidden" name="amount" value="7.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/hep-credits.html?tier=pro" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
                   <button type="submit" class="btn-primary" style="font-size: 0.65rem; padding: 0.4rem 0.8rem;">Buy</button>
                 </form>
               </div>
@@ -522,55 +607,31 @@
           </div>
         </div>
 
-        <!-- WBV HEP Generator -->
         <div class="product-card">
           <div class="product-image">⚡</div>
           <div class="product-content">
             <h3 class="product-title">WBV HEP Generator</h3>
             <p class="product-desc">Generate whole-body vibration home exercise programs with position-specific protocols, frequency and duration guidance, and printable HEPs for families. Built around the LifePro vibration platform.</p>
-            <div class="product-tier">
-              <strong>First 2 HEPs are free.</strong> Credits never expire • Redeem code in the generator after purchase
-            </div>
+            <div class="product-tier"><strong>First 2 HEPs are free.</strong> Credits never expire • Redeem code in the generator after purchase</div>
             <div class="product-footer" style="flex-direction: column; gap: 0.75rem; margin-bottom: 0.5rem;">
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(92,68,144,0.05); border-radius: 0.5rem;">
                 <div style="font-size: 0.9rem;"><strong>2 HEPs</strong> — $1.99</div>
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                  <input type="hidden" name="cmd" value="_xclick" />
-                  <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                  <input type="hidden" name="item_name" value="WBV HEP Generator — 2 Credits" />
-                  <input type="hidden" name="amount" value="1.99" />
-                  <input type="hidden" name="currency_code" value="USD" />
-                  <input type="hidden" name="no_shipping" value="1" />
-                  <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/wbv-credits.html?tier=starter" />
-                  <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                  <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="WBV HEP Generator — 2 Credits" /><input type="hidden" name="amount" value="1.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/wbv-credits.html?tier=starter" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
                   <button type="submit" class="btn-primary" style="font-size: 0.65rem; padding: 0.4rem 0.8rem;">Buy</button>
                 </form>
               </div>
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(92,68,144,0.05); border-radius: 0.5rem;">
                 <div style="font-size: 0.9rem;"><strong>5 HEPs</strong> — $3.99</div>
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                  <input type="hidden" name="cmd" value="_xclick" />
-                  <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                  <input type="hidden" name="item_name" value="WBV HEP Generator — 5 Credits" />
-                  <input type="hidden" name="amount" value="3.99" />
-                  <input type="hidden" name="currency_code" value="USD" />
-                  <input type="hidden" name="no_shipping" value="1" />
-                  <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/wbv-credits.html?tier=standard" />
-                  <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                  <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="WBV HEP Generator — 5 Credits" /><input type="hidden" name="amount" value="3.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/wbv-credits.html?tier=standard" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
                   <button type="submit" class="btn-primary" style="font-size: 0.65rem; padding: 0.4rem 0.8rem;">Buy</button>
                 </form>
               </div>
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(92,68,144,0.05); border-radius: 0.5rem;">
                 <div style="font-size: 0.9rem;"><strong>10 HEPs</strong> — $7.99</div>
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                  <input type="hidden" name="cmd" value="_xclick" />
-                  <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                  <input type="hidden" name="item_name" value="WBV HEP Generator — 10 Credits" />
-                  <input type="hidden" name="amount" value="7.99" />
-                  <input type="hidden" name="currency_code" value="USD" />
-                  <input type="hidden" name="no_shipping" value="1" />
-                  <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/wbv-credits.html?tier=value" />
-                  <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                  <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="WBV HEP Generator — 10 Credits" /><input type="hidden" name="amount" value="7.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/wbv-credits.html?tier=value" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
                   <button type="submit" class="btn-primary" style="font-size: 0.65rem; padding: 0.4rem 0.8rem;">Buy</button>
                 </form>
               </div>
@@ -582,112 +643,75 @@
       </div>
     </section>
 
-    <!-- CLINICAL TOOLS SECTION -->
+    <!-- ══ 4. HANDWRITING PAPER PACK ══ -->
     <section class="resource-section">
       <div class="section-header">
-        <h2>Clinical Templates & Printables</h2>
-        <p>Ready-to-use Word documents and PDFs for evaluations, handwriting, and career readiness.</p>
+        <h2>Handwriting Paper Pack</h2>
+        <p>Printable paper designed by a pediatric OT with guide zones built in for correct letter formation.</p>
       </div>
       <div class="product-grid">
 
-        <!-- OT Eval Template -->
-        <div class="product-card">
-          <div class="product-image">📋</div>
-          <div class="product-content">
-            <p class="product-label">For Therapists</p>
-            <h3 class="product-title">Pediatric OT Eval Template</h3>
-            <p class="product-desc">Comprehensive evaluation template covering all domains Medicaid reviewers look for. Fully editable Word doc with clinical cues throughout.</p>
-            <div class="product-footer" style="flex-direction: column; gap: 0.5rem;">
-              <span class="product-price">$3.99</span>
-              <a href="https://evolving-therapy-wellness.netlify.app/downloads/OT_Eval_Template_Preview.pdf" target="_blank" style="text-align: center; padding: 0.5rem; font-size: 0.75rem; color: var(--purple-light); text-decoration: none; border: 1px solid rgba(92,68,144,0.2); border-radius: 0.4rem; transition: all 0.2s;">👁️ Preview (2 pages)</a>
-              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                <input type="hidden" name="cmd" value="_xclick" />
-                <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                <input type="hidden" name="item_name" value="Pediatric OT Evaluation Template" />
-                <input type="hidden" name="amount" value="3.99" />
-                <input type="hidden" name="currency_code" value="USD" />
-                <input type="hidden" name="no_shipping" value="1" />
-                <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/download.html" />
-                <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
-                <button type="submit" class="btn-primary" style="width: 100%;">Buy Now</button>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <!-- Handwriting Paper Pack -->
         <div class="product-card">
           <div class="product-image">✏️</div>
           <div class="product-content">
-            <p class="product-label">For Families & Therapists</p>
+            <p class="product-label">For Families &amp; Therapists</p>
             <h3 class="product-title">Handwriting Paper Pack</h3>
-            <p class="product-desc">Four printable pages with yellow guide bands, dashed midlines, and descender space. Four different line sizes for progressive practice.</p>
-            <div class="product-footer" style="flex-direction: column; gap: 0.5rem;">
+            <p class="product-desc">Four printable pages with yellow guide bands, dashed midlines, and descender space so letters like g, j, and p don't overlap the line below. Four line sizes for progressive practice.</p>
+            <ul class="doc-list">
+              <li>1 Inch Lines (portrait)</li>
+              <li>½ Inch Lines (portrait)</li>
+              <li>Wide Ruled Lines (portrait)</li>
+              <li>1 Inch Lines (landscape)</li>
+            </ul>
+            <div class="product-footer" style="flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
               <span class="product-price">$0.99</span>
+              <a href="downloads/handwriting_preview.pdf" target="_blank" class="btn-secondary" style="width: 100%; text-align: center;">👁️ Preview (1 page sample)</a>
               <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                <input type="hidden" name="cmd" value="_xclick" />
-                <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                <input type="hidden" name="item_name" value="Handwriting Paper Pack" />
-                <input type="hidden" name="amount" value="0.99" />
-                <input type="hidden" name="currency_code" value="USD" />
-                <input type="hidden" name="no_shipping" value="1" />
-                <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/download-handwriting.html" />
-                <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
-                <button type="submit" class="btn-primary" style="width: 100%;">Buy Now</button>
+                <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="Handwriting Paper Pack" /><input type="hidden" name="amount" value="0.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/download-handwriting.html" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                <button type="submit" class="btn-primary" style="width: 100%;">Buy Now — $0.99</button>
               </form>
             </div>
           </div>
         </div>
 
-        <!-- Job Readiness Workbook -->
+        <!-- Handwriting Skills Chart — FREE -->
         <div class="product-card">
-          <div class="product-image">💼</div>
+          <div class="product-image">🖊️</div>
           <div class="product-content">
-            <p class="product-label">For Therapists</p>
-            <h3 class="product-title">Job Readiness Interactive Workbook</h3>
-            <p class="product-desc">Interactive PDF workbook for job readiness skills, interview prep, and employment transitions. Print or digital use.</p>
-            <div class="product-footer" style="flex-direction: column; gap: 0.5rem;">
-              <span class="product-price">$3.49</span>
-              <a href="/downloads/Job_Readiness_Preview.pdf" target="_blank" style="text-align: center; padding: 0.5rem; font-size: 0.75rem; color: var(--purple-light); text-decoration: none; border: 1px solid rgba(92,68,144,0.2); border-radius: 0.4rem; transition: all 0.2s;">👁️ Preview (5 pages)</a>
-              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                <input type="hidden" name="cmd" value="_xclick" />
-                <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                <input type="hidden" name="item_name" value="Job Readiness Interactive Workbook" />
-                <input type="hidden" name="amount" value="3.49" />
-                <input type="hidden" name="currency_code" value="USD" />
-                <input type="hidden" name="no_shipping" value="1" />
-                <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/download-job-readiness.html" />
-                <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
-                <button type="submit" class="btn-primary" style="width: 100%;">Buy Now</button>
-              </form>
+            <p class="product-label">For Families &amp; Therapists — Free Download</p>
+            <h3 class="product-title">Handwriting Skills: Developmental Chart</h3>
+            <p class="product-desc">A complete reference covering the full developmental sequence for handwriting readiness. Built on the Handwriting Without Tears framework.</p>
+            <ul class="doc-list">
+              <li>Pre-writing strokes with age ranges (ages 1–5)</li>
+              <li>Pencil grasp stages from palmar to dynamic tripod</li>
+              <li>The three writing zones explained</li>
+              <li>Capital and lowercase letter formation sequences</li>
+              <li>When to seek an OT evaluation</li>
+            </ul>
+            <div class="product-footer" style="margin-top: 1rem;">
+              <span class="product-price" style="color: var(--green); font-family: var(--ff-body); font-size: 0.9rem; font-weight: 500;">Free</span>
+              <a href="downloads/handwriting_v4.pdf" target="_blank" class="btn-primary" download>Download PDF</a>
             </div>
           </div>
         </div>
 
-        <!-- Everything Notebook -->
+        <!-- Why We Don't Rush Writing — FREE -->
         <div class="product-card">
-          <div class="product-image">📓</div>
+          <div class="product-image">✏️</div>
           <div class="product-content">
-            <p class="product-label">Print on Demand</p>
-            <h3 class="product-title">The Everything Notebook</h3>
-            <p class="product-desc">A 4-month spiral system designed for ADHD brains, by an OT with ADHD. Undated, guilt-free, and actually usable. Second Edition, 140 pages.</p>
-            <div class="product-footer">
-              <span style="color: var(--text-light); font-size: 0.9rem;">Lulu</span>
-              <a href="https://www.lulu.com/spotlight/everythingnotebook" target="_blank" class="btn-primary">Order</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Token Reward Chart -->
-        <div class="product-card">
-          <div class="product-image">🎫</div>
-          <div class="product-content">
-            <p class="product-label">Behavior Tool</p>
-            <h3 class="product-title">Token & Reward Chart</h3>
-            <p class="product-desc">Build custom weekly chore schedules with day-specific tasks. Parents set token values and customize rewards. PIN-protected with full parental controls. 14-day free trial. <strong>PIN: 1234</strong></p>
-            <div class="product-footer">
-              <span class="product-price" style="color: var(--green);">Free Trial</span>
-              <a href="token-chart.html" class="btn-primary">Try It Free</a>
+            <p class="product-label">For Families — Free Download</p>
+            <h3 class="product-title">Why We Don't Rush Writing</h3>
+            <p class="product-desc">A family guide explaining what has to develop before formal writing can succeed — and why rushing leads to habits that are hard to undo.</p>
+            <ul class="doc-list">
+              <li>Why bones and joint stability matter first</li>
+              <li>The foundations writing actually requires (core, shoulder, hands)</li>
+              <li>Play-based activities that build those foundations</li>
+              <li>Developmental timing: what to expect and when</li>
+              <li>Signs your child may benefit from an OT evaluation</li>
+            </ul>
+            <div class="product-footer" style="margin-top: 1rem;">
+              <span class="product-price" style="color: var(--green); font-family: var(--ff-body); font-size: 0.9rem; font-weight: 500;">Free</span>
+              <a href="downloads/prewriting_v4.pdf" target="_blank" class="btn-primary" download>Download PDF</a>
             </div>
           </div>
         </div>
@@ -695,59 +719,163 @@
       </div>
     </section>
 
-    <!-- PRIVATE PRACTICE BUNDLE SECTION -->
+    <!-- ══ 5. EVERYTHING NOTEBOOK ══ -->
     <section class="resource-section">
       <div class="section-header">
-        <h2>Private Practice Bundle</h2>
-        <p>Complete guides and resources for building and scaling a pediatric therapy practice.</p>
+        <h2>The Everything Notebook</h2>
+        <p>For ADHD brains — by an OT with ADHD who got tired of everything else.</p>
       </div>
       <div class="product-grid">
 
-        <!-- Module 1 + 2 Bundle -->
         <div class="product-card">
-          <div class="product-image">📖</div>
+          <div class="product-image">📓</div>
           <div class="product-content">
-            <h3 class="product-title">Module 1 + 2: Business Setup & Client Intake</h3>
-            <p class="product-desc"><strong>20 ready-to-use documents:</strong> Launch Checklist, Tax ID/NPI/CAQH Guide, LLC Setup, Insurance Checklist, Banking Guide, Credentialing Guide, HIPAA Tech List, Contractor Guide, Onboarding Checklist, Welcome Letter, New Patient FAQ, Intake Form, Consent to Treat & Evaluate, Release of Information, Media Release, Telehealth Consent, Financial Agreement, Sliding Scale Agreement, Privacy Practices, Termination Letter. Everything you need to launch and run professionally.</p>
+            <p class="product-label">Print on Demand — For ADHD Brains</p>
+            <h3 class="product-title">The Everything Notebook — Second Edition</h3>
+            <p class="product-desc">A 4-month spiral notebook system that is undated, guilt-free, and actually usable. Brain dumps, rolling priority lists, monthly calendars, and 140 lined pages. One notebook. Chaos controlled.</p>
+            <ul class="doc-list">
+              <li>Brain Dump + Rolling Priority List</li>
+              <li>New Contacts sheet</li>
+              <li>Year at a Glance (2-page spread)</li>
+              <li>4 undated Monthly Calendars</li>
+              <li>140 Lined Note Pages</li>
+            </ul>
+            <div class="product-footer" style="margin-top: 1rem;">
+              <span style="color: var(--text-light); font-size: 0.9rem;">Ships via Lulu</span>
+              <a href="https://www.lulu.com/spotlight/everythingnotebook" target="_blank" class="btn-primary">Order Now</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ 6. CLINICAL TEMPLATES ══ -->
+    <section class="resource-section">
+      <div class="section-header">
+        <h2>Clinical Templates</h2>
+        <p>Ready-to-use documents for evaluations and career readiness. For licensed therapists only.</p>
+      </div>
+      <div class="product-grid">
+
+        <div class="product-card">
+          <div class="product-image">📋</div>
+          <div class="product-content">
+            <p class="product-label">For Therapists</p>
+            <h3 class="product-title">Pediatric OT Eval Template</h3>
+            <p class="product-desc">Comprehensive evaluation template covering all performance skill domains. Covers areas Medicaid reviewers look for. Fully editable Word doc with clinical cues throughout.</p>
             <div class="product-footer" style="flex-direction: column; gap: 0.5rem;">
-              <span class="product-price">$12.99</span>
+              <span class="product-price">$3.99</span>
+              <a href="https://evolving-therapy-wellness.netlify.app/downloads/OT_Eval_Template_Preview.pdf" target="_blank" class="btn-secondary" style="width: 100%; text-align: center;">👁️ Preview (2 pages)</a>
               <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
-                <input type="hidden" name="cmd" value="_xclick" />
-                <input type="hidden" name="business" value="ot.evolve@gmail.com" />
-                <input type="hidden" name="item_name" value="Private Practice Bundle — Modules 1 + 2" />
-                <input type="hidden" name="amount" value="12.99" />
-                <input type="hidden" name="currency_code" value="USD" />
-                <input type="hidden" name="no_shipping" value="1" />
-                <input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/thank-you.html" />
-                <input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
-                <button type="submit" class="btn-primary" style="width: 100%;">Buy Now</button>
+                <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="Pediatric OT Evaluation Template" /><input type="hidden" name="amount" value="3.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/download.html" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                <button type="submit" class="btn-primary" style="width: 100%;">Buy Now — $3.99</button>
               </form>
             </div>
           </div>
         </div>
 
-        <!-- Module 3 Coming Soon -->
         <div class="product-card">
+          <div class="product-image">💼</div>
+          <div class="product-content">
+            <p class="product-label">For Therapists</p>
+            <h3 class="product-title">Job Readiness Interactive Workbook</h3>
+            <p class="product-desc">Interactive PDF workbook for job readiness skills, interview prep, and employment transitions for adolescent and young adult therapy populations. Print or digital use.</p>
+            <div class="product-footer" style="flex-direction: column; gap: 0.5rem;">
+              <span class="product-price">$3.49</span>
+              <a href="downloads/Job_Readiness_Preview.pdf" target="_blank" class="btn-secondary" style="width: 100%; text-align: center;">👁️ Preview (5 pages)</a>
+              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
+                <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="Job Readiness Interactive Workbook" /><input type="hidden" name="amount" value="3.49" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/download-job-readiness.html" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                <button type="submit" class="btn-primary" style="width: 100%;">Buy Now — $3.49</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ 7. PRIVATE PRACTICE BUNDLE ══ -->
+    <section class="resource-section">
+      <div class="section-header">
+        <h2>Private Practice Bundle</h2>
+        <p>Complete guides and documents for building and scaling a pediatric therapy practice.</p>
+      </div>
+      <div class="product-grid">
+
+        <div class="product-card">
+          <div class="product-image">📖</div>
+          <div class="product-content">
+            <h3 class="product-title">Module 1 + 2: Business Setup &amp; Client Intake</h3>
+            <p class="product-desc"><strong>20 ready-to-use documents</strong> covering everything from legal setup through credentialing to client intake.</p>
+            <ul class="doc-list">
+              <li>Private Practice Launch Checklist</li>
+              <li>Tax ID / NPI / CAQH Guide</li>
+              <li>LLC &amp; Business Structure Guide</li>
+              <li>Liability Insurance Checklist</li>
+              <li>Banking &amp; Finance Guide</li>
+              <li>Insurance Credentialing Guide</li>
+              <li>HIPAA-Compliant Tech &amp; Tools List</li>
+              <li>Contractor vs. Employee Guide</li>
+              <li>Contractor Onboarding Checklist</li>
+              <li>Welcome Letter + New Patient FAQ</li>
+              <li>Intake &amp; History Form</li>
+              <li>Consent to Treat &amp; Evaluate</li>
+              <li>Release of Information</li>
+              <li>Media Release + Telehealth Consent</li>
+              <li>Financial Agreement + Sliding Scale</li>
+              <li>Notice of Privacy Practices</li>
+              <li>Termination of Services Letter</li>
+            </ul>
+            <div class="product-footer" style="flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+              <span class="product-price">$12.99</span>
+              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin: 0;">
+                <input type="hidden" name="cmd" value="_xclick" /><input type="hidden" name="business" value="ot.evolve@gmail.com" /><input type="hidden" name="item_name" value="Private Practice Bundle — Modules 1 + 2" /><input type="hidden" name="amount" value="12.99" /><input type="hidden" name="currency_code" value="USD" /><input type="hidden" name="no_shipping" value="1" /><input type="hidden" name="return" value="https://evolving-therapy-wellness.netlify.app/thank-you.html" /><input type="hidden" name="cancel_return" value="https://evolving-therapy-wellness.netlify.app/resources.html" />
+                <button type="submit" class="btn-primary" style="width: 100%;">Buy Now — $12.99</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card coming-soon">
           <div class="product-image">📖</div>
           <div class="product-content">
             <p class="product-label">Coming Soon</p>
             <h3 class="product-title">Module 3: Clinical Documentation</h3>
-            <p class="product-desc">SOAP notes, progress reports, discharge summaries, goal tracking logs, referral forms, attendance logs, superbills, and waitlist tracking. 8 documents.</p>
-            <div class="product-footer">
+            <p class="product-desc"><strong>8 documents</strong> covering all your day-to-day clinical paperwork needs.</p>
+            <ul class="doc-list">
+              <li>SOAP Note Templates</li>
+              <li>Progress Report Template</li>
+              <li>Discharge Summary</li>
+              <li>Goal Tracking Log</li>
+              <li>Referral Form</li>
+              <li>Attendance Log</li>
+              <li>Superbill Template</li>
+              <li>Waitlist Tracking Sheet</li>
+            </ul>
+            <div class="product-footer" style="margin-top: 1rem;">
               <span class="product-price">$12.99</span>
               <button class="btn-primary" disabled>Notify Me</button>
             </div>
           </div>
         </div>
 
-        <!-- Module 4 Coming Soon -->
-        <div class="product-card">
+        <div class="product-card coming-soon">
           <div class="product-image">📖</div>
           <div class="product-content">
             <p class="product-label">Coming Soon</p>
-            <h3 class="product-title">Module 4: Operations & Compliance</h3>
-            <p class="product-desc">Client-facing policies, internal SOPs, BAAs, contractor agreements, HIPAA training, incident reports, and billing trackers. 7 documents.</p>
-            <div class="product-footer">
+            <h3 class="product-title">Module 4: Operations &amp; Compliance</h3>
+            <p class="product-desc"><strong>7 documents</strong> for running a compliant, well-organized private practice.</p>
+            <ul class="doc-list">
+              <li>Client-Facing Policy Templates</li>
+              <li>Internal Standard Operating Procedures</li>
+              <li>Business Associate Agreement (BAA)</li>
+              <li>Contractor Agreements</li>
+              <li>HIPAA Training Checklist</li>
+              <li>Incident Report Form</li>
+              <li>Billing Tracker</li>
+            </ul>
+            <div class="product-footer" style="margin-top: 1rem;">
               <span class="product-price">$12.99</span>
               <button class="btn-primary" disabled>Notify Me</button>
             </div>
@@ -790,6 +918,18 @@
   <script>
     window.addEventListener('scroll', () => {
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('active');
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+      });
     });
   </script>
 </body>

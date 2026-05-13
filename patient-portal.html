@@ -316,10 +316,20 @@
       letter-spacing: 0.05em;
     }
 
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 0.5rem; }
+    .hamburger span { width: 24px; height: 2px; background: var(--purple); border-radius: 2px; transition: all 0.3s; }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(8px,8px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(8px,-8px); }
+
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 900px) {
-      nav { padding: 1rem 2rem; }
-      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      nav { padding: 1rem 1.25rem; }
+      .hamburger { display: flex; }
+      .nav-links { position: absolute; top: 60px; left: 0; right: 0; flex-direction: column; gap: 0; background: rgba(253,251,249,0.98); backdrop-filter: blur(12px); padding: 1rem 1.25rem; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; border-bottom: 1px solid rgba(184,168,208,0.2); }
+      .nav-links.active { max-height: 500px; }
+      .nav-links li { padding: 0.75rem 0; border-bottom: 1px solid rgba(184,168,208,0.1); }
+      .nav-links li:last-child { border-bottom: none; }
       main { padding: 2rem; }
       .tools-grid { grid-template-columns: 1fr; }
     }
@@ -356,6 +366,9 @@
       <li><a href="patient-portal.html">Patient Portal</a></li>
       <li><a href="index.html#contact">Contact</a></li>
     </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <!-- MAIN CONTENT -->
@@ -390,6 +403,14 @@
           <h3>Share Your Story</h3>
           <p>Tell us about your therapy experience and help other families discover our services.</p>
           <span class="badge">Free</span>
+        </a>
+
+        <!-- Social Stories -->
+        <a href="social-stories.html" class="tool-card" style="border-color: rgba(92,68,144,0.25); background: linear-gradient(135deg, var(--warm-white) 0%, #f0eaf8 100%);">
+          <div class="tool-icon">📚</div>
+          <h3>Social Stories</h3>
+          <p>Personalized picture stories that help your child feel ready for church drop-off, doctor visits, first day of school, and more. Add real photos, print at home, or read together on your phone. Your child's info saves automatically.</p>
+          <span class="badge" style="background: var(--purple-pale); color: var(--purple);">Free &amp; Paid</span>
         </a>
 
         <!-- Token Chart -->
@@ -450,6 +471,18 @@
   <script>
     window.addEventListener('scroll', () => {
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('active');
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+      });
     });
   </script>
 </body>
