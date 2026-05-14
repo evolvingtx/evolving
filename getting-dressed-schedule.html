@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Getting Dressed Schedule – Evolving Therapy & Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:#5C4490;--purple-light:#9B88C4;--purple-pale:#EDE8F5;--purple-deep:#3E2D6E;
+  --cream:#FDFBF9;--warm-white:#F7F4FB;--text-dark:#1E1830;--text-light:#5A4E72;
+  --green:#4A8C6F;--green-pale:#E8F5EF;--border:rgba(92,68,144,0.15);--shadow:rgba(62,45,110,0.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',sans-serif;background:#E8E0F0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0}
+
+/* NAV */
+.site-nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;background:rgba(253,251,249,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(184,168,208,.2);box-shadow:0 2px 16px rgba(92,68,144,.06)}
+.site-nav-logo{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.nav-logo-circle{width:32px;height:32px;border:1.5px solid var(--purple-light);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.nav-logo-circle::before{content:'';position:absolute;width:24px;height:24px;border:1px solid var(--purple-pale);border-radius:50%}
+.nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:500;color:var(--purple);letter-spacing:.08em;text-transform:uppercase}
+.nav-logo-sub{font-size:.58rem;font-weight:300;color:var(--purple-light);letter-spacing:.2em;text-transform:uppercase;display:block;margin-top:-2px}
+.site-nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+.site-nav-links a{font-size:.72rem;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--text-light);text-decoration:none;transition:color .2s;white-space:nowrap}
+.site-nav-links a:hover{color:var(--purple)}
+.site-nav-links .nav-cta{color:var(--purple)!important;border:1px solid var(--purple-light);padding:.4rem 1rem;border-radius:2rem}
+.site-nav-links .nav-cta:hover{background:var(--purple);color:white!important;border-color:var(--purple)}
+
+.content-wrap{width:100%;display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px}
+
+/* EDITOR */
+.editor-panel{width:100%;max-width:640px;background:white;border-radius:20px;padding:22px 26px 20px;margin-bottom:24px;box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border)}
+.editor-panel h2{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--purple);margin-bottom:6px}
+.editor-note{font-size:.78rem;color:var(--text-light);margin-bottom:14px;line-height:1.6}
+.editor-note a{color:var(--purple);font-weight:600;text-decoration:none}
+.fields{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.field{flex:1;min-width:130px}
+.field label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--text-light);margin-bottom:5px}
+.field input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'Jost',sans-serif;font-size:.88rem;color:var(--text-dark);background:var(--cream);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--purple)}
+.clothing-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.clothing-label{font-size:.68rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text-light);width:100%;margin-bottom:2px}
+.toggle-btn{font-family:'Jost',sans-serif;font-size:.78rem;font-weight:600;border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;cursor:pointer;background:var(--cream);color:var(--text-light);transition:all .2s}
+.toggle-btn:hover{border-color:var(--purple);color:var(--purple)}
+.toggle-btn.active{background:var(--purple);color:white;border-color:var(--purple)}
+.btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{font-family:'Jost',sans-serif;font-weight:600;font-size:.85rem;border:none;cursor:pointer;border-radius:10px;padding:9px 20px;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px var(--shadow)}
+.btn-primary{background:var(--purple);color:white}
+.btn-ghost{background:var(--purple-pale);color:var(--purple)}
+.saved-msg{font-size:.72rem;color:var(--green);font-weight:600;opacity:0;transition:opacity .4s;margin-left:auto}
+.saved-msg.show{opacity:1}
+
+/* BOOK */
+.book-viewer{width:100%;max-width:460px;touch-action:pan-y}
+.page{display:none;background:var(--cream);border-radius:20px;overflow:hidden;box-shadow:0 8px 40px var(--shadow);border:1px solid var(--border);aspect-ratio:3/4;flex-direction:column;position:relative}
+.page.active{display:flex}
+
+/* Cover */
+.page-cover{background:linear-gradient(160deg,var(--purple-deep) 0%,var(--purple) 60%,var(--purple-light) 100%);align-items:center;justify-content:center;text-align:center}
+.cover-ring{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.1)}
+.cover-ring-1{width:220px;height:220px;top:-60px;right:-60px}
+.cover-ring-2{width:160px;height:160px;bottom:-40px;left:-40px}
+.cover-emoji{font-size:3.5rem;margin-bottom:14px;display:block}
+.cover-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:white;line-height:1.2;padding:0 28px;text-shadow:0 2px 12px rgba(0,0,0,.2)}
+.cover-name{font-size:.95rem;font-weight:300;color:rgba(255,255,255,.8);margin-top:12px;letter-spacing:.5px}
+.cover-brand{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:.6rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+
+/* Step page */
+.page-head{background:var(--purple-pale);padding:10px 18px 9px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
+.page-num{font-size:.62rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--purple-light)}
+.step-counter{font-size:.62rem;font-weight:700;color:var(--purple);background:white;border:1px solid var(--border);border-radius:99px;padding:2px 9px}
+
+/* Photo box */
+.img-box{flex:1;background:var(--warm-white);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;border-bottom:1px solid var(--border);transition:background .2s;min-height:0}
+.img-box:hover{background:var(--purple-pale)}
+.img-box img{width:100%;height:100%;object-fit:cover;display:none}
+.img-box img.on{display:block}
+.img-ph{display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+.ph-icon{font-size:4rem;line-height:1}
+.ph-text{font-size:.7rem;font-weight:500;letter-spacing:.5px;color:var(--purple-light);text-transform:uppercase}
+.img-over{position:absolute;bottom:0;left:0;right:0;background:rgba(92,68,144,.8);color:white;font-size:.62rem;font-weight:600;text-align:center;padding:6px;letter-spacing:.5px;opacity:0;transition:opacity .2s;text-transform:uppercase}
+.img-box:hover .img-over{opacity:1}
+.rm-btn{position:absolute;top:8px;right:8px;background:rgba(62,45,110,.65);color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:.8rem;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0}
+.rm-btn.on{display:flex}
+
+/* Text + actions */
+.txt-box{padding:10px 18px 8px;background:var(--cream);flex-shrink:0}
+.step-label{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:600;color:var(--text-dark);text-align:center;line-height:1.3}
+.step-sub{font-size:.78rem;color:var(--text-light);text-align:center;margin-top:3px}
+.step-actions{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 10px;background:var(--cream);flex-shrink:0;gap:8px;border-top:1px solid var(--border)}
+.btn-breakdown{font-family:'Jost',sans-serif;font-size:.7rem;font-weight:600;background:var(--warm-white);border:1.5px solid var(--border);color:var(--text-light);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-breakdown:hover{background:var(--purple-pale);border-color:var(--purple-light);color:var(--purple)}
+.btn-breakdown.active{background:var(--purple-pale);border-color:var(--purple);color:var(--purple)}
+.btn-done-step{font-family:'Jost',sans-serif;font-size:.75rem;font-weight:700;background:var(--purple);color:white;border:none;border-radius:20px;padding:6px 18px;cursor:pointer;transition:all .2s}
+.btn-done-step:hover{background:var(--purple-deep)}
+.btn-done-step.completed{background:var(--green)}
+
+/* SUB-STEP SLIDE */
+.page-substep{display:none;background:var(--cream);border-radius:20px;overflow:hidden;box-shadow:0 8px 40px var(--shadow);border:1px solid var(--border);aspect-ratio:3/4;flex-direction:column}
+.page-substep.active{display:flex}
+.substep-head{background:var(--purple-pale);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
+.substep-head-label{font-size:.6rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--purple-light)}
+.substep-head-count{font-size:.62rem;font-weight:700;color:var(--purple);background:white;border:1px solid var(--border);border-radius:99px;padding:2px 9px}
+.substep-display{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 28px;gap:20px;background:var(--warm-white);border-bottom:1px solid var(--border);min-height:0}
+.substep-circle{width:56px;height:56px;background:var(--purple-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--purple);flex-shrink:0}
+.substep-main-text{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:500;color:var(--text-dark);text-align:center;line-height:1.45}
+.substep-check-area{padding:14px 18px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--cream);flex-shrink:0}
+.big-check{width:60px;height:60px;border:2.5px solid var(--purple-light);border-radius:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;background:white;font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--purple-light)}
+.big-check:hover{border-color:var(--purple);background:var(--purple-pale);color:var(--purple)}
+.big-check.done{background:var(--green)!important;border-color:var(--green)!important;color:white!important;font-size:1.6rem}
+.check-hint{font-size:.7rem;color:var(--text-light);font-weight:500}
+.back-to-step{display:block;text-align:center;font-size:.7rem;font-weight:600;color:var(--purple-light);text-transform:uppercase;letter-spacing:.06em;padding:4px;cursor:pointer;text-decoration:none;transition:color .2s}
+.back-to-step:hover{color:var(--purple)}
+
+/* End page */
+.page-end{display:none;align-items:center;justify-content:center;text-align:center;background:var(--purple-pale);padding:32px;flex-direction:column;gap:14px;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px var(--shadow);border:1px solid var(--border);aspect-ratio:3/4}
+.page-end.active{display:flex}
+.end-star{font-size:3.5rem}
+.end-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--purple-deep);line-height:1.2}
+.end-reward{font-size:1.1rem;color:var(--green);font-family:'Cormorant Garamond',serif;font-weight:600;margin-top:4px}
+.end-sub{font-size:.85rem;color:var(--text-light);line-height:1.6}
+.end-brand-name{display:block;font-size:.6rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--purple-light);margin-top:12px}
+.end-brand-tag{font-family:'Cormorant Garamond',serif;font-size:.88rem;font-style:italic;color:var(--purple-light)}
+.btn-restart{font-family:'Jost',sans-serif;font-size:.78rem;font-weight:700;background:var(--purple);color:white;border:none;border-radius:20px;padding:8px 22px;cursor:pointer;margin-top:8px;transition:background .2s}
+.btn-restart:hover{background:var(--purple-deep)}
+
+/* NAV */
+.book-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px}
+.nav-btn{width:42px;height:42px;border-radius:50%;background:white;border:1.5px solid var(--border);color:var(--purple);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 2px 8px var(--shadow)}
+.nav-btn:hover:not(:disabled){background:var(--purple);color:white;border-color:var(--purple)}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:260px;justify-content:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .2s;cursor:pointer;flex-shrink:0}
+.dot.active{background:var(--purple);width:18px;border-radius:4px}
+.dot.substep{background:var(--purple-pale);width:5px;height:5px}
+.dot.substep.active{background:var(--purple-light);width:14px}
+
+/* FOOTER */
+.site-footer{width:100%;margin-top:48px;background:var(--text-dark);padding:2.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
+.site-footer-logo{font-family:'Cormorant Garamond',serif;font-size:1rem;color:rgba(255,255,255,.6);letter-spacing:.1em}
+.site-footer-tagline{font-size:.72rem;font-weight:300;color:rgba(255,255,255,.3);margin-top:3px}
+.site-footer-links{display:flex;gap:1.5rem;list-style:none;flex-wrap:wrap}
+.site-footer-links a{font-size:.7rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.4);text-decoration:none;text-transform:uppercase;transition:color .2s}
+.site-footer-links a:hover{color:rgba(255,255,255,.8)}
+.site-footer-copy{font-size:.68rem;color:rgba(255,255,255,.25);width:100%;text-align:center;margin-top:.5rem}
+
+/* PRINT */
+@media print {
+  @page{size:letter portrait;margin:8mm}
+  .site-nav,.site-footer,.editor-panel,.book-nav,.step-actions,.btn-restart,.back-to-step{display:none!important}
+  .content-wrap{padding:0!important}
+  body{background:white!important;display:block!important}
+  .book-viewer{max-width:100%!important;display:grid!important;grid-template-columns:1fr 1fr;gap:5mm}
+  .page,.page-substep,.page-end{display:flex!important;height:120mm!important;overflow:hidden!important;border:1.5px solid #5C4490!important;border-radius:10px!important;background:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page:nth-child(4n){break-after:page}
+  .page-cover{background:white!important}
+  .cover-ring{display:none!important}
+  .cover-title{color:#3E2D6E!important;text-shadow:none!important;font-size:1.1rem!important}
+  .cover-name{color:#5A4E72!important;font-size:.7rem!important}
+  .cover-brand{position:static!important;display:block;color:#9B88C4!important;font-size:.5rem;margin-top:8px}
+  .cover-emoji{font-size:2rem;margin-bottom:6px}
+  .page-head,.substep-head{background:white!important;border-bottom:1px solid rgba(92,68,144,.2)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;flex-shrink:0!important;padding:4px 10px}
+  .img-box{flex:1 1 auto!important;height:auto!important;min-height:0!important;background:white!important}
+  .img-box:not(.has-photo){border:1.5px dashed #9B88C4!important;background:white!important}
+  .img-over,.rm-btn{display:none!important}
+  .txt-box{flex:0 0 auto!important;flex-shrink:0!important;background:white!important;padding:6px 10px!important;max-height:28mm!important;overflow:hidden!important}
+  .substep-display{background:white!important;flex:1 1 auto!important;min-height:0!important}
+  .substep-check-area{flex:0 0 auto!important;background:white!important;padding:6px 10px!important}
+  .big-check{width:44px;height:44px;font-size:1.1rem}
+  .page-end{background:white!important}
+  .end-title{color:#3E2D6E!important;font-size:.9rem}
+  .end-sub{color:#5A4E72!important;font-size:.6rem}
+}
+
+/* STEP PICKER */
+.expand-row { margin-bottom: 14px; }
+.expand-label { font-size: .68rem; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px; display: block; }
+.expand-steps { display: flex; flex-direction: column; gap: 6px; }
+.expand-item { display: flex; align-items: center; gap: 10px; padding: 7px 12px; background: var(--warm-white); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all .2s; user-select: none; }
+.expand-item:hover { border-color: var(--purple-light); background: var(--purple-pale); }
+.expand-item.selected { border-color: var(--purple); background: var(--purple-pale); }
+.expand-check { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; transition: all .2s; font-size: .75rem; }
+.expand-item.selected .expand-check { background: var(--purple); border-color: var(--purple); color: white; }
+.expand-item-icon { font-size: 1.1rem; }
+.expand-item-text { font-size: .82rem; font-weight: 500; color: var(--text-dark); flex: 1; }
+.expand-item-count { font-size: .68rem; color: var(--purple-light); font-weight: 600; }
+
+/* PROFILE SWITCHER */
+.profile-row { margin-bottom: 14px; }
+.profile-label { font-size: .68rem; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; display: block; }
+.profile-list { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.profile-chip { font-family: 'Jost', sans-serif; font-size: .78rem; font-weight: 600; border: 1.5px solid var(--border); border-radius: 20px; padding: 4px 12px; cursor: pointer; background: var(--cream); color: var(--text-light); transition: all .2s; display: flex; align-items: center; gap: 5px; }
+.profile-chip:hover { border-color: var(--purple-light); color: var(--purple); }
+.profile-chip.active { background: var(--purple); color: white; border-color: var(--purple); }
+.profile-chip .chip-del { font-size: .65rem; opacity: .6; margin-left: 2px; transition: opacity .2s; }
+.profile-chip:hover .chip-del { opacity: 1; }
+.btn-add-profile { font-family: 'Jost', sans-serif; font-size: .75rem; font-weight: 600; background: none; border: 1.5px dashed var(--border); color: var(--purple-light); border-radius: 20px; padding: 4px 12px; cursor: pointer; transition: all .2s; }
+.btn-add-profile:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-pale); }
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+@media(max-width:560px){
+  .site-nav{padding:.75rem 1rem}
+  .site-nav-links{display:none}
+  .site-footer{flex-direction:column;text-align:center;padding:2rem 1.25rem}
+  .site-footer-links{justify-content:center;gap:1rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="site-nav-logo">
+    <div class="nav-logo-circle"></div>
+    <div><span class="nav-logo-text">Evolving</span><span class="nav-logo-sub">Therapy & Wellness</span></div>
+  </a>
+  <ul class="site-nav-links">
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="social-stories.html">Social Stories &amp; Schedules</a></li>
+    <li><a href="getting-dressed-story.html">← Social Story</a></li>
+    <li><a href="index.html#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<div class="content-wrap">
+
+<div class="editor-panel">
+  <h2>👕 Getting Dressed — Visual Schedule</h2>
+  <p class="editor-note">Read the <a href="getting-dressed-story.html">Social Story first →</a> then use this schedule as the daily tool. Tap any image to add a real photo.</p>
+
+  <!-- PROFILE SWITCHER -->
+  <div class="profile-row">
+    <span class="profile-label">👤 Profiles — tap to switch, + to add</span>
+    <div class="profile-list" id="profile-list"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="fields">
+    <div class="field"><label>Child's Name</label><input id="f-child" type="text" placeholder="e.g. Marcus" maxlength="30" oninput="saveAndUpdate()"></div>
+    <div class="field"><label>Reward When Done</label><input id="f-reward" type="text" placeholder="e.g. iPad, breakfast" maxlength="40" oninput="saveAndUpdate()"></div>
+  </div>
+
+  <div class="clothing-row">
+    <span class="clothing-label">Bottom layer (step 1):</span>
+    <button class="toggle-btn active" id="btm-underwear" onclick="setBottom('underwear')">🩲 Underwear</button>
+    <button class="toggle-btn" id="btm-pullup"    onclick="setBottom('pullup')">🩱 Pull-up</button>
+    <button class="toggle-btn" id="btm-diaper"    onclick="setBottom('diaper')">👶 Diaper</button>
+  </div>
+  <div class="clothing-row">
+    <span class="clothing-label">Bottoms (step 2):</span>
+    <button class="toggle-btn active" id="bot-pants"  onclick="setBottoms('pants')">👖 Pants</button>
+    <button class="toggle-btn" id="bot-shorts" onclick="setBottoms('shorts')">🩳 Shorts</button>
+    <button class="toggle-btn" id="bot-skirt"  onclick="setBottoms('skirt')">👗 Skirt</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- STEP EXPANSION PICKER -->
+  <div class="expand-row">
+    <span class="expand-label">🔍 Pre-select steps to break down</span>
+    <div class="expand-steps" id="expand-steps">
+      <!-- built by JS after clothing is set -->
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:4px;">
+    <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
+    <button class="btn btn-ghost" onclick="resetAll()">↩ Reset</button>
+    <span class="saved-msg" id="saved-msg">✓ Saved</span>
+  </div>
+</div>
+
+<!-- BOOK -->
+<div class="book-viewer" id="book">
+
+  <!-- COVER -->
+  <div class="page page-cover" id="page-cover">
+    <div class="cover-ring cover-ring-1"></div><div class="cover-ring cover-ring-2"></div>
+    <span class="cover-emoji">👕</span>
+    <div class="cover-title" id="cover-title">Getting Dressed</div>
+    <div class="cover-name"  id="cover-name">Let's do it! 💛</div>
+    <div class="cover-brand">Evolving Therapy &amp; Wellness</div>
+  </div>
+
+  <!-- STEP 1: bottom layer -->
+  <div class="page page-step" id="step-0">
+    <div class="page-head"><span class="page-num" id="hd-0">Step 1 of 5</span><span class="step-counter">1/5</span></div>
+    <div class="img-box" id="box-0" onclick="triggerUpload(0)">
+      <div class="img-ph"><span class="ph-icon" id="s0-icon">🩲</span><span class="ph-text" id="s0-ph">Underwear</span></div>
+      <img id="img-0" alt="Step 1"><div class="img-over">📷 Add photo</div>
+      <button class="rm-btn" id="rm-0" onclick="removePhoto(event,0)">✕</button>
+    </div>
+    <div class="txt-box"><div class="step-label" id="s0-label">Put on underwear</div><div class="step-sub" id="s0-sub">Step in and pull up</div></div>
+    <div class="step-actions">
+      <button class="btn-breakdown" id="brk-0" onclick="toggleBreakdown(0)">🔍 Break it down</button>
+      <button class="btn-done-step" id="done-0" onclick="markStepDone(0)">✓ Done</button>
+    </div>
+    <input type="file" id="file-0" accept="image/*" style="display:none" onchange="loadPhoto(0,this)">
+  </div>
+
+  <!-- STEP 2: bottoms -->
+  <div class="page page-step" id="step-1">
+    <div class="page-head"><span class="page-num">Step 2 of 5</span><span class="step-counter">2/5</span></div>
+    <div class="img-box" id="box-1" onclick="triggerUpload(1)">
+      <div class="img-ph"><span class="ph-icon" id="s1-icon">👖</span><span class="ph-text" id="s1-ph">Pants</span></div>
+      <img id="img-1" alt="Step 2"><div class="img-over">📷 Add photo</div>
+      <button class="rm-btn" id="rm-1" onclick="removePhoto(event,1)">✕</button>
+    </div>
+    <div class="txt-box"><div class="step-label" id="s1-label">Put on pants</div><div class="step-sub" id="s1-sub">Both legs in, pull up, fasten</div></div>
+    <div class="step-actions">
+      <button class="btn-breakdown" id="brk-1" onclick="toggleBreakdown(1)">🔍 Break it down</button>
+      <button class="btn-done-step" id="done-1" onclick="markStepDone(1)">✓ Done</button>
+    </div>
+    <input type="file" id="file-1" accept="image/*" style="display:none" onchange="loadPhoto(1,this)">
+  </div>
+
+  <!-- STEP 3: shirt -->
+  <div class="page page-step" id="step-2">
+    <div class="page-head"><span class="page-num">Step 3 of 5</span><span class="step-counter">3/5</span></div>
+    <div class="img-box" id="box-2" onclick="triggerUpload(2)">
+      <div class="img-ph"><span class="ph-icon">👕</span><span class="ph-text">Shirt</span></div>
+      <img id="img-2" alt="Step 3"><div class="img-over">📷 Add photo</div>
+      <button class="rm-btn" id="rm-2" onclick="removePhoto(event,2)">✕</button>
+    </div>
+    <div class="txt-box"><div class="step-label">Put on shirt</div><div class="step-sub">Head first, then both arms</div></div>
+    <div class="step-actions">
+      <button class="btn-breakdown" id="brk-2" onclick="toggleBreakdown(2)">🔍 Break it down</button>
+      <button class="btn-done-step" id="done-2" onclick="markStepDone(2)">✓ Done</button>
+    </div>
+    <input type="file" id="file-2" accept="image/*" style="display:none" onchange="loadPhoto(2,this)">
+  </div>
+
+  <!-- STEP 4: socks -->
+  <div class="page page-step" id="step-3">
+    <div class="page-head"><span class="page-num">Step 4 of 5</span><span class="step-counter">4/5</span></div>
+    <div class="img-box" id="box-3" onclick="triggerUpload(3)">
+      <div class="img-ph"><span class="ph-icon">🧦</span><span class="ph-text">Socks</span></div>
+      <img id="img-3" alt="Step 4"><div class="img-over">📷 Add photo</div>
+      <button class="rm-btn" id="rm-3" onclick="removePhoto(event,3)">✕</button>
+    </div>
+    <div class="txt-box"><div class="step-label">Put on socks</div><div class="step-sub">One foot at a time</div></div>
+    <div class="step-actions">
+      <button class="btn-breakdown" id="brk-3" onclick="toggleBreakdown(3)">🔍 Break it down</button>
+      <button class="btn-done-step" id="done-3" onclick="markStepDone(3)">✓ Done</button>
+    </div>
+    <input type="file" id="file-3" accept="image/*" style="display:none" onchange="loadPhoto(3,this)">
+  </div>
+
+  <!-- STEP 5: shoes -->
+  <div class="page page-step" id="step-4">
+    <div class="page-head"><span class="page-num">Step 5 of 5</span><span class="step-counter">5/5</span></div>
+    <div class="img-box" id="box-4" onclick="triggerUpload(4)">
+      <div class="img-ph"><span class="ph-icon">👟</span><span class="ph-text">Shoes</span></div>
+      <img id="img-4" alt="Step 5"><div class="img-over">📷 Add photo</div>
+      <button class="rm-btn" id="rm-4" onclick="removePhoto(event,4)">✕</button>
+    </div>
+    <div class="txt-box"><div class="step-label">Put on shoes</div><div class="step-sub">Right foot, left foot, fasten</div></div>
+    <div class="step-actions">
+      <button class="btn-breakdown" id="brk-4" onclick="toggleBreakdown(4)">🔍 Break it down</button>
+      <button class="btn-done-step" id="done-4" onclick="markStepDone(4)">✓ Done</button>
+    </div>
+    <input type="file" id="file-4" accept="image/*" style="display:none" onchange="loadPhoto(4,this)">
+  </div>
+
+  <!-- REWARD PAGE -->
+  <div class="page-end" id="page-end">
+    <div class="end-star">🌟</div>
+    <div class="end-title" id="end-title">I did it!</div>
+    <div class="end-reward" id="end-reward">Time for your reward! 🎉</div>
+    <div class="end-sub">I got dressed all by myself.<br>I am so proud! 💛</div>
+    <button class="btn-restart" onclick="restartAll()">↩ Start over</button>
+    <div><span class="end-brand-name">Evolving Therapy &amp; Wellness</span><span class="end-brand-tag">Helping children grow into who they're meant to be</span></div>
+  </div>
+
+  <div class="book-nav">
+    <button class="nav-btn" id="btn-prev" onclick="changePage(-1)" disabled>‹</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="btn-next" onclick="changePage(1)">›</button>
+  </div>
+</div><!-- /book -->
+
+</div><!-- /content-wrap -->
+
+<footer class="site-footer">
+  <div><div class="site-footer-logo">Evolving Therapy &amp; Wellness</div><div class="site-footer-tagline">Helping children grow into who they're meant to be</div></div>
+  <ul class="site-footer-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="social-stories.html">Social Stories &amp; Schedules</a></li>
+    <li><a href="getting-dressed-story.html">Social Story</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <p class="site-footer-copy">© 2025 Evolving Therapy &amp; Wellness. All rights reserved.</p>
+</footer>
+
+<script>
+/* ── PROFILES ────────────────────────── */
+const PROFILE_LIST_KEY = 'etw_dress_profiles';
+let activeProfile = 'default';
+
+function getProfiles() {
+  try { return JSON.parse(localStorage.getItem(PROFILE_LIST_KEY)) || ['default']; }
+  catch(e) { return ['default']; }
+}
+
+function saveProfiles(list) {
+  try { localStorage.setItem(PROFILE_LIST_KEY, JSON.stringify(list)); } catch(e) {}
+}
+
+function profileKey(k) { return `etw_dress_${activeProfile}_${k}`; }
+
+function renderProfiles() {
+  const list = getProfiles();
+  const el = document.getElementById('profile-list');
+  el.innerHTML = '';
+  list.forEach(name => {
+    const chip = document.createElement('div');
+    chip.className = 'profile-chip' + (name === activeProfile ? ' active' : '');
+    const label = name === 'default' ? '➕ Default' : name;
+    chip.innerHTML = `<span onclick="switchProfile('${name}')">${label}</span>` +
+      (name !== 'default' ? `<span class="chip-del" onclick="deleteProfile(event,'${name}')">✕</span>` : '');
+    el.appendChild(chip);
+  });
+  const addBtn = document.createElement('button');
+  addBtn.className = 'btn-add-profile';
+  addBtn.textContent = '+ Add Child';
+  addBtn.onclick = addProfile;
+  el.appendChild(addBtn);
+}
+
+function switchProfile(name) {
+  activeProfile = name;
+  loadProfileData();
+  renderProfiles();
+  renderExpandPicker();
+  restartAll();
+}
+
+function addProfile() {
+  const name = prompt('Enter child's name or nickname:');
+  if (!name || !name.trim()) return;
+  const trimmed = name.trim();
+  const list = getProfiles();
+  if (list.includes(trimmed)) { switchProfile(trimmed); return; }
+  list.push(trimmed);
+  saveProfiles(list);
+  activeProfile = trimmed;
+  // Pre-fill name field
+  document.getElementById('f-child').value = trimmed;
+  saveAndUpdate();
+  renderProfiles();
+  renderExpandPicker();
+}
+
+function deleteProfile(e, name) {
+  e.stopPropagation();
+  if (!confirm(`Remove profile for ${name}? Their saved data will be deleted.`)) return;
+  const list = getProfiles().filter(p => p !== name);
+  saveProfiles(list);
+  // Clear their stored data
+  ['child','reward','bottom','bottoms','expand'].forEach(k => {
+    try { localStorage.removeItem(`etw_dress_${name}_${k}`); } catch(e) {}
+  });
+  for (let i=0;i<5;i++) try { localStorage.removeItem(`etw_dress_${name}_img_${i}`); } catch(e) {}
+  activeProfile = 'default';
+  loadProfileData();
+  renderProfiles();
+  renderExpandPicker();
+  restartAll();
+}
+
+function loadProfileData() {
+  try {
+    const c  = localStorage.getItem(profileKey('child'));
+    const r  = localStorage.getItem(profileKey('reward'));
+    const b  = localStorage.getItem(profileKey('bottom'));
+    const bt = localStorage.getItem(profileKey('bottoms'));
+    document.getElementById('f-child').value  = c  || '';
+    document.getElementById('f-reward').value = r  || '';
+    if (b)  setBottomSilent(b);
+    if (bt) setBottomsSilent(bt);
+    loadSavedImages();
+    updateSchedule();
+    // Load expand selections
+    const exp = localStorage.getItem(profileKey('expand'));
+    selectedExpand = exp ? JSON.parse(exp) : [];
+  } catch(e) { selectedExpand = []; }
+}
+
+/* ── STEP EXPANSION PICKER ────────────── */
+let selectedExpand = []; // array of step indices to pre-expand
+
+function getStepMeta() {
+  const b  = CLOTHING.bottom[bottomChoice];
+  const bt = CLOTHING.bottoms[bottomsChoice];
+  return [
+    { icon: b.icon,  label: b.label,        count: b.steps.length },
+    { icon: bt.icon, label: bt.label,        count: bt.steps.length },
+    { icon: '👕',    label: 'Put on shirt',  count: FIXED_STEPS[2].steps.length },
+    { icon: '🧦',    label: 'Put on socks',  count: FIXED_STEPS[3].steps.length },
+    { icon: '👟',    label: 'Put on shoes',  count: FIXED_STEPS[4].steps.length },
+  ];
+}
+
+function renderExpandPicker() {
+  const meta = getStepMeta();
+  const el   = document.getElementById('expand-steps');
+  el.innerHTML = '';
+  meta.forEach((step, i) => {
+    const sel = selectedExpand.includes(i);
+    const item = document.createElement('div');
+    item.className = 'expand-item' + (sel ? ' selected' : '');
+    item.innerHTML = `
+      <div class="expand-check">${sel ? '✓' : ''}</div>
+      <span class="expand-item-icon">${step.icon}</span>
+      <span class="expand-item-text">Step ${i+1}: ${step.label}</span>
+      <span class="expand-item-count">${step.count} sub-steps</span>
+    `;
+    item.onclick = () => toggleExpandSelection(i);
+    el.appendChild(item);
+  });
+}
+
+function toggleExpandSelection(stepIndex) {
+  if (selectedExpand.includes(stepIndex)) {
+    selectedExpand = selectedExpand.filter(i => i !== stepIndex);
+  } else {
+    selectedExpand.push(stepIndex);
+  }
+  try { localStorage.setItem(profileKey('expand'), JSON.stringify(selectedExpand)); } catch(e) {}
+  renderExpandPicker();
+  // Rebuild the schedule with new selections
+  applyExpandSelections();
+}
+
+function applyExpandSelections() {
+  // Collapse all current breakdowns
+  for (let i = 0; i < 5; i++) {
+    if (breakdownOpen[i]) collapseBreakdown(i);
+  }
+  // Expand selected ones in order
+  selectedExpand.slice().sort((a,b)=>a-b).forEach(i => {
+    expandBreakdown(i);
+  });
+  // Go back to start
+  goTo(0);
+}
+
+/* ── CLOTHING DATA ────────────────────── */
+const CLOTHING = {
+  bottom: {
+    underwear:{ icon:'🩲', name:'Underwear', label:'Put on underwear', sub:'Step in and pull up',
+      steps:['Pick up your underwear','Find the front — tag goes in the back','Sit on the floor or bed','Put one foot through the hole','Put the other foot through','Stand up','Pull underwear all the way up'] },
+    pullup:   { icon:'🩱', name:'Pull-up',   label:'Put on pull-up',   sub:'Step in and pull up',
+      steps:['Pick up the pull-up','Find the front','Sit down on the floor or bed','Put one leg in','Put the other leg in','Stand up','Pull pull-up all the way up'] },
+    diaper:   { icon:'👶', name:'Diaper',    label:'Lie down for diaper', sub:'Caregiver will help',
+      steps:['Go to the changing spot','Lie down on your back','Keep your body still','Caregiver opens the old diaper','Caregiver puts on the new diaper','Fasten the tabs','Stand up — all done!'] },
+  },
+  bottoms: {
+    pants: { icon:'👖', name:'Pants',  label:'Put on pants',  sub:'Both legs in, pull up, fasten',
+      steps:['Pick up your pants','Find the front — tag goes at the back','Sit on the floor or bed','Put one leg into the pants','Put the other leg in','Stand up','Pull pants all the way up','Fasten the button or snap'] },
+    shorts:{ icon:'🩳', name:'Shorts', label:'Put on shorts', sub:'Both legs in, pull up',
+      steps:['Pick up your shorts','Find the front','Sit down','Put one leg in','Put the other leg in','Stand up','Pull shorts all the way up','Fasten if needed'] },
+    skirt: { icon:'👗', name:'Skirt',  label:'Put on skirt',  sub:'Step in and pull up',
+      steps:['Pick up the skirt','Find the front','Hold the skirt open','Step one foot in','Step the other foot in','Pull the skirt up to your waist','Straighten it out'] },
+  }
+};
+const FIXED_STEPS = {
+  2: { steps:['Pick up your shirt','Find the tag — it goes at the back','Hold the shirt open at the bottom','Put your head through the big hole','Put one arm through a sleeve','Put the other arm through the other sleeve','Pull the shirt down'] },
+  3: { steps:['Pick up the first sock','Find the opening at the top','Roll the sock down a little','Put your toes inside first','Pull the sock over your heel','Pull it all the way up','Now do the same with the second sock'] },
+  4: { steps:['Find both shoes','Pick up the RIGHT shoe — look for R or the bigger side','Loosen the fastening','Put your foot inside','Push your heel all the way down','Fasten the shoe','Now do the same with the LEFT shoe'] },
+};
+
+let bottomChoice  = 'underwear';
+let bottomsChoice = 'pants';
+const breakdownOpen = {}; // stepIndex -> bool
+let cur = 0;
+const PFX = 'etw_dress_sched_';
+
+/* ── NAVIGATION ───────────────────────── */
+function allSlides() {
+  return Array.from(document.getElementById('book').querySelectorAll('.page, .page-substep, .page-end'));
+}
+
+function rebuildDots() {
+  const slides = allSlides();
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = '';
+  slides.forEach((s, i) => {
+    const d = document.createElement('div');
+    const isSub = s.classList.contains('page-substep');
+    d.className = 'dot' + (isSub ? ' substep' : '') + (i === cur ? ' active' : '');
+    d.onclick = ((idx) => () => goTo(idx))(i);
+    dotsEl.appendChild(d);
+  });
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur >= slides.length - 1;
+}
+
+function goTo(n) {
+  const slides = allSlides();
+  const total  = slides.length;
+  n = Math.max(0, Math.min(n, total - 1));
+  slides[cur].classList.remove('active');
+  const dotsEl = document.getElementById('dots');
+  if (dotsEl.children[cur]) dotsEl.children[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  if (dotsEl.children[cur]) dotsEl.children[cur].classList.add('active');
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur >= total - 1;
+}
+
+function changePage(d) {
+  const total = allSlides().length;
+  if (cur + d >= 0 && cur + d < total) goTo(cur + d);
+}
+
+/* ── BREAKDOWN: insert/remove sub-step slides ── */
+function getSubstepsFor(stepIndex) {
+  if (stepIndex === 0) return CLOTHING.bottom[bottomChoice].steps;
+  if (stepIndex === 1) return CLOTHING.bottoms[bottomsChoice].steps;
+  return FIXED_STEPS[stepIndex]?.steps || [];
+}
+
+function makeSubstepSlide(stepIndex, subIdx, totalSubs, text) {
+  const div = document.createElement('div');
+  div.className = 'page-substep';
+  div.dataset.parentStep = stepIndex;
+  div.dataset.subIdx = subIdx;
+  div.innerHTML = `
+    <div class="substep-head">
+      <span class="substep-head-label">Step ${stepIndex+1} · Sub-step ${subIdx+1} of ${totalSubs}</span>
+      <span class="substep-head-count">${subIdx+1}/${totalSubs}</span>
+    </div>
+    <div class="substep-display">
+      <div class="substep-circle">${subIdx+1}</div>
+      <div class="substep-main-text">${text}</div>
+    </div>
+    <div class="substep-check-area">
+      <div class="big-check" id="bchk-${stepIndex}-${subIdx}" onclick="markSubDone(${stepIndex},${subIdx},${totalSubs},this)">
+        <span class="check-icon">${subIdx+1}</span>
+      </div>
+      <div class="check-hint">Tap when done</div>
+      <a class="back-to-step" onclick="backToStep(${stepIndex})">↩ Back to step ${stepIndex+1}</a>
+    </div>
+  `;
+  return div;
+}
+
+function toggleBreakdown(stepIndex) {
+  if (breakdownOpen[stepIndex]) {
+    collapseBreakdown(stepIndex);
+  } else {
+    expandBreakdown(stepIndex);
+  }
+}
+
+function expandBreakdown(stepIndex) {
+  breakdownOpen[stepIndex] = true;
+  const steps = getSubstepsFor(stepIndex);
+  const parentEl = document.getElementById('step-' + stepIndex);
+
+  // Insert sub-step slides after the parent step slide
+  let insertAfter = parentEl;
+  steps.forEach((text, i) => {
+    const slide = makeSubstepSlide(stepIndex, i, steps.length, text);
+    insertAfter.insertAdjacentElement('afterend', slide);
+    insertAfter = slide;
+  });
+
+  // Update button
+  const btn = document.getElementById('brk-' + stepIndex);
+  btn.textContent = '🔼 Hide sub-steps';
+  btn.classList.add('active');
+
+  // Rebuild dots and jump to first sub-step
+  rebuildDots();
+  const allS = allSlides();
+  const firstSub = document.querySelector(`[data-parent-step="${stepIndex}"][data-sub-idx="0"]`);
+  const idx = allS.indexOf(firstSub);
+  if (idx > -1) goTo(idx);
+}
+
+function collapseBreakdown(stepIndex) {
+  breakdownOpen[stepIndex] = false;
+  // Remove all sub-step slides for this step
+  document.querySelectorAll(`[data-parent-step="${stepIndex}"]`).forEach(el => el.remove());
+  const btn = document.getElementById('brk-' + stepIndex);
+  btn.textContent = '🔍 Break it down';
+  btn.classList.remove('active');
+  rebuildDots();
+  // Jump back to parent step
+  const allS = allSlides();
+  const parentEl = document.getElementById('step-' + stepIndex);
+  goTo(allS.indexOf(parentEl));
+}
+
+function backToStep(stepIndex) {
+  collapseBreakdown(stepIndex);
+}
+
+function markSubDone(stepIndex, subIdx, total, el) {
+  el.classList.add('done');
+  el.querySelector('.check-icon').textContent = '✓';
+  // Auto-advance after brief pause
+  setTimeout(() => changePage(1), 450);
+}
+
+/* ── MARK MAIN STEP DONE ─────────────────── */
+function markStepDone(stepIndex) {
+  const btn = document.getElementById('done-' + stepIndex);
+  btn.classList.add('completed');
+  btn.textContent = '✓ Done!';
+  // If breakdown is open, collapse it first then advance
+  if (breakdownOpen[stepIndex]) collapseBreakdown(stepIndex);
+  setTimeout(() => changePage(1), 400);
+}
+
+/* ── RESTART ──────────────────────────── */
+function restartAll() {
+  // Collapse all breakdowns
+  for (let i = 0; i < 5; i++) {
+    if (breakdownOpen[i]) collapseBreakdown(i);
+    const btn = document.getElementById('done-' + i);
+    if (btn) { btn.classList.remove('completed'); btn.textContent = '✓ Done'; }
+  }
+  rebuildDots();
+  goTo(0);
+}
+
+/* ── CLOTHING TOGGLES ─────────────────── */
+function updateClothing() {
+  const b  = CLOTHING.bottom[bottomChoice];
+  const bt = CLOTHING.bottoms[bottomsChoice];
+  document.getElementById('s0-icon').textContent  = b.icon;
+  document.getElementById('s0-ph').textContent    = b.name;
+  document.getElementById('s0-label').textContent = b.label;
+  document.getElementById('s0-sub').textContent   = b.sub;
+  document.getElementById('s1-icon').textContent  = bt.icon;
+  document.getElementById('s1-ph').textContent    = bt.name;
+  document.getElementById('s1-label').textContent = bt.label;
+  document.getElementById('s1-sub').textContent   = bt.sub;
+  // If breakdowns are open, rebuild them with updated steps
+  if (breakdownOpen[0]) { collapseBreakdown(0); expandBreakdown(0); }
+  if (breakdownOpen[1]) { collapseBreakdown(1); expandBreakdown(1); }
+}
+
+function setBottom(val) {
+  bottomChoice = val;
+  ['underwear','pullup','diaper'].forEach(v => document.getElementById('btm-'+v).classList.toggle('active', v===val));
+  updateClothing();
+  renderExpandPicker();
+  try { localStorage.setItem(profileKey('bottom'), val); } catch(e) {}
+}
+function setBottomSilent(val) {
+  bottomChoice = val;
+  ['underwear','pullup','diaper'].forEach(v => document.getElementById('btm-'+v).classList.toggle('active', v===val));
+}
+
+function setBottoms(val) {
+  bottomsChoice = val;
+  ['pants','shorts','skirt'].forEach(v => document.getElementById('bot-'+v).classList.toggle('active', v===val));
+  updateClothing();
+  renderExpandPicker();
+  try { localStorage.setItem(profileKey('bottoms'), val); } catch(e) {}
+}
+function setBottomsSilent(val) {
+  bottomsChoice = val;
+  ['pants','shorts','skirt'].forEach(v => document.getElementById('bot-'+v).classList.toggle('active', v===val));
+}
+
+/* ── TEXT ─────────────────────────────── */
+function updateSchedule() {
+  const child  = document.getElementById('f-child').value.trim();
+  const reward = document.getElementById('f-reward').value.trim();
+  document.getElementById('cover-title').textContent = child ? `${child} Gets Dressed` : 'Getting Dressed';
+  document.getElementById('cover-name').textContent  = child ? `You've got this, ${child}! 💛` : "Let's do it! 💛";
+  document.getElementById('end-title').textContent   = child ? `${child} did it!` : 'I did it!';
+  document.getElementById('end-reward').textContent  = reward ? `Time for ${reward}! 🎉` : 'Time for your reward! 🎉';
+}
+
+let saveTimer;
+function saveAndUpdate() {
+  updateSchedule();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(profileKey('child'),  document.getElementById('f-child').value);
+      localStorage.setItem(profileKey('reward'), document.getElementById('f-reward').value);
+      flash('✓ Saved');
+    } catch(e) {}
+  }, 600);
+}
+
+function loadSavedText() {
+  // handled by loadProfileData() now
+}
+
+let flashTimer;
+function flash(msg) {
+  const el = document.getElementById('saved-msg');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(flashTimer); flashTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+/* ── PHOTOS ───────────────────────────── */
+function compressImage(dataUrl, maxPx=600) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxPx/Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width*scale); c.height = Math.round(img.height*scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      resolve(c.toDataURL('image/jpeg', .78));
+    };
+    img.src = dataUrl;
+  });
+}
+function triggerUpload(n) { document.getElementById('file-'+n).click(); }
+async function loadPhoto(n, input) {
+  if (!input.files||!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const c = await compressImage(e.target.result);
+    applyPhoto(n, c);
+    try { localStorage.setItem(profileKey('img_'+n), c); flash('✓ Photo saved'); }
+    catch(e) { flash('⚠ Shown but not saved'); }
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function applyPhoto(n, src) {
+  const img=document.getElementById('img-'+n), box=document.getElementById('box-'+n);
+  img.src=src; img.classList.add('on');
+  box.querySelector('.img-ph').style.display='none';
+  box.classList.add('has-photo');
+  document.getElementById('rm-'+n).classList.add('on');
+}
+function removePhoto(e, n) {
+  e.stopPropagation();
+  const img=document.getElementById('img-'+n), box=document.getElementById('box-'+n);
+  img.src=''; img.classList.remove('on');
+  box.querySelector('.img-ph').style.display='';
+  box.classList.remove('has-photo');
+  document.getElementById('rm-'+n).classList.remove('on');
+  document.getElementById('file-'+n).value='';
+  try { localStorage.removeItem(profileKey('img_'+n)); } catch(e) {}
+}
+function loadSavedImages() {
+  try { for (let i=0;i<5;i++){const s=localStorage.getItem(profileKey('img_'+i));if(s)applyPhoto(i,s);} } catch(e){}
+}
+
+/* ── RESET ────────────────────────────── */
+function resetAll() {
+  if (!confirm(`Clear all saved info and photos for ${activeProfile === 'default' ? 'default profile' : activeProfile}?`)) return;
+  ['f-child','f-reward'].forEach(id => document.getElementById(id).value='');
+  for (let i=0;i<5;i++) removePhoto({stopPropagation:()=>{}}, i);
+  selectedExpand = [];
+  try {
+    ['child','reward','bottom','bottoms','expand'].forEach(k => localStorage.removeItem(profileKey(k)));
+    for (let i=0;i<5;i++) localStorage.removeItem(profileKey('img_'+i));
+  } catch(e) {}
+  restartAll();
+  renderExpandPicker();
+  updateSchedule(); flash('Reset');
+}
+
+/* ── SWIPE ────────────────────────────── */
+let tx = 0;
+document.getElementById('book').addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; }, { passive:true });
+document.getElementById('book').addEventListener('touchend',   e => {
+  const diff = tx - e.changedTouches[0].screenX;
+  if (Math.abs(diff) > 40) { diff > 0 ? changePage(1) : changePage(-1); }
+}, { passive:true });
+
+/* ── INIT ─────────────────────────────── */
+renderProfiles();
+loadProfileData();
+updateClothing();
+renderExpandPicker();
+// Apply any pre-selected expansions
+if (selectedExpand.length > 0) applyExpandSelections();
+// Set first page active and build dots
+document.getElementById('page-cover').classList.add('active');
+rebuildDots();
+</script>
+</body>
+</html>

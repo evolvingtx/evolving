@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Getting Dressed Story – Evolving Therapy & Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple:#5C4490;--purple-light:#9B88C4;--purple-pale:#EDE8F5;--purple-deep:#3E2D6E;
+  --cream:#FDFBF9;--warm-white:#F7F4FB;--text-dark:#1E1830;--text-light:#5A4E72;
+  --green:#4A8C6F;--border:rgba(92,68,144,0.15);--shadow:rgba(62,45,110,0.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',sans-serif;background:#E8E0F0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0}
+
+/* NAV */
+.site-nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;background:rgba(253,251,249,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(184,168,208,.2);box-shadow:0 2px 16px rgba(92,68,144,.06)}
+.site-nav-logo{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.nav-logo-circle{width:32px;height:32px;border:1.5px solid var(--purple-light);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.nav-logo-circle::before{content:'';position:absolute;width:24px;height:24px;border:1px solid var(--purple-pale);border-radius:50%}
+.nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:500;color:var(--purple);letter-spacing:.08em;text-transform:uppercase}
+.nav-logo-sub{font-family:'Jost',sans-serif;font-size:.58rem;font-weight:300;color:var(--purple-light);letter-spacing:.2em;text-transform:uppercase;display:block;margin-top:-2px}
+.site-nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+.site-nav-links a{font-size:.72rem;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--text-light);text-decoration:none;transition:color .2s;white-space:nowrap}
+.site-nav-links a:hover{color:var(--purple)}
+.site-nav-links .nav-cta{color:var(--purple)!important;border:1px solid var(--purple-light);padding:.4rem 1rem;border-radius:2rem;transition:all .25s}
+.site-nav-links .nav-cta:hover{background:var(--purple);color:white!important;border-color:var(--purple)}
+
+.content-wrap{width:100%;display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px}
+
+/* EDITOR */
+.editor-panel{width:100%;max-width:620px;background:white;border-radius:20px;padding:22px 26px 20px;margin-bottom:24px;box-shadow:0 4px 24px var(--shadow);border:1px solid var(--border)}
+.editor-panel h2{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--purple);margin-bottom:14px}
+.fields{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.field{flex:1;min-width:130px}
+.field label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--text-light);margin-bottom:5px}
+.field input,.field select{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'Jost',sans-serif;font-size:.92rem;color:var(--text-dark);background:var(--cream);outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:var(--purple)}
+.btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{font-family:'Jost',sans-serif;font-weight:600;font-size:.85rem;border:none;cursor:pointer;border-radius:10px;padding:9px 20px;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px var(--shadow)}
+.btn-primary{background:var(--purple);color:white}
+.btn-ghost{background:var(--purple-pale);color:var(--purple)}
+.saved-msg{font-size:.72rem;color:#4A8C6F;font-weight:600;opacity:0;transition:opacity .4s;margin-left:auto}
+.saved-msg.show{opacity:1}
+
+/* BOOK */
+.book-viewer{width:100%;max-width:460px}
+.page{display:none;background:var(--cream);border-radius:20px;overflow:hidden;box-shadow:0 8px 40px var(--shadow);border:1px solid var(--border);aspect-ratio:3/4;flex-direction:column;position:relative}
+.page.active{display:flex}
+
+/* Cover */
+.page-cover{background:linear-gradient(160deg,var(--purple-deep) 0%,var(--purple) 60%,var(--purple-light) 100%);align-items:center;justify-content:center;text-align:center}
+.cover-ring{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.1)}
+.cover-ring-1{width:220px;height:220px;top:-60px;right:-60px}
+.cover-ring-2{width:160px;height:160px;bottom:-40px;left:-40px}
+.cover-emoji{font-size:3.5rem;margin-bottom:14px;display:block}
+.cover-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:white;line-height:1.2;padding:0 28px;text-shadow:0 2px 12px rgba(0,0,0,.2)}
+.cover-name{font-size:.95rem;font-weight:300;color:rgba(255,255,255,.8);margin-top:12px;letter-spacing:.5px}
+.cover-brand{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:.6rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+
+/* Story page */
+.page-head{background:var(--purple-pale);padding:10px 18px 9px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
+.page-num{font-size:.62rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--purple-light)}
+.coach-pill{display:none;background:var(--purple);color:white;font-size:.56rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;border-radius:20px;padding:3px 9px}
+.coach-pill.on{display:inline-block}
+.img-box{flex:1;background:var(--warm-white);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;border-bottom:1px solid var(--border);transition:background .2s}
+.img-box:hover{background:var(--purple-pale)}
+.img-box img{width:100%;height:100%;object-fit:cover;display:none}
+.img-box img.on{display:block}
+.img-ph{display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+.ph-icon{font-size:3.8rem;line-height:1}
+.ph-text{font-size:.67rem;font-weight:500;letter-spacing:.5px;color:var(--purple-light);text-transform:uppercase}
+.img-over{position:absolute;bottom:0;left:0;right:0;background:rgba(92,68,144,.8);color:white;font-size:.62rem;font-weight:600;text-align:center;padding:6px;letter-spacing:.5px;opacity:0;transition:opacity .2s;text-transform:uppercase}
+.img-box:hover .img-over{opacity:1}
+.rm-btn{position:absolute;top:8px;right:8px;background:rgba(62,45,110,.65);color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:.8rem;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0}
+.rm-btn.on{display:flex}
+.txt-box{padding:16px 20px 14px;background:var(--cream);flex-shrink:0}
+.step-text{font-family:'Cormorant Garamond',serif;font-size:1.28rem;font-weight:500;color:var(--text-dark);line-height:1.5;text-align:center}
+.step-text .n{font-weight:700;color:var(--purple);font-style:italic}
+
+/* End page */
+.page-end{display:none;align-items:center;justify-content:center;text-align:center;background:var(--purple-pale);padding:32px;flex-direction:column;gap:14px;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px var(--shadow);border:1px solid var(--border);aspect-ratio:3/4}
+.page-end.active{display:flex}
+.end-heart{font-size:3rem}
+.end-title{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:700;color:var(--purple-deep);line-height:1.2}
+.end-sub{font-size:.85rem;color:var(--text-light);line-height:1.6}
+.end-brand{margin-top:8px}
+.end-brand-name{display:block;font-size:.6rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--purple-light)}
+.end-brand-tag{font-family:'Cormorant Garamond',serif;font-size:.88rem;font-style:italic;color:var(--purple-light)}
+
+/* NAV DOTS */
+.book-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px}
+.nav-btn{width:42px;height:42px;border-radius:50%;background:white;border:1.5px solid var(--border);color:var(--purple);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 2px 8px var(--shadow)}
+.nav-btn:hover:not(:disabled){background:var(--purple);color:white;border-color:var(--purple)}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .2s;cursor:pointer}
+.dot.active{background:var(--purple);width:20px;border-radius:4px}
+
+/* SWIPE */
+.book-viewer{touch-action:pan-y}
+
+/* FOOTER */
+.site-footer{width:100%;margin-top:48px;background:var(--text-dark);padding:2.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
+.site-footer-logo{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;color:rgba(255,255,255,.6);letter-spacing:.1em}
+.site-footer-tagline{font-size:.72rem;font-weight:300;color:rgba(255,255,255,.3);letter-spacing:.05em;margin-top:3px}
+.site-footer-links{display:flex;gap:1.5rem;list-style:none;flex-wrap:wrap}
+.site-footer-links a{font-size:.7rem;font-weight:300;letter-spacing:.1em;color:rgba(255,255,255,.4);text-decoration:none;text-transform:uppercase;transition:color .2s}
+.site-footer-links a:hover{color:rgba(255,255,255,.8)}
+.site-footer-copy{font-size:.68rem;color:rgba(255,255,255,.25);width:100%;text-align:center;margin-top:.5rem}
+
+/* PRINT */
+@media print {
+  @page{size:letter portrait;margin:8mm}
+  .site-nav,.site-footer,.editor-panel,.book-nav{display:none!important}
+  .content-wrap{padding:0!important}
+  body{background:white!important;padding:0!important;display:block!important}
+  .book-viewer{max-width:100%!important;display:grid!important;grid-template-columns:1fr 1fr;gap:5mm}
+  .page,.page-end{display:flex!important;height:120mm!important;overflow:hidden!important;border:1.5px solid #5C4490!important;border-radius:10px!important;background:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page:nth-child(4n){break-after:page}
+  .page-cover{background:white!important}
+  .cover-ring{display:none!important}
+  .cover-title{color:#3E2D6E!important;text-shadow:none!important;font-size:1.1rem!important}
+  .cover-name{color:#5A4E72!important;font-size:.7rem!important}
+  .cover-brand{position:static!important;display:block;color:#9B88C4!important;font-size:.5rem;margin-top:8px}
+  .cover-emoji{font-size:2rem;margin-bottom:6px}
+  .page-head{background:white!important;border-bottom:1px solid rgba(92,68,144,.2)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;flex-shrink:0!important;padding:4px 10px}
+  .page-num{font-size:.5rem}
+  .coach-pill{font-size:.44rem;padding:2px 5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .img-box{flex:1 1 auto!important;height:auto!important;min-height:0!important;background:white!important}
+  .img-box:not(.has-photo){border:1.5px dashed #9B88C4!important;background:white!important}
+  .img-over,.rm-btn{display:none!important}
+  .txt-box{flex:0 0 auto!important;flex-shrink:0!important;background:white!important;padding:7px 11px!important;max-height:34mm!important;overflow:hidden!important}
+  .step-text{font-size:.8rem!important;line-height:1.35!important}
+  .page-end{background:white!important}
+  .end-title{color:#3E2D6E!important;font-size:.9rem}
+  .end-sub{color:#5A4E72!important;font-size:.6rem}
+  .end-heart{font-size:1.7rem}
+}
+@media(max-width:560px){
+  .site-nav{padding:.75rem 1rem}
+  .site-nav-links{display:none}
+  .site-footer{flex-direction:column;text-align:center;padding:2rem 1.25rem}
+  .site-footer-links{justify-content:center;gap:1rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="site-nav-logo">
+    <div class="nav-logo-circle"></div>
+    <div><span class="nav-logo-text">Evolving</span><span class="nav-logo-sub">Therapy & Wellness</span></div>
+  </a>
+  <ul class="site-nav-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="social-stories.html">Social Stories &amp; Schedules</a></li>
+    <li><a href="getting-dressed-schedule.html">&#8594; Visual Schedule</a></li>
+    <li><a href="index.html#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<div class="content-wrap">
+
+<div class="editor-panel">
+  <h2>👕 Getting Dressed — Social Story</h2>
+  <p style="font-size:.78rem;color:var(--text-light);margin-bottom:14px;line-height:1.6">Read this story together first to build understanding. Then use the <a href="getting-dressed-schedule.html" style="color:var(--purple);font-weight:600">Visual Schedule →</a> as the daily step-by-step tool.</p>
+  <div class="fields">
+    <div class="field"><label>Child's Name</label><input id="f-child" type="text" placeholder="e.g. Marcus" maxlength="30" oninput="saveAndUpdate()"></div>
+    <div class="field"><label>Caregiver</label><input id="f-care" type="text" placeholder="Mommy · Ms. Vanessa…" maxlength="30" oninput="saveAndUpdate()"></div>
+    <div class="field"><label>Reward / Next Activity</label><input id="f-reward" type="text" placeholder="e.g. breakfast, iPad time" maxlength="40" oninput="saveAndUpdate()"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="window.print()">🖨️ Print Story</button>
+    <button class="btn btn-ghost" onclick="resetAll()">↩ Reset</button>
+    <span class="saved-msg" id="saved-msg">✓ Saved</span>
+  </div>
+</div>
+
+<div class="book-viewer" id="book">
+
+  <div class="page page-cover active" id="page-0">
+    <div class="cover-ring cover-ring-1"></div><div class="cover-ring cover-ring-2"></div>
+    <span class="cover-emoji">👕</span>
+    <div class="cover-title" id="cover-title">Getting Dressed</div>
+    <div class="cover-name" id="cover-name">A story for me 💛</div>
+    <div class="cover-brand">Evolving Therapy &amp; Wellness</div>
+  </div>
+
+  <div class="page page-story" id="page-1">
+    <div class="page-head"><span class="page-num">Page 1 of 8</span></div>
+    <div class="img-box" id="box-0" onclick="triggerUpload(0)"><div class="img-ph"><span class="ph-icon">🌅</span><span class="ph-text">Morning time</span></div><img id="img-0" alt="Morning"><div class="img-over">📷 Add photo</div><button class="rm-btn" id="rm-0" onclick="removePhoto(event,0)">✕</button></div>
+    <div class="txt-box"><p class="step-text" id="s0">Every morning, it is time to get dressed.</p></div>
+    <input type="file" id="file-0" accept="image/*" style="display:none" onchange="loadPhoto(0,this)">
+  </div>
+
+  <div class="page page-story" id="page-2">
+    <div class="page-head"><span class="page-num">Page 2 of 8</span></div>
+    <div class="img-box" id="box-1" onclick="triggerUpload(1)"><div class="img-ph"><span class="ph-icon">💪</span><span class="ph-text">Getting ready</span></div><img id="img-1" alt="Ready"><div class="img-over">📷 Add photo</div><button class="rm-btn" id="rm-1" onclick="removePhoto(event,1)">✕</button></div>
+    <div class="txt-box"><p class="step-text" id="s1">Getting dressed helps my body feel ready for the day.</p></div>
+    <input type="file" id="file-1" accept="image/*" style="display:none" onchange="loadPhoto(1,this)">
+  </div>
+
+  <div class="page page-story" id="page-3">
+    <div class="page-head"><span class="page-num">Page 3 of 8</span></div>
+    <div class="img-box" id="box-2" onclick="triggerUpload(2)"><div class="img-ph"><span class="ph-icon">🧺</span><span class="ph-text">My clothes</span></div><img id="img-2" alt="Clothes"><div class="img-over">📷 Add photo</div><button class="rm-btn" id="rm-2" onclick="removePhoto(event,2)">✕</button></div>
+    <div class="txt-box"><p class="step-text" id="s2">My clothes are right here, ready for me.</p></div>
+    <input type="file" id="file-2" accept="image/*" style="display:none" onchange="loadPhoto(2,this)">
+  </div>
+
+  <div class="page page-story" id="page-4">
+    <div class="page-head"><span class="page-num">Page 4 of 8</span></div>
+    <div class="img-box" id="box-3" onclick="triggerUpload(3)"><div class="img-ph"><span class="ph-icon">🧑‍🤝‍🧑</span><span class="ph-text">Helper nearby</span></div><img id="img-3" alt="Helper"><div class="img-over">📷 Add photo</div><button class="rm-btn" id="rm-3" onclick="removePhoto(event,3)">✕</button></div>
+    <div class="txt-box"><p class="step-text" id="s3"><span class="n">Helper</span> will be nearby if I need help.</p></div>
+    <input type="file" id="file-3" accept="image/*" style="display:none" onchange="loadPhoto(3,this)">
+  </div>
+
+  <div class="page page-story" id="page-5">
+    <div class="page-head"><span class="page-num">Page 5 of 8</span></div>
+    <div class="img-box" id="box-4" onclick="triggerUpload(4)"><div class="img-ph"><span class="ph-icon">😤</span><span class="ph-text">Hard feelings</span></div><img id="img-4" alt="Hard"><div class="img-over">📷 Add photo</div><button class="rm-btn" id="rm-4" onclick="removePhoto(event,4)">✕</button></div>
+    <div class="txt-box"><p class="step-text" id="s4">Sometimes getting dressed feels hard. That is okay.</p></div>
+    <input type="file" id="file-4" accept="image/*" style="display:none" onchange="loadPhoto(4,this)">
+  </div>
+
+  <div class="page page-story" id="page-6">
+    <div class="page-head"><span class="page-num">Page 6 of 8</span></div>
+    <div class="img-box" id="box-5" onclick="triggerUpload(5)"><div class="img-ph"><span class="ph-icon">🪜</span><span class="ph-text">One step</span></div><img id="img-5" alt="Steps"><div class="img-over">📷 Add photo</div><button class="rm-btn" id="rm-5" onclick="removePhoto(event,5)">✕</button></div>
+    <div class="txt-box"><p class="step-text" id="s5">I do it one step at a time. Each step is small.</p></div>
+    <input type="file" id="file-5" accept="image/*" style="display:none" onchange="loadPhoto(5,this)">
+  </div>
+
+  <!-- COACHING PAGE -->
+  <div class="page page-story" id="page-7">
+    <div class="page-head"><span class="page-num">Page 7 of 8</span><span class="coach-pill on">⭐ I can do this</span></div>
+    <div class="img-box" id="box-6" onclick="triggerUpload(6)"><div class="img-ph"><span class="ph-icon">🌟</span><span class="ph-text">I did it!</span></div><img id="img-6" alt="Pride"><div class="img-over">📷 Add photo</div><button class="rm-btn" id="rm-6" onclick="removePhoto(event,6)">✕</button></div>
+    <div class="txt-box"><p class="step-text" id="s6">When I get dressed by myself, I can feel really proud.</p></div>
+    <input type="file" id="file-6" accept="image/*" style="display:none" onchange="loadPhoto(6,this)">
+  </div>
+
+  <div class="page page-story" id="page-8">
+    <div class="page-head"><span class="page-num">Page 8 of 8</span></div>
+    <div class="img-box" id="box-7" onclick="triggerUpload(7)"><div class="img-ph"><span class="ph-icon">🎉</span><span class="ph-text">All done!</span></div><img id="img-7" alt="Done"><div class="img-over">📷 Add photo</div><button class="rm-btn" id="rm-7" onclick="removePhoto(event,7)">✕</button></div>
+    <div class="txt-box"><p class="step-text" id="s7">When I am done, it is time for <span class="n" id="reward-span">my reward</span>! 🎉</p></div>
+    <input type="file" id="file-7" accept="image/*" style="display:none" onchange="loadPhoto(7,this)">
+  </div>
+
+  <div class="page-end" id="page-9">
+    <div class="end-heart">💛</div>
+    <div class="end-title" id="end-title">I did it!</div>
+    <div class="end-sub">I am brave. I am capable.<br>Getting dressed is something I can do.</div>
+    <div class="end-brand"><span class="end-brand-name">Evolving Therapy &amp; Wellness</span><span class="end-brand-tag">Helping children grow into who they're meant to be</span></div>
+  </div>
+
+  <div class="book-nav">
+    <button class="nav-btn" id="btn-prev" onclick="changePage(-1)" disabled>&#8249;</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="btn-next" onclick="changePage(1)">&#8250;</button>
+  </div>
+</div>
+
+</div>
+
+<footer class="site-footer">
+  <div><div class="site-footer-logo">Evolving Therapy &amp; Wellness</div><div class="site-footer-tagline">Helping children grow into who they're meant to be</div></div>
+  <ul class="site-footer-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="social-stories.html">Social Stories &amp; Schedules</a></li>
+    <li><a href="getting-dressed-schedule.html">Visual Schedule</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <p class="site-footer-copy">© 2025 Evolving Therapy &amp; Wellness. All rights reserved.</p>
+</footer>
+
+<script>
+const TOTAL=10, PFX='etw_dress_story_';
+let cur=0;
+const dotsEl=document.getElementById('dots');
+for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>goTo(i);dotsEl.appendChild(d);}
+function goTo(n){
+  const pages=document.querySelectorAll('.page,.page-end');
+  pages.forEach(p=>p.classList.remove('active'));
+  dotsEl.children[cur].classList.remove('active');
+  cur=n;
+  pages[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  document.getElementById('btn-prev').disabled=cur===0;
+  document.getElementById('btn-next').disabled=cur===TOTAL-1;
+}
+function changePage(d){if(cur+d>=0&&cur+d<TOTAL)goTo(cur+d);}
+
+function updateStory(){
+  const child=document.getElementById('f-child').value.trim();
+  const care=document.getElementById('f-care').value.trim()||'Helper';
+  const reward=document.getElementById('f-reward').value.trim()||'my reward';
+  document.getElementById('cover-title').textContent=child?`${child}'s Getting Dressed Story`:'Getting Dressed';
+  document.getElementById('cover-name').textContent=child?`A story for ${child} 💛`:'A story for me 💛';
+  document.getElementById('end-title').textContent=child?`${child} did it!`:'I did it!';
+  document.getElementById('s3').innerHTML=`<span class="n">${care}</span> will be nearby if I need help.`;
+  document.getElementById('reward-span').textContent=reward;
+}
+
+let saveTimer;
+function saveAndUpdate(){
+  updateStory();
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{
+      localStorage.setItem(PFX+'child',document.getElementById('f-child').value);
+      localStorage.setItem(PFX+'care',document.getElementById('f-care').value);
+      localStorage.setItem(PFX+'reward',document.getElementById('f-reward').value);
+      flash('✓ Saved');
+    }catch(e){}
+  },600);
+}
+function loadSavedText(){
+  try{
+    const c=localStorage.getItem(PFX+'child'),r=localStorage.getItem(PFX+'care'),rw=localStorage.getItem(PFX+'reward');
+    if(c)document.getElementById('f-child').value=c;
+    if(r)document.getElementById('f-care').value=r;
+    if(rw)document.getElementById('f-reward').value=rw;
+  }catch(e){}
+}
+let flashTimer;
+function flash(msg){const el=document.getElementById('saved-msg');el.textContent=msg;el.classList.add('show');clearTimeout(flashTimer);flashTimer=setTimeout(()=>el.classList.remove('show'),2200);}
+
+function compressImage(dataUrl,maxPx=600){return new Promise(resolve=>{const img=new Image();img.onload=()=>{const scale=Math.min(1,maxPx/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.78));};img.src=dataUrl;});}
+function triggerUpload(n){document.getElementById('file-'+n).click();}
+async function loadPhoto(n,input){if(!input.files||!input.files[0])return;const reader=new FileReader();reader.onload=async e=>{const compressed=await compressImage(e.target.result);applyPhoto(n,compressed);try{localStorage.setItem(PFX+'img_'+n,compressed);flash('✓ Photo saved');}catch(e){flash('⚠ Shown but not saved');}};reader.readAsDataURL(input.files[0]);}
+function applyPhoto(n,src){const img=document.getElementById('img-'+n),box=document.getElementById('box-'+n);img.src=src;img.classList.add('on');box.querySelector('.img-ph').style.display='none';box.classList.add('has-photo');document.getElementById('rm-'+n).classList.add('on');}
+function removePhoto(e,n){e.stopPropagation();const img=document.getElementById('img-'+n),box=document.getElementById('box-'+n);img.src='';img.classList.remove('on');box.querySelector('.img-ph').style.display='';box.classList.remove('has-photo');document.getElementById('rm-'+n).classList.remove('on');document.getElementById('file-'+n).value='';try{localStorage.removeItem(PFX+'img_'+n);}catch(e){}}
+function loadSavedImages(){try{for(let i=0;i<8;i++){const src=localStorage.getItem(PFX+'img_'+i);if(src)applyPhoto(i,src);}}catch(e){}}
+function resetAll(){if(!confirm('Clear all saved info and photos?'))return;['f-child','f-care','f-reward'].forEach(id=>document.getElementById(id).value='');for(let i=0;i<8;i++)removePhoto({stopPropagation:()=>{}},i);try{['child','care','reward'].forEach(k=>localStorage.removeItem(PFX+k));for(let i=0;i<8;i++)localStorage.removeItem(PFX+'img_'+i);}catch(e){}updateStory();goTo(0);flash('Reset');}
+
+// Swipe support
+let tx=0;
+const bv=document.getElementById('book');
+bv.addEventListener('touchstart',e=>{tx=e.changedTouches[0].screenX;},{passive:true});
+bv.addEventListener('touchend',e=>{
+  const diff=tx-e.changedTouches[0].screenX;
+  if(Math.abs(diff)>40){if(diff>0&&cur<TOTAL-1)goTo(cur+1);else if(diff<0&&cur>0)goTo(cur-1);}
+},{passive:true});
+
+loadSavedText();loadSavedImages();updateStory();
+</script>
+</body>
+</html>

@@ -482,7 +482,16 @@
 </footer>
 
 <script>
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+function getTodayDateString() {
+  const today = new Date();
+  const dayName = DAYS[today.getDay()];
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const date = String(today.getDate()).padStart(2, '0');
+  const year = today.getFullYear();
+  return `${dayName}, ${month}/${date}/${year}`;
+}
 
 const state = {
   view: 'pin', // 'pin' | 'child' | 'admin'
@@ -556,7 +565,20 @@ function getLowestRewardCost() {
 }
 
 function toggleChore(choreId) {
-  state.db.completedToday[choreId] = !state.db.completedToday[choreId];
+  const chore = state.db.chores.find(c => c.id === choreId);
+  if (!chore) return;
+
+  const wasCompleted = state.db.completedToday[choreId];
+  
+  if (wasCompleted) {
+    // Unchecking - remove tokens
+    state.db.tokens -= chore.value;
+  } else {
+    // Checking - add tokens
+    state.db.tokens += chore.value;
+  }
+  
+  state.db.completedToday[choreId] = !wasCompleted;
   saveDB();
   render();
 }
@@ -721,6 +743,7 @@ function render() {
 
     app.innerHTML = `
       <div class="title-section">
+        <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.8rem;">${getTodayDateString()}</div>
         <div class="mission-title">Mission: Token Launch! 🚀</div>
       </div>
 
@@ -791,8 +814,8 @@ function render() {
               <label>Select Days</label>
               <div class="day-selector">
                 ${DAYS.map((day, i) => `
-                  <button type="button" class="day-btn ${editingChore?.days.includes(i) ? 'selected' : ''}" data-day="${i}" onclick="toggleDay(${i})">
-                    ${day}
+                  <button type="button" class="day-btn ${editingChore?.days.includes(i) ? 'selected' : ''}" data-day="${i}" onclick="toggleDay(${i})" style="font-size: 0.75rem;">
+                    ${day.slice(0, 3)}
                   </button>
                 `).join('')}
               </div>
