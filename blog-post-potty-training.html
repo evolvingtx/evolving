@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>Potty Training Toddlers: A Developmental Guide | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: light;
+      --purple:       #5C4490;
+      --purple-light: #9B88C4;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #3E2D6E;
+      --cream:        #FDFBF9;
+      --warm-white:   #F7F4FB;
+      --text:         #1E1830;
+      --text-light:   #5A4E72;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background-color: #FDFBF9;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123, 101, 164, 0.08); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* MAIN */
+    main {
+      margin-top: 80px;
+      padding: 4rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .meta {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(92, 68, 144, 0.15);
+    }
+
+    /* CONTENT */
+    .content {
+      background: white;
+      border: 1px solid rgba(92, 68, 144, 0.12);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .content h2 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--purple-pale);
+    }
+
+    .content h2:first-child { margin-top: 0; }
+
+    .content h3 {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content p {
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .content ul {
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .content li {
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .content th, .content td {
+      border: 1px solid rgba(92, 68, 144, 0.15);
+      padding: 1rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .content th {
+      background: var(--purple-pale);
+      font-weight: 600;
+      color: var(--purple-deep);
+    }
+
+    .content tr:nth-child(even) {
+      background: var(--warm-white);
+    }
+
+    /* READINESS GRID */
+    .readiness-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .readiness-card {
+      background: var(--warm-white);
+      border: 1px solid rgba(92, 68, 144, 0.15);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+    }
+
+    .readiness-card h4 {
+      font-family: var(--ff-display);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--purple-deep);
+      margin-bottom: 0.75rem;
+    }
+
+    .readiness-card ul { margin-left: 1.2rem; }
+
+    .readiness-card li {
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    /* OT TIP BOX */
+    .ot-tip {
+      background: var(--purple-pale);
+      border-left: 4px solid var(--purple);
+      border-radius: 0 0.75rem 0.75rem 0;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0;
+    }
+
+    .ot-tip .tip-label {
+      font-family: var(--ff-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.4rem;
+    }
+
+    .ot-tip h3 {
+      font-family: var(--ff-display);
+      font-size: 1.35rem;
+      color: var(--purple-deep);
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .ot-tip p {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .ot-tip ul { margin-left: 1.5rem; }
+
+    .ot-tip li {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-style: italic;
+      border-top: 1px solid rgba(92, 68, 144, 0.12);
+      padding-top: 1.25rem;
+      margin-top: 2rem;
+      line-height: 1.7;
+    }
+
+    /* RESOURCES SECTION */
+    .download-section {
+      padding: 2rem;
+      background: var(--purple-pale);
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .download-section h3 {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(92, 68, 144, 0.2);
+    }
+
+    .resource-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(92, 68, 144, 0.1);
+    }
+
+    .resource-item:last-child { border-bottom: none; }
+
+    .resource-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    .resource-item p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .resource-item strong { color: var(--text); }
+
+    .resource-item a { color: var(--purple); text-decoration: none; }
+    .resource-item a:hover { text-decoration: underline; }
+
+    /* BACK LINK */
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--purple-deep); }
+
+    /* FOOTER */
+    footer {
+      background: var(--purple-deep);
+      color: rgba(255,255,255,0.6);
+      padding: 2rem 4rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: white; }
+
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links li { font-size: 0.85rem; }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      main { padding: 2rem; }
+      .content { padding: 1.5rem; }
+    }
+
+    @media (max-width: 560px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      main { padding: 1.5rem; margin-top: 70px; }
+      .page-header h1 { font-size: 1.8rem; }
+      .content { padding: 1.25rem; }
+      .readiness-grid { grid-template-columns: 1fr; }
+      footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <a href="blog.html" class="back-link">← Back to Blog</a>
+
+    <div class="page-header">
+      <h1>Potty Training Toddlers: A Developmental Guide</h1>
+      <p>What to expect, when to start, and one simple trick that most parents have never tried, from a pediatric OT who also happens to be a mom of two boys.</p>
+      <div class="meta">Toileting &amp; Independence · Toddler Development · Ages 18 months – 5 years</div>
+    </div>
+
+    <div class="content">
+
+      <h2>It's Not About Age. It's About Readiness.</h2>
+      <p>Every parent eventually faces the question: when do we start? The pressure from well-meaning grandparents, daycare timelines, and the internet can make potty training feel like a test your child is supposed to pass at exactly 24 months. But potty training is a developmental skill, not a deadline. And like all developmental skills, readiness matters more than timing.</p>
+      <p>Most children show signs of readiness somewhere between 18 and 36 months, though the full picture of toileting independence, including nighttime dryness and wiping, continues to develop well into the preschool years. Boys, on average, tend to achieve readiness a few months later than girls, though individual variation is wide in both directions.</p>
+      <p>Rushing a child who is not developmentally ready tends to create frustration, power struggles, and regression. Starting when a child has the physical, cognitive, and emotional building blocks in place makes the whole process smoother for everyone.</p>
+
+      <h2>Signs Your Child May Be Ready</h2>
+
+      <div class="readiness-grid">
+        <div class="readiness-card">
+          <h4>Physical Readiness</h4>
+          <ul>
+            <li>Stays dry for 1.5 to 2 hours at a time</li>
+            <li>Has regular, predictable bowel movements</li>
+            <li>Can pull pants up and down</li>
+            <li>Can walk to and from the bathroom independently</li>
+            <li>Shows awareness during or just after urinating or having a bowel movement</li>
+          </ul>
+        </div>
+        <div class="readiness-card">
+          <h4>Cognitive and Emotional Readiness</h4>
+          <ul>
+            <li>Understands simple 2-step directions</li>
+            <li>Can communicate the need to go (words, signs, or gestures)</li>
+            <li>Shows interest in the potty or in what others are doing</li>
+            <li>Wants to please and responds to encouragement</li>
+            <li>Has beginning impulse control (can wait even briefly)</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>A child who checks most of these boxes is likely ready, or close to it. A child who checks very few is not, regardless of what their cousin or neighbor is doing.</p>
+
+      <h2>Toileting Development by Age: What to Expect</h2>
+      <p>The chart below outlines typical toileting development across the toddler and preschool years. Skills are listed generally for both boys and girls, with notes on where patterns differ. These are typical ranges, not strict expectations. Always consider the whole child.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>Typical Toileting Skills</th>
+            <th>Notes (Boys / Girls)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>12–18 months</strong></td>
+            <td>Begins to show awareness of wet or dirty diaper; may pull at diaper or go to a corner when having a bowel movement; can sit briefly on a potty with support</td>
+            <td>More about awareness than control. Not yet physiologically ready for training. Introduction to the potty is fine and encouraged.</td>
+          </tr>
+          <tr>
+            <td><strong>18–24 months</strong></td>
+            <td>Increased awareness before and during elimination; may begin to signal with words, gestures, or behavior; bladder capacity growing; can briefly delay urination</td>
+            <td>Girls may show readiness signals slightly earlier. Boys often show strong readiness closer to 24–30 months. Forcing training at this age commonly leads to regression.</td>
+          </tr>
+          <tr>
+            <td><strong>2–3 years (24–36 months)</strong></td>
+            <td>Most children achieve daytime urine training during this window; bowel training often follows or occurs simultaneously; can initiate going to the potty; begins pulling pants up and down with minimal help</td>
+            <td>Girls tend to achieve daytime dryness at the earlier end of this range. Boys often closer to 2.5–3 years. Accidents during play and activity are very common and normal throughout this period.</td>
+          </tr>
+          <tr>
+            <td><strong>3–4 years (36–48 months)</strong></td>
+            <td>Daytime continence mostly reliable; beginning to manage clothing independently; wipes independently (though technique still developing); flushes and washes hands with reminders</td>
+            <td>Girls often wipe front to back more consistently by 4 years with modeling. Boys seated for BMs and standing for urination is usually established by age 3.5–4 with guidance. Accidents during illness or excitement are still normal.</td>
+          </tr>
+          <tr>
+            <td><strong>4–5 years</strong></td>
+            <td>Manages bathroom routine largely independently; wipes with reasonable effectiveness; washes hands without prompting (with reminders); can hold urge for 30+ minutes; nighttime dryness beginning to establish</td>
+            <td>Nighttime dryness is developmentally separate from daytime training and is hormonally driven. Bed-wetting at 5 years is still within normal range, especially in boys. Nocturnal enuresis up to age 7 in boys is not unusual.</td>
+          </tr>
+          <tr>
+            <td><strong>5–6 years</strong></td>
+            <td>Full toileting independence expected; manages public restrooms with minimal support; reliably wipes and washes hands; nighttime dryness established for most children</td>
+            <td>If a child is not achieving daytime dryness by 5 years or nighttime dryness by 7 years, a conversation with a pediatrician or OT is appropriate. Rule out sensory, medical, or developmental contributors.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><em>Note: Regression during transitions, illness, stress, or the arrival of a new sibling is developmentally normal at any age and should be met with patience rather than pressure.</em></p>
+
+      <h2>The OT Approach: Strategies That Actually Work</h2>
+
+      <h3>Start with a Consistent Routine</h3>
+      <p>Consistency is the foundation of potty training. Bring your child to the potty at regular, predictable times rather than waiting for them to ask. Good natural anchors include: after waking up, before and after meals, before going outside, and before bath and bed. Building the habit of sitting, even briefly, teaches the body and brain to associate those times with toileting.</p>
+
+      <h3>Make the Environment Feel Safe</h3>
+      <p>Many young children are genuinely afraid of the toilet. The sound of flushing, the feeling of sitting on a large open seat, or the sensation of elimination without a diaper underneath can all be dysregulating. A child-sized potty chair on the floor can feel more secure than a seat insert on the full toilet. Feet should always be supported, a step stool is non-negotiable for seat inserts. When feet dangle, children tighten their whole body and cannot relax enough to go.</p>
+
+      <h3>Teach Kids What "Push" Actually Means</h3>
+      <p>This is one of the biggest gaps in potty training guidance. Parents and caregivers often tell children to "push" or "try to go," and children do exactly what that sounds like: they squeeze, tighten up, hold their breath, and brace. This makes elimination harder, not easier, and can contribute to constipation, stool withholding, and toileting anxiety.</p>
+      <p>Elimination, both urination and bowel movements, requires the pelvic floor to <em>relax</em>, not contract. Children cannot intuitively understand this. They need support to learn how their body actually works.</p>
+
+      <div class="ot-tip">
+        <div class="tip-label">OT Clinical Tip</div>
+        <h3>The Blowing Games Trick for Pelvic Floor Relaxation</h3>
+        <p>This is one of the most practical and underused strategies in potty training, and it works because it is grounded in physiology. When a child blows, the diaphragm lowers, intra-abdominal pressure increases gently from above, and the pelvic floor naturally relaxes below. The body does what you need it to do, without the child having to understand any of that.</p>
+        <p><strong>How to use it:</strong></p>
+        <ul>
+          <li>Give your child a drink of water or a small cup of a preferred beverage.</li>
+          <li>Wait 10 to 15 minutes, then head to the potty.</li>
+          <li>Once seated with feet supported, give them something to blow: a pinwheel, a bubble wand, a cotton ball across a tray, or a straw into a cup of water to make bubbles.</li>
+          <li>Let them blow slowly and repeatedly. Do not prompt them to push. Just let them blow and play.</li>
+          <li>The pelvic floor relaxes naturally, and many children will urinate or have a bowel movement without even trying.</li>
+        </ul>
+        <p>This is especially helpful for children who are withholding stool, who tighten up on the potty, or who have anxiety around bowel movements. The blowing games shift the child's attention away from the task and take the pressure out of the situation, literally and figuratively.</p>
+        <p>Bubbles are particularly effective because children love them, they require sustained slow exhalation, and they can be done right on the potty. A small bottle of bubbles in the bathroom is a simple and powerful tool.</p>
+      </div>
+
+      <h3>Manage Clothing for Independence</h3>
+      <p>A child who cannot get their own pants down will not make it in time, regardless of how motivated they are. During potty training, choose clothing that is easy to manage: elastic waistbands, no overalls or onesies, loose pants rather than fitted leggings. This is not a permanent wardrobe change. It is a practical accommodation that supports skill development.</p>
+
+      <h3>Address Sensory and Emotional Barriers</h3>
+      <p>Some children take significantly longer to potty train not because of stubbornness or lack of motivation, but because of genuine sensory or emotional challenges. If your child is showing strong fear of the potty, stool withholding, or major distress around toileting, these are worth discussing with your pediatrician and potentially a pediatric OT. Toileting difficulties are a recognized area of pediatric occupational therapy practice and there is real support available.</p>
+
+      <h2>A Note on Nighttime Dryness</h2>
+      <p>Nighttime dryness is controlled by a hormone called vasopressin, which suppresses urine production during sleep. This hormone does not mature at the same time as daytime bladder control. It develops on its own timeline, and no amount of training or potty practice at night will make it happen faster. The most helpful approach is patience, a quality mattress cover, and reducing fluids close to bedtime. Bed-wetting at age 5 and even into early elementary school is medically normal, particularly in boys.</p>
+
+      <h2>When to Seek Additional Support</h2>
+      <p>Consider reaching out to your pediatrician or a pediatric OT if your child:</p>
+      <ul>
+        <li>Shows no readiness signs by 3 years and has no known developmental delay</li>
+        <li>Was previously trained and has significant regression lasting more than several weeks without an obvious trigger</li>
+        <li>Has significant fear, distress, or anxiety around toileting that is not improving</li>
+        <li>Is chronically withholding stool, experiencing painful bowel movements, or showing signs of constipation</li>
+        <li>Is not achieving daytime dryness by age 5, or nighttime dryness by age 7</li>
+        <li>Has a diagnosis (autism spectrum disorder, sensory processing differences, developmental delay, or other) that may be affecting toileting</li>
+      </ul>
+      <p>Toileting is an occupation. It involves sensory processing, motor control, body awareness, emotional regulation, and environmental context. When it is hard, there are real clinical reasons, and real clinical support available.</p>
+
+      <div class="disclaimer">
+        This content is intended for educational and informational purposes only. It does not constitute medical advice, diagnosis, or treatment. Always consult a licensed healthcare provider for individualized guidance regarding your child's development.
+      </div>
+
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="download-section">
+      <h3>Resources for Families and Clinicians</h3>
+      <div class="resource-item">
+        <div class="resource-icon">📘</div>
+        <p><strong>American Academy of Pediatrics (AAP):</strong> Parent-facing guidance on toilet training readiness, timing, and troubleshooting. <a href="https://www.healthychildren.org/English/ages-stages/toddler/toilet-training/Pages/default.aspx" target="_blank" rel="noopener">healthychildren.org</a></p>
+      </div>
+      <div class="resource-item">
+        <div class="resource-icon">📗</div>
+        <p><strong>AOTA (American Occupational Therapy Association):</strong> OT's role in toileting and continence as an area of occupation. <a href="https://www.aota.org" target="_blank" rel="noopener">aota.org</a></p>
+      </div>
+      <div class="resource-item">
+        <div class="resource-icon">📙</div>
+        <p><strong>Oh Crap! Potty Training by Jamie Glowacki:</strong> A practical, no-fluff parent guide widely recommended by pediatric clinicians. Available at most libraries and major booksellers.</p>
+      </div>
+      <div class="resource-item">
+        <div class="resource-icon">🔬</div>
+        <p><strong>Brazelton, T.B. (1962). "A Child-Oriented Approach to Toilet Training":</strong> The foundational research establishing readiness-based potty training. Available through academic databases.</p>
+      </div>
+      <div class="resource-item">
+        <div class="resource-icon">🌐</div>
+        <p><strong>Pediatric Pelvic Health Resources:</strong> For clinicians working with toileting difficulties, pelvic floor resources are increasingly available through pediatric PT and OT continuing education programs.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <ul class="footer-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+</body>
+</html>
