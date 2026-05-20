@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>The Everything Notebook: Why I Made My Own | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: light;
+      --purple:       #5C4490;
+      --purple-light: #9B88C4;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #3E2D6E;
+      --cream:        #FDFBF9;
+      --warm-white:   #F7F4FB;
+      --text:         #1E1830;
+      --text-light:   #5A4E72;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background-color: #FDFBF9;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123, 101, 164, 0.08); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+
+    main {
+      margin-top: 80px;
+      padding: 4rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1rem;
+      color: var(--text-light);
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .meta {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(92, 68, 144, 0.15);
+    }
+
+    .content {
+      background: white;
+      border: 1px solid rgba(92, 68, 144, 0.12);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .content h2 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--purple-pale);
+    }
+
+    .content h2:first-child { margin-top: 0; }
+
+    .content h3 {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content p { margin-bottom: 1rem; color: var(--text); }
+    .content ul { margin-left: 2rem; margin-bottom: 1rem; }
+    .content li { margin-bottom: 0.5rem; color: var(--text); }
+
+    /* OT TIP */
+    .ot-tip {
+      background: var(--purple-pale);
+      border-left: 4px solid var(--purple);
+      border-radius: 0 0.75rem 0.75rem 0;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0;
+    }
+
+    .ot-tip .tip-label {
+      font-family: var(--ff-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.4rem;
+    }
+
+    .ot-tip h3 {
+      font-family: var(--ff-display);
+      font-size: 1.35rem;
+      color: var(--purple-deep);
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .ot-tip p { font-size: 0.95rem; color: var(--text); margin-bottom: 0.75rem; }
+    .ot-tip ul { margin-left: 1.5rem; }
+    .ot-tip li { font-size: 0.95rem; color: var(--text); margin-bottom: 0.5rem; }
+
+    /* SECTIONS BREAKDOWN */
+    .sections-breakdown {
+      margin: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .section-block {
+      background: var(--warm-white);
+      border: 1px solid rgba(92, 68, 144, 0.15);
+      border-radius: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .section-number {
+      font-family: var(--ff-display);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 2rem;
+      text-align: center;
+      margin-top: 0.2rem;
+    }
+
+    .section-block h4 {
+      font-family: var(--ff-display);
+      font-size: 1.15rem;
+      color: var(--purple-deep);
+      margin-bottom: 0.35rem;
+    }
+
+    .section-block p {
+      font-size: 0.88rem;
+      color: var(--text-light);
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    /* SALE BANNER */
+    .sale-banner {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--purple-deep);
+      color: white;
+      border-radius: 0.75rem;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .sale-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+    .sale-banner div {
+      flex: 1;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .sale-banner strong {
+      display: block;
+      font-size: 1rem;
+      color: white;
+      margin-bottom: 0.15rem;
+    }
+
+    .sale-code {
+      font-family: monospace;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      padding: 0.15rem 0.5rem;
+      border-radius: 0.3rem;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+    }
+
+    .sale-btn {
+      background: white;
+      color: var(--purple-deep);
+      font-family: var(--ff-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.25rem;
+      border-radius: 0.4rem;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+
+    .sale-btn:hover { opacity: 0.85; text-decoration: none; }
+
+    /* PURCHASE CTA */
+    .purchase-cta {
+      background: var(--purple-pale);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .purchase-cta h3 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-bottom: 0.75rem;
+    }
+
+    .purchase-cta p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      max-width: 500px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.7;
+    }
+
+    .btn-purchase {
+      display: inline-block;
+      background: var(--purple);
+      color: white;
+      font-family: var(--ff-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-purchase:hover {
+      background: var(--purple-deep);
+      transform: translateY(-2px);
+      color: white;
+      text-decoration: none;
+    }
+
+    .purchase-note {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+    }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-style: italic;
+      border-top: 1px solid rgba(92, 68, 144, 0.12);
+      padding-top: 1.25rem;
+      margin-top: 2rem;
+      line-height: 1.7;
+    }
+
+    /* BACK LINK */
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--purple-deep); }
+
+    /* NEWSLETTER */
+    .newsletter-section {
+      background: var(--warm-white);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .newsletter-section .eyebrow {
+      font-family: var(--ff-body);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .newsletter-section h3 {
+      font-family: var(--ff-display);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-bottom: 0.5rem;
+    }
+
+    .newsletter-section p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      max-width: 460px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--purple-deep);
+      color: rgba(255,255,255,0.6);
+      padding: 2rem 4rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    footer a { color: rgba(255,255,255,0.8); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: white; }
+
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links li { font-size: 0.85rem; }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      main { padding: 2rem; }
+      .content { padding: 1.5rem; }
+    }
+
+    @media (max-width: 560px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      main { padding: 1.5rem; margin-top: 70px; }
+      .page-header h1 { font-size: 1.8rem; }
+      .content { padding: 1.25rem; }
+      .purchase-cta { padding: 1.75rem; }
+      .btn-purchase { display: block; width: 100%; text-align: center; }
+      footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <a href="blog.html" class="back-link">← Back to Blog</a>
+
+    <!-- SALE BANNER -->
+    <div class="sale-banner">
+      <span class="sale-icon">🎉</span>
+      <div>
+        <strong>Limited Time: 15% Off</strong>
+        Use code <span class="sale-code">MAKEBANK15</span> at checkout on Lulu. Sale ends May 22nd.
+      </div>
+      <a href="https://www.lulu.com/spotlight/everythingnotebook" target="_blank" rel="noopener" class="sale-btn">Get the Deal →</a>
+    </div>
+
+    <div class="page-header">
+      <h1>The Everything Notebook: Why I Made My Own</h1>
+      <p>I spent years buying planners that didn't work, until I finally understood what I actually needed and built it myself.</p>
+      <div class="meta">Productivity · ADHD · Organization · Personal</div>
+    </div>
+
+    <div class="content">
+
+      <h2>Nothing Was Working</h2>
+
+      <p>I have tried every kind of planner. The beautiful ones with the weekly layouts and the habit trackers and the little boxes for gratitude and water intake. The simple ones. The digital ones I was convinced would finally stick. Bullet journals I spent an entire Sunday evening setting up and opened maybe twice after that.</p>
+
+      <p>And then there were the habit trackers. I am not tracking my mindful minutes or my water intake or any of that. You spend time making it look pretty with stickers and colored pens and then you don't use half the pages. It's a waste of time and it makes you feel like you failed at yet another system.</p>
+
+      <p>The real problem was not a lack of trying. I was trying constantly. The problem was that I was always using multiple things at once. A notebook here, a to-do pad there, sticky notes, my phone, whatever was open on the table when I had a thought. Nothing was in one place, so nothing was actually findable when I needed it.</p>
+
+      <h2>The Tip That Changed How I Think About This</h2>
+
+      <p>One day I came across a video about ADHD and organization. The tip was simple: use one notebook for everything and carry it everywhere.</p>
+
+      <p>I tried it for a year. One notebook, everywhere, all the time. And it genuinely helped. Everything was in one place. I stopped losing notes across three different surfaces. I stopped the constant consolidating and re-copying. Just having one home for everything made a real difference.</p>
+
+      <p>But I started running into the edges of what a blank notebook could do for me.</p>
+
+      <p>I kept to-do lists, and I wanted them in the front where I could access them fast, not buried on whatever page I happened to be on when I thought of something. I tried using the back of the notebook as a workaround. Then I started using a separate to-do pad again, which defeated the whole point. I was consolidating them constantly, which is its own kind of tax on your attention.</p>
+
+      <p>I also needed occasional access to a calendar. Eval dates, authorization timelines, appointments. Important dates that I needed to see at a glance without digging through pages of notes. Every planner I found that had monthly calendars had almost no writing space. Every notebook with real writing space had no calendar. I could not find both in the same place.</p>
+
+      <p>I needed a three-in-one system. I looked. It did not exist. So I made it.</p>
+
+      <div class="ot-tip">
+        <div class="tip-label">The OT Perspective</div>
+        <h3>Why ADHD Brains Need a Different Kind of System</h3>
+        <p>As a pediatric OT I spend a lot of time thinking about executive function: working memory, task initiation, planning, cognitive flexibility. These are the skills that most organizational systems assume you already have.</p>
+        <p>The problem with most planners is not the format. It's the cognitive load they require to maintain. The more elaborate the system, the more executive function it takes to keep up with it. And ADHD brains don't have executive function to spare on maintaining a system. The system has to do more of the work.</p>
+        <p>A few principles that actually help:</p>
+        <ul>
+          <li>One place for everything reduces the working memory cost of remembering where things are</li>
+          <li>Undated formats remove the guilt of missed days, which is one of the main reasons people abandon planners</li>
+          <li>Quick-access sections for the things you use most (to-do lists, priority tasks, calendar) mean less searching and less friction</li>
+          <li>Limited scope (4 months instead of 12) keeps the system from feeling overwhelming before you even start</li>
+        </ul>
+        <p>These are not workarounds. They are design choices based on how ADHD brains actually function.</p>
+      </div>
+
+      <h2>How the Brain Dump and Priority List Actually Works</h2>
+
+      <p>The first section is built around two ADHD-friendly strategies I had been using separately and finally combined.</p>
+
+      <p>The left side of the spread is the brain dump. Write down everything you need to do. Add to it every day as things come up. Get it out of your head and onto the page. Weekly reset.</p>
+
+      <p>The right side has four priority lists, not seven. Each one has three slots. You look at your brain dump, pick the three most important things, and write them there. That's your focus for that day. Four days instead of seven because we don't always get to the list, and five empty boxes at the end of the week just make you feel bad. The next week you transfer whatever is left over, add new items, and go again.</p>
+
+      <p>This system comes from real productivity research on how people with ADHD work best: externalize everything, then narrow focus down to what actually has to happen today. It sounds simple because it is. Simple is what works.</p>
+
+      <h2>What's Inside: The Three Sections</h2>
+
+      <div class="sections-breakdown">
+        <div class="section-block">
+          <div class="section-number">1</div>
+          <div>
+            <h4>Brain Dump + Rolling Priority List</h4>
+            <p>Weekly spreads with a full brain dump on the left and four 3-task priority lists on the right. Write everything, then identify what actually matters today. New week, fresh start. Transfer what's left and keep moving.</p>
+          </div>
+        </div>
+        <div class="section-block">
+          <div class="section-number">2</div>
+          <div>
+            <h4>The Mini Planner: 4 Months of Structure</h4>
+            <p>A new contacts page for numbers and names that would otherwise get lost. A 2-page Year at a Glance spread with a box for each month to jot down important dates. Then 4 undated monthly calendars to fill in yourself. A reminder page at the end to order the next one before you run out. Four months because 12 is too much to focus on at once, and because it works for school semesters, therapy planning cycles, and anyone who likes a fresh start a few times a year.</p>
+          </div>
+        </div>
+        <div class="section-block">
+          <div class="section-number">3</div>
+          <div>
+            <h4>140 Lined Note Pages</h4>
+            <p>The notebook part. Enough space for meeting notes, session notes, ideas, lists, plans, and whatever your brain needs to put somewhere. Everything, truly, in one place.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2>Why Four Months and Not Twelve</h2>
+
+      <p>A 12-month planner that you start in January and abandon by March is not a 12-month planner. It's a guilt object.</p>
+
+      <p>Four months is enough to feel like a real commitment without being overwhelming. It also works well for school semesters, therapy authorization cycles, and the honest truth that ADHD brains like a fresh start every once in a while. When you finish one notebook and start a new one, that's not failure. That's just how the system works.</p>
+
+      <p>The notebook currently comes as a soft cover spiral. One day I hope to find a print-on-demand hard cover option, because that would make it feel exactly right. But the spiral is practical, it lays flat, and it goes everywhere with you.</p>
+
+      <h2>Chaos Controlled</h2>
+
+      <p>That's what I called it because that's what it does. Not chaos eliminated. Not a perfect system that requires you to become a different person. Just one place, with structure where you need it and space where you need that too.</p>
+
+      <p>I made this for myself. And then I made it available because I know I am not the only one who has been looking for exactly this.</p>
+
+      <div class="disclaimer">
+        The Everything Notebook is an organizational and productivity product. It is not a therapeutic intervention, clinical tool, or substitute for evaluation or treatment by a licensed healthcare provider.
+      </div>
+
+    </div>
+
+    <!-- PURCHASE CTA -->
+    <div class="purchase-cta">
+      <h3>Get The Everything Notebook</h3>
+      <p>Second Edition. 140 lined pages. Brain dump and priority system. 4-month undated planner. One place for everything. Available now on Lulu.</p>
+      <a href="https://www.lulu.com/spotlight/everythingnotebook" target="_blank" rel="noopener" class="btn-purchase">Order on Lulu →</a>
+      <p class="purchase-note">Use code <strong>MAKEBANK15</strong> for 15% off through May 22nd. Print on demand, ships directly from Lulu Press.</p>
+    </div>
+
+    <div class="newsletter-section">
+      <p class="eyebrow">Stay in the loop</p>
+      <h3>New posts and resources, once a month.</h3>
+      <p>No spam, no clutter. Just good content when it's ready.</p>
+      <script src="https://f.convertkit.com/ckjs/ck.5.js"></script>
+      <form action="https://app.kit.com/forms/9467610/subscriptions" class="seva-form formkit-form" method="post" data-sv-form="9467610" data-uid="ac56365786" data-format="inline" data-version="5" data-options="{&quot;settings&quot;:{&quot;after_subscribe&quot;:{&quot;action&quot;:&quot;message&quot;,&quot;success_message&quot;:&quot;Success! Now check your email to confirm your subscription.&quot;,&quot;redirect_url&quot;:&quot;&quot;},&quot;analytics&quot;:{&quot;google&quot;:null,&quot;fathom&quot;:null,&quot;facebook&quot;:null,&quot;segment&quot;:null,&quot;pinterest&quot;:null,&quot;sparkloop&quot;:null,&quot;googletagmanager&quot;:null},&quot;modal&quot;:{&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;powered_by&quot;:{&quot;show&quot;:true,&quot;url&quot;:&quot;https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic&quot;},&quot;recaptcha&quot;:{&quot;enabled&quot;:false},&quot;return_visitor&quot;:{&quot;action&quot;:&quot;show&quot;,&quot;custom_content&quot;:&quot;&quot;},&quot;slide_in&quot;:{&quot;display_in&quot;:&quot;bottom_right&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;sticky_bar&quot;:{&quot;display_in&quot;:&quot;top&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15}},&quot;version&quot;:&quot;5&quot;}" min-width="400 500 600 700 800"><div data-style="clean"><ul class="formkit-alert formkit-alert-error" data-element="errors" data-group="alert"></ul><div data-element="fields" data-stacked="false" class="seva-fields formkit-fields"><div class="formkit-field"><input class="formkit-input" name="email_address" aria-label="Email Address" placeholder="Email Address" required="" type="email" style="color: rgb(0, 0, 0); border-color: rgb(227, 227, 227); border-radius: 4px; font-weight: 400;"></div><button data-element="submit" class="formkit-submit formkit-submit" style="color: rgb(255, 255, 255); background-color: rgb(92, 68, 144); border-radius: 4px; font-weight: 400;"><div class="formkit-spinner"><div></div><div></div><div></div></div><span class="">Subscribe</span></button></div><div class="formkit-powered-by-convertkit-container"><a href="https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic" data-element="powered-by" class="formkit-powered-by-convertkit" data-variant="dark" target="_blank" rel="nofollow noopener">Built with Kit</a></div></div><style>.formkit-form[data-uid="ac56365786"] *{box-sizing:border-box;}.formkit-form[data-uid="ac56365786"] .formkit-input{background:#ffffff;font-size:15px;padding:12px;border:1px solid #e3e3e3;flex:1 0 auto;line-height:1.4;margin:0;transition:border-color ease-out 300ms;}.formkit-form[data-uid="ac56365786"] .formkit-input:focus{outline:none;border-color:#5C4490;}.formkit-form[data-uid="ac56365786"] .formkit-button,.formkit-form[data-uid="ac56365786"] .formkit-submit{border:0;border-radius:5px;color:#ffffff;cursor:pointer;display:inline-block;text-align:center;font-size:15px;font-weight:500;margin-bottom:15px;overflow:hidden;padding:0;position:relative;vertical-align:middle;}.formkit-form[data-uid="ac56365786"] .formkit-submit > span{display:block;transition:all 300ms ease-in-out;padding:12px 24px;}.formkit-form[data-uid="ac56365786"] .formkit-alert{background:#f9fafb;border:1px solid #e3e3e3;border-radius:5px;flex:1 0 auto;list-style:none;margin:25px auto;padding:12px;text-align:center;width:100%;}.formkit-form[data-uid="ac56365786"] .formkit-alert:empty{display:none;}.formkit-form[data-uid="ac56365786"] .formkit-alert-success{background:#EDE8F5;border-color:rgba(92,68,144,0.2);color:#3E2D6E;}.formkit-form[data-uid="ac56365786"] .formkit-alert-error{background:#fde8e2;border-color:#f2643b;color:#ea4110;}.formkit-form[data-uid="ac56365786"] .formkit-spinner{display:flex;height:0px;width:0px;margin:0 auto;position:absolute;top:0;left:0;right:0;overflow:hidden;text-align:center;transition:all 300ms ease-in-out;}.formkit-form[data-uid="ac56365786"] .formkit-spinner > div{margin:auto;width:12px;height:12px;background-color:#fff;opacity:0.3;border-radius:100%;display:inline-block;}.formkit-form[data-uid="ac56365786"] .formkit-submit[data-active] .formkit-spinner{opacity:1;height:100%;width:50px;}.formkit-form[data-uid="ac56365786"] .formkit-submit[data-active] .formkit-spinner ~ span{opacity:0;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit-container{display:flex;width:100%;margin:10px 0;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit{background-color:#ffffff;border-radius:9px;cursor:pointer;display:block;height:36px;margin:0 auto;opacity:0.95;text-decoration:none;text-indent:100%;white-space:nowrap;overflow:hidden;width:157px;background-repeat:no-repeat;background-position:center;}.formkit-form[data-uid="ac56365786"]{max-width:700px;margin:0 auto;}.formkit-form[data-uid="ac56365786"] [data-style="clean"]{width:100%;}.formkit-form[data-uid="ac56365786"] .formkit-fields{display:flex;flex-wrap:wrap;margin:0 auto;}.formkit-form[data-uid="ac56365786"] .formkit-field,.formkit-form[data-uid="ac56365786"] .formkit-submit{margin:0 0 15px 0;flex:1 0 100%;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit-container{margin:0;}</style></form>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <ul class="footer-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+</body>
+</html>
