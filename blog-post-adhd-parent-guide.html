@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>A Parent's Guide to Supporting a Child with ADHD | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: light;
+      --purple:       #5C4490;
+      --purple-light: #9B88C4;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #3E2D6E;
+      --cream:        #FDFBF9;
+      --warm-white:   #F7F4FB;
+      --text:         #1E1830;
+      --text-light:   #5A4E72;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background-color: #FDFBF9;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123, 101, 164, 0.08); }
+
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+
+    main {
+      margin-top: 80px;
+      padding: 4rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1rem;
+      color: var(--text-light);
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .meta {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(92, 68, 144, 0.15);
+    }
+
+    .content {
+      background: white;
+      border: 1px solid rgba(92, 68, 144, 0.12);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .content h2 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--purple-pale);
+    }
+
+    .content h2:first-child { margin-top: 0; }
+
+    .content h3 {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content p { margin-bottom: 1rem; color: var(--text); }
+    .content ul { margin-left: 2rem; margin-bottom: 1rem; }
+    .content li { margin-bottom: 0.5rem; color: var(--text); }
+
+    .content a { color: var(--purple); text-decoration: none; }
+    .content a:hover { text-decoration: underline; }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .content th, .content td {
+      border: 1px solid rgba(92, 68, 144, 0.15);
+      padding: 1rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .content th {
+      background: var(--purple-pale);
+      font-weight: 600;
+      color: var(--purple-deep);
+    }
+
+    .content tr:nth-child(even) { background: var(--warm-white); }
+
+    /* CALLOUT */
+    .ot-tip {
+      background: var(--purple-pale);
+      border-left: 4px solid var(--purple);
+      border-radius: 0 0.75rem 0.75rem 0;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0;
+    }
+
+    .ot-tip .tip-label {
+      font-family: var(--ff-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.4rem;
+    }
+
+    .ot-tip h3 {
+      font-family: var(--ff-display);
+      font-size: 1.35rem;
+      color: var(--purple-deep);
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .ot-tip p { font-size: 0.95rem; color: var(--text); margin-bottom: 0.75rem; }
+    .ot-tip ul { margin-left: 1.5rem; }
+    .ot-tip li { font-size: 0.95rem; color: var(--text); margin-bottom: 0.5rem; }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-style: italic;
+      border-top: 1px solid rgba(92, 68, 144, 0.12);
+      padding-top: 1.25rem;
+      margin-top: 2rem;
+      line-height: 1.7;
+    }
+
+    /* RESOURCES */
+    .download-section {
+      padding: 2rem;
+      background: var(--purple-pale);
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .download-section h3 {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(92, 68, 144, 0.2);
+    }
+
+    .resource-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(92, 68, 144, 0.1);
+    }
+
+    .resource-item:last-child { border-bottom: none; }
+    .resource-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    .resource-item p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .resource-item strong { color: var(--text); }
+    .resource-item a { color: var(--purple); text-decoration: none; }
+    .resource-item a:hover { text-decoration: underline; }
+
+    /* BACK LINK */
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--purple-deep); }
+
+    /* NEWSLETTER */
+    .newsletter-section {
+      background: var(--warm-white);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .newsletter-section .eyebrow {
+      font-family: var(--ff-body);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .newsletter-section h3 {
+      font-family: var(--ff-display);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-bottom: 0.5rem;
+    }
+
+    .newsletter-section p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      max-width: 460px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--purple-deep);
+      color: rgba(255,255,255,0.6);
+      padding: 2rem 4rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    footer a { color: rgba(255,255,255,0.8); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: white; }
+
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links li { font-size: 0.85rem; }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      main { padding: 2rem; }
+      .content { padding: 1.5rem; }
+    }
+
+    @media (max-width: 560px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      main { padding: 1.5rem; margin-top: 70px; }
+      .page-header h1 { font-size: 1.8rem; }
+      .content { padding: 1.25rem; }
+      footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <a href="blog.html" class="back-link">← Back to Blog</a>
+
+    <div class="page-header">
+      <h1>A Parent's Guide to Supporting a Child with ADHD</h1>
+      <p>Tips, tools, and things to explore — grounded in research and written from the perspective of a pediatric OT who raises kids with ADHD and lives with it herself.</p>
+      <div class="meta">ADHD · Pediatric Development · Executive Function · Ages 3 and up</div>
+    </div>
+
+    <div class="content">
+
+      <h2>First, an Important Note on Medication</h2>
+
+      <p>The research is clear on this: the most effective approach to treating ADHD, particularly in school-age children, is a combination of medication and behavioral or family-based therapy. This is the consensus position of the American Academy of Pediatrics, the American Psychological Association, and decades of research including Dr. Barkley's own work. Medication is not a last resort. For many children, it is the single most effective tool available, and it works best when combined with behavioral support and family coaching.</p>
+
+      <p>This guide is written for families who are exploring non-medication strategies, either alongside medication or as a first approach for younger children or mild presentations. It is not a case against medication. If your child is struggling significantly with safety, learning, or daily functioning, that conversation belongs with your pediatrician or a specialist first.</p>
+
+      <h3>A Drug Worth Watching: Centanafadine</h3>
+
+      <p>For families interested in what's coming in the medication space, there is one development worth knowing about. <a href="https://www.additudemag.com/centanafadine-triple-reuptake-inhibitor-nonstimulant-adhd/" target="_blank" rel="noopener">Centanafadine</a>, developed by Otsuka Pharmaceutical, is currently under FDA priority review with a <strong>target decision date of July 24, 2026.</strong></p>
+
+      <p>What makes it notable: it is a first-in-class norepinephrine, dopamine, and serotonin reuptake inhibitor (NDSRI) — meaning it targets all three neurotransmitters involved in ADHD, including serotonin, which influences mood, impulsivity, sleep, and emotional regulation. Current stimulant medications focus almost exclusively on dopamine and norepinephrine. The mechanism is designed to address core ADHD symptoms and may also help with executive dysfunction and emotional dysregulation — the piece that current medications often leave partially unaddressed.</p>
+
+      <p>It is also a non-stimulant with a favorable safety profile and low abuse potential in Phase 3 trials across children, adolescents, and adults. Nothing is approved yet, but if the July 2026 decision goes forward, it could meaningfully expand options for families — particularly those whose children struggle most with the emotional and mood dimensions of ADHD. Worth keeping an eye on.</p>
+
+      <h2>What ADHD Actually Is</h2>
+
+      <p>ADHD (Attention-Deficit/Hyperactivity Disorder) is a brain-based neurodevelopmental condition that affects attention, impulse control, and self-regulation. It is not a discipline problem, a character flaw, or the result of too much screen time. It is a difference in how the brain is wired, and it is well-documented by decades of research.</p>
+
+      <p>One of the most important contributions to understanding ADHD comes from Dr. Russell Barkley, a clinical neuropsychologist and one of the world's leading researchers on the condition. <a href="https://www.russellbarkley.org" target="_blank" rel="noopener">Dr. Barkley's research</a> reframes ADHD not as a disorder of attention alone, but as a disorder of self-regulation and executive function — the brain's ability to manage itself toward goals over time.</p>
+
+      <div class="ot-tip">
+        <div class="tip-label">Key Research Finding</div>
+        <h3>The 30% Rule: What Dr. Barkley's Research Tells Us</h3>
+        <p>Dr. Barkley's research, confirmed by NIH researcher Dr. Phillip Shaw's 2007 neuroimaging study, established that children with ADHD show approximately a <strong>30% developmental delay in executive function skills</strong> compared to their neurotypical peers. This means a 10-year-old with ADHD may function more like a 7-year-old when it comes to planning, organization, impulse control, emotional regulation, and time management.</p>
+        <p>This is not about intelligence. Many children with ADHD are bright, creative, and highly capable. The gap is specifically in self-management skills — and understanding this changes how we respond to ADHD behavior. What looks like defiance or laziness is often a developmental gap in skills the child has not yet built.</p>
+        <p>The practical implication: your child likely needs more support, more scaffolding, and more time than their age alone would suggest. Adjust your expectations to their developmental age in executive function, not their chronological age.</p>
+      </div>
+
+      <h2>Executive Function: The Brain's Management System</h2>
+
+      <p>Executive functions are the cognitive skills that allow us to plan, organize, start tasks, manage time, control impulses, regulate emotions, and hold information in mind while we work. According to Dr. Barkley, ADHD is fundamentally a disorder of executive function — not simply inattention.</p>
+
+      <p>The key executive function areas affected in ADHD include:</p>
+
+      <ul>
+        <li><strong>Working Memory:</strong> Holding information in mind while using it. This is why a child forgets a 3-step direction by step 2, or loses track of what they were doing mid-task.</li>
+        <li><strong>Response Inhibition:</strong> Stopping to think before acting. This underlies impulsivity, blurting out, and difficulty waiting their turn.</li>
+        <li><strong>Emotional Regulation:</strong> Managing frustration, disappointment, and excitement. ADHD brains feel emotions intensely and have less internal braking capacity.</li>
+        <li><strong>Time Management:</strong> Dr. Barkley describes ADHD as involving "time blindness" — the inability to feel time passing or connect emotionally with future consequences. This is why deadlines feel unreal until they are immediate.</li>
+        <li><strong>Task Initiation and Planning:</strong> Getting started on tasks that are not immediately interesting, and breaking larger goals into manageable steps.</li>
+      </ul>
+
+      <p>Signs of executive function struggles in young children include: difficulty following routines, frequent frustration or meltdowns during transitions, losing belongings, forgetting instructions, and trouble finishing tasks they started with enthusiasm.</p>
+
+      <h2>Why Getting Support Early Matters</h2>
+
+      <p>Left unaddressed, ADHD affects far more than school performance. Research consistently shows that without appropriate support, children with ADHD face higher risks of academic underachievement, social difficulties, low self-esteem, anxiety, and depression. The goal of early intervention is not to eliminate ADHD — it cannot be eliminated — but to build the scaffolding that allows the child to develop their strengths while getting support in areas where the ADHD brain creates genuine challenges.</p>
+
+      <h2>Sleep and Regulation</h2>
+
+      <p>Sleep problems are extremely common in ADHD. <a href="https://www.additudemag.com/adhd-and-sleep-problems/" target="_blank" rel="noopener">ADDitude Magazine</a> reports that difficulty falling asleep affects 10 to 15 percent of pre-pubertal children with ADHD, rising to 50 percent by age 12 and over 70 percent in adults. Many ADHDers have a delayed internal body clock, meaning their brain does not naturally signal sleepiness at a typical bedtime. Poor sleep then worsens the very symptoms — attention, regulation, impulse control — that are already challenging.</p>
+
+      <h3>Sleep Support Strategies Worth Exploring</h3>
+
+      <ul>
+        <li><strong>Weighted blankets:</strong> Research supports their use for sleep onset and quality in children with ADHD. A study published in the <em>Journal of Sleep Research</em> found improvements in sleep, relaxation, and anxiety in children using weighted blankets over a 16-week period. Parents in that study reported improvements in 50 to 75 percent of children for sleep onset, sleep continuity, and bedtime resistance.</li>
+        <li><strong>Magnesium:</strong> A 2019 meta-analysis found lower magnesium levels in people with ADHD compared to neurotypical peers. Magnesium glycinate or citrate before bed is commonly used to support sleep and relaxation. Discuss with your pediatrician before starting any supplement.</li>
+        <li><strong>Compression clothing:</strong> Compression shirts or tops at night provide proprioceptive input that many children find regulating and calming.</li>
+        <li><strong>Brown noise:</strong> A steady low-frequency sound that many ADHDers find more regulating than music or silence for sleep.</li>
+        <li><strong>Consistent wind-down routine:</strong> Shower, lotion massage, reading, and low-stimulation connection time. The routine itself signals the nervous system to shift gears.</li>
+        <li><strong>Limiting screens at least one hour before bed:</strong> Blue light suppresses melatonin and the stimulation of most screen content works against the internal regulation shift needed for sleep.</li>
+        <li><strong>Outdoor play and natural light during the day:</strong> Daytime light exposure helps regulate the circadian rhythm and supports better sleep onset at night.</li>
+        <li><strong>Check iron and zinc levels:</strong> Deficiencies in both have been associated with sleep disruption and worsened ADHD symptoms. A simple blood panel can identify these.</li>
+      </ul>
+
+      <h2>Nutrition and Supplements</h2>
+
+      <p>Nutrition is not a cure for ADHD, but emerging research suggests that certain nutrient deficiencies are more common in children with ADHD, and that addressing them may support brain function alongside other treatments. The following are areas commonly explored with healthcare providers. Never start supplements without discussing them with your child's pediatrician, especially in children on medication.</p>
+
+      <h3>Nutrients with Research Support</h3>
+
+      <ul>
+        <li><strong>Omega-3 fatty acids (high DHA/EPA):</strong> Among the most studied supplements for ADHD. A meta-analysis of 16 studies cited by <a href="https://www.additudemag.com/adhd-omega-3-benefits/" target="_blank" rel="noopener">ADDitude</a> found that omega-3 supplementation consistently reduced hyperactivity as rated by parents and teachers. Researchers in the <em>Clinical Psychology Review</em> concluded there is "sufficient evidence to consider omega-3 fatty acids as a possible supplement to established therapies" for ADHD. Children with ADHD have been found to have lower omega-3 levels than their neurotypical peers across multiple studies.</li>
+        <li><strong>Magnesium:</strong> Research has found lower magnesium levels correlate with more severe ADHD symptoms. Magnesium supports the calming effect on the brain and helps with sleep and anxiety.</li>
+        <li><strong>Zinc:</strong> Zinc regulates dopamine and may improve the brain's response to dopamine-based medications. <a href="https://www.additudemag.com/vitamins-minerals-adhd-treatment-plan/" target="_blank" rel="noopener">ADDitude</a> notes a study published in the <em>Journal of Child Psychology and Psychiatry</em> showing zinc supplementation reduced hyperactivity and impulsivity in children with ADHD compared to placebo. Levels should be checked before supplementing — high zinc can be dangerous.</li>
+        <li><strong>Iron:</strong> Iron is necessary for dopamine production. One study found low ferritin levels in 84 percent of children with ADHD compared to 18 percent of the control group. Low iron correlates with cognitive deficits and more severe ADHD symptoms. Iron should only be supplemented if a deficiency is confirmed by bloodwork.</li>
+        <li><strong>Vitamin D:</strong> Deficiency is common in children generally and has been associated with worsened ADHD symptoms. Worth checking as part of a routine panel.</li>
+        <li><strong>Protein at breakfast:</strong> Not a supplement, but one of the most consistently recommended dietary strategies. Protein helps stabilize blood sugar and supports dopamine and norepinephrine production — exactly the neurotransmitters that ADHD medications target. A high-protein breakfast sets a better neurochemical foundation for the morning than a high-carb one.</li>
+      </ul>
+
+      <h3>Supplements with Early or Emerging Evidence</h3>
+
+      <ul>
+        <li><strong>L-theanine:</strong> An amino acid found in green tea that promotes calm without sedation. Small studies suggest it may help with sleep quality and focus, particularly when combined with caffeine. Research in children is limited but generally considered low-risk.</li>
+        <li><strong>Saffron extract:</strong> A handful of small randomized controlled trials have found saffron comparable to methylphenidate for some ADHD symptoms. The research is promising but the studies are small and more evidence is needed before strong conclusions can be drawn.</li>
+        <li><strong>NAC (N-acetylcysteine):</strong> NAC has shown benefit in some studies for OCD and ASD-related repetitive behaviors, and early research suggests possible benefit for ADHD, particularly for emotional regulation and impulsivity. The evidence is still preliminary and not yet well-established for ADHD specifically. Discuss with your provider before trying.</li>
+      </ul>
+
+      <h3>Other Dietary Considerations</h3>
+
+      <ul>
+        <li>Reducing artificial dyes, food colorings, and preservatives: A subset of children with ADHD show behavioral sensitivity to artificial dyes, particularly Red 40. The evidence is not universal but the intervention is low-risk and worth trying if your child's symptoms seem food-related.</li>
+        <li>Pre and probiotics: Gut-brain connection research is growing. Some families report improvements in mood and regulation with probiotic support, though ADHD-specific research is still early.</li>
+        <li>Limited dairy: Some families notice improved behavior with reduced dairy intake. This is not universal, but if you suspect a sensitivity it is worth a trial elimination period.</li>
+      </ul>
+
+      <h2>Movement and Sensory Strategies</h2>
+
+      <p>Exercise is one of the most well-supported non-medication interventions for ADHD. <a href="https://www.additudemag.com/exercise-and-the-adhd-brain/" target="_blank" rel="noopener">ADDitude Magazine</a>, citing Harvard psychiatrist Dr. John Ratey, describes exercise as "medication" for the ADHD brain. When a child moves, the brain releases dopamine, norepinephrine, and serotonin — exactly the neurotransmitters that ADHD medications are designed to increase. Exercise also increases brain-derived neurotrophic factor (BDNF), which supports learning and focus.</p>
+
+      <div class="ot-tip">
+        <div class="tip-label">OT Perspective</div>
+        <h3>Movement Changes Brain Chemistry — Not Just Behavior</h3>
+        <p>As a pediatric OT I want parents to understand that movement strategies are not just about burning energy or keeping kids busy. They are neurochemical interventions. When we recommend morning movement, balance activities, or vestibular input before a learning task, we are trying to prime the exact brain systems that ADHD affects. The timing matters: movement before a cognitive demand is more effective than movement after.</p>
+        <p>Research also shows that boys and girls with ADHD may respond differently to exercise intensity — boys tend to respond better to vigorous exercise while girls show more benefit from moderate-intensity movement. When in doubt, find movement the child actually enjoys and will keep doing. Sustained enjoyment beats optimal intensity every time.</p>
+      </div>
+
+      <h3>Movement Strategies with Research Support</h3>
+
+      <ul>
+        <li><strong>Daily outdoor play: at least 60 minutes.</strong> Nature exposure has a documented calming and attention-restoring effect. Unstructured outdoor play in natural environments reduces ADHD symptoms across multiple studies.</li>
+        <li><strong>Morning movement before school:</strong> Even 20 minutes of aerobic activity in the morning has been shown to improve classroom focus and reduce ADHD symptoms for several hours after. The research on morning timing is consistent enough that it's worth building into your routine.</li>
+        <li><strong>Martial arts and taekwondo:</strong> <a href="https://www.additudemag.com/exercise-ideas-for-kids-with-adhd-movement-for-focus/" target="_blank" rel="noopener">ADDitude</a> and Dr. Ratey both highlight martial arts as particularly beneficial for ADHD — the combination of physical movement, structured attention, discipline, and self-regulation practice makes it one of the most comprehensive movement options available. Studies show improvements in focus, confidence, and impulse control.</li>
+        <li><strong>Whole Body Vibration (WBV):</strong> Emerging research supports WBV as a tool for attention and regulation, particularly when used in the morning. The vibration provides proprioceptive and vestibular input that activates the central nervous system and supports arousal regulation. Used in clinical OT practice for sensory modulation.</li>
+        <li><strong>Mini trampoline or rebounding:</strong> Vestibular and proprioceptive input that many children with ADHD find regulating. Brief bouncing sessions before homework or transitions can help shift arousal state.</li>
+        <li><strong>Balance activities:</strong> Balance exercises activate the cerebellum and frontal lobe networks that support attention and executive function. Morning balance challenges (balance board, single-leg activities) as a warm-up for learning tasks have shown benefit in some studies.</li>
+        <li><strong>Mindfulness and breathing breaks:</strong> Brief, structured breathing or mindfulness exercises during the day help the nervous system reset. Particularly effective after frustrating tasks or before high-demand transitions.</li>
+      </ul>
+
+      <h3>Sensory and Environmental Tools</h3>
+
+      <ul>
+        <li><strong>Visual schedules, timers, and checklists:</strong> External structure compensates for the internal time and organization systems that ADHD makes unreliable. Visual timers (like Time Timer) make time concrete and visible.</li>
+        <li><strong>Compression clothing:</strong> Proprioceptive input throughout the day that supports body awareness and self-regulation for some children.</li>
+        <li><strong>Reduced screen time and intentional content selection:</strong> Fast-moving, high-stimulation content raises the threshold for what the brain finds interesting, making real-world tasks feel even more boring by comparison. This affects the dopamine system directly.</li>
+        <li><strong>Low-level red or near-infrared (NIR) light therapy:</strong> Targeting the frontal lobe, some research and clinical reports support red/NIR light therapy for attention, regulation, and reflex integration. The evidence base is still building and this should be considered an emerging area rather than an established intervention. Always consult a provider.</li>
+      </ul>
+
+      <h2>Therapies and Supports to Explore</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Therapy</th>
+            <th>What It Addresses</th>
+            <th>What to Look For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Occupational Therapy (OT)</strong></td>
+            <td>Sensory processing, executive function skills, self-regulation, reflex integration, fine motor, ADLs, and daily routines</td>
+            <td>A pediatric OT with experience in sensory processing and ADHD. Home and school-based delivery is most effective for generalization.</td>
+          </tr>
+          <tr>
+            <td><strong>Speech-Language Therapy (SLP)</strong></td>
+            <td>Language processing, following directions, social communication, pragmatic language, executive function language</td>
+            <td>Many children with ADHD have co-occurring language processing differences that go unidentified.</td>
+          </tr>
+          <tr>
+            <td><strong>Social Skills Support</strong></td>
+            <td>Peer interaction, reading social cues, managing frustration in social settings</td>
+            <td>Research suggests social skills are best developed in real-life, naturalistic settings with peers rather than in isolated group sessions.</td>
+          </tr>
+          <tr>
+            <td><strong>Parent Coaching</strong></td>
+            <td>How parents respond to ADHD behavior significantly affects outcomes</td>
+            <td>Look for approaches like Collaborative Problem Solving (Ross Greene) or Positive Discipline. These shift the parent-child dynamic from power struggle to collaborative problem solving.</td>
+          </tr>
+          <tr>
+            <td><strong>School-Based Support</strong></td>
+            <td>Academic accommodations, IEP or 504 plan, teacher communication</td>
+            <td>Your child may qualify for accommodations including extended time, preferential seating, reduced assignment length, or movement breaks built into the school day.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Nature, Play, and Connection</h2>
+
+      <p>Research on nature-based interventions for ADHD is consistent: time outdoors in natural environments reduces symptom severity, improves attention, and has a measurable calming effect on the nervous system. This is sometimes called Attention Restoration Theory — natural environments are low-demand and restorative in ways that built environments are not.</p>
+
+      <p>Real-world play and experiences teach social skills, frustration tolerance, creative problem solving, and self-regulation far more effectively than worksheets or structured programs. Unstructured play time is not wasted time for children with ADHD. It is developmental work.</p>
+
+      <p>And none of the strategies above replace the most important variable: a consistent, warm, connected relationship with a parent or caregiver who sees the child for who they are rather than what they struggle with. Connection and encouragement matter more than any specific intervention. Progress over perfection is always the goal.</p>
+
+      <div class="disclaimer">
+        This content is for educational and informational purposes only and does not constitute medical advice, diagnosis, or treatment. All supplement and intervention decisions should be made in consultation with your child's healthcare provider. We are not anti-medication — for many children, medication is the most effective option and an important part of a comprehensive treatment plan.
+      </div>
+
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="download-section">
+      <h3>References and Resources</h3>
+
+      <div class="resource-item">
+        <div class="resource-icon">💊</div>
+        <p><strong>Centanafadine (Otsuka) — FDA Priority Review:</strong> First-in-class NDSRI targeting all three ADHD neurotransmitters. FDA target decision date July 24, 2026. <a href="https://www.additudemag.com/centanafadine-triple-reuptake-inhibitor-nonstimulant-adhd/" target="_blank" rel="noopener">Read more at ADDitude</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📘</div>
+        <p><strong>Dr. Russell Barkley — russellbarkley.org:</strong> The leading research authority on ADHD, executive function, and self-regulation. Free factsheets, videos, and evidence-based information for parents and clinicians. <a href="https://www.russellbarkley.org" target="_blank" rel="noopener">russellbarkley.org</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📗</div>
+        <p><strong>ADDitude Magazine — additudemag.com:</strong> The most comprehensive and clinically respected parent-facing ADHD resource. Evidence-based articles reviewed by ADHD specialists, covering every aspect of life with ADHD. <a href="https://www.additudemag.com" target="_blank" rel="noopener">additudemag.com</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📙</div>
+        <p><strong>ADHD 2.0 — Hallowell & Ratey (2021):</strong> An updated, highly readable overview of ADHD neuroscience and treatment including the role of exercise, connection, and environment. Recommended for any parent wanting to understand the ADHD brain.</p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📙</div>
+        <p><strong>Smart but Scattered — Dawson & Guare:</strong> The go-to parent guide for understanding and building executive function skills in children. Practical, age-specific, and grounded in research.</p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📙</div>
+        <p><strong>The Explosive Child — Ross Greene:</strong> Essential reading for parents whose child's ADHD involves significant emotional dysregulation and frustration-based behavior. Introduces the Collaborative Problem Solving model.</p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">🔬</div>
+        <p><strong>Shaw, P. et al. (2007):</strong> "Attention-Deficit/Hyperactivity Disorder Is Characterized by a Delay in Cortical Maturation." <em>Proceedings of the National Academy of Sciences, 104(50).</em> The neuroimaging study confirming the 3-year brain maturation delay in ADHD.</p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">🔬</div>
+        <p><strong>Mehren, A. et al. (2020):</strong> "Physical exercise in attention deficit hyperactivity disorder — evidence and implications for treatment." <em>Borderline Personality Disorder and Emotion Dysregulation, 7(1).</em> Comprehensive review of exercise as an ADHD intervention.</p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">🌐</div>
+        <p><strong>CHADD (Children and Adults with ADHD):</strong> National nonprofit providing education, advocacy, and support. Includes a provider directory for locating ADHD-specialized clinicians. <a href="https://chadd.org" target="_blank" rel="noopener">chadd.org</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">💜</div>
+        <p><strong>Earthley Goodnight Lotion:</strong> Magnesium-based lotion for sleep support used in our home. <a href="https://earthley.com/?affiliateid=EvolveOT" target="_blank" rel="noopener">earthley.com</a> <em>(affiliate link)</em></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">💜</div>
+        <p><strong>LifePro Red Light Therapy:</strong> The device used in our home routine. Use code <strong>EvolveOT</strong> for 10% off. <a href="https://lifeprofitness.com/evolveot" target="_blank" rel="noopener">lifeprofitness.com/evolveot</a></p>
+      </div>
+
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div class="newsletter-section">
+      <p class="eyebrow">Stay in the loop</p>
+      <h3>New posts and resources, once a month.</h3>
+      <p>No spam, no clutter. Just good content when it's ready.</p>
+      <script src="https://f.convertkit.com/ckjs/ck.5.js"></script>
+      <form action="https://app.kit.com/forms/9467610/subscriptions" class="seva-form formkit-form" method="post" data-sv-form="9467610" data-uid="ac56365786" data-format="inline" data-version="5" data-options="{&quot;settings&quot;:{&quot;after_subscribe&quot;:{&quot;action&quot;:&quot;message&quot;,&quot;success_message&quot;:&quot;Success! Now check your email to confirm your subscription.&quot;,&quot;redirect_url&quot;:&quot;&quot;},&quot;analytics&quot;:{&quot;google&quot;:null,&quot;fathom&quot;:null,&quot;facebook&quot;:null,&quot;segment&quot;:null,&quot;pinterest&quot;:null,&quot;sparkloop&quot;:null,&quot;googletagmanager&quot;:null},&quot;modal&quot;:{&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;powered_by&quot;:{&quot;show&quot;:true,&quot;url&quot;:&quot;https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic&quot;},&quot;recaptcha&quot;:{&quot;enabled&quot;:false},&quot;return_visitor&quot;:{&quot;action&quot;:&quot;show&quot;,&quot;custom_content&quot;:&quot;&quot;},&quot;slide_in&quot;:{&quot;display_in&quot;:&quot;bottom_right&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;sticky_bar&quot;:{&quot;display_in&quot;:&quot;top&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15}},&quot;version&quot;:&quot;5&quot;}" min-width="400 500 600 700 800"><div data-style="clean"><ul class="formkit-alert formkit-alert-error" data-element="errors" data-group="alert"></ul><div data-element="fields" data-stacked="false" class="seva-fields formkit-fields"><div class="formkit-field"><input class="formkit-input" name="email_address" aria-label="Email Address" placeholder="Email Address" required="" type="email" style="color: rgb(0, 0, 0); border-color: rgb(227, 227, 227); border-radius: 4px; font-weight: 400;"></div><button data-element="submit" class="formkit-submit formkit-submit" style="color: rgb(255, 255, 255); background-color: rgb(92, 68, 144); border-radius: 4px; font-weight: 400;"><div class="formkit-spinner"><div></div><div></div><div></div></div><span class="">Subscribe</span></button></div><div class="formkit-powered-by-convertkit-container"><a href="https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic" data-element="powered-by" class="formkit-powered-by-convertkit" data-variant="dark" target="_blank" rel="nofollow noopener">Built with Kit</a></div></div><style>.formkit-form[data-uid="ac56365786"] *{box-sizing:border-box;}.formkit-form[data-uid="ac56365786"] .formkit-input{background:#ffffff;font-size:15px;padding:12px;border:1px solid #e3e3e3;flex:1 0 auto;line-height:1.4;margin:0;transition:border-color ease-out 300ms;}.formkit-form[data-uid="ac56365786"] .formkit-input:focus{outline:none;border-color:#5C4490;}.formkit-form[data-uid="ac56365786"] .formkit-button,.formkit-form[data-uid="ac56365786"] .formkit-submit{border:0;border-radius:5px;color:#ffffff;cursor:pointer;display:inline-block;text-align:center;font-size:15px;font-weight:500;margin-bottom:15px;overflow:hidden;padding:0;position:relative;vertical-align:middle;}.formkit-form[data-uid="ac56365786"] .formkit-submit > span{display:block;transition:all 300ms ease-in-out;padding:12px 24px;}.formkit-form[data-uid="ac56365786"] .formkit-alert{background:#f9fafb;border:1px solid #e3e3e3;border-radius:5px;flex:1 0 auto;list-style:none;margin:25px auto;padding:12px;text-align:center;width:100%;}.formkit-form[data-uid="ac56365786"] .formkit-alert:empty{display:none;}.formkit-form[data-uid="ac56365786"] .formkit-alert-success{background:#EDE8F5;border-color:rgba(92,68,144,0.2);color:#3E2D6E;}.formkit-form[data-uid="ac56365786"] .formkit-alert-error{background:#fde8e2;border-color:#f2643b;color:#ea4110;}.formkit-form[data-uid="ac56365786"] .formkit-spinner{display:flex;height:0;width:0;margin:0 auto;position:absolute;top:0;left:0;right:0;overflow:hidden;text-align:center;transition:all 300ms ease-in-out;}.formkit-form[data-uid="ac56365786"] .formkit-spinner > div{margin:auto;width:12px;height:12px;background-color:#fff;opacity:0.3;border-radius:100%;display:inline-block;}.formkit-form[data-uid="ac56365786"] .formkit-submit[data-active] .formkit-spinner{opacity:1;height:100%;width:50px;}.formkit-form[data-uid="ac56365786"] .formkit-submit[data-active] .formkit-spinner ~ span{opacity:0;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit-container{display:flex;width:100%;margin:10px 0;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit{background-color:#ffffff;border-radius:9px;cursor:pointer;display:block;height:36px;margin:0 auto;opacity:0.95;text-decoration:none;text-indent:100%;white-space:nowrap;overflow:hidden;width:157px;background-repeat:no-repeat;background-position:center;}.formkit-form[data-uid="ac56365786"]{max-width:700px;margin:0 auto;}.formkit-form[data-uid="ac56365786"] [data-style="clean"]{width:100%;}.formkit-form[data-uid="ac56365786"] .formkit-fields{display:flex;flex-wrap:wrap;margin:0 auto;}.formkit-form[data-uid="ac56365786"] .formkit-field,.formkit-form[data-uid="ac56365786"] .formkit-submit{margin:0 0 15px 0;flex:1 0 100%;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit-container{margin:0;}</style></form>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <ul class="footer-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+</body>
+</html>
