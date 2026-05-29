@@ -348,9 +348,32 @@ here</textarea>
       <button class="pill-btn" data-gm="vocab" onclick="setGM('vocab')"><span class="pi">📖</span>Cognitive: Words</button>
       <button class="pill-btn" data-gm="math" onclick="setGM('math')"><span class="pi">🔢</span>Cognitive: Math</button>
       <button class="pill-btn" data-gm="oculomotor" onclick="setGM('oculomotor')"><span class="pi">👁️</span>Oculomotor</button>
-      <button class="pill-btn" data-gm="motion" onclick="setGM('motion')" style="grid-column:span 3;border-color:var(--gn);"><span class="pi">📷</span>Motion — Camera Training <span style="font-size:9px;background:var(--gn);color:white;padding:1px 6px;border-radius:8px;margin-left:4px;">BETA</span></button>
+      <button class="pill-btn" data-gm="motion" onclick="setGM('motion')" style="grid-column:span 3;border-color:var(--gn);"><span class="pi">📷</span>Motion — Rhythm Training <span style="font-size:9px;background:var(--gn);color:white;padding:1px 6px;border-radius:8px;margin-left:4px;">BETA</span></button>
+      <button class="pill-btn" data-gm="activegames" onclick="setGM('activegames')" style="grid-column:span 3;border-color:var(--p);"><span class="pi">🎮</span>Active Games — Move Your Body <span style="font-size:9px;background:var(--p);color:white;padding:1px 6px;border-radius:8px;margin-left:4px;">BETA</span></button>
     </div>
-    <!-- Oculomotor sub-mode selector — shown only when oculomotor active -->
+    <!-- Motion sub-mode selector — shown only when motion active -->
+    <div id="motion-submode" style="display:none;margin-top:8px;">
+      <div class="label" style="margin-bottom:5px;">Movement Type</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="pill-btn active" id="mot-btn-clap" onclick="setMotMode('clap')"><span class="pi" style="font-size:13px;">👏</span>Clapping</button>
+        <button class="pill-btn" id="mot-btn-knee" onclick="setMotMode('knee')"><span class="pi" style="font-size:13px;">🤸</span>Knee Taps / Midline</button>
+        <button class="pill-btn" id="mot-btn-march" onclick="setMotMode('march')"><span class="pi" style="font-size:13px;">🦵</span>Marching</button>
+        <button class="pill-btn" id="mot-btn-jump" onclick="setMotMode('jump')"><span class="pi" style="font-size:13px;">⬆️</span>Jumps</button>
+      </div>
+      <div id="mot-clinical-note" style="font-size:10px;color:var(--gn);background:var(--gp);border-radius:7px;padding:6px 9px;margin-top:7px;line-height:1.65;"></div>
+    </div>
+    <!-- Active Games sub-mode selector -->
+    <div id="ag-submode" style="display:none;margin-top:8px;">
+      <div class="label" style="margin-bottom:5px;">Choose a Game</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="pill-btn active" id="ag-btn-stars"    onclick="setAGMode('stars')"><span class="pi" style="font-size:13px;">⭐</span>Catch Stars</button>
+        <button class="pill-btn"        id="ag-btn-balloons" onclick="setAGMode('balloons')"><span class="pi" style="font-size:13px;">🎈</span>Pop Balloons</button>
+        <button class="pill-btn"        id="ag-btn-soccer"   onclick="setAGMode('soccer')"><span class="pi" style="font-size:13px;">⚽</span>Kick Soccer</button>
+        <button class="pill-btn"        id="ag-btn-dodge"    onclick="setAGMode('dodge')"><span class="pi" style="font-size:13px;">🏃</span>Duck &amp; Jump</button>
+        <button class="pill-btn"        id="ag-btn-sidestep" onclick="setAGMode('sidestep')" style="grid-column:span 2;"><span class="pi" style="font-size:13px;">↔️</span>Side Steps &amp; Balance</button>
+      </div>
+      <div id="ag-clinical-note" style="font-size:10px;color:var(--gn);background:var(--gp);border-radius:7px;padding:6px 9px;margin-top:7px;line-height:1.65;"></div>
+    </div>
     <div id="ocu-submode" style="display:none;margin-top:8px;">
       <div class="label" style="margin-bottom:5px;">Vision Training Type</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
@@ -384,14 +407,6 @@ here</textarea>
         <div id="lv-desc" style="font-size:11px;color:var(--tl);margin-top:2px;line-height:1.6;"></div>
         <div id="lv-xac" style="font-size:10px;color:var(--gn);margin-top:5px;line-height:1.6;display:none;"></div>
       </div>
-    </div>
-  </div>
-  <!-- Coming soon badge -->
-  <div class="mx" style="background:linear-gradient(120deg,var(--pp),#E8F5EF);border:1px solid var(--pl);border-radius:11px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
-    <div style="font-size:20px;">📷</div>
-    <div>
-      <div style="font-size:12px;font-weight:500;color:var(--pd);">Camera Movement Mode — Coming Soon</div>
-      <div style="font-size:10px;color:var(--tl);margin-top:1px;">Clapping, knee taps, midline crossing, marching and more. 1–2 months.</div>
     </div>
   </div>
   <!-- BPM -->
@@ -602,29 +617,40 @@ here</textarea>
     <button class="btn" style="width:100%;" onclick="startAfterWGCalib()">Start Session ▶</button>
   </div>
 </div>
-<div id="motion-setup" style="display:none;position:fixed;inset:0;z-index:250;background:rgba(10,8,24,.92);align-items:center;justify-content:center;">
-  <div style="width:90%;max-width:400px;background:var(--cr);border-radius:20px;padding:22px 18px 26px;">
-    <div class="serif" style="font-size:22px;color:var(--pd);margin-bottom:6px;">📷 Motion Setup</div>
-    <div style="font-size:11px;color:var(--tl);margin-bottom:14px;line-height:1.7;">Phase 1 — Movement detection via camera. Position child so their upper body is visible. Any deliberate movement (clap, hand raise, knee tap) triggers a tap.</div>
+<div id="motion-setup" style="display:none;position:fixed;inset:0;z-index:250;background:rgba(10,8,24,.92);align-items:center;justify-content:center;overflow-y:auto;">
+  <div style="width:90%;max-width:440px;background:var(--cr);border-radius:20px;padding:22px 18px 26px;margin:16px auto;">
+    <div class="serif" style="font-size:22px;color:var(--pd);margin-bottom:4px;">📷 Camera Setup</div>
+    <div id="mot-setup-mode-label" style="font-size:11px;color:var(--p);font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;"></div>
+
+    <!-- Positioning guide — changes per sub-mode -->
+    <div id="mot-position-guide" style="background:var(--pp);border-radius:11px;padding:11px 13px;margin-bottom:12px;font-size:11px;color:var(--tx);line-height:1.75;">
+      <strong style="color:var(--pd);display:block;margin-bottom:4px;">📐 Camera Positioning</strong>
+      <div id="mot-guide-text"></div>
+    </div>
+
+    <!-- Silhouette diagram — simple SVG showing correct framing -->
+    <div id="mot-silhouette" style="background:#111;border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;font-size:10px;color:rgba(255,255,255,.5);">
+      <svg id="mot-svg-guide" viewBox="0 0 200 150" width="100%" style="max-height:110px;"></svg>
+      <div style="margin-top:4px;" id="mot-svg-caption"></div>
+    </div>
+
     <!-- Camera preview -->
     <div style="position:relative;width:100%;aspect-ratio:4/3;background:#111;border-radius:12px;overflow:hidden;margin-bottom:12px;">
       <video id="motion-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);"></video>
       <canvas id="motion-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
-      <div id="motion-status" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;color:white;background:rgba(0,0,0,.5);padding:4px;">Requesting camera…</div>
+      <!-- Skeleton overlay for MediaPipe -->
+      <canvas id="mp-skeleton-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
+      <div id="motion-status" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;color:white;background:rgba(0,0,0,.55);padding:4px;">Requesting camera…</div>
+      <div id="mot-gesture-feedback" style="position:absolute;top:8px;left:0;right:0;text-align:center;font-size:13px;font-weight:600;color:#4AC878;display:none;text-shadow:0 1px 4px rgba(0,0,0,.8);"></div>
     </div>
-    <!-- Sensitivity slider -->
-    <div style="margin-bottom:12px;">
-      <div class="label">Motion Sensitivity</div>
-      <input type="range" min="1" max="10" value="5" id="motion-sens" oninput="M.sensitivity=this.value;document.getElementById('sens-val').textContent=this.value" style="width:100%;accent-color:var(--gn);"/>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tl);margin-top:2px;">
-        <span>Less sensitive</span><span id="sens-val">5</span><span>More sensitive</span>
-      </div>
-    </div>
+
+    <!-- MP loading status -->
+    <div id="mp-load-status" style="font-size:10px;color:var(--tl);text-align:center;margin-bottom:8px;display:none;">⏳ Loading pose detection…</div>
+
     <div style="display:flex;gap:8px;">
       <button class="btn-out" style="flex:1;" onclick="closeMotionSetup()">Cancel</button>
       <button class="btn" style="flex:2;" id="motion-start-btn" onclick="startCountdownFromMotion()" disabled>Start ▶</button>
     </div>
-    <div style="font-size:10px;color:var(--tl);text-align:center;margin-top:8px;">Full hand tracking (MediaPipe) coming in next update</div>
   </div>
 </div>
 
@@ -869,17 +895,28 @@ function showScreen(id){
 function setSM(m){S.soundMode=m;document.querySelectorAll('#sound-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.sm===m));}
 function setGM(m){
   if(G.gameMode==='motion'&&m!=='motion') stopMotionCamera();
+  if(G.gameMode==='activegames'&&m!=='activegames') stopMotionCamera();
   G.gameMode=m;
   document.querySelectorAll('#gm-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.gm===m));
   const sub=document.getElementById('ocu-submode');
   if(sub) sub.style.display=m==='oculomotor'?'block':'none';
+  const msub=document.getElementById('motion-submode');
+  if(msub) msub.style.display=m==='motion'?'block':'none';
+  const agsub=document.getElementById('ag-submode');
+  if(agsub) agsub.style.display=m==='activegames'?'block':'none';
   if(m==='oculomotor'){
     setOcuMode(G.ocuMode||'pursuits');
+  } else if(m==='motion'){
+    setMotMode(M.motMode||'clap');
+    const d=document.getElementById('gm-desc');if(d) d.textContent='';
+    const cn=document.getElementById('ocu-clinical-note');if(cn)cn.textContent='';
+  } else if(m==='activegames'){
+    setAGMode(AG.mode||'stars');
+    const d=document.getElementById('gm-desc');if(d) d.textContent='';
+    const cn=document.getElementById('ocu-clinical-note');if(cn)cn.textContent='';
   } else {
     const d=document.getElementById('gm-desc');
-    if(d) d.textContent=m==='motion'
-      ?'EvoSensory Motion — Camera detects your movement. Clap, raise your hand, or tap your knee to the beat. No buttons needed.'
-      :GM_DESC[m]||'';
+    if(d) d.textContent=GM_DESC[m]||'';
     const cn=document.getElementById('ocu-clinical-note');if(cn)cn.textContent='';
   }
 }
@@ -1940,7 +1977,8 @@ function gameDraw(){
     else if(G.ocuMode==='gaze')     drawGazeHold(ctx,W,H,an);
     else                            drawPursuits(ctx,W,H,an);
   }
-  else if(G.gameMode==='motion')    drawMotionGame(ctx,W,H,an);
+  else if(G.gameMode==='motion')       drawMotionGame(ctx,W,H,an);
+  else if(G.gameMode==='activegames')  drawActiveGame(ctx,W,H,an);
   else drawStandard(ctx,W,H,an);
   // Shared particles
   G.particles=G.particles.map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+.33,vx:p.vx*.96,life:p.life-1})).filter(p=>p.life>0);
@@ -1988,8 +2026,9 @@ function handleTap(side){
   const isEduMode=G.gameMode==='vocab'||G.gameMode==='math';
   const isOcu=G.gameMode==='oculomotor';
   const isMotion=G.gameMode==='motion';
-  // Single-tap modes: Level 1, edu, bubblegum, target range, oculomotor, motion
-  const isSingle=G.lvId===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||isOcu||isMotion;
+  const isAG=G.gameMode==='activegames';
+  // Single-tap modes: Level 1, edu, bubblegum, target range, oculomotor, motion, activegames
+  const isSingle=G.lvId===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||isOcu||isMotion||isAG;
   const lanes=isSingle?[{side:'B',cx:W/2}]:[{side:'L',cx:W*.02+W*.22},{side:'R',cx:W*.54+W*.22}];
   const CY=G.gameMode==='targetrange'?H*.42:H*.87;
   const tapSide=isSingle?'C':side;
@@ -2064,6 +2103,11 @@ function startCountdown(){
   // Motion mode: show camera setup before countdown
   if(G.gameMode==='motion'&&(!M.active||!M.stream)){
     openMotionSetup();
+    return;
+  }
+  // Active Games: camera setup reuses motion setup overlay
+  if(G.gameMode==='activegames'&&(!M.active||!M.stream)){
+    openAGSetup();
     return;
   }
   // Oculomotor + eye tracking: calibrate first if not done
@@ -2375,94 +2419,210 @@ function printSOAP(){const t=document.getElementById('soap-text').value;const w=
 document.getElementById('soap-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSOAP();});
 
 /* ═══════════════════════════════════════════════════
-   MOTION MODULE — Phase 1
-   Frame-differencing motion detection via device camera.
-   Any deliberate movement (clap, hand raise, knee tap)
-   triggers a tap event against the metronome beat.
-   Phase 2 will add MediaPipe Hands for precise tracking.
+   MOTION MODULE — Phase 2: MediaPipe Pose
+   Gesture detection via 33-point body landmark model.
+   Sub-modes: clap, knee taps/midline, march, jump.
+   Windows + Chrome target. Lazy-loads from CDN.
+   Skeleton overlay on canvas during game.
+   Falls back to frame-differencing if CDN unavailable.
 ═══════════════════════════════════════════════════ */
 const M={
-  stream: null,
-  active: false,
-  sensitivity: 5, // matches slider default
-  prevFrame: null,
-  tapCooldown: 0,
-  offCanvas: null,
-  offCtx: null,
+  stream:null, active:false,
+  motMode:'clap',
+  pose:null,
+  poseLoaded:false,
+  landmarks:null,
+  tapCooldown:0,
+  prevAnkleY:null,
+  jumpBaseline:null,
+  beatCount:0,
+  useFallback:false,
+  prevFrame:null, offCanvas:null, offCtx:null, sensitivity:5,
 };
 
+const MOT_MODES={
+  clap:{
+    label:'Clapping',icon:'👏',
+    clinical:'Bilateral upper extremity timing. Both wrists must come together on the beat. Targets bilateral coordination, motor timing, and proprioceptive feedback.',
+    guide:'Camera shows child from waist up. Both hands must be visible. Seat child 3–4 feet from the screen. Good frontal lighting.',
+    svgType:'upper',svgCaption:'Waist-up view required',
+  },
+  knee:{
+    label:'Knee Taps / Midline',icon:'🤸',
+    clinical:'Right hand crosses to left knee, left hand crosses to right knee, alternating each beat. Targets midline crossing, bilateral integration, and ideomotor praxis.',
+    guide:'Full body or waist-to-head visible. Child sits in a chair. Knees must be visible. 3–5 feet from screen. Hands must visibly cross the body centerline.',
+    svgType:'full',svgCaption:'Waist-to-head or full body view',
+  },
+  march:{
+    label:'Marching',icon:'🦵',
+    clinical:'Alternating knee raises above hip height. Targets bilateral coordination, proprioception, postural control, and rhythmic motor sequencing.',
+    guide:'Full body head to feet must be visible. Child stands 4–6 feet from screen. Knees must clearly lift above hip height for detection.',
+    svgType:'full',svgCaption:'Full body view required — head to feet',
+  },
+  jump:{
+    label:'Jumps',icon:'⬆️',
+    clinical:'Both feet leave ground simultaneously on the beat. Targets bilateral lower extremity coordination, vestibular processing, timing, and motor planning.',
+    guide:'Full body with extra clearance above the head for the jump arc. 5–7 feet from screen on a non-slip surface. Clear the surrounding area. Both ankles must be visible at rest.',
+    svgType:'full',svgCaption:'Full body + jump clearance above head',
+  },
+};
+
+const PL={
+  NOSE:0,L_SHOULDER:11,R_SHOULDER:12,L_ELBOW:13,R_ELBOW:14,
+  L_WRIST:15,R_WRIST:16,L_HIP:23,R_HIP:24,
+  L_KNEE:25,R_KNEE:26,L_ANKLE:27,R_ANKLE:28,
+};
+
+function setMotMode(mode){
+  M.motMode=mode;
+  Object.keys(MOT_MODES).forEach(k=>{
+    const btn=document.getElementById('mot-btn-'+k);
+    if(btn) btn.classList.toggle('active',k===mode);
+  });
+  const note=document.getElementById('mot-clinical-note');
+  if(note) note.textContent=MOT_MODES[mode]?.clinical||'';
+}
+
+/* ── SETUP OVERLAY ─────────────────────────────────── */
 function openMotionSetup(){
+  const mo=MOT_MODES[M.motMode]||MOT_MODES.clap;
+  const lbl=document.getElementById('mot-setup-mode-label');
+  if(lbl) lbl.textContent=mo.icon+' '+mo.label;
+  const gt=document.getElementById('mot-guide-text');
+  if(gt) gt.textContent=mo.guide;
+  drawPositioningSVG(mo.svgType,mo.svgCaption);
   document.getElementById('motion-setup').style.display='flex';
   startMotionCamera();
+  loadMediaPipePose();
 }
+
+function drawPositioningSVG(type,caption){
+  const svg=document.getElementById('mot-svg-guide');
+  const cap=document.getElementById('mot-svg-caption');
+  if(cap) cap.textContent=caption;
+  if(!svg) return;
+  const u=type==='upper';
+  svg.innerHTML=`
+    <rect width="200" height="150" fill="#0a0818" rx="8"/>
+    <rect x="30" y="${u?20:8}" width="140" height="${u?122:134}" fill="none" stroke="rgba(155,136,196,.4)" stroke-width="1.5" stroke-dasharray="6,4" rx="4"/>
+    <circle cx="100" cy="${u?40:26}" r="10" fill="none" stroke="rgba(155,136,196,.7)" stroke-width="2"/>
+    <line x1="100" y1="${u?50:36}" x2="100" y2="${u?90:80}" stroke="rgba(155,136,196,.7)" stroke-width="2"/>
+    <line x1="100" y1="${u?60:46}" x2="${u?68:65}" y2="${u?80:66}" stroke="rgba(155,136,196,.7)" stroke-width="2"/>
+    <line x1="100" y1="${u?60:46}" x2="${u?132:135}" y2="${u?80:66}" stroke="rgba(155,136,196,.7)" stroke-width="2"/>
+    ${u?`<line x1="30" y1="105" x2="170" y2="105" stroke="rgba(74,200,120,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="100" y="120" text-anchor="middle" font-size="8" fill="rgba(74,200,120,.7)">Camera crops here</text>`
+    :`<line x1="100" y1="80" x2="82" y2="116" stroke="rgba(155,136,196,.7)" stroke-width="2"/>
+    <line x1="100" y1="80" x2="118" y2="116" stroke="rgba(155,136,196,.7)" stroke-width="2"/>
+    <line x1="82" y1="116" x2="72" y2="124" stroke="rgba(155,136,196,.7)" stroke-width="2"/>
+    <line x1="118" y1="116" x2="128" y2="124" stroke="rgba(155,136,196,.7)" stroke-width="2"/>`}
+    <text x="100" y="145" text-anchor="middle" font-size="7.5" fill="rgba(255,255,255,.4)">${u?'3–4 ft from screen':'4–7 ft from screen'}</text>
+  `;
+}
+
 function closeMotionSetup(){
   stopMotionCamera();
   document.getElementById('motion-setup').style.display='none';
-  setGM('standard'); // revert if cancelled
+  setGM('standard');
 }
+
 function startCountdownFromMotion(){
   document.getElementById('motion-setup').style.display='none';
   M.active=true;
+  M.jumpBaseline=null;
+  M.beatCount=0;
   startCountdown();
 }
 
+/* ── CAMERA + MEDIAPIPE LOADING ─────────────────────── */
 async function startMotionCamera(){
   const status=document.getElementById('motion-status');
   const startBtn=document.getElementById('motion-start-btn');
   if(status) status.textContent='Requesting camera…';
+  if(startBtn) startBtn.disabled=true;
   try{
-    M.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:320},height:{ideal:240}},audio:false});
+    M.stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
     const vid=document.getElementById('motion-video');
     if(vid){vid.srcObject=M.stream;await vid.play();}
-    // Setup offscreen canvas for frame diff
     M.offCanvas=document.createElement('canvas');M.offCanvas.width=80;M.offCanvas.height=60;
-    M.offCtx=M.offCanvas.getContext('2d');
-    M.prevFrame=null;
-    if(status) status.textContent='✓ Camera ready — position patient';
-    if(startBtn) startBtn.disabled=false;
-    // Start preview loop
-    previewMotionLoop();
+    M.offCtx=M.offCanvas.getContext('2d');M.prevFrame=null;
+    if(status) status.textContent=M.poseLoaded?'✓ Ready — position patient':'Loading pose engine…';
+    if(M.poseLoaded&&startBtn) startBtn.disabled=false;
+    previewSkeletonLoop();
   }catch(err){
-    if(status) status.textContent='Camera access denied. Check browser permissions.';
+    if(status) status.textContent='Camera denied. Check Chrome settings (lock icon → Camera → Allow).';
     console.warn('Camera error:',err);
   }
 }
 
-function stopMotionCamera(){
-  M.active=false;
-  _previewRunning=false;
-  M.prevFrame=null;
-  if(M.stream){M.stream.getTracks().forEach(t=>t.stop());M.stream=null;}
-  const vid=document.getElementById('motion-video');
-  if(vid){vid.srcObject=null;}
+async function loadMediaPipePose(){
+  if(M.poseLoaded||M.pose) return;
+  const loadEl=document.getElementById('mp-load-status');
+  if(loadEl) loadEl.style.display='block';
+  try{
+    if(!window.Pose) await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js');
+    if(!window.drawConnectors) await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js');
+    M.pose=new window.Pose({locateFile:(f)=>`https://cdn.jsdelivr.net/npm/@mediapipe/pose/${f}`});
+    M.pose.setOptions({modelComplexity:1,smoothLandmarks:true,enableSegmentation:false,
+      minDetectionConfidence:0.55,minTrackingConfidence:0.55});
+    M.pose.onResults((results)=>{
+      M.landmarks=results.poseLandmarks||null;
+      drawSkeletonOnCanvas(results);
+    });
+    await M.pose.initialize();
+    M.poseLoaded=true;
+    if(loadEl) loadEl.style.display='none';
+    const status=document.getElementById('motion-status');
+    if(status&&M.stream) status.textContent='✓ Pose engine ready — position patient';
+    const startBtn=document.getElementById('motion-start-btn');
+    if(startBtn&&M.stream) startBtn.disabled=false;
+  }catch(e){
+    console.warn('MediaPipe failed, using fallback:',e);
+    M.useFallback=true;M.poseLoaded=true;
+    if(loadEl) loadEl.style.display='none';
+    const status=document.getElementById('motion-status');
+    if(status) status.textContent='⚠ Using motion detection (pose engine unavailable)';
+    const startBtn=document.getElementById('motion-start-btn');
+    if(startBtn&&M.stream) startBtn.disabled=false;
+  }
 }
 
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);
+  });
+}
+
+function stopMotionCamera(){
+  M.active=false;_previewRunning=false;
+  M.prevFrame=null;M.landmarks=null;M.jumpBaseline=null;
+  if(M.stream){M.stream.getTracks().forEach(t=>t.stop());M.stream=null;}
+  const vid=document.getElementById('motion-video');
+  if(vid) vid.srcObject=null;
+}
+
+/* ── SKELETON PREVIEW (during setup) ──────────────── */
 let _previewRunning=false;
-function previewMotionLoop(){
+function previewSkeletonLoop(){
   if(!M.stream||_previewRunning) return;
   _previewRunning=true;
   const vid=document.getElementById('motion-video');
-  const ov=document.getElementById('motion-overlay');
-  if(!ov) return;
-  const octx=ov.getContext('2d');
-  function frame(){
+  async function frame(){
     if(!M.stream){_previewRunning=false;return;}
-    ov.width=ov.offsetWidth||300;ov.height=ov.offsetHeight||225;
-    // Motion detection preview
-    if(vid&&vid.readyState>=2&&M.offCtx){
+    if(M.pose&&vid&&vid.readyState>=2){try{await M.pose.send({image:vid});}catch(e){}}
+    if(M.useFallback&&vid&&vid.readyState>=2&&M.offCtx){
       M.offCtx.drawImage(vid,0,0,80,60);
       const curr=M.offCtx.getImageData(0,0,80,60).data;
       if(M.prevFrame){
         let diff=0;
-        for(let i=0;i<curr.length;i+=4){diff+=Math.abs(curr[i]-M.prevFrame[i])+Math.abs(curr[i+1]-M.prevFrame[i+1])+Math.abs(curr[i+2]-M.prevFrame[i+2]);}
-        const motion=diff/(80*60*3);
-        const thresh=20-(M.sensitivity*1.5); // sens 1=18.5, sens 10=5
-        if(motion>thresh&&M.tapCooldown<=0){
-          // Visual pulse on detection
-          octx.fillStyle='rgba(74,200,120,0.35)';octx.fillRect(0,0,ov.width,ov.height);
-          M.tapCooldown=8;
+        for(let i=0;i<curr.length;i+=4){
+          diff+=Math.abs(curr[i]-M.prevFrame[i])+Math.abs(curr[i+1]-M.prevFrame[i+1])+Math.abs(curr[i+2]-M.prevFrame[i+2]);
         }
-        if(M.tapCooldown>0) M.tapCooldown--;
+        if(diff/(80*60*3)>10){
+          const fb=document.getElementById('mot-gesture-feedback');
+          if(fb){fb.textContent='Movement ✓';fb.style.display='block';setTimeout(()=>{if(fb)fb.style.display='none';},400);}
+        }
       }
       M.prevFrame=new Uint8Array(curr);
     }
@@ -2471,31 +2631,137 @@ function previewMotionLoop(){
   requestAnimationFrame(frame);
 }
 
-function motionDetectLoop(){
-  // Called every animation frame DURING active game
-  if(!M.active||!G.playing||!M.stream) return;
-  const vid=document.getElementById('motion-video');
-  if(!vid||vid.readyState<2||!M.offCtx) return;
-  M.offCtx.drawImage(vid,0,0,80,60);
-  const curr=M.offCtx.getImageData(0,0,80,60).data;
-  if(M.prevFrame){
-    let diff=0;
-    for(let i=0;i<curr.length;i+=4){diff+=Math.abs(curr[i]-M.prevFrame[i])+Math.abs(curr[i+1]-M.prevFrame[i+1])+Math.abs(curr[i+2]-M.prevFrame[i+2]);}
-    const motion=diff/(80*60*3);
-    const thresh=20-(M.sensitivity*1.5);
-    if(motion>thresh&&M.tapCooldown<=0){
-      handleTap('C'); // Fire as center tap
-      M.tapCooldown=12; // ~200ms cooldown at 60fps
-    }
+function drawSkeletonOnCanvas(results){
+  const canvas=document.getElementById('mp-skeleton-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.offsetWidth||320;canvas.height=canvas.offsetHeight||240;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(!results.poseLandmarks) return;
+  ctx.save();ctx.scale(-1,1);ctx.translate(-canvas.width,0);
+  if(window.drawConnectors&&window.POSE_CONNECTIONS){
+    drawConnectors(ctx,results.poseLandmarks,POSE_CONNECTIONS,{color:'rgba(155,136,196,.55)',lineWidth:1.8});
   }
-  if(M.tapCooldown>0) M.tapCooldown--;
-  M.prevFrame=new Uint8Array(curr);
+  results.poseLandmarks.forEach((lm2,i)=>{
+    if(lm2.visibility<0.3) return;
+    const x=lm2.x*canvas.width,y=lm2.y*canvas.height;
+    ctx.fillStyle=[PL.L_WRIST,PL.R_WRIST,PL.L_KNEE,PL.R_KNEE,PL.L_ANKLE,PL.R_ANKLE].includes(i)
+      ?'#4AC878':'rgba(155,136,196,.85)';
+    ctx.beginPath();ctx.arc(x,y,i<=2?4:3,0,Math.PI*2);ctx.fill();
+  });
+  ctx.restore();
+  if(M.landmarks&&M.stream){
+    const g=detectGesture();
+    const fb=document.getElementById('mot-gesture-feedback');
+    if(fb){if(g){fb.textContent=g+' ✓';fb.style.display='block';}else fb.style.display='none';}
+  }
 }
 
-// Draw motion canvas overlay (camera feed) during game
+/* ── GESTURE DETECTION ──────────────────────────────── */
+function lm(idx){
+  if(!M.landmarks) return null;
+  const l=M.landmarks[idx];
+  return(l&&l.visibility>0.4)?l:null;
+}
+function dist2D(a,b){return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);}
+
+function detectGesture(){
+  if(M.useFallback) return detectFallback();
+  if(M.motMode==='clap')  return detectClap();
+  if(M.motMode==='knee')  return detectKneeTap();
+  if(M.motMode==='march') return detectMarch();
+  if(M.motMode==='jump')  return detectJump();
+  return detectClap();
+}
+
+let _clapState=false;
+function detectClap(){
+  const lw=lm(PL.L_WRIST),rw=lm(PL.R_WRIST);
+  if(!lw||!rw) return null;
+  const d=dist2D(lw,rw);
+  if(d<0.18&&!_clapState){_clapState=true;return 'Clap';}
+  if(d>0.24) _clapState=false;
+  return null;
+}
+
+let _kneeSide='right',_kneeState=false;
+function detectKneeTap(){
+  const lw=lm(PL.L_WRIST),rw=lm(PL.R_WRIST);
+  const lk=lm(PL.L_KNEE),rk=lm(PL.R_KNEE);
+  const ls=lm(PL.L_SHOULDER),rs=lm(PL.R_SHOULDER);
+  if(!lw||!rw||!lk||!rk||!ls||!rs) return null;
+  let detected=false;
+  if(_kneeSide==='right'){
+    if(dist2D(lw,lk)<0.18&&!_kneeState){detected=true;_kneeSide='left';}
+  } else {
+    if(dist2D(rw,rk)<0.18&&!_kneeState){detected=true;_kneeSide='right';}
+  }
+  if(detected){_kneeState=true;return 'Knee Tap';}
+  if(dist2D(lw,lk)>0.25&&dist2D(rw,rk)>0.25) _kneeState=false;
+  return null;
+}
+
+let _marchSide='left',_marchState=false;
+function detectMarch(){
+  const lk=lm(PL.L_KNEE),rk=lm(PL.R_KNEE);
+  const lh=lm(PL.L_HIP),rh=lm(PL.R_HIP);
+  if(!lk||!rk||!lh||!rh) return null;
+  let detected=false;
+  if(_marchSide==='left'&&(lh.y-lk.y)>0.06&&!_marchState){detected=true;_marchSide='right';}
+  else if(_marchSide==='right'&&(rh.y-rk.y)>0.06&&!_marchState){detected=true;_marchSide='left';}
+  if(detected){_marchState=true;return 'March';}
+  if((lh.y-lk.y)<0.02&&(rh.y-rk.y)<0.02) _marchState=false;
+  return null;
+}
+
+let _jumpState=false;
+function detectJump(){
+  const la=lm(PL.L_ANKLE),ra=lm(PL.R_ANKLE);
+  if(!la||!ra) return null;
+  const avgY=(la.y+ra.y)/2;
+  if(M.jumpBaseline===null||M.beatCount<3){
+    M.jumpBaseline=(M.jumpBaseline===null)?avgY:M.jumpBaseline*0.9+avgY*0.1;
+    return null;
+  }
+  const rise=M.jumpBaseline-avgY;
+  if(rise>0.07&&!_jumpState){_jumpState=true;return 'Jump';}
+  if(rise<0.02) _jumpState=false;
+  return null;
+}
+
+function detectFallback(){
+  const vid=document.getElementById('motion-video');
+  if(!M.offCtx||!vid||vid.readyState<2) return null;
+  M.offCtx.drawImage(vid,0,0,80,60);
+  const curr=M.offCtx.getImageData(0,0,80,60).data;
+  let diff=0;
+  if(M.prevFrame){
+    for(let i=0;i<curr.length;i+=4){
+      diff+=Math.abs(curr[i]-M.prevFrame[i])+Math.abs(curr[i+1]-M.prevFrame[i+1])+Math.abs(curr[i+2]-M.prevFrame[i+2]);
+    }
+  }
+  M.prevFrame=new Uint8Array(curr);
+  return(diff/(80*60*3))>(20-M.sensitivity*1.5)?'Movement':null;
+}
+
+/* ── GAME LOOP INTEGRATION ──────────────────────────── */
+function motionDetectLoop(){
+  if(!M.active||!G.playing) return;
+  if(M.tapCooldown>0){M.tapCooldown--;return;}
+  const vid=document.getElementById('motion-video');
+  if(M.pose&&vid&&vid.readyState>=2&&!M.useFallback){
+    M.pose.send({image:vid}).catch(()=>{});
+  }
+  const gesture=detectGesture();
+  if(gesture){
+    handleTap('C');
+    M.tapCooldown=18;
+    M.beatCount++;
+  }
+}
+
 function drawMotionGame(ctx,W,H,an){
   const vid=document.getElementById('motion-video');
-  // Draw camera feed mirrored
   if(vid&&vid.readyState>=2){
     ctx.save();ctx.scale(-1,1);ctx.drawImage(vid,-W,0,W,H);ctx.restore();
   } else {
@@ -2503,32 +2769,406 @@ function drawMotionGame(ctx,W,H,an){
     ctx.fillStyle='rgba(255,255,255,.4)';ctx.font=`${Math.floor(W*.04)}px Jost,sans-serif`;
     ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Camera loading…',W/2,H/2);
   }
-  // Semi-transparent overlay with beat indicator
-  const iv=60/G.bpm, elapsed=G.lastBeatTime>0?(an-G.lastBeatTime):0, phase=Math.min(elapsed/iv,1);
-  const beatPulse=Math.max(0,1-phase/.2);
-  if(beatPulse>0){
-    ctx.strokeStyle=`rgba(74,200,120,${beatPulse*.7})`;ctx.lineWidth=4+beatPulse*8;
-    ctx.strokeRect(2,2,W-4,H-4);
+  // Beat pulse border
+  const iv=60/G.bpm,elapsed=G.lastBeatTime>0?(an-G.lastBeatTime):0,phase=Math.min(elapsed/iv,1);
+  const bp=Math.max(0,1-phase/.2);
+  if(bp>0){ctx.strokeStyle=`rgba(74,200,120,${bp*.8})`;ctx.lineWidth=4+bp*10;ctx.strokeRect(2,2,W-4,H-4);}
+  // Skeleton overlay
+  if(M.landmarks&&!M.useFallback){
+    ctx.save();ctx.scale(-1,1);ctx.translate(-W,0);
+    M.landmarks.forEach((l2,i)=>{
+      if(l2.visibility<0.4) return;
+      const x=l2.x*W,y=l2.y*H;
+      ctx.fillStyle=[PL.L_WRIST,PL.R_WRIST,PL.L_KNEE,PL.R_KNEE,PL.L_ANKLE,PL.R_ANKLE].includes(i)
+        ?'rgba(74,200,120,.9)':'rgba(155,136,196,.65)';
+      ctx.beginPath();ctx.arc(x,y,i<=2?5:3.5,0,Math.PI*2);ctx.fill();
+    });
+    [[PL.L_SHOULDER,PL.R_SHOULDER],[PL.L_SHOULDER,PL.L_ELBOW],[PL.R_SHOULDER,PL.R_ELBOW],
+     [PL.L_ELBOW,PL.L_WRIST],[PL.R_ELBOW,PL.R_WRIST],[PL.L_SHOULDER,PL.L_HIP],
+     [PL.R_SHOULDER,PL.R_HIP],[PL.L_HIP,PL.R_HIP],[PL.L_HIP,PL.L_KNEE],
+     [PL.R_HIP,PL.R_KNEE],[PL.L_KNEE,PL.L_ANKLE],[PL.R_KNEE,PL.R_ANKLE]].forEach(([a,b])=>{
+      const la2=M.landmarks[a],lb2=M.landmarks[b];
+      if(!la2||!lb2||la2.visibility<0.3||lb2.visibility<0.3) return;
+      ctx.strokeStyle='rgba(155,136,196,.4)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(la2.x*W,la2.y*H);ctx.lineTo(lb2.x*W,lb2.y*H);ctx.stroke();
+    });
+    ctx.restore();
   }
-  // Motion detection feedback
-  const motionActive=M.tapCooldown>8;
-  if(motionActive){ctx.fillStyle='rgba(74,200,120,.22)';ctx.fillRect(0,0,W,H);}
-  // Crosshair target zone
-  ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
-  ctx.strokeRect(W*.2,H*.1,W*.6,H*.8);ctx.setLineDash([]);
-  ctx.fillStyle='rgba(255,255,255,.5)';ctx.font=`bold ${Math.floor(W*.032)}px Jost,sans-serif`;
-  ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText('MOVE IN TIME WITH THE BEAT',W/2,H*.04);
-  // Instructions bottom
-  ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,H*.88,W,H*.12);
-  ctx.fillStyle='white';ctx.font=`${Math.floor(W*.031)}px Jost,sans-serif`;ctx.textBaseline='middle';
-  ctx.fillText('Clap · Hand raise · Knee tap',W/2,H*.94);
-  // Run detection
-  motionDetectLoop();
+  // Mode label bar top
+  const mo2=MOT_MODES[M.motMode];
+  if(mo2){
+    ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,W,H*.1);
+    ctx.fillStyle='white';ctx.font=`bold ${Math.floor(W*.034)}px Jost,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(mo2.icon+' '+mo2.label.toUpperCase(),W/2,H*.05);
+  }
+  // NOW cue bottom
+  const nextBeatIn=60/G.bpm-(an-(G.lastBeatTime||an));
+  const urgency=Math.max(0,1-(nextBeatIn/(60/G.bpm)));
+  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,H*.9,W,H*.1);
+  ctx.fillStyle=urgency>0.75?'#4AC878':'rgba(255,255,255,.7)';
+  ctx.font=`bold ${Math.floor(W*.033)}px Jost,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(urgency>0.75?'NOW!':urgency>0.4?'Get ready…':'',W/2,H*.95);
   // Progress bar
   const prog=G.total>0?(G.beatsDone/G.total)*100:0;
-  ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(0,H*.98-6,W,6);
-  if(prog>0){ctx.fillStyle='rgba(74,200,120,.8)';ctx.fillRect(0,H*.98-6,W*(prog/100),6);}
+  ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(0,H-5,W,5);
+  if(prog>0){ctx.fillStyle='rgba(74,200,120,.8)';ctx.fillRect(0,H-5,W*(prog/100),5);}
+  ctx.textBaseline='alphabetic';
+  motionDetectLoop();
+}
+
+
+/* ═══════════════════════════════════════════════════
+   ACTIVE GAMES — Camera Body Movement Games
+   Five games using MediaPipe Pose landmarks.
+   Body position / movement controls game objects.
+   Shares M.pose, M.landmarks, M.stream with Motion module.
+   Each game: spawn objects, detect body control, score.
+═══════════════════════════════════════════════════ */
+const AG={
+  mode:'stars',
+  objects:[],      // active game objects (stars, balloons, etc.)
+  score:0,
+  catches:0,
+  misses:0,
+  spawnTimer:0,
+  playerX:0.5,     // normalized 0-1, shoulder midpoint
+  playerY:0.5,     // normalized, hip midpoint
+  duckState:false,
+  jumpState:false,
+  prevShoulderY:null,
+  balance:{startTime:null,side:'left',holdMs:0,best:0},
+};
+
+const AG_MODES={
+  stars:{
+    label:'Catch the Stars',icon:'⭐',
+    clinical:'Lateral weight shifting and whole-body lateral movement. Targets vestibular processing, dynamic balance, bilateral integration, and attention. Child side-steps to align body under falling stars.',
+    guide:'Full body visible. Child stands 4–6 feet from screen. Clear space 3 feet each side. Stars fall from top — move body left or right to catch.',
+  },
+  balloons:{
+    label:'Pop Balloons',icon:'🎈',
+    clinical:'Overhead reaching and bilateral upper extremity extension. Targets shoulder range of motion, motor planning, and visual-motor integration. Reach to pop balloons at various heights.',
+    guide:'Waist-up visible. Child stands 3–4 feet from screen. Arms must be fully visible overhead. Balloons appear at different heights — reach up with either hand to pop.',
+  },
+  soccer:{
+    label:'Kick Soccer',icon:'⚽',
+    clinical:'Lower extremity motor control and unilateral kicking pattern. Targets motor planning, balance on one foot, proprioception, and bilateral asymmetry detection.',
+    guide:'Full body visible. Child stands 4–5 feet from screen. Balls roll in from sides — kick with the matching foot (left ball = left foot, right ball = right foot).',
+  },
+  dodge:{
+    label:'Duck & Jump',icon:'🏃',
+    clinical:'Whole-body dynamic movement, motor planning, and reaction time. Duck under low obstacles, jump over ground obstacles. Targets vestibular, proprioception, and bilateral lower extremity coordination.',
+    guide:'Full body with jump clearance above head. 5–7 feet from screen. Obstacles come from right side — duck (bend knees low) for high obstacles, jump for ground ones.',
+  },
+  sidestep:{
+    label:'Side Steps & Balance',icon:'↔️',
+    clinical:'Dynamic lateral balance and single-leg stance. Targets vestibular processing, proprioception, postural control, and static/dynamic balance. Hold position for score multiplier.',
+    guide:'Full body visible. 4–6 feet from screen. Step to lit target zones and hold still for the balance bonus. Still = higher score.',
+  },
+};
+
+function setAGMode(mode){
+  AG.mode=mode;
+  Object.keys(AG_MODES).forEach(k=>{
+    const btn=document.getElementById('ag-btn-'+k);
+    if(btn) btn.classList.toggle('active',k===mode);
+  });
+  const note=document.getElementById('ag-clinical-note');
+  if(note) note.textContent=AG_MODES[mode]?.clinical||'';
+}
+
+/* ── AG SETUP (reuses motion camera) ──────────────── */
+function openAGSetup(){
+  const mo=AG_MODES[AG.mode]||AG_MODES.stars;
+  // Reuse motion-setup overlay with AG content
+  const lbl=document.getElementById('mot-setup-mode-label');
+  if(lbl) lbl.textContent=mo.icon+' '+mo.label;
+  const gt=document.getElementById('mot-guide-text');
+  if(gt) gt.textContent=mo.guide;
+  drawPositioningSVG(mo.guide.toLowerCase().includes('waist-up')?'upper':'full', mo.guide.split('.')[0]);
+  const startBtn=document.getElementById('motion-start-btn');
+  if(startBtn){
+    startBtn.onclick=()=>{
+      document.getElementById('motion-setup').style.display='none';
+      M.active=true;AG.objects=[];AG.score=0;AG.catches=0;AG.misses=0;AG.spawnTimer=0;
+      startBtn.onclick=startCountdownFromMotion; // restore
+      startCountdown();
+    };
+  }
+  document.getElementById('motion-setup').style.display='flex';
+  startMotionCamera();
+  loadMediaPipePose();
+}
+
+/* ── PLAYER BODY TRACKING ─────────────────────────── */
+function updatePlayerFromPose(){
+  if(!M.landmarks) return;
+  const ls=lm(PL.L_SHOULDER),rs=lm(PL.R_SHOULDER);
+  const lh=lm(PL.L_HIP),rh=lm(PL.R_HIP);
+  const lw2=lm(PL.L_WRIST),rw2=lm(PL.R_WRIST);
+  const lk2=lm(PL.L_KNEE),rk2=lm(PL.R_KNEE);
+  const la2=lm(PL.L_ANKLE),ra2=lm(PL.R_ANKLE);
+  if(ls&&rs) AG.playerX=(ls.x+rs.x)/2;
+  if(lh&&rh) AG.playerY=(lh.y+rh.y)/2;
+  // Duck detection: hip Y close to knee Y (squatting)
+  if(lh&&rh&&lk2&&rk2){
+    const hipKneeDist=Math.abs(((lh.y+rh.y)/2)-((lk2.y+rk2.y)/2));
+    AG.duckState=hipKneeDist<0.12;
+  }
+  // Jump detection: ankles well above baseline (reuse from Motion)
+  if(la2&&ra2){
+    const avgAnkY=(la2.y+ra2.y)/2;
+    if(M.jumpBaseline===null) M.jumpBaseline=avgAnkY;
+    AG.jumpState=(M.jumpBaseline-avgAnkY)>0.06;
+  }
+  // Wrist heights (for balloons)
+  AG.wristL=lw2?{x:lw2.x,y:lw2.y}:null;
+  AG.wristR=rw2?{x:rw2.x,y:rw2.y}:null;
+  // Ankle positions (for soccer)
+  AG.ankleL=la2?{x:la2.x,y:la2.y}:null;
+  AG.ankleR=ra2?{x:ra2.x,y:ra2.y}:null;
+}
+
+/* ── OBJECT SPAWNING ───────────────────────────────── */
+function spawnAGObject(W,H){
+  const t=Date.now();
+  const bpm=G.bpm||72;
+  const spawnInterval=Math.max(800,Math.round(60000/bpm)*2); // ~2 beats
+  if(t-AG.spawnTimer<spawnInterval) return;
+  AG.spawnTimer=t;
+  const mode=AG.mode;
+
+  if(mode==='stars'){
+    AG.objects.push({
+      type:'star',x:Math.random()*0.8+0.1,y:0,vy:0.004+Math.random()*0.002,
+      size:32+Math.random()*16,caught:false,missed:false,id:t,
+    });
+  } else if(mode==='balloons'){
+    const side=Math.random()>0.5?'L':'R';
+    AG.objects.push({
+      type:'balloon',x:side==='L'?0.2+Math.random()*0.2:0.6+Math.random()*0.2,
+      y:0.8+Math.random()*0.15,vy:-0.003,side,
+      size:36+Math.random()*14,popped:false,id:t,
+    });
+  } else if(mode==='soccer'){
+    const side=Math.random()>0.5?'L':'R';
+    AG.objects.push({
+      type:'ball',x:side==='L'?0:1,y:0.82+Math.random()*0.08,
+      vx:side==='L'?0.005:-0.005,side,
+      size:28,kicked:false,missed:false,id:t,
+    });
+  } else if(mode==='dodge'){
+    const isHigh=Math.random()>0.5;
+    AG.objects.push({
+      type:'obstacle',x:1.1,y:isHigh?0.25:0.72,vx:-0.006,
+      isHigh,w:0.12,h:isHigh?0.18:0.12,dodged:false,hit:false,id:t,
+    });
+  } else if(mode==='sidestep'){
+    const side=Math.random()>0.5?'L':'R';
+    AG.objects.push({
+      type:'zone',x:side==='L'?0.2:0.7,y:0.5,
+      side,w:0.22,h:0.45,active:true,holdTimer:0,lit:false,id:t,
+      expires:t+4000,
+    });
+  }
+}
+
+/* ── COLLISION / INTERACTION ──────────────────────── */
+function checkAGCollisions(W,H){
+  const px=AG.playerX,py=AG.playerY;
+  AG.objects.forEach(obj=>{
+    if(obj.caught||obj.missed||obj.popped||obj.kicked||obj.hit||obj.dodged) return;
+
+    if(obj.type==='star'){
+      const dx=Math.abs(px-obj.x);
+      const dy=Math.abs(py-obj.y);
+      if(dx<0.12&&dy<0.14){
+        obj.caught=true;AG.catches++;AG.score+=10;
+        spawnPopup(obj.x*W,obj.y*H,'⭐ +10','#F5C518');
+        handleTap('C');
+      } else if(obj.y>1.05) obj.missed=true;
+    }
+
+    if(obj.type==='balloon'){
+      const wrist=obj.side==='L'?AG.wristR:AG.wristL; // mirrored
+      if(wrist){
+        const dx=Math.abs(wrist.x-obj.x);
+        const dy=Math.abs(wrist.y-obj.y);
+        if(dx<0.1&&dy<0.12){
+          obj.popped=true;AG.catches++;AG.score+=10;
+          spawnPopup(obj.x*W,obj.y*H,'🎈 POP! +10','#FF8FA3');
+          handleTap('C');
+        }
+      }
+      if(obj.y<-0.1) obj.missed=true;
+    }
+
+    if(obj.type==='ball'){
+      const ankle=obj.side==='L'?AG.ankleR:AG.ankleL; // mirrored
+      if(ankle){
+        const dx=Math.abs(ankle.x-obj.x);
+        const dy=Math.abs(ankle.y-obj.y);
+        if(dx<0.1&&dy<0.1){
+          obj.kicked=true;AG.catches++;AG.score+=10;
+          obj.vx*=-2.5;obj.vy=-0.01;
+          spawnPopup(obj.x*W,obj.y*H,'⚽ KICK! +10','#4AC878');
+          handleTap('C');
+        }
+      }
+      if(obj.x<-0.2||obj.x>1.2) obj.missed=!obj.kicked;
+    }
+
+    if(obj.type==='obstacle'){
+      // Check if player dodged correctly
+      const playerHitbox={x:px,y:py,w:0.08,h:0.15};
+      const blocked=Math.abs(playerHitbox.x-obj.x)<0.1&&Math.abs(playerHitbox.y-obj.y)<0.12;
+      if(blocked){
+        const dodged=obj.isHigh?AG.duckState:AG.jumpState;
+        if(dodged){obj.dodged=true;AG.catches++;AG.score+=15;spawnPopup(obj.x*W,obj.y*H,'DODGE! +15','#4AC878');handleTap('C');}
+        else if(obj.x<0.2&&!obj.hit){obj.hit=true;AG.misses++;spawnPopup(obj.x*W,obj.y*H,'HIT!','#FF6B6B');}
+      }
+      if(obj.x<-0.2) obj.missed=!obj.dodged&&!obj.hit;
+    }
+
+    if(obj.type==='zone'){
+      const inZone=Math.abs(px-obj.x)<0.12;
+      if(inZone&&!obj.lit){obj.lit=true;obj.holdTimer=Date.now();}
+      if(!inZone&&obj.lit){
+        const held=Date.now()-obj.holdTimer;
+        if(held>600){AG.catches++;AG.score+=Math.floor(held/200)*5;spawnPopup(obj.x*W,obj.y*H,`BALANCE! +${Math.floor(held/200)*5}`,'#9B88C4');handleTap('C');}
+        obj.lit=false;obj.holdTimer=0;
+      }
+      if(Date.now()>obj.expires) obj.active=false;
+    }
+  });
+
+  // Clean up settled objects
+  AG.objects=AG.objects.filter(o=>{
+    if(o.type==='star') return !o.caught&&!o.missed;
+    if(o.type==='balloon') return !o.popped&&!o.missed;
+    if(o.type==='ball') return !o.missed&&!(o.kicked&&Math.abs(o.x)>1.3);
+    if(o.type==='obstacle') return o.x>-0.2;
+    if(o.type==='zone') return o.active;
+    return true;
+  });
+}
+
+function spawnPopup(x,y,text,color){
+  G.popups.push({x,y,text,color,life:40,sz:15});
+}
+
+/* ── UPDATE POSITIONS ──────────────────────────────── */
+function updateAGObjects(){
+  AG.objects.forEach(o=>{
+    if(o.vy) o.y+=o.vy;
+    if(o.vx) o.x+=o.vx;
+  });
+}
+
+/* ── MAIN DRAW ─────────────────────────────────────── */
+function drawActiveGame(ctx,W,H,an){
+  const vid=document.getElementById('motion-video');
+
+  // Camera background
+  if(vid&&vid.readyState>=2){
+    ctx.save();ctx.scale(-1,1);ctx.drawImage(vid,-W,0,W,H);ctx.restore();
+  } else {
+    ctx.fillStyle='#0a0818';ctx.fillRect(0,0,W,H);
+  }
+
+  // Dark overlay for readability
+  ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(0,0,W,H);
+
+  // Feed pose
+  if(M.pose&&vid&&vid.readyState>=2&&!M.useFallback){
+    M.pose.send({image:vid}).catch(()=>{});
+  }
+  updatePlayerFromPose();
+  updateAGObjects();
+  spawnAGObject(W,H);
+  checkAGCollisions(W,H);
+
+  // Draw skeleton
+  if(M.landmarks&&!M.useFallback){
+    ctx.save();ctx.scale(-1,1);ctx.translate(-W,0);
+    [[PL.L_SHOULDER,PL.R_SHOULDER],[PL.L_SHOULDER,PL.L_ELBOW],[PL.R_SHOULDER,PL.R_ELBOW],
+     [PL.L_ELBOW,PL.L_WRIST],[PL.R_ELBOW,PL.R_WRIST],[PL.L_SHOULDER,PL.L_HIP],
+     [PL.R_SHOULDER,PL.R_HIP],[PL.L_HIP,PL.R_HIP],[PL.L_HIP,PL.L_KNEE],
+     [PL.R_HIP,PL.R_KNEE],[PL.L_KNEE,PL.L_ANKLE],[PL.R_KNEE,PL.R_ANKLE]].forEach(([a,b])=>{
+      const la3=M.landmarks[a],lb3=M.landmarks[b];
+      if(!la3||!lb3||la3.visibility<0.3||lb3.visibility<0.3) return;
+      ctx.strokeStyle='rgba(155,136,196,.35)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(la3.x*W,la3.y*H);ctx.lineTo(lb3.x*W,lb3.y*H);ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  // Draw game objects
+  ctx.save();
+  AG.objects.forEach(obj=>{
+    const x=obj.x*W, y=obj.y*H;
+    if(obj.type==='star'){
+      ctx.font=`${obj.size}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.globalAlpha=0.92;ctx.fillText('⭐',x,y);
+      // Shadow glow
+      ctx.shadowColor='#FFD700';ctx.shadowBlur=obj.size*.4;
+      ctx.fillText('⭐',x,y);ctx.shadowBlur=0;ctx.globalAlpha=1;
+    } else if(obj.type==='balloon'){
+      ctx.font=`${obj.size}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.globalAlpha=0.9;ctx.fillText('🎈',x,y);ctx.globalAlpha=1;
+    } else if(obj.type==='ball'){
+      ctx.font='28px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.globalAlpha=0.92;ctx.fillText('⚽',x,y);ctx.globalAlpha=1;
+    } else if(obj.type==='obstacle'){
+      ctx.fillStyle=obj.isHigh?'rgba(255,107,107,.85)':'rgba(255,165,0,.85)';
+      ctx.fillRect((obj.x-obj.w/2)*W,obj.y*H,obj.w*W,obj.h*H);
+      ctx.fillStyle='white';ctx.font='bold 12px Jost,sans-serif';
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(obj.isHigh?'DUCK!':'JUMP!',(obj.x)*W,(obj.y+obj.h/2)*H);
+    } else if(obj.type==='zone'){
+      ctx.fillStyle=obj.lit?'rgba(155,136,196,.35)':'rgba(92,68,144,.18)';
+      ctx.strokeStyle=obj.lit?'rgba(155,136,196,.9)':'rgba(92,68,144,.5)';
+      ctx.lineWidth=2;ctx.setLineDash(obj.lit?[]:[6,4]);
+      ctx.fillRect((obj.x-obj.w/2)*W,(obj.y-obj.h/2)*H,obj.w*W,obj.h*H);
+      ctx.strokeRect((obj.x-obj.w/2)*W,(obj.y-obj.h/2)*H,obj.w*W,obj.h*H);
+      ctx.setLineDash([]);
+      if(obj.lit){
+        const held=((Date.now()-obj.holdTimer)/1000).toFixed(1);
+        ctx.fillStyle='white';ctx.font='bold 13px Jost,sans-serif';
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(`Hold ${held}s`,obj.x*W,obj.y*H);
+      }
+    }
+  });
+  ctx.restore();
+
+  // HUD: mode label + score
+  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,W,H*.09);
+  const mo3=AG_MODES[AG.mode];
+  ctx.fillStyle='white';ctx.font=`bold ${Math.floor(W*.034)}px Jost,sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText((mo3?.icon||'🎮')+' '+(mo3?.label||'Active Game').toUpperCase(),W/2,H*.045);
+  // Score top right
+  ctx.textAlign='right';ctx.font=`bold ${Math.floor(W*.045)}px Jost,sans-serif`;
+  ctx.fillStyle='#FFD700';ctx.fillText(''+AG.score,W-12,H*.055);
+
+  // Duck/Jump cue for dodge mode
+  if(AG.mode==='dodge'){
+    const nextObs=AG.objects.find(o=>o.type==='obstacle'&&o.x<0.7&&o.x>0.1);
+    if(nextObs){
+      ctx.fillStyle=nextObs.isHigh?'rgba(255,80,80,.85)':'rgba(255,165,0,.85)';
+      ctx.fillRect(0,H*.89,W,H*.11);
+      ctx.fillStyle='white';ctx.font=`bold ${Math.floor(W*.05)}px Jost,sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(nextObs.isHigh?'⬇️ DUCK!':'⬆️ JUMP!',W/2,H*.945);
+    }
+  }
+
+  // Progress bar
+  const prog=G.total>0?(G.beatsDone/G.total)*100:0;
+  ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(0,H-4,W,4);
+  if(prog>0){ctx.fillStyle='rgba(155,136,196,.8)';ctx.fillRect(0,H-4,W*(prog/100),4);}
   ctx.textBaseline='alphabetic';
 }
 
