@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /evosensory.html
+Disallow: /evosensory-about.html
+
+# EvoSensory beta — private, not for indexing
+# Remove these lines when ready for public launch

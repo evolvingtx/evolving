@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EvoSensory | Evolving Therapy & Wellness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--p:#5C4490;--pl:#9B88C4;--pp:#EDE8F5;--pd:#3E2D6E;--cr:#FDFBF9;--ww:#F7F4FB;--tx:#1E1830;--tl:#5A4E72;--gn:#4A8C6F;--gp:#E8F5EF;--go:#C4922A;--gop:#FBF2EA;--rd:#B85450;--br:rgba(92,68,144,.15);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Jost',sans-serif;background:var(--cr);color:var(--tx);overflow-x:hidden;}
+.serif{font-family:'Cormorant Garamond',Georgia,serif;}
+nav{background:white;border-bottom:1px solid var(--br);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--pd);font-weight:500;}
+.nav-logo span{font-size:11px;color:var(--tl);display:block;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif;font-weight:400;}
+.nav-link{font-size:13px;color:var(--p);text-decoration:none;font-weight:500;}
+.hero{background:linear-gradient(150deg,var(--pd) 0%,var(--p) 55%,#8B6DB8 100%);padding:60px 20px 70px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;left:-60px;width:300px;height:300px;border-radius:50%;border:1px solid rgba(255,255,255,.08);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-80px;right:-40px;width:240px;height:240px;border-radius:50%;border:1px solid rgba(255,255,255,.06);pointer-events:none;}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:11px;color:rgba(255,255,255,.85);letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:500;color:white;line-height:1.1;margin-bottom:10px;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.7);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
+.hero-tagline{font-size:16px;color:rgba(255,255,255,.88);max-width:500px;margin:0 auto 32px;line-height:1.7;}
+.hero-btn{display:inline-block;background:white;color:var(--p);padding:16px 38px;border-radius:12px;font:600 16px/1 'Jost',sans-serif;text-decoration:none;transition:all .2s;box-shadow:0 4px 24px rgba(0,0,0,.2);}
+.hero-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3);}
+.hero-note{font-size:11px;color:rgba(255,255,255,.5);margin-top:14px;}
+section{padding:52px 20px;max-width:700px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:500;color:var(--pl);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:34px;color:var(--pd);line-height:1.2;margin-bottom:16px;}
+.section-body{font-size:14px;color:var(--tl);line-height:1.85;}
+.beta-banner{background:linear-gradient(120deg,#FFF8E8,#FFF3D0);border:1px solid var(--go);border-radius:14px;padding:18px 22px;}
+.beta-banner h3{font-size:15px;font-weight:600;color:var(--go);margin-bottom:8px;}
+.beta-banner p,.beta-banner ul{font-size:13px;color:var(--tx);line-height:1.8;}
+.beta-banner ul{padding-left:18px;margin-top:6px;}
+/* Module grid */
+.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;}
+.module-card{background:white;border:1px solid var(--br);border-radius:16px;padding:18px 16px;}
+.module-icon{font-size:28px;margin-bottom:9px;}
+.module-name{font-size:14px;font-weight:600;color:var(--p);margin-bottom:6px;}
+.module-name .badge{font-size:9px;background:var(--gn);color:white;padding:2px 7px;border-radius:8px;margin-left:6px;font-weight:500;}
+.module-name .beta-b{font-size:9px;background:var(--go);color:white;padding:2px 7px;border-radius:8px;margin-left:6px;}
+.module-name .phase{font-size:9px;background:var(--pl);color:white;padding:2px 7px;border-radius:8px;margin-left:6px;}
+.module-desc{font-size:12px;color:var(--tl);line-height:1.68;}
+/* Feedback steps */
+.step-row{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--br);}
+.step-row:last-child{border-bottom:none;}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--p);color:white;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-text{font-size:13px;color:var(--tx);line-height:1.78;}
+.step-text strong{color:var(--p);}
+/* Protocol callout */
+.protocol-box{background:var(--gop);border:1px solid var(--go);border-radius:14px;padding:20px 22px;margin-top:20px;display:flex;gap:16px;align-items:flex-start;}
+.protocol-icon{font-size:32px;flex-shrink:0;}
+.protocol-body h4{font-size:14px;font-weight:600;color:var(--go);margin-bottom:6px;}
+.protocol-body p{font-size:13px;color:var(--tx);line-height:1.75;margin-bottom:10px;}
+.protocol-link{display:inline-block;background:var(--go);color:white;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:500;text-decoration:none;transition:opacity .2s;}
+.protocol-link:hover{opacity:.85;}
+/* HW table */
+.hw-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:16px;}
+.hw-table th{background:var(--pp);color:var(--pd);padding:9px 10px;text-align:left;font-weight:500;}
+.hw-table td{padding:9px 10px;border-bottom:1px solid var(--br);color:var(--tl);}
+.hw-table tr:nth-child(even) td{background:var(--ww);}
+.hw-table td:first-child{font-weight:500;color:var(--tx);}
+/* Clinical callout */
+.clinical-note{background:var(--gp);border:1px solid var(--gn);border-radius:11px;padding:14px 16px;font-size:12px;color:var(--tx);line-height:1.78;margin-top:16px;}
+/* WG disclosure */
+.wg-note{background:var(--pp);border:1px solid var(--pl);border-radius:11px;padding:13px 16px;font-size:12px;color:var(--tx);line-height:1.75;margin-top:12px;}
+/* CTA */
+.cta{background:linear-gradient(140deg,var(--pp),var(--ww));border-radius:20px;padding:40px 28px;text-align:center;margin:0 0 52px;}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--pd);margin-bottom:10px;}
+.cta-sub{font-size:14px;color:var(--tl);max-width:400px;margin:0 auto 24px;line-height:1.7;}
+.cta-btn{display:inline-block;background:var(--p);color:white;padding:15px 36px;border-radius:11px;font:600 15px/1 'Jost',sans-serif;text-decoration:none;transition:all .2s;}
+.cta-btn:hover{background:var(--pd);transform:translateY(-2px);}
+footer{background:var(--pd);color:rgba(255,255,255,.65);padding:28px 20px;text-align:center;font-size:11px;line-height:2;}
+footer a{color:rgba(255,255,255,.8);text-decoration:none;}
+footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
+@media(max-width:560px){.hero-title{font-size:38px;}.module-grid{grid-template-columns:1fr;}.protocol-box{flex-direction:column;gap:10px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">EvoSensory<span>Evolving Therapy &amp; Wellness</span></div>
+  <a href="evosensory.html" class="nav-link">Launch App →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🔒 Private Beta · Trusted Colleagues Only</div>
+  <h1 class="hero-title">EvoSensory</h1>
+  <div class="hero-sub">Multi-Sensory Rhythmic Timing Training</div>
+  <p class="hero-tagline">A browser-based clinical tool that trains timing, visual tracking, language, and movement through layered, real-time sensory feedback — developed by a pediatric OT.</p>
+  <a href="evosensory.html" class="hero-btn">Launch EvoSensory ▶</a>
+  <div class="hero-note">Free to use · No install · Wired headphones recommended for full spatial audio</div>
+</div>
+
+<!-- BETA NOTICE -->
+<div style="max-width:700px;margin:32px auto 0;padding:0 20px;">
+<div class="beta-banner">
+  <h3>📋 Beta Test Notice</h3>
+  <p>You're accessing an early beta. A few things to know:</p>
+  <ul>
+    <li>Visual polish is still in progress — a full design update is coming</li>
+    <li>Features marked BETA are being actively refined based on real clinical use</li>
+    <li>Your observations, bugs, and clinical feedback are exactly what I need right now</li>
+    <li>Reach out at <strong>Admin@Evolve-OT.com</strong> — I read every message</li>
+  </ul>
+  <p style="margin-top:10px;font-size:12px;color:var(--tl);">Thank you for your time and clinical lens. This is being shared with a small group of trusted colleagues before public launch.</p>
+</div>
+</div>
+
+<!-- WHAT IS IT -->
+<section>
+  <div class="section-label">About</div>
+  <h2 class="section-title">What Is EvoSensory?</h2>
+  <p class="section-body">EvoSensory is a multi-sensory rhythmic timing training platform I built as a pediatric OT because I couldn't find a tool that delivered real-time, clinically meaningful feedback without a significant equipment investment or subscription fee. It runs entirely in a web browser. A device and a pair of wired earbuds give you the full therapeutic loop.</p>
+
+  <p class="section-body" style="margin-top:12px;">The core of the app is the <strong style="color:var(--p);">Micro-Timing Drift Engine (MTDE)</strong> — a real-time algorithm that tracks the slope of your timing errors across consecutive beats using linear regression. It doesn't just tell you if a tap was early or late. It tells you whether your timing is stabilizing, accelerating, or dragging — and adapts the audio and haptic feedback accordingly. That multi-beat trend analysis is not available in basic metronome-based software.</p>
+
+  <p class="section-body" style="margin-top:12px;">Rhythmic timing training has a strong evidence base across ADHD, DCD, dyslexia, TBI, cerebral palsy, and general sensory processing challenges. The research consistently shows that structured, precise metronome-based feedback improves bilateral coordination, attention, motor planning, processing speed, and reading. EvoSensory puts that clinical approach in a free, no-install tool that works from a school Chromebook or a $40 Android tablet.</p>
+</section>
+
+<!-- MODULES -->
+<section style="padding-top:0;">
+  <div class="section-label">The Platform</div>
+  <h2 class="section-title">Four Training Modules</h2>
+  <div class="module-grid">
+    <div class="module-card">
+      <div class="module-icon">🎮</div>
+      <div class="module-name">Classic <span class="badge">Active</span></div>
+      <div class="module-desc">Core timing engine. Millisecond precision across six progressive levels — from bilateral alternation to complex rest patterns. Bubble Blast, Target Range, and Falling Notes visual modes. XAC haptic pillow integration.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">👁️</div>
+      <div class="module-name">Oculomotor <span class="badge">Active</span></div>
+      <div class="module-desc">Visual targets move in sync with the beat. Four sub-modes: smooth pursuits, saccadic jumps, depth pulse (convergence/accommodation), and gaze hold. Tap-based proxy tracking — not camera eye tracking. Optional WebGazer integration for gaze screening (Phase 2).</div>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">🧠</div>
+      <div class="module-name">Cognitive <span class="badge">Active</span></div>
+      <div class="module-desc">Vocabulary and math embedded in the timing task. Speech is the beat — the app spells words letter by letter, then says the whole word, all timed to the metronome. Math mode counts, adds, or multiplies. Directly targets phonological timing and number fluency.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">📷</div>
+      <div class="module-name">Motion <span class="beta-b">Beta</span></div>
+      <div class="module-desc">Camera-based movement detection. Any visible movement — clap, knee tap, hand raise — registers as a tap. Phase 1 uses frame differencing. Full hand tracking coming in next update. Useful for low-motor-demand access and telehealth observation.</div>
+    </div>
+  </div>
+
+  <!-- WebGazer note -->
+  <div class="wg-note">
+    <strong style="color:var(--p);">👁️ Eye Tracking — Phase 2 (Oculomotor Module)</strong><br>
+    An optional camera-based gaze estimation toggle is available in the Oculomotor sub-mode panel. When activated, it uses the front camera to estimate where the child's eyes are pointing during pursuits and saccades, overlaying a real-time gaze crosshair on the training canvas. Average gaze lag is recorded in the session data and included in the SOAP note.<br><br>
+    <em>Important disclosure: This is screening-level data (±60–80px), not clinical-grade eye movement recording. It is clearly labeled in the UI and SOAP note. It does not replace a functional vision or behavioral optometry evaluation.</em>
+  </div>
+</section>
+
+<!-- NO-TECH OPTION -->
+<section style="padding-top:0;">
+  <div class="section-label">No Technology Required</div>
+  <h2 class="section-title">Want to Start Without the App?</h2>
+  <p class="section-body">EvoSensory exists because not every child, family, or session has device access or a stable internet connection. The clinical rationale for rhythmic timing training doesn't change just because the app isn't available. That's why I also created a structured low-tech protocol designed around a free metronome app and everyday materials.</p>
+  <p class="section-body" style="margin-top:10px;">The protocol covers five progressive levels — from basic beat detection through dual-task timing — with session tracking logs, sample goal language, skill tags on every exercise, and a find-more-resources footer for families. It works as a home program, a school-based handout, or a starting point before introducing EvoSensory in clinic.</p>
+
+  <div class="protocol-box">
+    <div class="protocol-icon">📄</div>
+    <div class="protocol-body">
+      <h4>Rhythmic Timing Training — Low-Tech Protocol</h4>
+      <p>A downloadable PDF with 15 progressive exercises across 5 levels. Just a metronome app and everyday materials. Includes sample OT goals, session tracking log, and skill tags. Written for therapists, parents, and educators.</p>
+      <a href="/resources" class="protocol-link">Get the Protocol ($4.99) →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FEEDBACK LOOP -->
+<section style="padding-top:0;">
+  <div class="section-label">The Feedback Loop</div>
+  <h2 class="section-title">Three Simultaneous Channels</h2>
+  <div class="step-row">
+    <div class="step-num">🔊</div>
+    <div class="step-text"><strong>Auditory — Spatial:</strong> Early taps send an ascending tone to the left ear. Late taps send a descending tone to the right ear. The further from the beat, the further the stereo pan. The MTDE shapes the tone based on whether your timing is accelerating (faster chirp) or dragging (deeper slide). This is why wired headphones matter — Bluetooth audio lag defeats the feedback loop entirely.</div>
+  </div>
+  <div class="step-row">
+    <div class="step-num">📳</div>
+    <div class="step-text"><strong>Haptic — Tactile:</strong> Device vibration fires with distinct patterns for early, late, and perfect taps. With the Xbox Adaptive Controller (XAC), left and right rumble channels fire independently — left side for early, right side for late. Designed to drive a haptic cushion for whole-body proprioceptive input. Audio haptic fallback active for iPhone users.</div>
+  </div>
+  <div class="step-row">
+    <div class="step-num">👁️</div>
+    <div class="step-text"><strong>Visual — Gamified:</strong> Five visual game modes across Classic and Oculomotor modules, plus two Cognitive modes. All visuals are prototype-level — a full design polish pass is planned. Blind Training mode fades the canvas after 10 seconds to train pure auditory/haptic timing without visual anchoring.</div>
+  </div>
+</section>
+
+<!-- HARDWARE -->
+<section style="padding-top:0;">
+  <div class="section-label">Hardware</div>
+  <h2 class="section-title">Scales With What You Have</h2>
+  <p class="section-body" style="margin-bottom:4px;">Nothing extra is required to start. Add hardware as clinical goals indicate.</p>
+  <table class="hw-table">
+    <thead><tr><th>Setup</th><th>Approx. Cost</th><th>What It Adds</th></tr></thead>
+    <tbody>
+      <tr><td>Any device + browser</td><td>$0</td><td>Full timing training, all modules, SOAP notes, multi-user tracking</td></tr>
+      <tr><td>+ Wired earbuds</td><td>~$10</td><td>Spatial audio feedback — the single most important upgrade</td></tr>
+      <tr><td>+ USB switches or XAC</td><td>~$100–160</td><td>Motor-accessible input; bilateral switch training; XAC pillow output</td></tr>
+      <tr><td>+ XAC + haptic cushion</td><td>~$150–200</td><td>Directional whole-body haptic feedback through a vibrating pillow</td></tr>
+      <tr><td>+ Front camera (built-in)</td><td>$0</td><td>Motion module + optional WebGazer gaze screening in Oculomotor</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--tl);margin-top:10px;line-height:1.65;">The Xbox Adaptive Controller ($100) is the best single hardware investment. Your existing AAC switch plugs directly into the 3.5mm back jacks — no adapter needed.</p>
+</section>
+
+<!-- FOR THERAPISTS -->
+<section style="padding-top:0;">
+  <div class="section-label">For Therapists</div>
+  <h2 class="section-title">Built for Real Clinical Documentation</h2>
+  <p class="section-body">EvoSensory works across home, school, clinic, and telehealth settings. Every session generates objective, reportable data: accuracy percentage, average timing deviation in milliseconds, MTDE drift pattern (stabilized / accelerating / dragging), oculomotor mode breakdown, and optional WebGazer gaze lag when eye tracking is active. That data is designed to support skilled service justification in your documentation.</p>
+
+  <p class="section-body" style="margin-top:12px;">The SOAP note generator turns all of that into a draft note after each session — structured S/O/A/P with clinical interpretation of the deviation and drift data, built-in next-session recommendations, and appropriate screening disclosures for the oculomotor module. Edit before pasting into your EMR. It is clearly labeled as a draft.</p>
+
+  <p class="section-body" style="margin-top:12px;">Multiple client profiles can be tracked on a single device. Progress charts display accuracy and average deviation across the last 15 sessions per user. CSV export available for external analysis or parent sharing.</p>
+
+  <div class="clinical-note">
+    <strong style="color:var(--gn);">📋 SOAP Note — What's Included</strong><br>
+    S: Client-reported or observed experience · O: Accuracy %, average ms deviation, MTDE drift interpretation, timing tendency, oculomotor mode, gaze lag (if active) · A: Clinical interpretation based on session data · P: Suggested BPM, level, and sensory supports for next session. All data auto-populated. Edit for clinical accuracy before use.
+  </div>
+</section>
+
+<!-- CTA -->
+<div style="padding:0 20px;">
+<div class="cta">
+  <div class="cta-title">Ready to Try It?</div>
+  <p class="cta-sub">Launch EvoSensory in your browser. Free, no login, no install. Wired headphones recommended for the full feedback experience.</p>
+  <a href="evosensory.html" class="cta-btn">Launch EvoSensory ▶</a>
+  <div style="font-size:11px;color:var(--tl);margin-top:16px;">Beta version · Feedback to Admin@Evolve-OT.com</div>
+</div>
+</div>
+
+<footer>
+  <strong>Evolving Therapy &amp; Wellness</strong>
+  Vanessa Dorado Walker, MS, OTR/L<br>
+  <a href="mailto:Admin@Evolve-OT.com">Admin@Evolve-OT.com</a> &nbsp;·&nbsp; <a href="https://www.evolve-ot.com">www.evolve-ot.com</a><br><br>
+  <!-- Patent Pending · Uncomment after provisional filing -->
+  &copy; 2026 Evolving Therapy &amp; Wellness. All rights reserved.<br>
+  EvoSensory is a trademark of Evolving Therapy &amp; Wellness.<br><br>
+  <span style="font-size:10px;opacity:.6;">EvoSensory is not a medical device and does not diagnose, treat, or cure any condition. Oculomotor screening data is not clinical-grade eye movement recording. For use within a therapeutic relationship by a licensed professional only.</span>
+</footer>
+
+</body>
+</html>
