@@ -602,7 +602,7 @@ here</textarea>
     <div id="wg-instruction" style="position:absolute;top:16px;left:0;right:0;text-align:center;color:white;font-size:14px;font-weight:500;z-index:2;background:rgba(0,0,0,.55);padding:10px;">Look at each dot and click or tap it. 9 points total.</div>
     <div id="wg-progress" style="position:absolute;top:56px;left:0;right:0;text-align:center;color:rgba(255,255,255,.6);font-size:12px;z-index:2;">0 / 9 calibrated</div>
     <!-- Calibration dots injected by JS -->
-    <div id="wg-dots"></div>
+    <div id="wg-dots" style="position:absolute;inset:0;"></div>
     <!-- Small face preview bottom right -->
     <video id="wg-face-vid" autoplay playsinline muted style="position:absolute;bottom:16px;right:16px;width:90px;height:68px;border-radius:8px;object-fit:cover;border:2px solid var(--pl);opacity:.7;transform:scaleX(-1);"></video>
   </div>
@@ -3241,23 +3241,34 @@ async function startWGCalibration(){
     closeWGSetup();
     return;
   }
-  // Start camera for face preview
-  try{
-    WG.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
-    const vid=document.getElementById('wg-face-vid');
-    if(vid){vid.srcObject=WG.stream;vid.play();}
-  }catch(e){console.warn('WG face preview failed',e);}
 
-  // Configure WebGazer
-  window.webgazer
-    .setRegression('ridge')
-    .setTracker('TFFacemesh')
-    .setGazeListener((data)=>{
-      if(data){WG.gazeX=data.x;WG.gazeY=data.y;}
-    });
-  webgazer.showVideoPreview(false);
-  webgazer.showPredictionPoints(false);
-  await webgazer.begin();
+  // Configure WebGazer — let it manage its own camera
+  // Do NOT open a separate getUserMedia stream (conflicts with webgazer.begin)
+  try{
+    window.webgazer
+      .setRegression('ridge')
+      .setGazeListener((data)=>{
+        if(data){WG.gazeX=data.x;WG.gazeY=data.y;}
+      });
+    webgazer.showVideoPreview(true);   // let WG show its own small preview
+    webgazer.showPredictionPoints(false);
+    webgazer.saveDataAcrossSessions(false);
+    await webgazer.begin();
+    // Move WG video to our face preview slot if it exists
+    const wgVid=document.getElementById('webgazerVideoFeed');
+    const previewSlot=document.getElementById('wg-face-vid');
+    if(wgVid&&previewSlot){
+      wgVid.style.cssText='position:absolute;bottom:16px;right:16px;width:90px;height:68px;border-radius:8px;object-fit:cover;border:2px solid var(--pl);opacity:.7;transform:scaleX(-1);z-index:5;';
+      // WebGazer appends to body — move it into our calibration div
+      const calibDiv=document.getElementById('wg-calibration');
+      if(calibDiv&&wgVid.parentNode!==calibDiv) calibDiv.appendChild(wgVid);
+    }
+  }catch(e){
+    console.warn('WebGazer begin failed:',e);
+    alert('Eye tracking could not start. Camera may be in use by another tab.');
+    closeWGSetup();
+    return;
+  }
 
   // Show calibration screen
   document.getElementById('wg-intro').style.display='none';
@@ -3284,34 +3295,51 @@ function buildCalibDots(){
 }
 
 function calibrateDot(idx,x,y){
-  // WebGazer records this click as a calibration point
-  if(window.webgazer) webgazer.recordScreenPosition(x,y,'click');
+  // Record calibration point — WebGazer CDN uses 2-param version
+  if(window.webgazer){
+    try{webgazer.recordScreenPosition(x,y);}
+    catch(e){console.warn('recordScreenPosition failed:',e);}
+  }
   const dot=document.getElementById('wg-dot-'+idx);
   if(dot){
     dot.style.background='var(--p)';
     dot.style.transform='translate(-50%,-50%) scale(1.3)';
     dot.style.borderColor='white';
-    setTimeout(()=>{if(dot)dot.style.transform='translate(-50%,-50%) scale(.8)';dot.style.opacity='.5';},300);
+    setTimeout(()=>{
+      if(dot){dot.style.transform='translate(-50%,-50%) scale(.8)';dot.style.opacity='.5';}
+    },300);
   }
   WG.calibStep++;
-  document.getElementById('wg-progress').textContent=WG.calibStep+' / 9 calibrated';
+  const prog=document.getElementById('wg-progress');
+  if(prog) prog.textContent=WG.calibStep+' / 9 calibrated';
   if(WG.calibStep>=9){
     setTimeout(()=>{
       WG.calibrated=true;
       WG.loaded=true;
       document.getElementById('wg-calibration').style.display='none';
       document.getElementById('wg-ready').style.display='block';
+      // Hide WG video preview during game
+      const wgVid=document.getElementById('webgazerVideoFeed');
+      if(wgVid) wgVid.style.display='none';
     },500);
   }
 }
 
 function stopWGCamera(){
+  // WG manages its own stream — pause it rather than killing the stream
+  try{if(window.webgazer) webgazer.pause();}catch(e){}
   if(WG.stream){WG.stream.getTracks().forEach(t=>t.stop());WG.stream=null;}
+  const wgVid=document.getElementById('webgazerVideoFeed');
+  if(wgVid) wgVid.style.display='none';
 }
 
 function startAfterWGCalib(){
   document.getElementById('wg-setup').style.display='none';
-  stopWGCamera(); // face preview not needed during game
+  // Resume WG prediction (was paused during calibration display)
+  try{if(window.webgazer) webgazer.resume();}catch(e){}
+  // Hide the WG video element so it doesn't overlap game canvas
+  const wgVid=document.getElementById('webgazerVideoFeed');
+  if(wgVid) wgVid.style.display='none';
   WG.gazeLag=[];
   startCountdown();
 }
