@@ -387,7 +387,7 @@ here</textarea>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:9px 12px;background:var(--ww);border-radius:9px;border:1px solid var(--br);">
         <div>
           <div style="font-size:12px;font-weight:500;color:var(--tx);">👁️ Eye Tracking <span style="font-size:9px;background:var(--p);color:white;padding:1px 6px;border-radius:7px;margin-left:3px;">Phase 2</span></div>
-          <div style="font-size:10px;color:var(--tl);margin-top:1px;">Chrome on Windows/Mac only · Camera estimates gaze position</div>
+          <div style="font-size:10px;color:var(--tl);margin-top:1px;">Chrome on Windows, Mac, or Android · Not supported on iOS/Safari</div>
         </div>
         <label style="position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;">
           <input type="checkbox" id="wg-toggle" onchange="toggleEyeTracking(this.checked)" style="opacity:0;width:0;height:0;">
@@ -3198,28 +3198,34 @@ const WG_CALIB_POSITIONS = [
 ];
 
 function toggleEyeTracking(on){
-  // WebGazer requires Chrome on desktop — block iOS/Safari early
   if(on){
-    const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
     const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    const isMobileUA=/Mobi|Android/i.test(navigator.userAgent);
-    if(isIOS||isSafari||isMobileUA){
+    const isAndroidChrome=/android/i.test(navigator.userAgent)&&/chrome/i.test(navigator.userAgent);
+    // Block iOS and non-Chrome Safari. Android Chrome is allowed (WebGL + WebRTC supported).
+    if(isIOS||isSafari){
       const cb=document.getElementById('wg-toggle');
       if(cb) cb.checked=false;
       WG.active=false;
-      // Show inline warning
       const note=document.getElementById('ocu-clinical-note');
       if(note){
-        note.textContent='👁️ Eye tracking requires Chrome on a Windows or Mac computer. Not supported on iPhone, iPad, or Safari.';
-        note.style.color='var(--rd)';note.style.background='rgba(184,84,80,.1)';note.style.borderColor='var(--rd)';
+        note.textContent='👁️ Eye tracking is not supported on iPhone, iPad, or Safari. Use Chrome on Windows, Mac, or Android.';
+        note.style.color='var(--rd)';note.style.background='rgba(184,84,80,.1)';
       }
       return;
     }
+    // Android Chrome: works but warn about performance on low-end tablets
+    if(isAndroidChrome){
+      const note=document.getElementById('ocu-clinical-note');
+      if(note){
+        note.textContent='👁️ Eye tracking on Android Chrome is supported. Performance may vary on lower-end tablets. Ensure good lighting.';
+        note.style.color='var(--go)';note.style.background='var(--gop)';
+      }
+    }
   }
   WG.active=on;
-  // Reset clinical note style
   const note=document.getElementById('ocu-clinical-note');
-  if(note){note.style.color='';note.style.background='';note.style.borderColor='';}
+  if(note&&!on){note.style.color='';note.style.background='';}
   const knob=document.getElementById('wg-knob');
   const track=document.getElementById('wg-toggle-knob');
   if(knob) knob.style.transform=on?'translateX(18px)':'translateX(0)';
