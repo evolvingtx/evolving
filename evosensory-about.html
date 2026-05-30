@@ -219,21 +219,98 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
   <h2 class="section-title">Pediatric and Adult Populations</h2>
   <p class="section-body">EvoSensory was built in pediatric OT practice but the clinical applications extend across the lifespan. Any population with timing, coordination, attention, or motor planning deficits can benefit. Current user profiles support three age categories — Pediatric (0–17), Adult (18–64), and Older Adult (65+) — with BPM defaults, hit window settings, and SOAP note language that adjust automatically.</p>
   <p class="section-body" style="margin-top:10px;">Populations with documented evidence for rhythmic timing intervention: ADHD, DCD, dyslexia, autism, TBI, stroke, Parkinson's disease, MS, cerebral palsy, sensory processing disorder, anxiety, and age-related motor and cognitive decline. The Motion and Active Games modules extend reach to standing balance, gait, vestibular processing, and upper and lower extremity coordination.</p>
+</section>
 
+<!-- UNDERSTANDING RESULTS -->
+<section style="padding-top:0;">
+  <div class="section-label">Reading the Data</div>
+  <h2 class="section-title">Understanding the Results</h2>
+
+  <p class="section-body">EvoSensory tracks three separate things after every session. They measure different skills and should not be confused with each other.</p>
+
+  <!-- The three metrics explained -->
+  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0 24px;">
+
+    <div style="background:var(--pp);border-left:4px solid var(--p);border-radius:0 10px 10px 0;padding:14px 16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--pd);margin-bottom:5px;">1. Accuracy — Were they hitting the beat at all?</div>
+      <p style="font-size:13px;color:var(--tx);line-height:1.75;margin:0;">Accuracy is the percentage of beats the patient responded to within the acceptable time window. A patient with 90% accuracy hit the window on 9 out of 10 beats. This reflects engagement, attention, and whether the task level is appropriate.</p>
+    </div>
+
+    <div style="background:var(--pp);border-left:4px solid var(--p);border-radius:0 10px 10px 0;padding:14px 16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--pd);margin-bottom:5px;">2. Timing Deviation — Where exactly were their taps landing?</div>
+      <p style="font-size:13px;color:var(--tx);line-height:1.75;margin:0;">Deviation is measured in milliseconds (ms) and shows the average distance between where the beat was and where the tap landed. <strong>Lower is better — zero means perfectly on the beat.</strong> The sign tells you direction: positive (+) means early (tapping before the beat), negative (−) means late (tapping after the beat).</p>
+      <p style="font-size:13px;color:var(--tx);line-height:1.75;margin:8px 0 0;">A patient can score 95% accuracy but still have a +55ms average deviation — meaning they hit the window every time, but they are consistently half a beat early. A therapist watching the session might say "great job." The app captures that the patient is systematically early every single tap. That is a different clinical finding than accuracy alone can show.</p>
+    </div>
+
+    <div style="background:var(--pp);border-left:4px solid var(--p);border-radius:0 10px 10px 0;padding:14px 16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--pd);margin-bottom:5px;">3. Session Trend — Did their timing change as the session went on?</div>
+      <p style="font-size:13px;color:var(--tx);line-height:1.75;margin:0;">The session trend tracks whether errors got bigger, smaller, or stayed the same as the session progressed. A patient who starts well and drifts earlier over time may have difficulty sustaining inhibitory control. One who drifts later may be experiencing attention fatigue or motor planning difficulty under sustained demand.</p>
+    </div>
+  </div>
+
+  <!-- Interpretation scale -->
+  <h3 style="font-size:15px;font-weight:600;color:var(--p);margin:0 0 12px;">Clinical Interpretation Scale</h3>
+
+  <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:6px;letter-spacing:.05em;">ACCURACY</div>
+  <table class="hw-table" style="margin-bottom:20px;">
+    <thead><tr><th>Range</th><th>Interpretation</th><th>Recommended Action</th></tr></thead>
+    <tbody>
+      <tr><td><strong>85–100%</strong></td><td>Functional range — skill is established at this level and tempo</td><td>Advance level or increase BPM by 4–8</td></tr>
+      <tr><td><strong>70–84%</strong></td><td>Emerging — patient is engaging with the task with moderate consistency</td><td>Continue at current level; target 85% across 2 sessions before advancing</td></tr>
+      <tr><td><strong>50–69%</strong></td><td>Below functional threshold — significant inconsistency; direct intervention is indicated</td><td>Maintain level; adjust sensory supports; consider slower BPM</td></tr>
+      <tr><td><strong>Below 50%</strong></td><td>Well below threshold — current level or tempo may exceed patient's capacity</td><td>Reduce BPM by 8–10 or drop one level; assess for contributing factors</td></tr>
+    </tbody>
+  </table>
+
+  <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:6px;letter-spacing:.05em;">TIMING DEVIATION (absolute value — lower is better)</div>
+  <table class="hw-table" style="margin-bottom:20px;">
+    <thead><tr><th>Range</th><th>Interpretation</th><th>Clinical Relevance</th></tr></thead>
+    <tbody>
+      <tr><td><strong>0–20ms</strong></td><td>Excellent precision — within normal limits for skilled timing</td><td>Strong internal clock; ready for more complex tasks</td></tr>
+      <tr><td><strong>21–40ms</strong></td><td>Good precision — mild timing variability, functional for most daily tasks</td><td>Typical performance for children in active development</td></tr>
+      <tr><td><strong>41–70ms</strong></td><td>Moderate difficulty — errors are noticeable and affect coordinated tasks</td><td>Likely impacting handwriting fluency, reading rhythm, bilateral motor skills</td></tr>
+      <tr><td><strong>71–100ms</strong></td><td>Significant difficulty — consistent with a timing processing deficit</td><td>Intervention warranted; document functional impact in daily occupations</td></tr>
+      <tr><td><strong>100ms+</strong></td><td>Severe difficulty — consistent with moderate to severe timing disorder</td><td>Reduce task demands; prioritize sensory feedback supports; consider contributing diagnoses</td></tr>
+    </tbody>
+  </table>
+
+  <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:6px;letter-spacing:.05em;">DIRECTION OF DEVIATION</div>
+  <table class="hw-table" style="margin-bottom:20px;">
+    <thead><tr><th>Pattern</th><th>Clinical Interpretation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Consistently early (+)</strong></td><td>Anticipatory motor response — patient is acting before the correct moment. May reflect impulsivity, difficulty waiting, or poor response inhibition. Often seen in ADHD and anxiety presentations.</td></tr>
+      <tr><td><strong>Consistently late (−)</strong></td><td>Delayed motor initiation — patient is responding after the correct moment. May reflect processing speed differences, motor planning difficulty, or low arousal. Common in DCD, TBI, and fatigue-related presentations.</td></tr>
+      <tr><td><strong>Mixed / balanced</strong></td><td>No consistent directional tendency. Errors may be random (inconsistent attention) or centered (good regulation). Review alongside accuracy for full picture.</td></tr>
+    </tbody>
+  </table>
+
+  <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:6px;letter-spacing:.05em;">SESSION TREND</div>
+  <table class="hw-table" style="margin-bottom:8px;">
+    <thead><tr><th>Pattern</th><th>Clinical Interpretation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Stable</strong></td><td>Timing was consistent from beginning to end of session. Patient maintained regulation throughout the task.</td></tr>
+      <tr><td><strong>Drifting early over time</strong></td><td>Responses became progressively earlier as the session continued. May reflect mounting impulsivity or difficulty sustaining inhibitory control under extended demand.</td></tr>
+      <tr><td><strong>Drifting late over time</strong></td><td>Responses became progressively later as the session continued. May reflect attentional fatigue, processing slowdown, or motor planning difficulty under sustained load.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="clinical-note" style="margin-top:16px;">
+    <strong style="color:var(--gn);">Key point for documentation:</strong> Accuracy and deviation measure different things. A patient can score high on accuracy and still show clinically significant deviation. Always report both, and connect the deviation pattern to a functional impact in the patient's daily occupations.
+  </div>
 </section>
 
 <section style="padding-top:0;">
   <div class="section-label">For Therapists</div>
   <h2 class="section-title">Built for Real Clinical Documentation</h2>
-  <p class="section-body">EvoSensory works across home, school, clinic, and telehealth settings. Every session generates objective, reportable data: accuracy percentage, average timing deviation in milliseconds, MTDE drift pattern (stabilized / accelerating / dragging), oculomotor mode breakdown, and optional WebGazer gaze lag when eye tracking is active. That data is designed to support skilled service justification in your documentation.</p>
+  <p class="section-body">EvoSensory works across home, school, clinic, and telehealth settings. Every session generates objective, reportable data: accuracy percentage, average timing deviation in milliseconds, session trend (stable / drifting early / drifting late), oculomotor mode breakdown, and optional camera-based gaze screening when eye tracking is active. That data is designed to support skilled service justification in your documentation.</p>
 
-  <p class="section-body" style="margin-top:12px;">The SOAP note generator turns all of that into a draft note after each session — structured S/O/A/P with clinical interpretation of the deviation and drift data, built-in next-session recommendations, and appropriate screening disclosures for the oculomotor module. Edit before pasting into your EMR. It is clearly labeled as a draft.</p>
+  <p class="section-body" style="margin-top:12px;">The SOAP note generator builds a complete draft note after each session with plain-language interpretation of all three metrics, modality and age category context, hardware confirmation, next-session recommendations, and appropriate disclosures. Edit before pasting into your EMR. Always labeled as a draft.</p>
 
   <p class="section-body" style="margin-top:12px;">Multiple client profiles can be tracked on a single device. Progress charts display accuracy and average deviation across the last 15 sessions per user. CSV export available for external analysis or parent sharing.</p>
 
   <div class="clinical-note">
     <strong style="color:var(--gn);">📋 SOAP Note — What's Included</strong><br>
-    S: Client-reported or observed experience · O: Accuracy %, average ms deviation, MTDE drift interpretation, timing tendency, oculomotor mode, gaze lag (if active) · A: Clinical interpretation based on session data · P: Suggested BPM, level, and sensory supports for next session. All data auto-populated. Edit for clinical accuracy before use.
+    S: Client-reported or observed experience · O: Accuracy %, timing deviation with direction, session trend, modality, sensory hardware confirmed · A: Plain-language clinical interpretation with functional connection prompts · P: Specific next-session BPM and level recommendations based on session data. All data auto-populated. Edit for clinical accuracy before use.
   </div>
 </section>
 
