@@ -414,6 +414,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   <div class="tog-row"><div><div class="tog-label">🗣 Speech (Vocab/Math)</div><div class="tog-sub">Speaks letters, words, and numbers aloud</div></div><label class="tog"><input type="checkbox" id="tog-speech" checked onchange="S.speechOn=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">🕶 Blind Training</div><div class="tog-sub">Visuals fade after 10s</div></div><label class="tog"><input type="checkbox" id="tog-bld" onchange="S.blindMode=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">👩‍⚕️ Therapist View</div><div class="tog-sub">ms deviation + clinical notes</div></div><label class="tog"><input type="checkbox" id="tog-th" onchange="S.therapistMode=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">✅ Session Setup Prompt</div><div class="tog-sub">Ask about headphones & haptics before each session</div></div><label class="tog"><input type="checkbox" id="tog-hwcheck" checked onchange="S.hwCheckOn=this.checked"/><span class="tog-tk"></span></label></div>
 
   <div style="margin-top:11px;"><div class="label">Haptic Intensity</div>
   <input type="range" min="0" max="100" value="80" id="hi-sl" oninput="S.hapticIntensity=this.value/100;document.getElementById('hi-v').textContent=this.value+'%'" style="width:100%;accent-color:var(--go);"/>
@@ -725,6 +726,55 @@ here</textarea>
   </div>
 </div>
 
+<!-- PRE-SESSION HARDWARE CONFIRMATION -->
+<div id="hw-check-overlay" style="display:none;position:fixed;inset:0;z-index:220;background:rgba(30,24,48,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="width:90%;max-width:380px;background:var(--cr);border-radius:20px;padding:22px 18px 24px;">
+    <div class="serif" style="font-size:21px;color:var(--pd);margin-bottom:4px;">Session Setup</div>
+    <div style="font-size:11px;color:var(--tl);margin-bottom:16px;line-height:1.6;">Confirm what's connected. The SOAP note will only report feedback that was actually active.</div>
+
+    <!-- Headphones -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--ww);border-radius:10px;margin-bottom:7px;border:1px solid var(--br);">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--tx);">🎧 Wired Headphones</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Spatial audio — left ear early, right ear late</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="hw-headphones" onchange="updateHWSummary()"/><span class="tog-tk"></span></label>
+    </div>
+
+    <!-- Device haptics -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--ww);border-radius:10px;margin-bottom:7px;border:1px solid var(--br);">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--tx);">📳 Device Vibration</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Phone or tablet haptic feedback</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="hw-haptic" onchange="updateHWSummary()"/><span class="tog-tk"></span></label>
+    </div>
+
+    <!-- XAC pillow -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--ww);border-radius:10px;margin-bottom:12px;border:1px solid var(--br);">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--tx);">🎮 XAC Haptic Pillow</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Xbox Adaptive Controller + vibration cushion</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="hw-xac" onchange="updateHWSummary()"/><span class="tog-tk"></span></label>
+    </div>
+
+    <!-- Summary line -->
+    <div id="hw-summary" style="font-size:10px;color:var(--tl);background:var(--pp);border-radius:8px;padding:7px 10px;margin-bottom:14px;line-height:1.7;min-height:32px;"></div>
+
+    <!-- Don't ask again -->
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px;">
+      <input type="checkbox" id="hw-skip-always" style="accent-color:var(--p);width:14px;height:14px;"/>
+      <label for="hw-skip-always" style="font-size:11px;color:var(--tl);cursor:pointer;">Don't show this again (can reset in Settings)</label>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button class="btn-out" style="flex:1;" onclick="closeHWCheck()">Cancel</button>
+      <button class="btn" style="flex:2;" onclick="confirmHWAndStart()">Start Session ▶</button>
+    </div>
+  </div>
+</div>
+
 <!-- WEBGAZER EYE TRACKING CALIBRATION OVERLAY -->
 <div id="wg-setup" style="display:none;position:fixed;inset:0;z-index:260;background:rgba(4,4,16,.95);flex-direction:column;align-items:center;justify-content:center;">
   <!-- Step 1: Intro -->
@@ -857,6 +907,7 @@ const GM_DESC={
 
 /* ═══ SETTINGS ══════════════════════════════════════ */
 const S={soundMode:'count',audioOn:true,metroOn:true,hapticOn:true,rumbleOn:true,
+  hwCheckOn:true,  // show hardware confirmation before each session
   visualOn:true,speechOn:true,blindMode:false,therapistMode:false,hapticIntensity:.8};
 
 /* ═══ GAME STATE ════════════════════════════════════ */
@@ -1105,7 +1156,7 @@ function showScreen(id){
   const el=document.getElementById('screen-'+id);
   if(el) el.classList.add('active');
   if(id==='stats') renderStats();
-  if(id==='map')   { renderMap(); updateUserChip(); applyDesktopMapLayout(); }
+  if(id==='map')   { renderMap(); updateUserChip(); applyDesktopMapLayout(); SESSION_HW.checked=false; }
   if(id==='results') renderRes();
   if(id==='users')  renderUsers();
 }
@@ -2455,6 +2506,12 @@ function missAdapt(){G.consecMiss++;G.recentAcc.push(0);if(G.recentAcc.length>10
 
 /* ═══ GAME START / END ════════════════════════════ */
 function startCountdown(){
+  // Hardware check: show session setup overlay first (unless disabled or skipped)
+  const skipAlways=localStorage.getItem(HW_SKIP_KEY)==='1';
+  if(S.hwCheckOn&&!skipAlways&&!SESSION_HW.checked){
+    openHWCheck();
+    return;
+  }
   // Motion mode: show camera setup before countdown
   if(G.gameMode==='motion'&&(!M.active||!M.stream)){
     openMotionSetup();
@@ -2683,102 +2740,157 @@ function generateSOAP(sess){
   const beats=PATS[sess.level]?.length||G.total||0;
   const streak=sess.maxStreak||0;
 
-  // Age category label
-  const ageCatLabel={
-    peds:'Pediatric (0–17)',
-    adult:'Adult (18–64)',
-    older:'Older Adult (65+)',
-  }[u?.ageCat||'peds']||'Pediatric';
-
-  // Modality label
+  // Age and modality
+  const ageCatLabel={peds:'Pediatric (0–17)',adult:'Adult (18–64)',older:'Older Adult (65+)'}[u?.ageCat||'peds']||'Pediatric';
   const modalityLabel={
-    'hands-bi':'Bilateral hands',
-    'hands-r':'Right hand (unilateral)',
-    'hands-l':'Left hand (unilateral)',
-    'feet-bi':'Bilateral feet',
-    'feet-r':'Right foot (unilateral)',
-    'feet-l':'Left foot (unilateral)',
+    'hands-bi':'Bilateral hands','hands-r':'Right hand (unilateral)','hands-l':'Left hand (unilateral)',
+    'feet-bi':'Bilateral feet','feet-r':'Right foot (unilateral)','feet-l':'Left foot (unilateral)',
   }[u?.modality||'hands-bi']||'Bilateral hands';
-
   const isFeet=(u?.modality||'').startsWith('feet');
   const isUnilateral=(u?.modality||'').endsWith('-r')||(u?.modality||'').endsWith('-l');
-  const modalityNote=isFeet
-    ?`\n  Training modality: ${modalityLabel}. Note: foot tap BPM targets are set 8–10 BPM lower than hand targets to account for the longer motor loop (hip → knee → ankle → floor contact).`
-    :`\n  Training modality: ${modalityLabel}.`;
-  const unilateralNote=isUnilateral
-    ?` Unilateral training was selected; contralateral extremity was not used during this session.`:'';
-  const olderAdultNote=(u?.ageCat==='older')
-    ?`\n  Note: Hit window was widened per older adult protocol to capture timing pattern without penalizing age-related latency.`:'';
 
-  // Accuracy interpretation
-  const accInterp=acc>=80?'within functional range for this skill level'
-    :acc>=60?'emerging, with intermittent inaccuracies noted'
-    :acc>=40?'significantly below functional threshold, indicating continued need for direct intervention'
-    :'well below threshold, suggesting this level may exceed current capacity — consider reducing BPM or level';
+  // ── ACCURACY ──────────────────────────────────────────────────────────
+  const accInterp=
+    acc>=80 ? 'within functional range for this level and tempo'
+    :acc>=60 ? 'emerging — patient hit the beat accurately more than half the time but accuracy was inconsistent'
+    :acc>=40 ? 'below functional threshold — patient had significant difficulty matching the beat consistently; direct intervention is indicated'
+             : 'well below threshold — this level or tempo may currently exceed patient capacity; consider reducing BPM or level';
 
-  // Deviation interpretation
-  const devInterp=Math.abs(dev)<=30?'high precision (≤30ms), indicating strong temporal resolution'
-    :Math.abs(dev)<=60?'moderate precision (31–60ms), within expected range for active intervention'
-    :Math.abs(dev)<=100?'reduced precision (61–100ms), indicating temporal processing deficit'
-    :'significantly reduced precision (>100ms), consistent with moderate-severe timing deficit';
+  // ── TIMING ERROR (deviation) ───────────────────────────────────────────
+  const absdev=Math.abs(dev);
+  const devDir=dev>15?'tapping early (ahead of the beat)':dev<-15?'tapping late (behind the beat)':'centered on the beat';
+  const devInterp=
+    absdev<=30 ? `responses were accurate and well-timed (average error: ${dev>0?'+':''}${dev}ms)`
+    :absdev<=60 ? `responses were moderately accurate with a tendency toward ${devDir} (average error: ${dev>0?'+':''}${dev}ms)`
+    :absdev<=100? `responses showed a consistent pattern of ${devDir} with errors averaging ${dev>0?'+':''}${dev}ms — this level of error affects functional timing tasks`
+                : `timing errors were significant, averaging ${dev>0?'+':''}${dev}ms with a pattern of ${devDir} — consistent with a moderate to severe difficulty coordinating movement to an external rhythm`;
 
-  // Drift interpretation
+  // ── DRIFT (session trend) ──────────────────────────────────────────────
   const driftInterp={
-    stabilized:'Drift analysis (MTDE) indicated a stabilized pattern — deviations were consistent across the session without progressive deterioration.',
-    accelerating:`Drift analysis (MTDE) indicated an accelerating pattern (slope: ${Math.round(G.recentDev?.reduce?.((s,v,i,a)=>i?s+(v-a[i-1]):0,0)/Math.max(1,(G.recentDev?.length||1)-1))||0}ms/beat), with deviations trending earlier over the session. This pattern may reflect impulsivity, difficulty inhibiting anticipatory motor responses, or reduced self-monitoring.`,
-    dragging:`Drift analysis (MTDE) indicated a dragging pattern, with deviations trending later over the session. This may reflect processing delay, attentional fatigue, or motor planning difficulty.`,
-  }[drift]||'Drift analysis was inconclusive due to insufficient data points.';
+    stabilized:
+      'Timing accuracy remained consistent from the beginning to the end of the session, indicating the patient was able to sustain the timing task without significant deterioration.',
+    accelerating:
+      'Timing errors increased over the course of the session, with responses becoming progressively earlier as the session continued. ' +
+      'This pattern is consistent with difficulty waiting for the correct moment to respond — a motor equivalent of impulsivity — and may reflect challenges with response inhibition or self-monitoring.',
+    dragging:
+      'Timing errors increased over the course of the session, with responses becoming progressively later over time. ' +
+      'This pattern may reflect attention fatigue, slowed processing, or increasing difficulty with motor planning as the session progressed.',
+  }[drift]||'Session trend data was insufficient to determine a clear pattern.';
 
-  // Tendency
-  const tendInterp=tend==='early'?'Patient demonstrated a consistent early-tap tendency, suggesting anticipatory motor timing.'
-    :tend==='late'?'Patient demonstrated a consistent late-tap tendency, suggesting delayed motor initiation or processing.'
-    :'No significant early or late tendency was observed (balanced timing pattern).';
+  // ── TENDENCY (overall lean) ────────────────────────────────────────────
+  const tendInterp=
+    tend==='early' ?
+      'Overall, patient tended to tap before the beat throughout the session. This anticipatory pattern may reflect impulsivity or difficulty inhibiting a motor response until the correct moment — directly relevant to functional tasks requiring timing and turn-taking.'
+    :tend==='late' ?
+      'Overall, patient tended to tap after the beat throughout the session. This pattern may reflect delayed motor initiation or slower processing speed, which can affect tasks requiring timely, coordinated responses in daily activities.'
+    :
+      'No consistent early or late pattern was observed. Patient responses were centered around the beat without a significant directional tendency.';
 
-  // Mode context
+  // ── MODE CONTEXT ──────────────────────────────────────────────────────
   const modeContext={
-    standard:`EvoSensory Classic (Falling Notes)`,
-    bubblegum:`EvoSensory Classic (Bubble Blast — motivational engagement format)`,
-    targetrange:`EvoSensory Classic (Target Range — visual-motor integration format)`,
-    vocab:`EvoSensory Cognitive (Vocabulary Mode — phonological + timing dual task)`,
-    math:`EvoSensory Cognitive (Math Mode — number fluency + timing dual task)`,
-    oculomotor:`EvoSensory Oculomotor (${({pursuits:'Smooth Pursuits',saccades:'Saccadic Jumps',depth:'Depth Pulse / Convergence',gaze:'Gaze Hold / Sustained Fixation'}[ocuMode]||ocuMode)})`,
-    motion:`EvoSensory Motion (${({clap:'Bilateral clapping',knee:'Alternating knee taps with midline crossing',march:'Marching / alternating knee raises',jump:'Bilateral jumps'}[sess.motMode||M.motMode]||'Camera-based movement detection')})`,
-    activegames:`EvoSensory Active Games (${({stars:'Catch the Stars — lateral weight shifting',balloons:'Pop Balloons — overhead reach',soccer:'Kick Soccer — unilateral kicking pattern',dodge:'Duck & Jump — whole-body dynamic movement',sidestep:'Side Steps & Balance — dynamic lateral balance'}[sess.agMode||AG.mode]||'Active Games')})`,
+    standard:     'EvoSensory Classic — timed bilateral tapping with visual falling notes',
+    bubblegum:    'EvoSensory Classic — Bubble Blast format (motivational visual engagement)',
+    targetrange:  'EvoSensory Classic — Target Range format (visual-motor timing)',
+    vocab:        'EvoSensory Cognitive — Vocabulary Mode (patient spelled and repeated words timed to a metronome beat, targeting phonological processing and auditory-motor integration)',
+    math:         'EvoSensory Cognitive — Math Mode (patient counted or solved math sequences timed to a metronome beat, targeting number fluency and auditory-motor integration)',
+    oculomotor:   `EvoSensory Oculomotor — ${({
+      pursuits:'Smooth Pursuits (patient tracked a moving visual target and tapped in time with the beat; targets visual tracking and bilateral motor timing)',
+      saccades:'Saccadic Jumps (patient tracked a jumping dot between targets and tapped on each appearance; targets saccadic reaction time and timing)',
+      depth:   'Depth Pulse (expanding visual target timed to beat; targets visual convergence, accommodation, and timing)',
+      gaze:    'Gaze Hold (patient sustained fixation on a stationary target while tapping the beat; targets sustained visual attention and dual-task timing)',
+    }[ocuMode]||ocuMode)}`,
+    motion:       `EvoSensory Motion — ${({
+      clap:   'bilateral clapping timed to the metronome (targets bilateral upper extremity coordination and rhythmic motor timing)',
+      knee:   'alternating knee taps with midline crossing (right hand to left knee, left hand to right knee; targets midline crossing, bilateral integration, and ideomotor praxis)',
+      march:  'marching with alternating knee raises timed to the beat (targets bilateral lower extremity coordination, postural control, and rhythmic sequencing)',
+      jump:   'bilateral jumps timed to the metronome (targets bilateral lower extremity coordination, vestibular processing, and motor planning)',
+    }[sess.motMode||M.motMode]||'camera-based movement detection')}`,
+    activegames:  `EvoSensory Active Games — ${({
+      stars:    'Catch the Stars (lateral weight shifting and side-stepping; targets dynamic balance and vestibular processing)',
+      balloons: 'Pop Balloons (overhead reaching with alternating hands; targets shoulder range of motion and visual-motor coordination)',
+      soccer:   'Kick Soccer (unilateral foot kicking with alternating sides; targets lower extremity motor control and single-leg balance)',
+      dodge:    'Duck and Jump (whole-body ducking and jumping to avoid obstacles; targets motor planning, reaction time, and lower extremity coordination)',
+      sidestep: 'Side Steps and Balance (lateral stepping to targets with hold; targets dynamic and static balance and proprioception)',
+    }[sess.agMode||AG.mode]||'active body movement game')}`,
   }[mode]||mode;
 
-  const S2=`S: [Therapist to add — patient-reported response, engagement level, complaints, behavior during session]`;
-
+  // ── EYE TRACKING ──────────────────────────────────────────────────────
   const eyeNote=sess.eyeTracking&&sess.avgGazeLag!=null
-    ?`\n  Eye tracking (WebGazer): avg gaze lag ${sess.avgGazeLag>0?'+':''}${sess.avgGazeLag}px vs target. ${Math.abs(sess.avgGazeLag)<30?'Gaze closely followed target.':sess.avgGazeLag>30?'Gaze lagged target — eyes trailed behind moving stimulus.':'Gaze led target — eyes anticipated movement.'}`
+    ?`\n  Camera-based gaze screening was active during the oculomotor task. Average gaze position lagged behind the target by ${Math.abs(sess.avgGazeLag)}px. ${
+        Math.abs(sess.avgGazeLag)<30 ? 'Eyes closely followed the target throughout the task.'
+        :sess.avgGazeLag>30          ? 'Eyes consistently trailed behind the moving target, suggesting difficulty with smooth visual tracking.'
+                                     : 'Eyes tended to anticipate target movement.'
+      } Note: this is a camera-based screening estimate, not a clinical eye movement recording.`
     :'';
 
-  const O=`O: Patient (${ageCatLabel}) participated in rhythmic timing training using ${modeContext}. Session conducted on ${date}.
-${modalityNote}${unilateralNote}${olderAdultNote}
-  Level: ${lv.name} (Level ${lv.id}) | Tempo: ${bpm} BPM | Beats: ${beats}
-  Accuracy: ${acc}% (${accInterp})
-  Average timing deviation: ${dev>0?'+':''}${dev}ms (${devInterp})
-  Maximum streak: ${streak} consecutive accurate taps
-  ${driftInterp}
-  ${tendInterp}
-  ${ocuMode?`Oculomotor sub-mode: ${ocuMode}. OM tracking is tap-based (motor response proxy to visual stimuli).\n  `:''}${eyeNote}
-  Maximum streak: ${streak} consecutive accurate taps
-  ${driftInterp}
-  ${tendInterp}
-  ${ocuMode?`Oculomotor sub-mode: ${ocuMode}. OM tracking is tap-based (motor response proxy to visual stimuli).\n  `:''}${eyeNote}Spatial audio feedback (left ear = early; right ear = late) and haptic feedback provided throughout session.`;
+  // ── SENSORY FEEDBACK ──────────────────────────────────────────────────
+  const fbParts=[];
+  if(SESSION_HW.headphones) fbParts.push('spatial audio feedback via wired headphones (left ear = early response; right ear = late response)');
+  if(SESSION_HW.haptic)     fbParts.push('device vibration feedback');
+  if(SESSION_HW.xac)        fbParts.push('bilateral haptic feedback via XAC haptic pillow');
+  const fbNote=fbParts.length
+    ? 'Sensory feedback provided this session: '+fbParts.join('; ')+'.'
+    : 'No supplemental sensory feedback hardware was used this session. Training was delivered as timing and visual feedback only.';
 
-  const A=`A: Patient demonstrated [improvement / regression / plateau] in internal timing accuracy compared to prior session. ${acc>=70?'Performance is within functional range for this BPM level.':'Continued skilled intervention is indicated to address temporal processing deficits impacting occupational performance.'} ${tend!=='balanced'?`Timing tendency toward ${tend} taps may reflect ${tend==='early'?'impulsivity or poor inhibitory control':'processing delay or reduced attentional engagement'}, warranting further assessment.`:''} ${drift!=='stabilized'?`MTDE drift pattern (${drift}) suggests ${drift==='accelerating'?'difficulty sustaining inhibitory control across the session':'progressive attentional fatigue or processing decline over time'}.`:'Stable drift pattern suggests consistent regulation across the session.'}
+  // ── MODALITY NOTE ─────────────────────────────────────────────────────
+  const modalityNote=isFeet
+    ?`Training was conducted using ${modalityLabel}. Starting tempo was set lower than hand-based targets to account for the longer motor sequence involved in foot taps.`
+    :`Training was conducted using ${modalityLabel}.`;
+  const unilateralNote=isUnilateral?' The non-dominant or unaffected extremity was not used during this session.':'';
+  const olderAdultNote=u?.ageCat==='older'
+    ?' Response window was widened per older adult protocol to capture timing patterns without penalizing age-related differences in reaction time.':'';
 
-  [Therapist to add: functional connection to occupation — handwriting, reading, ADLs, social participation, etc.]`;
+  // ── ASSEMBLE ──────────────────────────────────────────────────────────
+  const S2=`S: [Therapist to add — patient-reported experience, engagement level, behavior observations, fatigue, and any comments made during the session]`;
 
-  const P=`P: Continue rhythmic timing training. ${acc>=80&&streak>=10?'Consider advancing to Level '+(Math.min(sess.level+1,6))+' or increasing BPM by 4.':acc<50?'Reduce BPM to '+Math.max(40,bpm-8)+' or trial Level '+Math.max(1,sess.level-1)+' to ensure success within Zone of Proximal Development.':'Maintain current level and BPM. Target ≥70% accuracy for 2 consecutive sessions before progressing.'}
+  const O=`O: Patient (${ageCatLabel}) participated in a rhythmic timing training session using ${modeContext}. Session date: ${date}.
 
-  Frequency/duration: [as per plan of care]
-  Home program: [Therapist to specify — e.g., 10 minutes daily, Level 1 warm-up, wired earbuds]
-  Next session focus: [Therapist to add]
+  ${modalityNote}${unilateralNote}${olderAdultNote}
+  Level: ${lv.name} (Level ${lv.id}) | Tempo: ${bpm} BPM | Total beats: ${beats}
 
-  — ${u?.name||'[Therapist Name]'} · [Credentials] · Evolving Therapy & Wellness`;
+  Timing accuracy: ${acc}% — ${accInterp}.
+  Timing consistency: ${devInterp}.
+  Maximum unbroken streak: ${streak} consecutive accurate responses.
 
-  return `SOAP NOTE — EvoSensory Session\nDate: ${date}\nPatient: ${name} | ${ageCatLabel} | ${modalityLabel}\nTherapist: Vanessa Dorado Walker, MS, OTR/L\n\n${S2}\n\n${O}\n\n${A}\n\n${P}\n\n---\nGenerated by EvoSensory · Evolving Therapy & Wellness · www.evolve-ot.com\nDraft only — edit before inclusion in clinical record.`;
+  Session trend: ${driftInterp}
+  Overall timing pattern: ${tendInterp}
+  ${ocuMode?`\n  Oculomotor task: Tapping responses were used as a motor proxy for visual tracking — the app records how closely timed the patient's tap was to each visual event.`:''}${eyeNote}
+
+  ${fbNote}`;
+
+  const A=`A: Patient demonstrated [improvement / no change / regression] in rhythmic timing accuracy compared to prior session.
+
+  ${acc>=70
+    ? 'Timing accuracy is within functional range for this level, indicating emerging ability to coordinate movement to an external rhythm.'
+    : 'Timing accuracy remains below functional threshold, indicating continued need for skilled intervention to develop internal timing, bilateral motor coordination, and the ability to sequence movement in time with an external cue.'}
+
+  ${tend!=='balanced'
+    ? `Patient showed a consistent ${tend==='early'?'early':'late'}-tap tendency throughout the session. ${tend==='early'
+        ?'This anticipatory pattern is consistent with difficulty inhibiting a motor response — a pattern that may manifest as impulsivity, rushing through tasks, or difficulty waiting for a turn in daily life.'
+        :'This delayed pattern is consistent with slower motor initiation, which may affect tasks requiring timely coordinated responses such as handwriting, dressing, and peer interactions.'}`
+    : 'No consistent early or late tendency was observed, suggesting improving temporal self-regulation.'}
+
+  ${drift!=='stabilized'
+    ? `Timing performance changed across the session (${drift==='accelerating'?'responses became progressively earlier':'responses became progressively later'}), which may indicate ${drift==='accelerating'?'difficulty sustaining inhibitory control over time':'attentional fatigue or processing decline during sustained tasks'}. This finding supports the need for continued direct skilled intervention.`
+    : 'Timing remained stable across the session, indicating the patient was able to sustain the task without significant deterioration.'}
+
+  [Therapist to add: connection to functional occupations — e.g., handwriting fluency, reading rhythm, ADL sequencing, social turn-taking, gait, sports]`;
+
+  const P=`P: Continue rhythmic timing training to address ${isFeet?'lower':'upper'} extremity motor timing, bilateral coordination, and ${tend!=='balanced'?tend==='early'?'response inhibition':'motor initiation':'timing regulation'}.
+
+  ${acc>=80&&streak>=10
+    ? `Patient met criteria for progression. Recommend advancing to Level ${Math.min(sess.level+1,6)} or increasing tempo to ${bpm+4} BPM at next session.`
+    : acc<50
+    ? `Recommend reducing tempo to ${Math.max(40,bpm-8)} BPM or trialing Level ${Math.max(1,sess.level-1)} to establish a reliable baseline before progressing.`
+    : `Maintain current level (${lv.name}) and tempo (${bpm} BPM). Target 70% or greater accuracy across two consecutive sessions before advancing.`}
+
+  Frequency and duration: [per plan of care]
+  Home program: [Therapist to specify — e.g., 5–10 minutes daily with free metronome app]
+  Next session priorities: [Therapist to add]
+
+  — Vanessa Dorado Walker, MS, OTR/L · Evolving Therapy & Wellness`;
+
+  return `SOAP NOTE — EvoSensory Rhythmic Timing Training\nDate: ${date}\nPatient: ${name} | ${ageCatLabel} | ${modalityLabel}\nTherapist: Vanessa Dorado Walker, MS, OTR/L\n\n${S2}\n\n${O}\n\n${A}\n\n${P}\n\n---\nGenerated by EvoSensory · Evolving Therapy & Wellness · www.evolve-ot.com\nThis is a draft note. Review and edit before including in any clinical record.`;
 }
 
 function openSOAP(result, sess){
@@ -3895,6 +4007,109 @@ function recordGazeLag(targetX,canvasW){
   const gazeCanvasX=(WG.gazeX-rect.left)*(canvasW/rect.width);
   const lagPx=gazeCanvasX-targetX;
   WG.gazeLag.push({beatIdx:G.lastBeatIdx,lagPx:Math.round(lagPx)});
+}
+
+/* ═══ PRE-SESSION HARDWARE CHECK ════════════════════
+   Tracks what hardware was actually active this session.
+   SOAP note reads from SESSION_HW, not S.* settings,
+   so it reflects reality not assumed defaults.
+═══════════════════════════════════════════════════ */
+const SESSION_HW={
+  headphones: false,
+  haptic:     false,
+  xac:        false,
+  checked:    false,  // was the dialog shown this session?
+};
+
+// localStorage key for "don't show again"
+const HW_SKIP_KEY='evo_hw_skip';
+
+function openHWCheck(){
+  const overlay=document.getElementById('hw-check-overlay');
+  if(!overlay) return;
+  // Pre-set toggles to last known state from localStorage
+  const saved=JSON.parse(localStorage.getItem('evo_hw_state')||'{}');
+  const hpEl=document.getElementById('hw-headphones');
+  const haEl=document.getElementById('hw-haptic');
+  const xaEl=document.getElementById('hw-xac');
+  if(hpEl) hpEl.checked=saved.headphones||false;
+  if(haEl) haEl.checked=saved.haptic||false;
+  if(xaEl) xaEl.checked=saved.xac||false;
+  updateHWSummary();
+  overlay.style.display='flex';
+}
+
+function closeHWCheck(){
+  document.getElementById('hw-check-overlay').style.display='none';
+}
+
+function updateHWSummary(){
+  const hp=document.getElementById('hw-headphones')?.checked;
+  const ha=document.getElementById('hw-haptic')?.checked;
+  const xa=document.getElementById('hw-xac')?.checked;
+  const el=document.getElementById('hw-summary');
+  if(!el) return;
+  const active=[];
+  if(hp) active.push('🎧 Spatial audio');
+  if(ha) active.push('📳 Device haptics');
+  if(xa) active.push('🎮 XAC pillow');
+  el.textContent=active.length
+    ? 'Active this session: '+active.join(', ')+'.'
+    : 'No sensory feedback hardware selected — timing only.';
+}
+
+function confirmHWAndStart(){
+  const hp=document.getElementById('hw-headphones')?.checked||false;
+  const ha=document.getElementById('hw-haptic')?.checked||false;
+  const xa=document.getElementById('hw-xac')?.checked||false;
+  // Store confirmed state
+  SESSION_HW.headphones=hp;
+  SESSION_HW.haptic=ha;
+  SESSION_HW.xac=xa;
+  SESSION_HW.checked=true;
+  // Update main settings to match (so audio engine fires correctly)
+  S.audioOn=hp;
+  S.hapticOn=ha;
+  S.rumbleOn=xa;
+  // Sync settings toggles
+  const ta=document.getElementById('tog-audio');if(ta) ta.checked=hp;
+  const th=document.getElementById('tog-hap');if(th) th.checked=ha;
+  const tr=document.getElementById('tog-rum');if(tr) tr.checked=xa;
+  // Save for next time
+  localStorage.setItem('evo_hw_state',JSON.stringify({headphones:hp,haptic:ha,xac:xa}));
+  // Handle "don't show again"
+  if(document.getElementById('hw-skip-always')?.checked){
+    localStorage.setItem(HW_SKIP_KEY,'1');
+    S.hwCheckOn=false;
+    const tog=document.getElementById('tog-hwcheck');if(tog) tog.checked=false;
+  }
+  closeHWCheck();
+  proceedWithCountdown();
+}
+
+function proceedWithCountdown(){
+  // Continue the countdown flow that was intercepted
+  // Re-check other intercepts (WG, motion)
+  if(G.gameMode==='motion'&&(!M.active||!M.stream)){openMotionSetup();return;}
+  if(G.gameMode==='activegames'&&(!M.active||!M.stream)){openAGSetup();return;}
+  if(G.gameMode==='oculomotor'&&WG.active&&!WG.calibrated){openWGSetup();return;}
+  initAudio();
+  G.items=[];G.particles=[];G.popups=[];G.beats=[];G.hits=[];
+  G.score=0;G.streak=0;G.maxStreak=0;G.beatsDone=0;G.consecMiss=0;
+  G.recentDev=[];G.recentAcc=[];G.blindStart=null;G.cvOpacity=1;G.crossGlow=0;
+  G.bubble={size:0,max:68,burstParts:[],mood:'idle'};
+  G.adaptWin=120;G.customBpm=false;
+  const lv=LVS.find(l=>l.id===G.lvId)||LVS[0];
+  G.total=PATS[G.lvId]?.length||32;
+  G.patIdx=0;G.nextBeat=null;
+  showScreen('countdown');
+  let cd=3;
+  document.getElementById('cd-num').textContent=cd;
+  const cdIv=setInterval(()=>{
+    cd--;
+    if(cd>0){document.getElementById('cd-num').textContent=cd;}
+    else{clearInterval(cdIv);beginGame();}
+  },1000);
 }
 
 /* ═══ CALIBRATION ═══════════════════════════════════ */
