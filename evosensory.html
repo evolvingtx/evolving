@@ -7,9 +7,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="EvoSensory"/>
-<meta name="theme-color" content="#5C4490"/>
+<meta name="theme-color" content="#3E2D6E"/>
 <meta name="description" content="EvoSensory — Multi-Sensory Rhythmic Timing Training by Evolving Therapy & Wellness"/>
 <title>EvoSensory | Evolving Therapy & Wellness</title>
+<!-- Favicon: purple circle with ES lettering -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%233E2D6E'/%3E%3Ccircle cx='50' cy='50' r='43' fill='none' stroke='%239B88C4' stroke-width='3'/%3E%3Ctext x='50' y='63' font-family='Georgia%2Cserif' font-size='38' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
+<!-- Apple home screen icon (Save to Home Screen on iPhone/iPad) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='38' fill='%233E2D6E'/%3E%3Ccircle cx='90' cy='90' r='76' fill='none' stroke='%239B88C4' stroke-width='4.5'/%3E%3Ctext x='90' y='114' font-family='Georgia%2Cserif' font-size='70' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -185,11 +189,38 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
 
 <!-- NEW USER MODAL -->
 <div id="new-user-modal">
-  <div class="modal-box">
+  <div class="modal-box" style="max-height:92vh;overflow-y:auto;">
     <div class="modal-title">New Player</div>
+
+    <!-- Name -->
     <input class="modal-input" id="new-user-name" placeholder="Name or initials (e.g. Mia, J.T.)" maxlength="20" autocomplete="off"/>
-    <div style="font-size:11px;color:var(--tl);margin-bottom:8px;">Pick a color:</div>
+
+    <!-- Age category -->
+    <div style="font-size:11px;color:var(--tl);margin-bottom:5px;font-weight:500;">Age Category</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:12px;" id="age-cat-row">
+      <button class="pill-btn active" data-ac="peds" onclick="pickAgeCat('peds')" style="font-size:10px;padding:6px 4px;">🧒 Pediatric<br><span style="font-size:9px;color:var(--tl);">0–17</span></button>
+      <button class="pill-btn" data-ac="adult" onclick="pickAgeCat('adult')" style="font-size:10px;padding:6px 4px;">🧑 Adult<br><span style="font-size:9px;color:var(--tl);">18–64</span></button>
+      <button class="pill-btn" data-ac="older" onclick="pickAgeCat('older')" style="font-size:10px;padding:6px 4px;">🧓 Older Adult<br><span style="font-size:9px;color:var(--tl);">65+</span></button>
+    </div>
+
+    <!-- Modality -->
+    <div style="font-size:11px;color:var(--tl);margin-bottom:5px;font-weight:500;">Primary Training Modality</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;" id="modality-row">
+      <button class="pill-btn active" data-mod="hands-bi" onclick="pickModality('hands-bi')" style="font-size:10px;padding:6px 4px;">🤲 Hands<br><span style="font-size:9px;color:var(--tl);">Bilateral</span></button>
+      <button class="pill-btn" data-mod="hands-r" onclick="pickModality('hands-r')" style="font-size:10px;padding:6px 4px;">✋ Hand<br><span style="font-size:9px;color:var(--tl);">Right only</span></button>
+      <button class="pill-btn" data-mod="hands-l" onclick="pickModality('hands-l')" style="font-size:10px;padding:6px 4px;">🤚 Hand<br><span style="font-size:9px;color:var(--tl);">Left only</span></button>
+      <button class="pill-btn" data-mod="feet-bi" onclick="pickModality('feet-bi')" style="font-size:10px;padding:6px 4px;">👣 Feet<br><span style="font-size:9px;color:var(--tl);">Bilateral</span></button>
+      <button class="pill-btn" data-mod="feet-r" onclick="pickModality('feet-r')" style="font-size:10px;padding:6px 4px;">🦵 Foot<br><span style="font-size:9px;color:var(--tl);">Right only</span></button>
+      <button class="pill-btn" data-mod="feet-l" onclick="pickModality('feet-l')" style="font-size:10px;padding:6px 4px;">🦵 Foot<br><span style="font-size:9px;color:var(--tl);">Left only</span></button>
+    </div>
+
+    <!-- Suggested BPM callout — updates dynamically -->
+    <div id="new-user-bpm-hint" style="background:var(--gp);border:1px solid var(--gn);border-radius:8px;padding:7px 10px;font-size:10px;color:var(--tx);margin-bottom:12px;line-height:1.7;"></div>
+
+    <!-- Color -->
+    <div style="font-size:11px;color:var(--tl);margin-bottom:6px;">Pick a color:</div>
     <div class="avatar-picker" id="avatar-picker"></div>
+
     <div class="row">
       <button class="btn-out" style="flex:1;" onclick="closeNewUser()">Cancel</button>
       <button class="btn" style="flex:2;" onclick="saveNewUser()">Add Player ▶</button>
@@ -793,6 +824,16 @@ function setActiveUser(uid){
   activeUserId = uid;
   localStorage.setItem(AU_KEY, uid);
   loadSess();
+  // Apply user-specific defaults to the map screen
+  const u = getActiveUser();
+  if(u){
+    if(u.bpmDefault && !G.customBpm){
+      G.bpm = u.bpmDefault;
+    }
+    if(u.hitWindowBase){
+      G.hitWindowBase = u.hitWindowBase;
+    }
+  }
   updateUserChip();
 }
 
@@ -840,9 +881,60 @@ function selectUser(uid){
 
 /* ─── New user modal ───────────────────────────── */
 let pendingColorIdx = 0;
+let pendingAgeCat   = 'peds';   // peds | adult | older
+let pendingModality = 'hands-bi'; // hands-bi | hands-r | hands-l | feet-bi | feet-r | feet-l
+
+// BPM defaults by category + modality
+const BPM_DEFAULTS = {
+  // [startBPM, label description]
+  'peds-hands-bi':  [60, 'Pediatric · Bilateral hands · Start 60 BPM'],
+  'peds-hands-r':   [60, 'Pediatric · Right hand · Start 60 BPM'],
+  'peds-hands-l':   [60, 'Pediatric · Left hand · Start 60 BPM'],
+  'peds-feet-bi':   [52, 'Pediatric · Bilateral feet · Start 52 BPM (motor loop longer for feet)'],
+  'peds-feet-r':    [52, 'Pediatric · Right foot · Start 52 BPM'],
+  'peds-feet-l':    [52, 'Pediatric · Left foot · Start 52 BPM'],
+  'adult-hands-bi': [66, 'Adult · Bilateral hands · Start 66 BPM'],
+  'adult-hands-r':  [66, 'Adult · Right hand · Start 66 BPM'],
+  'adult-hands-l':  [66, 'Adult · Left hand · Start 66 BPM'],
+  'adult-feet-bi':  [56, 'Adult · Bilateral feet · Start 56 BPM'],
+  'adult-feet-r':   [56, 'Adult · Right foot · Start 56 BPM'],
+  'adult-feet-l':   [56, 'Adult · Left foot · Start 56 BPM'],
+  'older-hands-bi': [52, 'Older Adult · Bilateral hands · Start 52 BPM · Wider hit window applied'],
+  'older-hands-r':  [52, 'Older Adult · Right hand · Start 52 BPM · Wider hit window applied'],
+  'older-hands-l':  [52, 'Older Adult · Left hand · Start 52 BPM · Wider hit window applied'],
+  'older-feet-bi':  [44, 'Older Adult · Bilateral feet · Start 44 BPM · Floor switch recommended'],
+  'older-feet-r':   [44, 'Older Adult · Right foot · Start 44 BPM · Floor switch recommended'],
+  'older-feet-l':   [44, 'Older Adult · Left foot · Start 44 BPM · Floor switch recommended'],
+};
+
+function updateBPMHint(){
+  const key=`${pendingAgeCat}-${pendingModality}`;
+  const def=BPM_DEFAULTS[key];
+  const hint=document.getElementById('new-user-bpm-hint');
+  if(!hint) return;
+  if(def){
+    const isFeet=pendingModality.startsWith('feet');
+    const isOlder=pendingAgeCat==='older';
+    hint.innerHTML=`<strong style="color:var(--gn);">📊 Suggested starting BPM: ${def[0]}</strong><br>${def[1]}${isFeet?'<br>💡 Foot taps start 8–10 BPM slower than hand taps — longer motor loop from hip to floor contact.':''}${isOlder?'<br>⚡ Hit window starts wider for older adults to capture timing pattern, not penalize latency.':''}`;
+  }
+}
+
+function pickAgeCat(cat){
+  pendingAgeCat=cat;
+  document.querySelectorAll('#age-cat-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.ac===cat));
+  updateBPMHint();
+}
+
+function pickModality(mod){
+  pendingModality=mod;
+  document.querySelectorAll('#modality-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mod===mod));
+  updateBPMHint();
+}
 
 function openNewUser(){
   pendingColorIdx = USERS.length % AVATAR_COLORS.length;
+  pendingAgeCat   = 'peds';
+  pendingModality = 'hands-bi';
   // Build color picker
   const picker = document.getElementById('avatar-picker');
   if(picker){
@@ -850,7 +942,11 @@ function openNewUser(){
       `<div class="av-opt${i===pendingColorIdx?' selected':''}" style="background:${c}" data-ci="${i}" onclick="pickColor(${i})">${AVATAR_EMOJIS[i]}</div>`
     ).join('');
   }
+  // Reset pickers
+  document.querySelectorAll('#age-cat-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.ac==='peds'));
+  document.querySelectorAll('#modality-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mod==='hands-bi'));
   document.getElementById('new-user-name').value = '';
+  updateBPMHint();
   document.getElementById('new-user-modal').classList.add('active');
   setTimeout(()=>document.getElementById('new-user-name').focus(), 100);
 }
@@ -868,12 +964,21 @@ function saveNewUser(){
   if(!name){ nameEl?.focus(); return; }
   const id = 'u_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
   const color = AVATAR_COLORS[pendingColorIdx];
-  USERS.push({id, name, color, colorIdx:pendingColorIdx});
+  const key=`${pendingAgeCat}-${pendingModality}`;
+  const bpmDefault=BPM_DEFAULTS[key]?.[0]||60;
+  const hitWindowBase=pendingAgeCat==='older'?160:120; // wider for older adults
+  USERS.push({
+    id, name, color, colorIdx:pendingColorIdx,
+    ageCat:pendingAgeCat,
+    modality:pendingModality,
+    bpmDefault,
+    hitWindowBase,
+  });
   saveUsers();
   closeNewUser();
   setActiveUser(id);
   renderUsers();
-  localStorage.setItem('rr_seen_'+id, '0'); // mark as new so welcome shows
+  localStorage.setItem('rr_seen_'+id, '0');
   showScreen('welcome');
 }
 
@@ -2331,6 +2436,33 @@ function generateSOAP(sess){
   const beats=PATS[sess.level]?.length||G.total||0;
   const streak=sess.maxStreak||0;
 
+  // Age category label
+  const ageCatLabel={
+    peds:'Pediatric (0–17)',
+    adult:'Adult (18–64)',
+    older:'Older Adult (65+)',
+  }[u?.ageCat||'peds']||'Pediatric';
+
+  // Modality label
+  const modalityLabel={
+    'hands-bi':'Bilateral hands',
+    'hands-r':'Right hand (unilateral)',
+    'hands-l':'Left hand (unilateral)',
+    'feet-bi':'Bilateral feet',
+    'feet-r':'Right foot (unilateral)',
+    'feet-l':'Left foot (unilateral)',
+  }[u?.modality||'hands-bi']||'Bilateral hands';
+
+  const isFeet=(u?.modality||'').startsWith('feet');
+  const isUnilateral=(u?.modality||'').endsWith('-r')||(u?.modality||'').endsWith('-l');
+  const modalityNote=isFeet
+    ?`\n  Training modality: ${modalityLabel}. Note: foot tap BPM targets are set 8–10 BPM lower than hand targets to account for the longer motor loop (hip → knee → ankle → floor contact).`
+    :`\n  Training modality: ${modalityLabel}.`;
+  const unilateralNote=isUnilateral
+    ?` Unilateral training was selected; contralateral extremity was not used during this session.`:'';
+  const olderAdultNote=(u?.ageCat==='older')
+    ?`\n  Note: Hit window was widened per older adult protocol to capture timing pattern without penalizing age-related latency.`:'';
+
   // Accuracy interpretation
   const accInterp=acc>=80?'within functional range for this skill level'
     :acc>=60?'emerging, with intermittent inaccuracies noted'
@@ -2363,20 +2495,25 @@ function generateSOAP(sess){
     vocab:`EvoSensory Cognitive (Vocabulary Mode — phonological + timing dual task)`,
     math:`EvoSensory Cognitive (Math Mode — number fluency + timing dual task)`,
     oculomotor:`EvoSensory Oculomotor (${({pursuits:'Smooth Pursuits',saccades:'Saccadic Jumps',depth:'Depth Pulse / Convergence',gaze:'Gaze Hold / Sustained Fixation'}[ocuMode]||ocuMode)})`,
-    motion:`EvoSensory Motion (Camera-based movement detection)`,
+    motion:`EvoSensory Motion (${({clap:'Bilateral clapping',knee:'Alternating knee taps with midline crossing',march:'Marching / alternating knee raises',jump:'Bilateral jumps'}[sess.motMode||M.motMode]||'Camera-based movement detection')})`,
+    activegames:`EvoSensory Active Games (${({stars:'Catch the Stars — lateral weight shifting',balloons:'Pop Balloons — overhead reach',soccer:'Kick Soccer — unilateral kicking pattern',dodge:'Duck & Jump — whole-body dynamic movement',sidestep:'Side Steps & Balance — dynamic lateral balance'}[sess.agMode||AG.mode]||'Active Games')})`,
   }[mode]||mode;
 
-  const S=`S: [Therapist to add — patient-reported response, engagement level, complaints, behavior during session]`;
+  const S2=`S: [Therapist to add — patient-reported response, engagement level, complaints, behavior during session]`;
 
   const eyeNote=sess.eyeTracking&&sess.avgGazeLag!=null
     ?`\n  Eye tracking (WebGazer): avg gaze lag ${sess.avgGazeLag>0?'+':''}${sess.avgGazeLag}px vs target. ${Math.abs(sess.avgGazeLag)<30?'Gaze closely followed target.':sess.avgGazeLag>30?'Gaze lagged target — eyes trailed behind moving stimulus.':'Gaze led target — eyes anticipated movement.'}`
     :'';
 
-  const O=`O: Patient participated in rhythmic timing training using ${modeContext}. Session conducted on ${date}.
-
+  const O=`O: Patient (${ageCatLabel}) participated in rhythmic timing training using ${modeContext}. Session conducted on ${date}.
+${modalityNote}${unilateralNote}${olderAdultNote}
   Level: ${lv.name} (Level ${lv.id}) | Tempo: ${bpm} BPM | Beats: ${beats}
   Accuracy: ${acc}% (${accInterp})
   Average timing deviation: ${dev>0?'+':''}${dev}ms (${devInterp})
+  Maximum streak: ${streak} consecutive accurate taps
+  ${driftInterp}
+  ${tendInterp}
+  ${ocuMode?`Oculomotor sub-mode: ${ocuMode}. OM tracking is tap-based (motor response proxy to visual stimuli).\n  `:''}${eyeNote}
   Maximum streak: ${streak} consecutive accurate taps
   ${driftInterp}
   ${tendInterp}
@@ -2394,7 +2531,7 @@ function generateSOAP(sess){
 
   — ${u?.name||'[Therapist Name]'} · [Credentials] · Evolving Therapy & Wellness`;
 
-  return `SOAP NOTE — EvoSensory Session\nDate: ${date}\nPatient: ${name}\nTherapist: Vanessa Dorado Walker, MS, OTR/L\n\n${S}\n\n${O}\n\n${A}\n\n${P}\n\n---\nGenerated by EvoSensory · Evolving Therapy & Wellness · www.evolve-ot.com\nDraft only — edit before inclusion in clinical record.`;
+  return `SOAP NOTE — EvoSensory Session\nDate: ${date}\nPatient: ${name} | ${ageCatLabel} | ${modalityLabel}\nTherapist: Vanessa Dorado Walker, MS, OTR/L\n\n${S2}\n\n${O}\n\n${A}\n\n${P}\n\n---\nGenerated by EvoSensory · Evolving Therapy & Wellness · www.evolve-ot.com\nDraft only — edit before inclusion in clinical record.`;
 }
 
 function openSOAP(result, sess){
@@ -2564,9 +2701,21 @@ async function loadMediaPipePose(){
   const loadEl=document.getElementById('mp-load-status');
   if(loadEl) loadEl.style.display='block';
   try{
-    if(!window.Pose) await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js');
-    if(!window.drawConnectors) await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js');
-    M.pose=new window.Pose({locateFile:(f)=>`https://cdn.jsdelivr.net/npm/@mediapipe/pose/${f}`});
+    // Use pinned version — unpinned @mediapipe/pose resolves unreliably
+    const MP_VER='0.5.1675469404';
+    const MP_CDN=`https://cdn.jsdelivr.net/npm/@mediapipe/pose@${MP_VER}`;
+    if(!window.Pose){
+      try{await loadScript(`${MP_CDN}/pose.js`);}
+      catch(e){
+        // jsdelivr failed — try unpkg fallback
+        await loadScript(`https://unpkg.com/@mediapipe/pose@${MP_VER}/pose.js`);
+      }
+    }
+    if(!window.drawConnectors){
+      try{await loadScript(`${MP_CDN}/drawing_utils.js`);}
+      catch(e){await loadScript(`https://unpkg.com/@mediapipe/pose@${MP_VER}/drawing_utils.js`);}
+    }
+    M.pose=new window.Pose({locateFile:(f)=>`${MP_CDN}/${f}`});
     M.pose.setOptions({modelComplexity:1,smoothLandmarks:true,enableSegmentation:false,
       minDetectionConfidence:0.55,minTrackingConfidence:0.55});
     M.pose.onResults((results)=>{
@@ -2615,6 +2764,31 @@ function previewSkeletonLoop(){
   async function frame(){
     if(!M.stream){_previewRunning=false;return;}
     if(M.pose&&vid&&vid.readyState>=2){try{await M.pose.send({image:vid});}catch(e){}}
+    // Auto-enable Start when enough body landmarks are visible
+    const startBtn=document.getElementById('motion-start-btn');
+    if(startBtn&&M.landmarks&&M.poseLoaded&&!M.useFallback){
+      const keyLandmarks=[PL.L_SHOULDER,PL.R_SHOULDER,PL.L_HIP,PL.R_HIP];
+      const allVisible=keyLandmarks.every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.5);
+      if(allVisible){
+        startBtn.disabled=false;
+        // Check if full-body modes need ankles too
+        const fullBodyModes=['march','jump','sidestep','soccer','stars','dodge'];
+        const needsFullBody=fullBodyModes.includes(M.motMode)||fullBodyModes.includes(AG.mode);
+        if(needsFullBody){
+          const anklesOk=[PL.L_ANKLE,PL.R_ANKLE].every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.4);
+          const status=document.getElementById('motion-status');
+          if(status) status.textContent=anklesOk?'✓ Full body detected — ready!':'⬇️ Step back — need to see full body including feet';
+          startBtn.disabled=!anklesOk;
+        } else {
+          const status=document.getElementById('motion-status');
+          if(status) status.textContent='✓ Body detected — ready!';
+        }
+      } else {
+        const status=document.getElementById('motion-status');
+        if(status) status.textContent='Looking for body… position yourself in frame';
+        startBtn.disabled=true;
+      }
+    }
     if(M.useFallback&&vid&&vid.readyState>=2&&M.offCtx){
       M.offCtx.drawImage(vid,0,0,80,60);
       const curr=M.offCtx.getImageData(0,0,80,60).data;
@@ -3287,11 +3461,30 @@ async function startWGCalibration(){
   // Small delay to let Chrome release the camera track
   await new Promise(r=>setTimeout(r,400));
 
+  // Show loading status in intro panel
+  const wgStatus=document.getElementById('wg-intro');
+  if(wgStatus){
+    const existing=document.getElementById('wg-loading-msg');
+    if(!existing){
+      const msg=document.createElement('div');
+      msg.id='wg-loading-msg';
+      msg.style.cssText='font-size:11px;color:var(--p);margin-top:10px;text-align:center;';
+      msg.textContent='⏳ Opening camera…';
+      wgStatus.appendChild(msg);
+    } else existing.textContent='⏳ Opening camera…';
+  }
+
   try{
-    // If WebGazer already started, just resume and skip begin()
-    if(WG.wgStarted){
-      webgazer.resume();
-    } else {
+    // If WebGazer already started, resume — but check it's still functional
+    if(WG.wgStarted&&window.webgazer){
+      try{webgazer.resume();}
+      catch(e){
+        // resume failed — full restart
+        WG.wgStarted=false;
+        try{await webgazer.end();}catch(e2){}
+      }
+    }
+    if(!WG.wgStarted){
       window.webgazer
         .setRegression('ridge')
         .setGazeListener((data)=>{
@@ -3303,22 +3496,32 @@ async function startWGCalibration(){
       await webgazer.begin();
       WG.wgStarted=true;
     }
-    // Move WG video into our calibration div
+    const loadMsg=document.getElementById('wg-loading-msg');
+    if(loadMsg) loadMsg.textContent='✓ Camera ready';
+    // Move WG video into calibration div
     setTimeout(()=>{
-      const wgVid=document.getElementById('webgazerVideoFeed');
+      const wgVid=document.getElementById('webgazerVideoFeed')||
+                  document.querySelector('video[id^="webgazer"]');
       const calibDiv=document.getElementById('wg-calibration');
       if(wgVid&&calibDiv&&wgVid.parentNode!==calibDiv){
         wgVid.style.cssText='position:absolute;bottom:16px;right:16px;width:90px;height:68px;border-radius:8px;object-fit:cover;border:2px solid var(--pl);opacity:.7;transform:scaleX(-1);z-index:5;';
         calibDiv.appendChild(wgVid);
       }
-    },600);
+    },800);
   }catch(e){
     console.error('WebGazer begin error:',e);
-    const msg=e?.name==='NotReadableError'||e?.message?.includes('use')
-      ?'Camera is still releasing from previous use. Wait 2 seconds and try again.'
-      :'Eye tracking could not start: '+e.message;
-    alert(msg);
-    closeWGSetup();
+    const loadMsg=document.getElementById('wg-loading-msg');
+    let msg='Eye tracking could not start.';
+    if(e?.name==='NotReadableError'||e?.message?.includes('use')||e?.message?.includes('busy')){
+      msg='Camera busy — wait 3 seconds and try again. If this keeps happening, close other browser tabs or apps using the camera.';
+    } else if(e?.name==='NotAllowedError'||e?.message?.includes('Permission')){
+      msg='Camera permission denied. Click the camera icon in the Chrome address bar and allow access, then try again.';
+    } else {
+      msg='Eye tracking could not start: '+(e.message||e.name||'unknown error');
+    }
+    if(loadMsg) loadMsg.style.color='var(--rd)';
+    if(loadMsg) loadMsg.textContent='✗ '+msg;
+    // Don't close — let user read the message and try again or cancel
     return;
   }
 
@@ -3370,7 +3573,7 @@ function calibrateDot(idx,x,y){
       document.getElementById('wg-calibration').style.display='none';
       document.getElementById('wg-ready').style.display='block';
       // Hide WG video preview during game
-      const wgVid=document.getElementById('webgazerVideoFeed');
+      const wgVid=document.getElementById('webgazerVideoFeed')||document.querySelector('video[id*="webgazer"]');
       if(wgVid) wgVid.style.display='none';
     },500);
   }
@@ -3380,7 +3583,7 @@ function stopWGCamera(){
   // WG manages its own stream — pause it rather than killing the stream
   try{if(window.webgazer) webgazer.pause();}catch(e){}
   if(WG.stream){WG.stream.getTracks().forEach(t=>t.stop());WG.stream=null;}
-  const wgVid=document.getElementById('webgazerVideoFeed');
+  const wgVid=document.getElementById('webgazerVideoFeed')||document.querySelector('video[id*="webgazer"]');
   if(wgVid) wgVid.style.display='none';
 }
 
@@ -3389,7 +3592,7 @@ function startAfterWGCalib(){
   // Resume WG prediction (was paused during calibration display)
   try{if(window.webgazer) webgazer.resume();}catch(e){}
   // Hide the WG video element so it doesn't overlap game canvas
-  const wgVid=document.getElementById('webgazerVideoFeed');
+  const wgVid=document.getElementById('webgazerVideoFeed')||document.querySelector('video[id*="webgazer"]');
   if(wgVid) wgVid.style.display='none';
   WG.gazeLag=[];
   startCountdown();
