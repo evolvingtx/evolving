@@ -137,6 +137,114 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
 .tap-btn:focus-visible{outline:4px solid white;outline-offset:3px;}
 .btn-sm{min-height:36px;}
 .bpm-btn{min-width:44px;min-height:44px;}
+
+/* ═══ DESKTOP LAYOUT ≥900px ═══════════════════════════════════
+   Two-column map. Large game canvas. Wide welcome/stats/results.
+═══════════════════════════════════════════════════════════════ */
+@media (min-width:900px){
+
+  /* Global container widening */
+  .screen{padding:20px 32px 32px;}
+  .mx{max-width:560px;}
+  .nav,.hud,.pb-wrap,.drift-box,#tap-btns{max-width:860px;}
+
+  /* ── MAP SCREEN — two-column ── */
+  #screen-map{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  #screen-map .nav{max-width:100%;width:100%;}
+  #screen-map > .nav{margin-bottom:8px;}
+
+  /* Two-column wrapper — injected by JS */
+  .dt-map-cols{
+    display:grid;
+    grid-template-columns:300px 1fr;
+    gap:16px;
+    width:100%;
+    max-width:1000px;
+    align-items:start;
+  }
+  .dt-map-left{display:flex;flex-direction:column;gap:10px;}
+  .dt-map-right{display:flex;flex-direction:column;gap:10px;}
+
+  /* Map SVG panel wider */
+  #screen-map > div:has(#map-svg){max-width:100%;}
+  .dt-map-right > div:has(#map-svg){
+    height:200px;
+    min-width:0;
+  }
+  .dt-map-right > div:has(#map-svg) svg{
+    width:100%;height:200px;
+  }
+  #buddy-pos{transform:translate(-50%,-100%) scale(.55);}
+
+  /* Cards full width inside their column */
+  .dt-map-left .card,
+  .dt-map-right .card,
+  .dt-map-left .btn,
+  .dt-map-right .btn{
+    max-width:100%;width:100%;
+  }
+
+  /* ── GAME SCREEN — big canvas ── */
+  #screen-game{
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:flex-start;
+    gap:12px;
+    padding:16px 24px;
+  }
+  #cw{
+    width:660px;
+    height:500px;
+    max-width:calc(100vw - 280px);
+    flex-shrink:0;
+  }
+  /* Game sidebar — HUD, drift, tap buttons stacked on right */
+  .dt-game-sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:240px;
+    flex-shrink:0;
+  }
+  /* On mobile the sidebar doesn't exist — show original layout */
+  .hud,.drift-box,.pb-wrap,#tap-btns{max-width:100%;}
+
+  /* ── WELCOME — two-column hardware + modules ── */
+  #screen-welcome{align-items:center;}
+  #screen-welcome > .mx{max-width:860px;}
+  #screen-welcome .card{max-width:860px;}
+  #screen-welcome .btn{max-width:860px;}
+
+  /* ── RESULTS ── */
+  #screen-results > .mx,
+  #screen-results > .card{max-width:760px;}
+
+  /* ── STATS ── */
+  #screen-stats > .mx,
+  #screen-stats > .card{max-width:900px;}
+
+  /* ── COUNTDOWN ── */
+  .cd-num{font-size:140px;}
+
+  /* ── MODALS wider ── */
+  .modal-box{max-width:520px;}
+  .s-panel{max-width:560px;border-radius:20px;margin:auto;margin-top:auto;align-self:center;}
+  #overlay-settings.active{align-items:center;}
+
+  /* ── tap buttons larger on desktop ── */
+  .tap-btn{padding:26px 0;font-size:20px;border-radius:14px;}
+  .tap-btn.C{padding:26px 0;}
+
+  /* ── BPM display larger ── */
+  #bpm-disp{font-size:36px!important;}
+
+  /* ── Canvas size ── */
+  #cw{height:480px;}
+}
 /* User profiles */
 #screen-users{background:linear-gradient(160deg,var(--pp) 0%,var(--cr) 55%);}
 .user-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:400px;}
@@ -292,9 +400,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
 
   <div class="label">Beat Sound</div>
   <div class="pill-row cols3" id="sound-pills">
-    <button class="pill-btn" data-sm="click" onclick="setSM('click')">Click</button>
-    <button class="pill-btn active" data-sm="count" onclick="setSM('count')">1–2 Count</button>
-    <button class="pill-btn" data-sm="notes" onclick="setSM('notes')">Notes</button>
+    <button class="pill-btn" data-sm="click" onclick="setSM('click')">Single Beat</button>
+    <button class="pill-btn active" data-sm="count" onclick="setSM('count')">Double Beat</button>
+    <button class="pill-btn" data-sm="spoken" onclick="setSM('spoken')">1–2 Spoken</button>
   </div>
 
   <div class="label">Sensory Outputs</div>
@@ -997,10 +1105,96 @@ function showScreen(id){
   const el=document.getElementById('screen-'+id);
   if(el) el.classList.add('active');
   if(id==='stats') renderStats();
-  if(id==='map')   { renderMap(); updateUserChip(); }
+  if(id==='map')   { renderMap(); updateUserChip(); applyDesktopMapLayout(); }
   if(id==='results') renderRes();
   if(id==='users')  renderUsers();
 }
+
+function applyDesktopMapLayout(){
+  const isDesktop=window.innerWidth>=900;
+  const map=document.getElementById('screen-map');
+  if(!map) return;
+
+  // Remove any existing desktop wrapper
+  const existing=document.getElementById('dt-map-cols');
+  if(existing){
+    while(existing.firstChild){
+      const child=existing.firstChild;
+      if(child.classList&&child.classList.contains('dt-map-left')){
+        while(child.firstChild) map.insertBefore(child.firstChild, existing);
+      } else if(child.classList&&child.classList.contains('dt-map-right')){
+        while(child.firstChild) map.insertBefore(child.firstChild, existing);
+      } else {
+        map.insertBefore(child, existing);
+      }
+    }
+    existing.remove();
+  }
+
+  if(!isDesktop) return;
+
+  const cols=document.createElement('div');
+  cols.id='dt-map-cols';cols.className='dt-map-cols';
+  const left=document.createElement('div');left.className='dt-map-left';
+  const right=document.createElement('div');right.className='dt-map-right';
+
+  const children=[...map.children];
+  children.forEach(child=>{
+    if(child.classList&&child.classList.contains('nav')) return;
+    if(child.id==='dt-map-cols') return;
+    const isModuleCard=child.querySelector&&child.querySelector('#gm-pills');
+    if(isModuleCard) left.appendChild(child);
+    else right.appendChild(child);
+  });
+
+  cols.appendChild(left);cols.appendChild(right);
+  map.appendChild(cols);
+}
+
+function applyDesktopGameLayout(){
+  const isDesktop=window.innerWidth>=900;
+  const gameScreen=document.getElementById('screen-game');
+  if(!gameScreen) return;
+
+  const existingWrap=document.getElementById('dt-game-wrap');
+  if(existingWrap){
+    while(existingWrap.firstChild) gameScreen.insertBefore(existingWrap.firstChild, existingWrap);
+    existingWrap.remove();
+  }
+
+  if(!isDesktop) return;
+
+  // Move canvas to left, everything else to right sidebar
+  const wrap=document.createElement('div');
+  wrap.id='dt-game-wrap';
+  wrap.style.cssText='display:flex;gap:14px;width:100%;max-width:960px;align-items:flex-start;';
+
+  const cwEl=document.getElementById('cw');
+  const sidebar=document.createElement('div');
+  sidebar.className='dt-game-sidebar';
+
+  const gameChildren=[...gameScreen.children];
+  gameChildren.forEach(child=>{
+    if(child===cwEl){
+      wrap.appendChild(cwEl);
+    } else {
+      sidebar.appendChild(child);
+    }
+  });
+
+  wrap.appendChild(sidebar);
+  gameScreen.appendChild(wrap);
+}
+
+// Re-apply on resize
+window.addEventListener('resize',()=>{
+  if(document.getElementById('screen-map')?.classList.contains('active')){
+    applyDesktopMapLayout();
+  }
+  if(document.getElementById('screen-game')?.classList.contains('active')){
+    applyDesktopGameLayout();
+  }
+});
 function setSM(m){S.soundMode=m;document.querySelectorAll('#sound-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.sm===m));}
 function setGM(m){
   if(G.gameMode==='motion'&&m!=='motion') stopMotionCamera();
@@ -1123,11 +1317,63 @@ function initAudio(){if(!G.audioCtx)G.audioCtx=new(window.AudioContext||window.w
 function playBeat(when,idx){
   // In vocab and math modes, spoken content replaces the beat sound entirely
   if(G.gameMode==='vocab'||G.gameMode==='math') return;
-  if(!S.metroOn||!G.audioCtx)return;
-  const ctx=G.audioCtx,acc=idx%2===0,m=S.soundMode;
-  if(m==='click'){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=acc?1000:700;g.gain.setValueAtTime(acc?.28:.16,when);g.gain.exponentialRampToValueAtTime(.001,when+.05);o.start(when);o.stop(when+.07);}
-  else if(m==='count'){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='triangle';o.frequency.value=acc?880:440;g.gain.setValueAtTime(acc?.28:.18,when);g.gain.exponentialRampToValueAtTime(.001,when+.1);o.start(when);o.stop(when+.12);}
-  else{const scale=[294,330,392,440,587,659,784],f=scale[idx%scale.length];const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(acc?.22:.14,when);g.gain.exponentialRampToValueAtTime(.001,when+.2);o.start(when);o.stop(when+.22);}
+  if(!S.metroOn||!G.audioCtx) return;
+  const ctx=G.audioCtx, acc=idx%2===0, m=S.soundMode;
+
+  if(m==='click'){
+    // Single beat — one clean click per beat, louder accent on beat 1
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=acc?1050:1050; // same pitch both beats — single pattern
+    g.gain.setValueAtTime(acc?.32:.32,when);
+    g.gain.exponentialRampToValueAtTime(.001,when+.04);
+    o.start(when);o.stop(when+.06);
+
+  } else if(m==='count'){
+    // Double beat — high tone beat 1, low tone beat 2
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='triangle';
+    o.frequency.value=acc?900:500;
+    g.gain.setValueAtTime(acc?.30:.20,when);
+    g.gain.exponentialRampToValueAtTime(.001,when+.1);
+    o.start(when);o.stop(when+.12);
+
+  } else if(m==='spoken'){
+    // 1-2 Spoken — tone + speech. Says "one" on beat 1, "two" on beat 2.
+    // Tone still fires so there's immediate auditory feedback before speech latency
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';
+    o.frequency.value=acc?660:440;
+    g.gain.setValueAtTime(acc?.18:.12,when);
+    g.gain.exponentialRampToValueAtTime(.001,when+.06);
+    o.start(when);o.stop(when+.08);
+    // Schedule speech — small delay to align with the beat
+    const delayMs=Math.max(0,(when-ctx.currentTime)*1000);
+    setTimeout(()=>{
+      if(!S.speechOn&&S.soundMode==='spoken'){
+        // Force speak even if speech toggle is off — spoken count IS the beat
+        speakCount(acc?'one':'two');
+      } else if(S.soundMode==='spoken'){
+        speakCount(acc?'one':'two');
+      }
+    }, delayMs);
+  }
+}
+
+function speakCount(word){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(word);
+  u.rate=1.1; u.pitch=1.1; u.volume=1.0;
+  // Use a clear voice if available
+  const voices=window.speechSynthesis.getVoices();
+  const pref=voices.find(v=>v.lang==='en-US'&&v.localService)||
+             voices.find(v=>v.lang.startsWith('en')&&v.localService)||
+             voices.find(v=>v.lang.startsWith('en'))||null;
+  if(pref) u.voice=pref;
+  window.speechSynthesis.speak(u);
 }
 
 /* ═══ AUDIO HAPTICS (mobile-only fallback) ══════════
@@ -2286,6 +2532,7 @@ function startCountdown(){
 function beginGame(){
   G.playing=true;if(S.blindMode)G.blindStart=Date.now();
   showScreen('game');
+  applyDesktopGameLayout();
   const cw=document.getElementById('cw'),gc=document.getElementById('gc');
   const sz=()=>{gc.width=cw.offsetWidth||380;gc.height=cw.offsetHeight||260;};sz();
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}}
@@ -2411,7 +2658,7 @@ function printRpt(){
   const imp=f3&&l3&&f3>0?Math.round((1-l3/f3)*100):null;
   const rows=last.map(x=>`<tr><td>${new Date(x.date).toLocaleDateString()}</td><td>Lv${x.level}</td><td>${x.bpm}</td><td>${x.accuracy}%</td><td>${x.avgDev>0?'+':''}${x.avgDev}ms</td><td>${x.score}</td><td>${x.driftTrend||'—'}</td><td style="color:#4A8C6F">${x.ocuMode||'—'}</td></tr>`).join('');
   const w=window.open('','_blank');if(!w)return;
-  w.document.write(`<!DOCTYPE html><html><head><title>EvoSensory Progress Report</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;}h1{color:#3E2D6E;font-size:20px;border-bottom:2px solid #EDE8F5;padding-bottom:8px;}h2{color:#5C4490;font-size:13px;margin-top:20px;}.meta{font-size:11px;color:#5A4E72;margin-bottom:14px;}table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#EDE8F5;color:#3E2D6E;padding:7px 5px;text-align:left;font-weight:500;}td{padding:5px;border-bottom:1px solid #EDE8F5;}tr:nth-child(even) td{background:#F7F4FB;}.stats{display:flex;gap:20px;flex-wrap:wrap;margin:10px 0;}.stat .v{font-size:20px;font-weight:700;color:#5C4490;}.stat .k{font-size:10px;color:#5A4E72;}.note{margin-top:16px;font-size:10px;color:#9B88C4;border-top:1px solid #EDE8F5;padding-top:8px;}</style></head><body><h1>EvoSensory Progress Report</h1><div class="meta">Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · www.evolve-ot.com · ${new Date().toLocaleDateString()}</div><h2>Summary</h2><div class="stats"><div class="stat"><div class="v">${s.length}</div><div class="k">Sessions</div></div><div class="stat"><div class="v">${best}ms</div><div class="k">Best Variance</div></div>${imp!=null?`<div class="stat"><div class="v">${imp>0?'+':''}${imp}%</div><div class="k">Improvement</div></div>`:''}</div><h2>Last ${last.length} Sessions</h2><table><tr><th>Date</th><th>Level</th><th>BPM</th><th>Accuracy</th><th>Avg Dev</th><th>Score</th><th>Drift</th><th>OM Mode</th></tr>${rows}</table><p class="note">EvoSensory — Multi-Sensory Rhythmic Timing Training. Modules: Classic (rhythmic timing + haptics), Oculomotor (visual tracking), Cognitive (vocabulary + math), Motion (coming soon). The Micro-Timing Drift Engine (MTDE) tracks timing trends using linear regression. Oculomotor tracking is tap-based: motor response timing to visual stimuli, providing a proxy measure of visual detection and reaction.</p><p class="note">© 2026 Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · Admin@Evolve-OT.com · www.evolve-ot.com</p></body></html>`);
+  w.document.write(`<!DOCTYPE html><html><head><title>EvoSensory Progress Report</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;}h1{color:#3E2D6E;font-size:20px;border-bottom:2px solid #EDE8F5;padding-bottom:8px;}h2{color:#5C4490;font-size:13px;margin-top:20px;}.meta{font-size:11px;color:#5A4E72;margin-bottom:14px;}table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#EDE8F5;color:#3E2D6E;padding:7px 5px;text-align:left;font-weight:500;}td{padding:5px;border-bottom:1px solid #EDE8F5;}tr:nth-child(even) td{background:#F7F4FB;}.stats{display:flex;gap:20px;flex-wrap:wrap;margin:10px 0;}.stat .v{font-size:20px;font-weight:700;color:#5C4490;}.stat .k{font-size:10px;color:#5A4E72;}.note{margin-top:16px;font-size:10px;color:#9B88C4;border-top:1px solid #EDE8F5;padding-top:8px;}</style></head><body><h1>EvoSensory Progress Report</h1><div class="meta">Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · www.evolve-ot.com · ${new Date().toLocaleDateString()}</div><h2>Summary</h2><div class="stats"><div class="stat"><div class="v">${s.length}</div><div class="k">Sessions</div></div><div class="stat"><div class="v">${best}ms</div><div class="k">Best Variance</div></div>${imp!=null?`<div class="stat"><div class="v">${imp>0?'+':''}${imp}%</div><div class="k">Improvement</div></div>`:''}</div><h2>Last ${last.length} Sessions</h2><table><tr><th>Date</th><th>Level</th><th>BPM</th><th>Accuracy</th><th>Avg Dev</th><th>Score</th><th>Drift</th><th>OM Mode</th></tr>${rows}</table><p class="note">EvoSensory — Multi-Sensory Rhythmic Timing Training. Modules: Classic (rhythmic timing + haptics), Oculomotor (visual tracking), Cognitive (vocabulary + math), Motion (coming soon). The Micro-Timing Drift Engine (MTDE) tracks timing trends using linear regression. Oculomotor tracking is tap-based: motor response timing to visual stimuli, providing a proxy measure of visual detection and reaction.</p><p class="note">© 2026 Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · vanessa@evolve-ot.com · www.evolve-ot.com</p></body></html>`);
   w.document.close();setTimeout(()=>w.print(),400);
 }
 
@@ -3479,20 +3726,31 @@ async function startWGCalibration(){
     if(WG.wgStarted&&window.webgazer){
       try{webgazer.resume();}
       catch(e){
-        // resume failed — full restart
         WG.wgStarted=false;
         try{await webgazer.end();}catch(e2){}
       }
     }
     if(!WG.wgStarted){
-      window.webgazer
-        .setRegression('ridge')
-        .setGazeListener((data)=>{
+      // Do NOT chain — setRegression returns void in some builds
+      if(typeof webgazer.setRegression==='function'){
+        try{webgazer.setRegression('ridge');}catch(e){}
+      }
+      if(typeof webgazer.setGazeListener==='function'){
+        webgazer.setGazeListener((data)=>{
           if(data){WG.gazeX=data.x;WG.gazeY=data.y;}
         });
-      webgazer.showVideoPreview(true);
-      webgazer.showPredictionPoints(false);
-      webgazer.saveDataAcrossSessions(false);
+      }
+      // showVideoPreview and showPredictionPoints may not exist in all builds
+      if(typeof webgazer.showVideoPreview==='function'){
+        try{webgazer.showVideoPreview(true);}catch(e){}
+      }
+      if(typeof webgazer.showPredictionPoints==='function'){
+        try{webgazer.showPredictionPoints(false);}catch(e){}
+      }
+      // saveDataAcrossSessions doesn't exist in all builds — skip safely
+      if(typeof webgazer.saveDataAcrossSessions==='function'){
+        try{webgazer.saveDataAcrossSessions(false);}catch(e){}
+      }
       await webgazer.begin();
       WG.wgStarted=true;
     }
@@ -3501,7 +3759,7 @@ async function startWGCalibration(){
     // Move WG video into calibration div
     setTimeout(()=>{
       const wgVid=document.getElementById('webgazerVideoFeed')||
-                  document.querySelector('video[id^="webgazer"]');
+                  document.querySelector('video[id*="webgazer"]');
       const calibDiv=document.getElementById('wg-calibration');
       if(wgVid&&calibDiv&&wgVid.parentNode!==calibDiv){
         wgVid.style.cssText='position:absolute;bottom:16px;right:16px;width:90px;height:68px;border-radius:8px;object-fit:cover;border:2px solid var(--pl);opacity:.7;transform:scaleX(-1);z-index:5;';
