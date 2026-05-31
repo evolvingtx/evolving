@@ -2,19 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#3E2D6E"/>
 <title>EvoSensory | Evolving Therapy & Wellness</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%233E2D6E'/%3E%3Ccircle cx='50' cy='50' r='43' fill='none' stroke='%239B88C4' stroke-width='3'/%3E%3Ctext x='50' y='63' font-family='Georgia%2Cserif' font-size='38' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{--p:#5C4490;--pl:#9B88C4;--pp:#EDE8F5;--pd:#3E2D6E;--cr:#FDFBF9;--ww:#F7F4FB;--tx:#1E1830;--tl:#5A4E72;--gn:#4A8C6F;--gp:#E8F5EF;--go:#C4922A;--gop:#FBF2EA;--rd:#B85450;--br:rgba(92,68,144,.15);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{font-family:'Jost',sans-serif;background:var(--cr);color:var(--tx);overflow-x:hidden;}
-.serif{font-family:'Cormorant Garamond',Georgia,serif;}
-nav{background:white;border-bottom:1px solid var(--br);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--pd);font-weight:500;}
-.nav-logo span{font-size:11px;color:var(--tl);display:block;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif;font-weight:400;}
-.nav-link{font-size:13px;color:var(--p);text-decoration:none;font-weight:500;}
+/* ── NAV ── */
+nav{background:white;border-bottom:1px solid var(--br);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--pd);font-weight:500;text-decoration:none;}
+.nav-logo span{font-size:10px;color:var(--tl);display:block;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif;font-weight:400;}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nav-link{font-size:12px;color:var(--p);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:6px;transition:background .15s;white-space:nowrap;}
+.nav-link:hover{background:var(--pp);}
+.nav-link.active{background:var(--pp);color:var(--pd);}
+.nav-launch{font-size:12px;background:var(--p);color:white;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:600;white-space:nowrap;transition:background .2s;}
+.nav-launch:hover{background:var(--pd);}
+/* ── HERO ── */
 .hero{background:linear-gradient(150deg,var(--pd) 0%,var(--p) 55%,#8B6DB8 100%);padding:60px 20px 70px;text-align:center;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:-60px;left:-60px;width:300px;height:300px;border-radius:50%;border:1px solid rgba(255,255,255,.08);pointer-events:none;}
 .hero::after{content:'';position:absolute;bottom:-80px;right:-40px;width:240px;height:240px;border-radius:50%;border:1px solid rgba(255,255,255,.06);pointer-events:none;}
@@ -25,63 +33,83 @@ nav{background:white;border-bottom:1px solid var(--br);padding:14px 20px;display
 .hero-btn{display:inline-block;background:white;color:var(--p);padding:16px 38px;border-radius:12px;font:600 16px/1 'Jost',sans-serif;text-decoration:none;transition:all .2s;box-shadow:0 4px 24px rgba(0,0,0,.2);}
 .hero-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3);}
 .hero-note{font-size:11px;color:rgba(255,255,255,.5);margin-top:14px;}
-section{padding:52px 20px;max-width:700px;margin:0 auto;}
+/* ── LAYOUT ── */
+section{padding:44px 20px;max-width:700px;margin:0 auto;}
 .section-label{font-size:11px;font-weight:500;color:var(--pl);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:34px;color:var(--pd);line-height:1.2;margin-bottom:16px;}
-.section-body{font-size:14px;color:var(--tl);line-height:1.85;}
-.beta-banner{background:linear-gradient(120deg,#FFF8E8,#FFF3D0);border:1px solid var(--go);border-radius:14px;padding:18px 22px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--pd);line-height:1.2;margin-bottom:14px;}
+.section-body{font-size:14px;color:var(--tl);line-height:1.85;margin-bottom:10px;}
+/* ── BETA BANNER ── */
+.beta-banner{background:linear-gradient(120deg,#FFF8E8,#FFF3D0);border:1px solid var(--go);border-radius:14px;padding:18px 22px;max-width:700px;margin:24px auto 0;}
 .beta-banner h3{font-size:15px;font-weight:600;color:var(--go);margin-bottom:8px;}
 .beta-banner p,.beta-banner ul{font-size:13px;color:var(--tx);line-height:1.8;}
 .beta-banner ul{padding-left:18px;margin-top:6px;}
-/* Module grid */
-.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;}
-.module-card{background:white;border:1px solid var(--br);border-radius:16px;padding:18px 16px;}
-.module-icon{font-size:28px;margin-bottom:9px;}
-.module-name{font-size:14px;font-weight:600;color:var(--p);margin-bottom:6px;}
-.module-name .badge{font-size:9px;background:var(--gn);color:white;padding:2px 7px;border-radius:8px;margin-left:6px;font-weight:500;}
-.module-name .beta-b{font-size:9px;background:var(--go);color:white;padding:2px 7px;border-radius:8px;margin-left:6px;}
-.module-name .phase{font-size:9px;background:var(--pl);color:white;padding:2px 7px;border-radius:8px;margin-left:6px;}
-.module-desc{font-size:12px;color:var(--tl);line-height:1.68;}
-/* Feedback steps */
-.step-row{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--br);}
-.step-row:last-child{border-bottom:none;}
-.step-num{width:32px;height:32px;border-radius:50%;background:var(--p);color:white;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-.step-text{font-size:13px;color:var(--tx);line-height:1.78;}
-.step-text strong{color:var(--p);}
-/* Protocol callout */
-.protocol-box{background:var(--gop);border:1px solid var(--go);border-radius:14px;padding:20px 22px;margin-top:20px;display:flex;gap:16px;align-items:flex-start;}
-.protocol-icon{font-size:32px;flex-shrink:0;}
-.protocol-body h4{font-size:14px;font-weight:600;color:var(--go);margin-bottom:6px;}
-.protocol-body p{font-size:13px;color:var(--tx);line-height:1.75;margin-bottom:10px;}
-.protocol-link{display:inline-block;background:var(--go);color:white;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:500;text-decoration:none;transition:opacity .2s;}
+/* ── MODULE GRID ── */
+.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+.module-card{background:white;border:1px solid var(--br);border-radius:14px;padding:16px 14px;text-decoration:none;display:block;transition:transform .2s,box-shadow .2s;}
+.module-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px var(--br);}
+.module-icon{font-size:26px;margin-bottom:8px;}
+.module-name{font-size:13px;font-weight:600;color:var(--p);margin-bottom:5px;}
+.module-name .badge{font-size:9px;background:var(--gn);color:white;padding:2px 6px;border-radius:6px;margin-left:5px;}
+.module-name .beta-b{font-size:9px;background:var(--go);color:white;padding:2px 6px;border-radius:6px;margin-left:5px;}
+.module-desc{font-size:11.5px;color:var(--tl);line-height:1.65;}
+/* ── WHAT IS IT ── */
+.what-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;}
+.what-card{background:var(--ww);border:1px solid var(--br);border-radius:12px;padding:14px 12px;text-align:center;}
+.what-icon{font-size:22px;margin-bottom:6px;}
+.what-title{font-size:12px;font-weight:600;color:var(--pd);margin-bottom:4px;}
+.what-desc{font-size:11px;color:var(--tl);line-height:1.6;}
+/* ── NAV TILES ── */
+.page-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+.page-tile{background:white;border:1.5px solid var(--br);border-radius:14px;padding:16px 14px;text-decoration:none;display:block;transition:all .2s;}
+.page-tile:hover{border-color:var(--p);transform:translateY(-2px);}
+.page-tile-icon{font-size:20px;margin-bottom:6px;}
+.page-tile-title{font-size:13px;font-weight:600;color:var(--p);margin-bottom:3px;}
+.page-tile-desc{font-size:11px;color:var(--tl);line-height:1.6;}
+/* ── PROTOCOL BOX ── */
+.protocol-box{background:var(--gop);border:1px solid var(--go);border-radius:14px;padding:18px 20px;margin-top:18px;display:flex;gap:14px;align-items:flex-start;}
+.protocol-icon{font-size:28px;flex-shrink:0;}
+.protocol-body h4{font-size:13px;font-weight:600;color:var(--go);margin-bottom:5px;}
+.protocol-body p{font-size:12.5px;color:var(--tx);line-height:1.75;margin-bottom:10px;}
+.protocol-link{display:inline-block;background:var(--go);color:white;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:500;text-decoration:none;}
 .protocol-link:hover{opacity:.85;}
-/* HW table */
-.hw-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:16px;}
-.hw-table th{background:var(--pp);color:var(--pd);padding:9px 10px;text-align:left;font-weight:500;}
-.hw-table td{padding:9px 10px;border-bottom:1px solid var(--br);color:var(--tl);}
-.hw-table tr:nth-child(even) td{background:var(--ww);}
-.hw-table td:first-child{font-weight:500;color:var(--tx);}
-/* Clinical callout */
-.clinical-note{background:var(--gp);border:1px solid var(--gn);border-radius:11px;padding:14px 16px;font-size:12px;color:var(--tx);line-height:1.78;margin-top:16px;}
-/* WG disclosure */
-.wg-note{background:var(--pp);border:1px solid var(--pl);border-radius:11px;padding:13px 16px;font-size:12px;color:var(--tx);line-height:1.75;margin-top:12px;}
-/* CTA */
-.cta{background:linear-gradient(140deg,var(--pp),var(--ww));border-radius:20px;padding:40px 28px;text-align:center;margin:0 0 52px;}
-.cta-title{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--pd);margin-bottom:10px;}
-.cta-sub{font-size:14px;color:var(--tl);max-width:400px;margin:0 auto 24px;line-height:1.7;}
-.cta-btn{display:inline-block;background:var(--p);color:white;padding:15px 36px;border-radius:11px;font:600 15px/1 'Jost',sans-serif;text-decoration:none;transition:all .2s;}
+/* ── UPDATES ── */
+.update-item{border-left:3px solid var(--p);padding:10px 0 10px 14px;margin-bottom:14px;}
+.update-date{font-size:10px;font-weight:600;color:var(--pl);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.update-title{font-size:14px;font-weight:600;color:var(--pd);margin-bottom:4px;}
+.update-body{font-size:13px;color:var(--tl);line-height:1.75;}
+.update-body ul{padding-left:16px;margin-top:4px;}
+.update-body li{margin-bottom:3px;}
+/* ── CTA ── */
+.cta{background:linear-gradient(140deg,var(--pp),var(--ww));border-radius:20px;padding:36px 24px;text-align:center;margin:0 0 48px;}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--pd);margin-bottom:10px;}
+.cta-sub{font-size:14px;color:var(--tl);max-width:400px;margin:0 auto 20px;line-height:1.7;}
+.cta-btn{display:inline-block;background:var(--p);color:white;padding:14px 34px;border-radius:11px;font:600 14px/1 'Jost',sans-serif;text-decoration:none;transition:all .2s;}
 .cta-btn:hover{background:var(--pd);transform:translateY(-2px);}
-footer{background:var(--pd);color:rgba(255,255,255,.65);padding:28px 20px;text-align:center;font-size:11px;line-height:2;}
+/* ── FOOTER ── */
+footer{background:var(--pd);color:rgba(255,255,255,.65);padding:28px 20px;text-align:center;font-size:11px;line-height:2.1;}
 footer a{color:rgba(255,255,255,.8);text-decoration:none;}
 footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
-@media(max-width:560px){.hero-title{font-size:38px;}.module-grid{grid-template-columns:1fr;}.protocol-box{flex-direction:column;gap:10px;}}
+/* ── MOBILE ── */
+@media(max-width:700px){
+  .hero-title{font-size:38px;}
+  .module-grid{grid-template-columns:1fr;}
+  .what-grid{grid-template-columns:1fr 1fr;}
+  .page-tiles{grid-template-columns:1fr;}
+  .protocol-box{flex-direction:column;gap:10px;}
+}
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">EvoSensory<span>Evolving Therapy &amp; Wellness</span></div>
-  <a href="evosensory.html" class="nav-link">Launch App →</a>
+  <a href="evosensory-about.html" class="nav-logo">EvoSensory<span>Evolving Therapy &amp; Wellness</span></a>
+  <div class="nav-links">
+    <a href="evosensory-about.html" class="nav-link active">About</a>
+    <a href="evosensory-manual.html" class="nav-link">Manual</a>
+    <a href="evosensory-modules.html" class="nav-link">Modules</a>
+  </div>
+  <a href="evosensory.html" class="nav-launch">Launch App →</a>
 </nav>
 
 <!-- HERO -->
@@ -91,226 +119,196 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
   <div class="hero-sub">Multi-Sensory Rhythmic Timing Training</div>
   <p class="hero-tagline">A browser-based clinical tool that trains timing, visual tracking, language, and movement through layered, real-time sensory feedback — developed by a pediatric OT.</p>
   <a href="evosensory.html" class="hero-btn">Launch EvoSensory ▶</a>
-  <div class="hero-note">Free to use · No install · Wired headphones recommended for full spatial audio</div>
+  <div class="hero-note">No install required · Wired headphones recommended</div>
 </div>
 
 <!-- BETA NOTICE -->
-<div style="max-width:700px;margin:32px auto 0;padding:0 20px;">
-<div class="beta-banner">
+<div style="max-width:700px;margin:0 auto;padding:0 20px;">
+<div class="beta-banner" style="margin:24px 0 0;">
   <h3>📋 Beta Test Notice</h3>
-  <p>You're accessing an early beta. A few things to know:</p>
+  <p>You're accessing an early beta. Features are being actively refined based on real clinical use. Your observations, bugs, and feedback are exactly what's needed right now.</p>
   <ul>
-    <li>Visual polish is still in progress — a full design update is coming</li>
-    <li>Features marked BETA are being actively refined based on real clinical use</li>
-    <li>Your observations, bugs, and clinical feedback are exactly what I need right now</li>
-    <li>Reach out at <strong>Admin@Evolve-OT.com</strong> — I read every message</li>
+    <li>Camera modules (Motion, Active Games) require Chrome on a Windows, Mac, or Android computer</li>
+    <li>Eye tracking requires Chrome on desktop — not supported on iPhone or Safari</li>
+    <li>Visual design polish is still in progress</li>
+    <li>Access is free during the beta period</li>
+    <li>Feedback: <strong>vanessa@evolve-ot.com</strong></li>
   </ul>
-  <p style="margin-top:10px;font-size:12px;color:var(--tl);">Thank you for your time and clinical lens. This is being shared with a small group of trusted colleagues before public launch.</p>
 </div>
 </div>
 
 <!-- WHAT IS IT -->
 <section>
-  <div class="section-label">About</div>
+  <div class="section-label">What It Is</div>
   <h2 class="section-title">What Is EvoSensory?</h2>
-  <p class="section-body">EvoSensory is a multi-sensory rhythmic timing training platform I built as a pediatric OT because I couldn't find a tool that delivered real-time, clinically meaningful feedback without a significant equipment investment or subscription fee. It runs entirely in a web browser. A device and a pair of wired earbuds give you the full therapeutic loop.</p>
+  <p class="section-body">EvoSensory is a rhythmic timing training platform built by a pediatric OT. A patient taps in time with a metronome beat. The app measures — to the millisecond — how accurately they hit the beat, whether they tend to tap early or late, and whether their timing gets better or worse as the session progresses. That data becomes a SOAP note draft automatically.</p>
+  <p class="section-body">It runs in any browser. Nothing to install. No subscription required.</p>
 
-  <p class="section-body" style="margin-top:12px;">The core of the app is the <strong style="color:var(--p);">Micro-Timing Drift Engine (MTDE)</strong> — a real-time algorithm that tracks the slope of your timing errors across consecutive beats using linear regression. It doesn't just tell you if a tap was early or late. It tells you whether your timing is stabilizing, accelerating, or dragging — and adapts the audio and haptic feedback accordingly. That multi-beat trend analysis is not available in basic metronome-based software.</p>
-
-  <p class="section-body" style="margin-top:12px;">Rhythmic timing training has a strong evidence base across ADHD, DCD, dyslexia, TBI, cerebral palsy, and general sensory processing challenges. The research consistently shows that structured, precise metronome-based feedback improves bilateral coordination, attention, motor planning, processing speed, and reading. EvoSensory puts that clinical approach in a free, no-install tool that works from a school Chromebook or a $40 Android tablet.</p>
+  <div class="what-grid">
+    <div class="what-card">
+      <div class="what-icon">🎯</div>
+      <div class="what-title">Accuracy</div>
+      <div class="what-desc" style="text-align:left;"><strong style="display:block;font-size:10.5px;color:var(--pd);margin-bottom:2px;">% of beats hit</strong>Were they on task?</div>
+    </div>
+    <div class="what-card">
+      <div class="what-icon">⏱️</div>
+      <div class="what-title">Deviation</div>
+      <div class="what-desc" style="text-align:left;"><strong style="display:block;font-size:10.5px;color:var(--pd);margin-bottom:2px;">ms (milliseconds) from the beat</strong>Lower deviations are better.<br><span style="color:var(--go);font-weight:500;">(+) = early</span> &nbsp; <span style="color:var(--p);font-weight:500;">(−) = late</span></div>
+    </div>
+    <div class="what-card">
+      <div class="what-icon">📈</div>
+      <div class="what-title">Session Trend</div>
+      <div class="what-desc">Did timing hold, drift early, or drift late over time?</div>
+    </div>
+  </div>
+  <p class="section-body" style="margin-top:14px;font-size:13px;background:var(--pp);border-radius:10px;padding:10px 14px;color:var(--tx);">A patient can score high accuracy <em>and</em> have significant timing deviation. These measure different skills. <a href="evosensory-manual.html#results" style="color:var(--p);font-weight:500;">See the full interpretation guide →</a></p>
 </section>
 
-<!-- MODULES -->
+<!-- RESEARCH -->
+<section style="padding-top:0;">
+  <div class="section-label">The Evidence</div>
+  <h2 class="section-title">Why Rhythmic Timing Training Works</h2>
+  <p class="section-body">Rhythmic timing training has a strong evidence base built over three decades of research across OT, PT, special education, and neuroscience. The core mechanism is well established: the brain's internal timing system — involving the cerebellum, basal ganglia, supplementary motor area, and prefrontal cortex — can be trained through structured, repetitive practice synchronizing movement to an external beat.</p>
+  <p class="section-body">When this system is less efficient, the effects are visible in daily life: impulsivity, bilateral coordination difficulty, slow processing, reading challenges, handwriting struggles, and poor motor sequencing. EvoSensory makes timing errors measurable and documentable in a way a therapist watching cannot achieve with the naked eye.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">
+    <div style="background:var(--ww);border:1px solid var(--br);border-radius:10px;padding:12px 13px;">
+      <div style="font-size:12px;font-weight:600;color:var(--p);margin-bottom:4px;">ADHD &amp; Attention</div>
+      <div style="font-size:12px;color:var(--tl);line-height:1.65;">Children with ADHD show measurable timing deficits independent of inattention. Rhythmic training reduces impulsivity and improves sustained attention through cerebellar-prefrontal pathways.</div>
+    </div>
+    <div style="background:var(--ww);border:1px solid var(--br);border-radius:10px;padding:12px 13px;">
+      <div style="font-size:12px;font-weight:600;color:var(--p);margin-bottom:4px;">DCD &amp; Bilateral Coordination</div>
+      <div style="font-size:12px;color:var(--tl);line-height:1.65;">Rhythmic timing training improves alternating limb timing and interlimb synchronization in DCD. Improvements transfer to functional bilateral tasks.</div>
+    </div>
+    <div style="background:var(--ww);border:1px solid var(--br);border-radius:10px;padding:12px 13px;">
+      <div style="font-size:12px;font-weight:600;color:var(--p);margin-bottom:4px;">Reading &amp; Phonological Processing</div>
+      <div style="font-size:12px;color:var(--tl);line-height:1.65;">Temporal processing underlies phoneme discrimination. Rhythmic training improves reading fluency in children with dyslexia through auditory timing mechanisms.</div>
+    </div>
+    <div style="background:var(--ww);border:1px solid var(--br);border-radius:10px;padding:12px 13px;">
+      <div style="font-size:12px;font-weight:600;color:var(--p);margin-bottom:4px;">Parkinson's &amp; Stroke</div>
+      <div style="font-size:12px;color:var(--tl);line-height:1.65;">Rhythmic auditory stimulation has some of the strongest evidence in Parkinson's research for gait. Rhythmic cuing improves bilateral motor retraining post-stroke.</div>
+    </div>
+  </div>
+  <p style="margin-top:12px;font-size:13px;color:var(--tl);"><a href="evosensory-manual.html#research" style="color:var(--p);font-weight:500;">Full research breakdown in the Manual →</a></p>
+</section>
+
+<!-- FIVE MODULES -->
 <section style="padding-top:0;">
   <div class="section-label">The Platform</div>
-  <h2 class="section-title">Four Training Modules</h2>
+  <h2 class="section-title">Five Training Modules</h2>
   <div class="module-grid">
-    <div class="module-card">
+    <a href="evosensory-modules.html#classic" class="module-card">
       <div class="module-icon">🎮</div>
       <div class="module-name">Classic <span class="badge">Active</span></div>
-      <div class="module-desc">Core timing engine. Six progressive levels from bilateral alternation to complex rest patterns. Three visual modes: Falling Notes, Bubble Blast, Target Range. Spatial audio error correction (left ear = early, right ear = late), XAC haptic pillow integration, Blind Training mode, and adaptive hit window.</div>
-    </div>
-    <div class="module-card">
+      <div class="module-desc">Core timing engine. Six progressive levels. Spatial audio, haptic feedback, XAC integration. Start here with every patient.</div>
+    </a>
+    <a href="evosensory-modules.html#oculomotor" class="module-card">
       <div class="module-icon">👁️</div>
       <div class="module-name">Oculomotor <span class="badge">Active</span></div>
-      <div class="module-desc">Four sub-modes: smooth pursuits, saccadic jumps, depth pulse (convergence and accommodation), and gaze hold — all synced to the beat. Tap-based proxy tracking. Optional camera-based gaze estimation on Chrome (Phase 2). Screening-level data, clearly labeled.</div>
-    </div>
-    <div class="module-card">
+      <div class="module-desc">Pursuits, saccades, depth pulse, gaze hold — all synced to the beat. Optional camera eye tracking on Chrome desktop.</div>
+    </a>
+    <a href="evosensory-modules.html#cognitive" class="module-card">
       <div class="module-icon">🧠</div>
       <div class="module-name">Cognitive <span class="badge">Active</span></div>
-      <div class="module-desc">Vocabulary and math embedded in the timing task. Speech is the beat: words spelled by syllable and spoken aloud, timed to the metronome. Math mode counts, adds, and multiplies. Targets phonological processing, number fluency, and auditory-motor integration simultaneously.</div>
-    </div>
-    <div class="module-card">
+      <div class="module-desc">Vocabulary and math spoken on the beat. Phonological processing and number fluency meet rhythmic timing.</div>
+    </a>
+    <a href="evosensory-modules.html#motion" class="module-card">
       <div class="module-icon">📷</div>
-      <div class="module-name">Motion — Rhythm Training <span class="beta-b">Beta</span></div>
-      <div class="module-desc">MediaPipe Pose (33 body landmarks) detects specific gestures timed to the beat. Four sub-modes: bilateral clapping, alternating knee taps with midline crossing, marching, and jumps. Live skeleton overlay, camera positioning guide, and auto-start when body is detected in frame. Chrome on Windows, Mac, or Android.</div>
-    </div>
-    <div class="module-card" style="grid-column:span 2;background:linear-gradient(135deg,var(--ww),var(--gp));">
+      <div class="module-name">Motion <span class="beta-b">Beta</span></div>
+      <div class="module-desc">Camera detects clapping, knee taps, marching, and jumps timed to the beat. Chrome on a computer required.</div>
+    </a>
+    <a href="evosensory-modules.html#activegames" class="module-card" style="background:linear-gradient(135deg,var(--ww),var(--gp));">
       <div class="module-icon">🎯</div>
       <div class="module-name">Active Games <span class="beta-b">Beta</span></div>
-      <div class="module-desc">Five camera-based games controlled by body movement. Catch falling stars by side-stepping (vestibular, dynamic balance). Pop balloons by reaching overhead (shoulder ROM, visual-motor integration). Kick soccer balls with the matching foot (unilateral lower extremity, single-leg balance). Duck or jump to dodge obstacles (reaction time, whole-body motor planning). Hold balance zones for score multipliers (static balance, proprioception). Chrome on a computer required.</div>
-    </div>
-  </div>
-
-  <!-- WebGazer note -->
-  <div class="wg-note">
-    <strong style="color:var(--p);">👁️ Eye Tracking — Phase 2 (Oculomotor Module)</strong><br>
-    An optional camera-based gaze estimation toggle is available in the Oculomotor sub-mode panel. When activated, it uses the front camera to estimate where the child's eyes are pointing during pursuits and saccades, overlaying a real-time gaze crosshair on the training canvas. Average gaze lag is recorded in the session data and included in the SOAP note.<br><br>
-    <em>Important disclosure: This is screening-level data (±60–80px), not clinical-grade eye movement recording. It is clearly labeled in the UI and SOAP note. It does not replace a functional vision or behavioral optometry evaluation.</em>
+      <div class="module-desc">Five camera games controlled by body movement — catch stars, pop balloons, kick soccer, duck and jump, balance zones. Targets vestibular, bilateral coordination, motor planning, and dynamic balance. Chrome on a computer required.</div>
+    </a>
   </div>
 </section>
 
-<!-- NO-TECH OPTION -->
+<!-- WHERE TO GO NEXT -->
+<section style="padding-top:0;">
+  <div class="section-label">Explore</div>
+  <h2 class="section-title">Where to Go Next</h2>
+  <div class="page-tiles">
+    <a href="evosensory-manual.html" class="page-tile">
+      <div class="page-tile-icon">📖</div>
+      <div class="page-tile-title">Quick Start Manual</div>
+      <div class="page-tile-desc">Step-by-step setup, how to run a session, settings guide, SOAP note walkthrough, and interpretation scales.</div>
+    </a>
+    <a href="evosensory-modules.html" class="page-tile">
+      <div class="page-tile-icon">🗂️</div>
+      <div class="page-tile-title">Module Guide</div>
+      <div class="page-tile-desc">Deep dive into each module — clinical rationale, sub-modes, populations, and how to use the data.</div>
+    </a>
+    <a href="evosensory-manual.html#soap" class="page-tile">
+      <div class="page-tile-icon">📋</div>
+      <div class="page-tile-title">SOAP Note Guide</div>
+      <div class="page-tile-desc">What's in the note, how to read it, and how to edit it for your EMR and insurance documentation.</div>
+    </a>
+    <a href="www.evolve-ot.com/resources" class="page-tile">
+      <div class="page-tile-icon">📄</div>
+      <div class="page-tile-title">Printable Mini Manual</div>
+      <div class="page-tile-desc">5-page PDF with quick start, interpretation scales, settings reference, and SOAP guide. Available at evolve-ot.com/resources.</div>
+    </a>
+  </div>
+</section>
+
+<!-- NO TECH OPTION -->
 <section style="padding-top:0;">
   <div class="section-label">No Technology Required</div>
   <h2 class="section-title">Want to Start Without the App?</h2>
-  <p class="section-body">EvoSensory exists because not every child, family, or session has device access or a stable internet connection. The clinical rationale for rhythmic timing training doesn't change just because the app isn't available. That's why I also created a structured low-tech protocol designed around a free metronome app and everyday materials.</p>
-  <p class="section-body" style="margin-top:10px;">The protocol covers five progressive levels — from basic beat detection through dual-task timing — with session tracking logs, sample goal language, skill tags on every exercise, and a find-more-resources footer for families. It works as a home program, a school-based handout, or a starting point before introducing EvoSensory in clinic.</p>
-
+  <p class="section-body">EvoSensory exists because not every session has device access. The clinical rationale for rhythmic timing training doesn't change when the app isn't available. A structured low-tech protocol using a free metronome app and everyday materials can be used as a home program, a school-based handout, or a starting point before introducing EvoSensory in clinic.</p>
   <div class="protocol-box">
     <div class="protocol-icon">📄</div>
     <div class="protocol-body">
       <h4>Rhythmic Timing Training — Low-Tech Protocol</h4>
-      <p>A downloadable PDF with 15 progressive exercises across 5 levels. Just a metronome app and everyday materials. Includes sample OT goals, session tracking log, and skill tags. Written for therapists, parents, and educators.</p>
-      <a href="/resources" class="protocol-link">Get the Protocol ($4.99) →</a>
+      <p>15 exercises across 5 progressive levels. Just a free metronome app and everyday materials. Includes sample OT goals, session tracking log, ADHD-specific section, and parent FAQ.</p>
+      <a href="https://www.evolve-ot.com/resources" class="protocol-link">Get the Protocol ($4.99) →</a>
     </div>
   </div>
 </section>
 
-<!-- FEEDBACK LOOP -->
+<!-- UPDATES -->
 <section style="padding-top:0;">
-  <div class="section-label">The Feedback Loop</div>
-  <h2 class="section-title">Three Simultaneous Channels</h2>
-  <div class="step-row">
-    <div class="step-num">🔊</div>
-    <div class="step-text"><strong>Auditory — Spatial:</strong> Early taps send an ascending tone to the left ear. Late taps send a descending tone to the right ear. The further from the beat, the further the stereo pan. The MTDE shapes the tone based on whether your timing is accelerating (faster chirp) or dragging (deeper slide). This is why wired headphones matter — Bluetooth audio lag defeats the feedback loop entirely.</div>
-  </div>
-  <div class="step-row">
-    <div class="step-num">📳</div>
-    <div class="step-text"><strong>Haptic — Tactile:</strong> Device vibration fires with distinct patterns for early, late, and perfect taps. With the Xbox Adaptive Controller (XAC), left and right rumble channels fire independently — left side for early, right side for late. Designed to drive a haptic cushion for whole-body proprioceptive input. Audio haptic fallback active for iPhone users.</div>
-  </div>
-  <div class="step-row">
-    <div class="step-num">👁️</div>
-    <div class="step-text"><strong>Visual — Gamified:</strong> Five visual game modes across Classic and Oculomotor modules, plus two Cognitive modes. All visuals are prototype-level — a full design polish pass is planned. Blind Training mode fades the canvas after 10 seconds to train pure auditory/haptic timing without visual anchoring.</div>
-  </div>
-</section>
+  <div class="section-label">What's New</div>
+  <h2 class="section-title">Updates</h2>
+  <p class="section-body" style="margin-bottom:20px;">Significant updates are posted here so you don't have to wait for an email. Refresh this page to see what's changed.</p>
 
-<!-- HARDWARE -->
-<section style="padding-top:0;">
-  <div class="section-label">Hardware</div>
-  <h2 class="section-title">Scales With What You Have</h2>
-  <p class="section-body" style="margin-bottom:4px;">Nothing extra is required to start. Add hardware as clinical goals indicate.</p>
-  <table class="hw-table">
-    <thead><tr><th>Setup</th><th>Approx. Cost</th><th>What It Adds</th></tr></thead>
-    <tbody>
-      <tr><td>Any device + browser</td><td>$0</td><td>Full timing training, all modules, SOAP notes, multi-user tracking with age category + modality profiles</td></tr>
-      <tr><td>+ Wired earbuds</td><td>~$10</td><td>Spatial audio feedback — the single most important upgrade</td></tr>
-      <tr><td>+ USB switches or XAC</td><td>~$100–160</td><td>Motor-accessible input; bilateral switch training; XAC pillow output</td></tr>
-      <tr><td>+ XAC + haptic cushion</td><td>~$150–200</td><td>Directional whole-body haptic feedback through a vibrating pillow</td></tr>
-      <tr><td>+ Front camera (built-in)</td><td>$0</td><td>Motion module + optional WebGazer gaze screening in Oculomotor</td></tr>
-    </tbody>
-  </table>
-  <p style="font-size:12px;color:var(--tl);margin-top:10px;line-height:1.65;">The Xbox Adaptive Controller ($100) is the best single hardware investment. Your existing AAC switch plugs directly into the 3.5mm back jacks — no adapter needed.</p>
-</section>
-
-<!-- FOR THERAPISTS -->
-<section style="padding-top:0;">
-  <div class="section-label">Who It's For</div>
-  <h2 class="section-title">Pediatric and Adult Populations</h2>
-  <p class="section-body">EvoSensory was built in pediatric OT practice but the clinical applications extend across the lifespan. Any population with timing, coordination, attention, or motor planning deficits can benefit. Current user profiles support three age categories — Pediatric (0–17), Adult (18–64), and Older Adult (65+) — with BPM defaults, hit window settings, and SOAP note language that adjust automatically.</p>
-  <p class="section-body" style="margin-top:10px;">Populations with documented evidence for rhythmic timing intervention: ADHD, DCD, dyslexia, autism, TBI, stroke, Parkinson's disease, MS, cerebral palsy, sensory processing disorder, anxiety, and age-related motor and cognitive decline. The Motion and Active Games modules extend reach to standing balance, gait, vestibular processing, and upper and lower extremity coordination.</p>
-</section>
-
-<!-- UNDERSTANDING RESULTS -->
-<section style="padding-top:0;">
-  <div class="section-label">Reading the Data</div>
-  <h2 class="section-title">Understanding the Results</h2>
-
-  <p class="section-body">EvoSensory tracks three separate things after every session. They measure different skills and should not be confused with each other.</p>
-
-  <!-- The three metrics explained -->
-  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0 24px;">
-
-    <div style="background:var(--pp);border-left:4px solid var(--p);border-radius:0 10px 10px 0;padding:14px 16px;">
-      <div style="font-size:13px;font-weight:600;color:var(--pd);margin-bottom:5px;">1. Accuracy — Were they hitting the beat at all?</div>
-      <p style="font-size:13px;color:var(--tx);line-height:1.75;margin:0;">Accuracy is the percentage of beats the patient responded to within the acceptable time window. A patient with 90% accuracy hit the window on 9 out of 10 beats. This reflects engagement, attention, and whether the task level is appropriate.</p>
-    </div>
-
-    <div style="background:var(--pp);border-left:4px solid var(--p);border-radius:0 10px 10px 0;padding:14px 16px;">
-      <div style="font-size:13px;font-weight:600;color:var(--pd);margin-bottom:5px;">2. Timing Deviation — Where exactly were their taps landing?</div>
-      <p style="font-size:13px;color:var(--tx);line-height:1.75;margin:0;">Deviation is measured in milliseconds (ms) and shows the average distance between where the beat was and where the tap landed. <strong>Lower is better — zero means perfectly on the beat.</strong> The sign tells you direction: positive (+) means early (tapping before the beat), negative (−) means late (tapping after the beat).</p>
-      <p style="font-size:13px;color:var(--tx);line-height:1.75;margin:8px 0 0;">A patient can score 95% accuracy but still have a +55ms average deviation — meaning they hit the window every time, but they are consistently half a beat early. A therapist watching the session might say "great job." The app captures that the patient is systematically early every single tap. That is a different clinical finding than accuracy alone can show.</p>
-    </div>
-
-    <div style="background:var(--pp);border-left:4px solid var(--p);border-radius:0 10px 10px 0;padding:14px 16px;">
-      <div style="font-size:13px;font-weight:600;color:var(--pd);margin-bottom:5px;">3. Session Trend — Did their timing change as the session went on?</div>
-      <p style="font-size:13px;color:var(--tx);line-height:1.75;margin:0;">The session trend tracks whether errors got bigger, smaller, or stayed the same as the session progressed. A patient who starts well and drifts earlier over time may have difficulty sustaining inhibitory control. One who drifts later may be experiencing attention fatigue or motor planning difficulty under sustained demand.</p>
+  <div class="update-item">
+    <div class="update-date">May 2026 — Beta Build 3</div>
+    <div class="update-title">Active Games, Desktop Layout, SOAP Note Rewrite</div>
+    <div class="update-body">
+      <ul>
+        <li><strong>Active Games module</strong> — five camera-based body movement games: Catch Stars, Pop Balloons, Kick Soccer, Duck &amp; Jump, Side Steps &amp; Balance</li>
+        <li><strong>Desktop layout</strong> — two-column map screen and larger game canvas at 900px+ screen width</li>
+        <li><strong>SOAP note</strong> fully rewritten in plain clinical language — no jargon, all data still present, insurance-ready</li>
+        <li><strong>SOAP note footnote</strong> — "How to read this note" guide included at the bottom of every generated note</li>
+        <li><strong>Pre-session hardware confirmation</strong> — confirms headphones, haptics, and XAC before each session; SOAP note only documents what's actually connected</li>
+        <li><strong>User profiles</strong> — age category (Pediatric, Adult, Older Adult) and training modality (hands/feet, bilateral/unilateral) with automatic BPM defaults</li>
+        <li><strong>Beat sound options</strong> — Single Beat, Double Beat, 1–2 Spoken (says "one" and "two" aloud)</li>
+        <li><strong>Session Setup Prompt</strong> toggle in Settings</li>
+      </ul>
     </div>
   </div>
 
-  <!-- Interpretation scale -->
-  <h3 style="font-size:15px;font-weight:600;color:var(--p);margin:0 0 12px;">Clinical Interpretation Scale</h3>
-
-  <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:6px;letter-spacing:.05em;">ACCURACY</div>
-  <table class="hw-table" style="margin-bottom:20px;">
-    <thead><tr><th>Range</th><th>Interpretation</th><th>Recommended Action</th></tr></thead>
-    <tbody>
-      <tr><td><strong>85–100%</strong></td><td>Functional range — skill is established at this level and tempo</td><td>Advance level or increase BPM by 4–8</td></tr>
-      <tr><td><strong>70–84%</strong></td><td>Emerging — patient is engaging with the task with moderate consistency</td><td>Continue at current level; target 85% across 2 sessions before advancing</td></tr>
-      <tr><td><strong>50–69%</strong></td><td>Below functional threshold — significant inconsistency; direct intervention is indicated</td><td>Maintain level; adjust sensory supports; consider slower BPM</td></tr>
-      <tr><td><strong>Below 50%</strong></td><td>Well below threshold — current level or tempo may exceed patient's capacity</td><td>Reduce BPM by 8–10 or drop one level; assess for contributing factors</td></tr>
-    </tbody>
-  </table>
-
-  <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:6px;letter-spacing:.05em;">TIMING DEVIATION (absolute value — lower is better)</div>
-  <table class="hw-table" style="margin-bottom:20px;">
-    <thead><tr><th>Range</th><th>Interpretation</th><th>Clinical Relevance</th></tr></thead>
-    <tbody>
-      <tr><td><strong>0–20ms</strong></td><td>Excellent precision — within normal limits for skilled timing</td><td>Strong internal clock; ready for more complex tasks</td></tr>
-      <tr><td><strong>21–40ms</strong></td><td>Good precision — mild timing variability, functional for most daily tasks</td><td>Typical performance for children in active development</td></tr>
-      <tr><td><strong>41–70ms</strong></td><td>Moderate difficulty — errors are noticeable and affect coordinated tasks</td><td>Likely impacting handwriting fluency, reading rhythm, bilateral motor skills</td></tr>
-      <tr><td><strong>71–100ms</strong></td><td>Significant difficulty — consistent with a timing processing deficit</td><td>Intervention warranted; document functional impact in daily occupations</td></tr>
-      <tr><td><strong>100ms+</strong></td><td>Severe difficulty — consistent with moderate to severe timing disorder</td><td>Reduce task demands; prioritize sensory feedback supports; consider contributing diagnoses</td></tr>
-    </tbody>
-  </table>
-
-  <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:6px;letter-spacing:.05em;">DIRECTION OF DEVIATION</div>
-  <table class="hw-table" style="margin-bottom:20px;">
-    <thead><tr><th>Pattern</th><th>Clinical Interpretation</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Consistently early (+)</strong></td><td>Anticipatory motor response — patient is acting before the correct moment. May reflect impulsivity, difficulty waiting, or poor response inhibition. Often seen in ADHD and anxiety presentations.</td></tr>
-      <tr><td><strong>Consistently late (−)</strong></td><td>Delayed motor initiation — patient is responding after the correct moment. May reflect processing speed differences, motor planning difficulty, or low arousal. Common in DCD, TBI, and fatigue-related presentations.</td></tr>
-      <tr><td><strong>Mixed / balanced</strong></td><td>No consistent directional tendency. Errors may be random (inconsistent attention) or centered (good regulation). Review alongside accuracy for full picture.</td></tr>
-    </tbody>
-  </table>
-
-  <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:6px;letter-spacing:.05em;">SESSION TREND</div>
-  <table class="hw-table" style="margin-bottom:8px;">
-    <thead><tr><th>Pattern</th><th>Clinical Interpretation</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Stable</strong></td><td>Timing was consistent from beginning to end of session. Patient maintained regulation throughout the task.</td></tr>
-      <tr><td><strong>Drifting early over time</strong></td><td>Responses became progressively earlier as the session continued. May reflect mounting impulsivity or difficulty sustaining inhibitory control under extended demand.</td></tr>
-      <tr><td><strong>Drifting late over time</strong></td><td>Responses became progressively later as the session continued. May reflect attentional fatigue, processing slowdown, or motor planning difficulty under sustained load.</td></tr>
-    </tbody>
-  </table>
-
-  <div class="clinical-note" style="margin-top:16px;">
-    <strong style="color:var(--gn);">Key point for documentation:</strong> Accuracy and deviation measure different things. A patient can score high on accuracy and still show clinically significant deviation. Always report both, and connect the deviation pattern to a functional impact in the patient's daily occupations.
+  <div class="update-item">
+    <div class="update-date">May 2026 — Beta Build 2</div>
+    <div class="update-title">Motion Module Phase 2, Oculomotor Expansion, WebGazer</div>
+    <div class="update-body">
+      <ul>
+        <li><strong>Motion module</strong> upgraded to MediaPipe Pose — detects clapping, knee taps with midline crossing, marching, and jumps. Live skeleton overlay and auto-start when body is detected</li>
+        <li><strong>Oculomotor</strong> expanded to four sub-modes: Smooth Pursuits, Saccadic Jumps, Depth Pulse, Gaze Hold</li>
+        <li><strong>Eye tracking Phase 2</strong> — optional camera-based gaze estimation during oculomotor sessions (Chrome desktop only)</li>
+        <li><strong>Multi-user profiles</strong> with session history, progress charts, and CSV export</li>
+        <li><strong>SOAP note generator</strong> added to results and stats screens</li>
+      </ul>
+    </div>
   </div>
-</section>
 
-<section style="padding-top:0;">
-  <div class="section-label">For Therapists</div>
-  <h2 class="section-title">Built for Real Clinical Documentation</h2>
-  <p class="section-body">EvoSensory works across home, school, clinic, and telehealth settings. Every session generates objective, reportable data: accuracy percentage, average timing deviation in milliseconds, session trend (stable / drifting early / drifting late), oculomotor mode breakdown, and optional camera-based gaze screening when eye tracking is active. That data is designed to support skilled service justification in your documentation.</p>
-
-  <p class="section-body" style="margin-top:12px;">The SOAP note generator builds a complete draft note after each session with plain-language interpretation of all three metrics, modality and age category context, hardware confirmation, next-session recommendations, and appropriate disclosures. Edit before pasting into your EMR. Always labeled as a draft.</p>
-
-  <p class="section-body" style="margin-top:12px;">Multiple client profiles can be tracked on a single device. Progress charts display accuracy and average deviation across the last 15 sessions per user. CSV export available for external analysis or parent sharing.</p>
-
-  <div class="clinical-note">
-    <strong style="color:var(--gn);">📋 SOAP Note — What's Included</strong><br>
-    S: Client-reported or observed experience · O: Accuracy %, timing deviation with direction, session trend, modality, sensory hardware confirmed · A: Plain-language clinical interpretation with functional connection prompts · P: Specific next-session BPM and level recommendations based on session data. All data auto-populated. Edit for clinical accuracy before use.
+  <div class="update-item" style="border-color:var(--pl);">
+    <div class="update-date">April 2026 — Beta Build 1</div>
+    <div class="update-title">Initial Beta Release</div>
+    <div class="update-body">Classic timing engine, Cognitive module (Vocab + Math), basic oculomotor (pursuits), spatial audio feedback, XAC haptic integration, Blind Training mode, Therapist View.</div>
   </div>
 </section>
 
@@ -318,20 +316,19 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
 <div style="padding:0 20px;">
 <div class="cta">
   <div class="cta-title">Ready to Try It?</div>
-  <p class="cta-sub">Launch EvoSensory in your browser. Free, no login, no install. Wired headphones recommended for the full feedback experience.</p>
+  <p class="cta-sub">Launch EvoSensory in your browser. No install required. Wired headphones recommended for the full feedback experience.</p>
   <a href="evosensory.html" class="cta-btn">Launch EvoSensory ▶</a>
-  <div style="font-size:11px;color:var(--tl);margin-top:16px;">Beta version · Feedback to Admin@Evolve-OT.com</div>
+  <div style="font-size:11px;color:var(--tl);margin-top:14px;">Beta version · Feedback to vanessa@evolve-ot.com</div>
 </div>
 </div>
 
 <footer>
   <strong>Evolving Therapy &amp; Wellness</strong>
   Vanessa Dorado Walker, MS, OTR/L<br>
-  <a href="mailto:Admin@Evolve-OT.com">Admin@Evolve-OT.com</a> &nbsp;·&nbsp; <a href="https://www.evolve-ot.com">www.evolve-ot.com</a><br><br>
-  <!-- Patent Pending · Uncomment after provisional filing -->
+  <a href="mailto:vanessa@evolve-ot.com">vanessa@evolve-ot.com</a> &nbsp;·&nbsp; <a href="https://www.evolve-ot.com">www.evolve-ot.com</a><br><br>
   &copy; 2026 Evolving Therapy &amp; Wellness. All rights reserved.<br>
   EvoSensory is a trademark of Evolving Therapy &amp; Wellness.<br><br>
-  <span style="font-size:10px;opacity:.6;">EvoSensory is not a medical device and does not diagnose, treat, or cure any condition. Oculomotor screening data is not clinical-grade eye movement recording. For use within a therapeutic relationship by a licensed professional only.</span>
+  <span style="font-size:10px;opacity:.6;">EvoSensory is not a medical device. Oculomotor screening data is not clinical-grade eye movement recording. For use within a therapeutic relationship by a licensed professional only.</span>
 </footer>
 
 </body>
