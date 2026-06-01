@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#3E2D6E"/>
+<title>EvoSensory Modules | Evolving Therapy & Wellness</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%233E2D6E'/%3E%3Ccircle cx='50' cy='50' r='43' fill='none' stroke='%239B88C4' stroke-width='3'/%3E%3Ctext x='50' y='63' font-family='Georgia%2Cserif' font-size='38' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--p:#5C4490;--pl:#9B88C4;--pp:#EDE8F5;--pd:#3E2D6E;--cr:#FDFBF9;--ww:#F7F4FB;--tx:#1E1830;--tl:#5A4E72;--gn:#4A8C6F;--gp:#E8F5EF;--go:#C4922A;--gop:#FBF2EA;--rd:#B85450;--br:rgba(92,68,144,.15);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Jost',sans-serif;background:var(--cr);color:var(--tx);overflow-x:hidden;}
+nav{background:white;border-bottom:1px solid var(--br);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--pd);font-weight:500;text-decoration:none;}
+.nav-logo span{font-size:10px;color:var(--tl);display:block;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif;font-weight:400;}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nav-link{font-size:12px;color:var(--p);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:6px;transition:background .15s;}
+.nav-link:hover{background:var(--pp);}
+.nav-link.active{background:var(--pp);color:var(--pd);}
+.nav-launch{font-size:12px;background:var(--p);color:white;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:600;white-space:nowrap;}
+.nav-launch:hover{background:var(--pd);}
+.page-header{background:var(--pd);padding:40px 20px 44px;text-align:center;}
+.page-header h1{font-family:'Cormorant Garamond',serif;font-size:38px;color:white;font-weight:400;margin-bottom:8px;}
+.page-header p{font-size:14px;color:rgba(255,255,255,.7);max-width:500px;margin:0 auto;}
+.jump-links{background:white;border-bottom:1px solid var(--br);padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;position:sticky;top:57px;z-index:90;}
+.jump-link{font-size:11px;color:var(--p);text-decoration:none;padding:4px 10px;border-radius:6px;border:1px solid var(--br);font-weight:500;white-space:nowrap;}
+.jump-link:hover{background:var(--pp);}
+section{padding:40px 20px;max-width:680px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:500;color:var(--pl);letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px;}
+h2{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--pd);line-height:1.2;margin-bottom:14px;}
+h3{font-size:13px;font-weight:600;color:var(--p);margin:18px 0 7px;text-transform:uppercase;letter-spacing:.06em;}
+p{font-size:13.5px;color:var(--tx);line-height:1.8;margin-bottom:10px;}
+.module-hero{border-radius:14px;padding:20px 18px;margin-bottom:18px;display:flex;gap:14px;align-items:flex-start;}
+.module-hero-icon{font-size:36px;flex-shrink:0;}
+.module-hero-title{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--pd);margin-bottom:4px;}
+.module-hero-sub{font-size:12px;color:var(--tl);line-height:1.65;}
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 16px;}
+.sub-card{background:white;border:1px solid var(--br);border-radius:10px;padding:11px 12px;}
+.sub-name{font-size:12px;font-weight:600;color:var(--p);margin-bottom:3px;}
+.sub-desc{font-size:11px;color:var(--tl);line-height:1.6;}
+.callout{border-radius:10px;padding:11px 14px;margin:10px 0;}
+.callout-purple{background:var(--pp);border-left:3px solid var(--p);}
+.callout-green{background:var(--gp);border-left:3px solid var(--gn);}
+.callout-gold{background:var(--gop);border-left:3px solid var(--go);}
+.callout strong{font-size:12px;color:var(--pd);display:block;margin-bottom:3px;}
+.callout-green strong{color:var(--gn);}
+.callout-gold strong{color:var(--go);}
+.callout p{font-size:12px;margin:0;line-height:1.7;color:var(--tx);}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0 14px;}
+th{background:var(--p);color:white;padding:7px 9px;text-align:left;font-weight:500;font-size:11px;}
+td{padding:7px 9px;border-bottom:1px solid var(--br);vertical-align:top;line-height:1.65;font-size:12px;}
+tr:nth-child(even) td{background:var(--ww);}
+td:first-child{font-weight:500;color:var(--pd);}
+.req-badge{display:inline-block;font-size:9px;background:var(--go);color:white;padding:2px 7px;border-radius:5px;font-weight:600;margin-left:6px;vertical-align:middle;}
+.divider{border:none;border-top:1px solid var(--br);margin:0;}
+footer{background:var(--pd);color:rgba(255,255,255,.65);padding:24px 20px;text-align:center;font-size:11px;line-height:2;}
+footer a{color:rgba(255,255,255,.8);text-decoration:none;}
+footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
+@media(max-width:560px){.sub-grid{grid-template-columns:1fr;}.module-hero{flex-direction:column;gap:8px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="evosensory-about.html" class="nav-logo">EvoSensory<span>Evolving Therapy &amp; Wellness</span></a>
+  <div class="nav-links">
+    <a href="evosensory-about.html" class="nav-link">About</a>
+    <a href="evosensory-manual.html" class="nav-link">Manual</a>
+    <a href="evosensory-modules.html" class="nav-link active">Modules</a>
+  </div>
+  <a href="evosensory.html" class="nav-launch">Launch App →</a>
+</nav>
+
+<div class="page-header">
+  <h1>Module Guide</h1>
+  <p>Clinical rationale, sub-modes, and best use cases for each of the five EvoSensory modules.</p>
+</div>
+
+<div class="jump-links">
+  <a href="#classic"     class="jump-link">🎮 Classic</a>
+  <a href="#oculomotor"  class="jump-link">👁️ Oculomotor</a>
+  <a href="#cognitive"   class="jump-link">🧠 Cognitive</a>
+  <a href="#motion"      class="jump-link">📷 Motion</a>
+  <a href="#activegames" class="jump-link">🎯 Active Games</a>
+</div>
+
+<!-- CLASSIC -->
+<section id="classic">
+  <div class="section-label">Module 1</div>
+  <div class="module-hero" style="background:var(--pp);">
+    <div class="module-hero-icon">🎮</div>
+    <div>
+      <div class="module-hero-title">Classic</div>
+      <div class="module-hero-sub">Core timing engine · Six progressive levels · Start every patient here</div>
+    </div>
+  </div>
+  <h2>Classic Module</h2>
+  <p>Classic is the foundation of EvoSensory. A patient taps in time with a metronome beat. The app measures accuracy, timing deviation, and session trend in real time. Spatial audio and haptic feedback close the loop immediately — the patient hears and feels whether each tap was early or late before the next beat arrives.</p>
+
+  <h3>Levels</h3>
+  <table>
+    <thead><tr><th>Level</th><th>Pattern</th><th>Primary Target</th></tr></thead>
+    <tbody>
+      <tr><td>Level 1</td><td>Alternating L/R</td><td>Basic bilateral coordination and beat detection</td></tr>
+      <tr><td>Level 2</td><td>Alternating with short rests</td><td>Bilateral coordination + response inhibition</td></tr>
+      <tr><td>Level 3</td><td>Longer held beats</td><td>Sustained timing and motor control</td></tr>
+      <tr><td>Level 4</td><td>Syncopated patterns</td><td>Motor planning and complex sequencing</td></tr>
+      <tr><td>Level 5</td><td>Irregular patterns with rests</td><td>Internal clock and anticipatory timing</td></tr>
+      <tr><td>Level 6</td><td>Full complexity</td><td>Clinical ceiling — bilateral foot tap designed for this level</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Visual Modes</h3>
+  <div class="sub-grid" style="grid-template-columns:1fr;">
+    <div class="sub-card"><div class="sub-name">Falling Notes</div><div class="sub-desc">Notes fall from the top. Patient taps when they reach the target zone. Good default for most patients.</div></div>
+    <div class="sub-card"><div class="sub-name">Bubble Blast</div><div class="sub-desc">Bubbles expand on the beat. Fun, motivating format — good for younger children or low-engagement sessions.</div></div>
+    <div class="sub-card"><div class="sub-name">Target Range</div><div class="sub-desc">Visual target at the bottom. Clean, minimal, less visually stimulating. Good for children who are over-responsive to busy visuals.</div></div>
+  </div>
+
+  <div class="callout callout-purple">
+    <strong>Blind Training Mode</strong>
+    <p>Available in Settings. The visual display fades after 10 seconds, leaving only audio and haptic feedback. Trains pure internal timing without visual anchoring. Use when a patient has become reliant on the visual cue and you want to build internalization.</p>
+  </div>
+
+  <h3>Best For</h3>
+  <p>Every patient — ADHD, DCD, dyspraxia, TBI, stroke, autism, dyslexia, Parkinson's, older adults with balance concerns. Classic is the most clinically versatile module and should be the starting point for everyone.</p>
+</section>
+
+<hr class="divider"/>
+
+<!-- OCULOMOTOR -->
+<section id="oculomotor">
+  <div class="section-label">Module 2</div>
+  <div class="module-hero" style="background:var(--pp);">
+    <div class="module-hero-icon">👁️</div>
+    <div>
+      <div class="module-hero-title">Oculomotor</div>
+      <div class="module-hero-sub">Visual tracking synced to the beat · Tap-based motor proxy · Optional camera eye screening</div>
+    </div>
+  </div>
+  <h2>Oculomotor Module</h2>
+  <p>Visual targets move in sync with the metronome beat. The patient taps when the target reaches a cued position. The app measures how accurately the tap is timed to the visual event — not whether the patient's eyes tracked correctly. Tapping is used as a motor proxy for visual tracking.</p>
+  <p>An optional camera-based gaze estimation toggle (Phase 2) overlays a real-time gaze crosshair on the canvas during pursuits and saccades and records average gaze lag. This is screening-level data — clearly labeled in the SOAP note. It does not replace a behavioral optometry evaluation.</p>
+
+  <h3>Sub-Modes</h3>
+  <div class="sub-grid">
+    <div class="sub-card"><div class="sub-name">Smooth Pursuits</div><div class="sub-desc">Target sweeps left and right continuously. Patient taps at each turnaround. Targets smooth visual tracking and bilateral timing.</div></div>
+    <div class="sub-card"><div class="sub-name">Saccadic Jumps</div><div class="sub-desc">Target jumps between two boxes on each beat. Patient taps at each appearance. Targets saccadic initiation speed and timing accuracy.</div></div>
+    <div class="sub-card"><div class="sub-name">Depth Pulse</div><div class="sub-desc">A circle expands from tiny to full screen on each beat. Patient taps at maximum expansion. Targets visual convergence and accommodation training.</div></div>
+    <div class="sub-card"><div class="sub-name">Gaze Hold</div><div class="sub-desc">Stationary target — patient holds gaze on it while tapping the beat. Targets sustained visual attention and dual-task timing.</div></div>
+  </div>
+
+  <h3>Best For</h3>
+  <p>Patients with visual processing difficulties, reading challenges, post-concussion visual symptoms, convergence insufficiency, or any condition where visual-motor timing integration is a treatment target. Refer to behavioral optometry when gaze screening data suggests significant tracking deficits.</p>
+</section>
+
+<hr class="divider"/>
+
+<!-- COGNITIVE -->
+<section id="cognitive">
+  <div class="section-label">Module 3</div>
+  <div class="module-hero" style="background:var(--pp);">
+    <div class="module-hero-icon">🧠</div>
+    <div>
+      <div class="module-hero-title">Cognitive</div>
+      <div class="module-hero-sub">Language and math on the beat · Speech is the metronome · Dual-task timing</div>
+    </div>
+  </div>
+  <h2>Cognitive Module</h2>
+  <p>In Cognitive mode, speech replaces the beat sound. The app speaks on the beat — the patient taps along while processing the spoken content. This creates a dual-task that directly targets phonological processing and number fluency alongside rhythmic timing.</p>
+
+  <h3>Sub-Modes</h3>
+  <div class="sub-grid">
+    <div class="sub-card"><div class="sub-name">Vocabulary Mode</div><div class="sub-desc">Words are spelled letter by letter, broken into syllables, and spoken whole — all timed to the beat. BUT-TER-FLY. Targets phonological awareness and auditory processing.</div></div>
+    <div class="sub-card"><div class="sub-name">Math Mode</div><div class="sub-desc">Counting sets, addition, and multiplication spoken on the beat. "3 plus 4 equals." A dot counter visual supports numbers up to 24. Targets number fluency and working memory.</div></div>
+  </div>
+
+  <h3>Best For</h3>
+  <p>Dyslexia, reading delays, phonological processing difficulties, math fluency challenges, ADHD with academic impact. Strong dual-task training for any patient who needs to practice simultaneous cognitive and motor demands. Use in collaboration with SLP when targeting phonological goals.</p>
+</section>
+
+<hr class="divider"/>
+
+<!-- MOTION -->
+<section id="motion">
+  <div class="section-label">Module 4</div>
+  <div class="module-hero" style="background:linear-gradient(135deg,var(--ww),var(--gp));">
+    <div class="module-hero-icon">📷</div>
+    <div>
+      <div class="module-hero-title">Motion — Rhythm Training <span class="req-badge">Chrome Desktop</span></div>
+      <div class="module-hero-sub">Camera detects specific body gestures timed to the beat · MediaPipe Pose · 33 body landmarks</div>
+    </div>
+  </div>
+  <h2>Motion Module</h2>
+  <p>The camera detects specific body movements and scores them against the metronome beat. No buttons needed — the gesture is the tap. A live skeleton overlay shows the detected landmarks on screen during the session.</p>
+  <p>The Start button activates automatically when the camera detects the required body landmarks in frame. For full-body modes, it waits until both ankles are visible.</p>
+  <p><strong>Requires Chrome on Windows, Mac, or Android.</strong> Falls back to basic frame-differencing motion detection if MediaPipe fails to load.</p>
+
+  <h3>Sub-Modes</h3>
+  <div class="sub-grid">
+    <div class="sub-card"><div class="sub-name">👏 Clapping</div><div class="sub-desc">Both wrists come together on the beat. Waist-up camera. Targets bilateral upper extremity coordination and rhythmic motor timing.</div></div>
+    <div class="sub-card"><div class="sub-name">🤸 Knee Taps / Midline</div><div class="sub-desc">Right hand to left knee, left hand to right knee, alternating. Targets midline crossing, bilateral integration, and ideomotor praxis.</div></div>
+    <div class="sub-card"><div class="sub-name">🦵 Marching</div><div class="sub-desc">Alternating knee raises above hip height. Full body required. Targets bilateral lower extremity coordination, postural control, and rhythmic sequencing.</div></div>
+    <div class="sub-card"><div class="sub-name">⬆️ Jumps</div><div class="sub-desc">Both feet leave the ground on the beat. Full body + jump clearance required. Targets bilateral lower extremity coordination, vestibular processing, and motor planning.</div></div>
+  </div>
+
+  <h3>Best For</h3>
+  <p>Any patient where whole-body movement is a therapy target — DCD, bilateral coordination deficits, gait training, vestibular processing, postural control, motor planning. Strong for telehealth observation of movement quality.</p>
+</section>
+
+<hr class="divider"/>
+
+<!-- ACTIVE GAMES -->
+<section id="activegames">
+  <div class="section-label">Module 5</div>
+  <div class="module-hero" style="background:linear-gradient(135deg,var(--ww),var(--gp));">
+    <div class="module-hero-icon">🎯</div>
+    <div>
+      <div class="module-hero-title">Active Games <span class="req-badge">Chrome Desktop</span></div>
+      <div class="module-hero-sub">Body movement controls five camera games · No controllers · Standing or seated play</div>
+    </div>
+  </div>
+  <h2>Active Games Module</h2>
+  <p>Body position and movement control five different games. The camera tracks the patient's body using MediaPipe Pose and maps their position to in-game actions. No tapping required — movement is the input.</p>
+  <p><strong>Requires Chrome on Windows, Mac, or Android.</strong></p>
+
+  <h3>The Five Games</h3>
+  <div class="sub-grid" style="grid-template-columns:1fr;">
+    <div class="sub-card"><div class="sub-name">⭐ Catch the Stars</div><div class="sub-desc">Stars fall from the top. Side-step left or right to align under them. Targets lateral weight shifting, vestibular processing, and dynamic balance.</div></div>
+    <div class="sub-card"><div class="sub-name">🎈 Pop Balloons</div><div class="sub-desc">Balloons float up. Reach overhead with the matching hand to pop them. Targets shoulder ROM, overhead reach, and visual-motor integration.</div></div>
+    <div class="sub-card"><div class="sub-name">⚽ Kick Soccer</div><div class="sub-desc">Balls roll in from either side. Kick with the matching foot. Targets unilateral lower extremity motor control and single-leg balance.</div></div>
+    <div class="sub-card"><div class="sub-name">🏃 Duck &amp; Jump</div><div class="sub-desc">Obstacles slide in from the right. Duck under high obstacles, jump over low ones. Targets motor planning, reaction time, and dynamic whole-body movement.</div></div>
+    <div class="sub-card"><div class="sub-name">↔️ Side Steps &amp; Balance</div><div class="sub-desc">Highlighted zones appear on left or right. Step into the zone and hold still — the longer you hold, the higher the score multiplier. Targets dynamic and static balance and proprioception.</div></div>
+  </div>
+
+  <div class="callout callout-green">
+    <strong>Clinical targets across Active Games</strong>
+    <p>Vestibular processing · Dynamic balance · Static balance · Postural control · Proprioception · Upper extremity reach and ROM · Unilateral lower extremity control · Lateral weight shifting · Motor planning · Reaction time · Visual-motor integration</p>
+  </div>
+
+  <h3>Best For</h3>
+  <p>Patients with vestibular processing challenges, balance deficits, postural instability, fall risk, lower extremity coordination goals, or any patient who needs a movement-based engagement format. Strong for older adults, DCD, TBI, stroke rehab, and patients who need a break from seated tap-based training.</p>
+</section>
+
+<footer>
+  <strong>Evolving Therapy &amp; Wellness</strong>
+  Vanessa Dorado Walker, MS, OTR/L<br>
+  <a href="mailto:vanessa@evolve-ot.com">vanessa@evolve-ot.com</a> &nbsp;·&nbsp; <a href="https://www.evolve-ot.com">www.evolve-ot.com</a><br><br>
+  &copy; 2026 Evolving Therapy &amp; Wellness. All rights reserved.
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>Not All Screens Are Created Equal | Evolving Therapy & Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: light;
+      --purple:       #5C4490;
+      --purple-light: #9B88C4;
+      --purple-pale:  #EDE8F5;
+      --purple-deep:  #3E2D6E;
+      --cream:        #FDFBF9;
+      --warm-white:   #F7F4FB;
+      --text:         #1E1830;
+      --text-light:   #5A4E72;
+      --ff-display:   'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background-color: #FDFBF9;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(253, 251, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184, 168, 208, 0.2);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 24px rgba(123, 101, 164, 0.08); }
+
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+
+    .nav-logo-circle {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-circle::before {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border: 1px solid var(--purple-pale);
+      border-radius: 50%;
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--purple);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--ff-body);
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--purple-light);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+
+    .nav-links a {
+      font-family: var(--ff-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--purple);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--purple); }
+    .nav-links a:hover::after { width: 100%; }
+
+    main {
+      margin-top: 80px;
+      padding: 4rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--ff-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1rem;
+      color: var(--text-light);
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .meta {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(92, 68, 144, 0.15);
+    }
+
+    .content {
+      background: white;
+      border: 1px solid rgba(92, 68, 144, 0.12);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .content h2 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--purple-pale);
+    }
+
+    .content h2:first-child { margin-top: 0; }
+
+    .content h3 {
+      font-family: var(--ff-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .content p { margin-bottom: 1rem; color: var(--text); }
+    .content ul { margin-left: 2rem; margin-bottom: 1rem; }
+    .content li { margin-bottom: 0.5rem; color: var(--text); }
+    .content a { color: var(--purple); text-decoration: none; }
+    .content a:hover { text-decoration: underline; }
+
+    /* SHOW CARDS GRID */
+    .show-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .show-card {
+      background: var(--warm-white);
+      border: 1px solid rgba(92, 68, 144, 0.15);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+    }
+
+    .show-card h4 {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      color: var(--purple-deep);
+      margin-bottom: 0.35rem;
+    }
+
+    .show-card .show-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--purple-light);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .show-card p {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* OT TIP */
+    .ot-tip {
+      background: var(--purple-pale);
+      border-left: 4px solid var(--purple);
+      border-radius: 0 0.75rem 0.75rem 0;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0;
+    }
+
+    .ot-tip .tip-label {
+      font-family: var(--ff-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.4rem;
+    }
+
+    .ot-tip h3 {
+      font-family: var(--ff-display);
+      font-size: 1.35rem;
+      color: var(--purple-deep);
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .ot-tip p { font-size: 0.95rem; color: var(--text); margin-bottom: 0.75rem; }
+    .ot-tip ul { margin-left: 1.5rem; }
+    .ot-tip li { font-size: 0.95rem; color: var(--text); margin-bottom: 0.5rem; }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-style: italic;
+      border-top: 1px solid rgba(92, 68, 144, 0.12);
+      padding-top: 1.25rem;
+      margin-top: 2rem;
+      line-height: 1.7;
+    }
+
+    /* RESOURCES */
+    .download-section {
+      padding: 2rem;
+      background: var(--purple-pale);
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .download-section h3 {
+      font-family: var(--ff-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--purple-deep);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(92, 68, 144, 0.2);
+    }
+
+    .resource-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(92, 68, 144, 0.1);
+    }
+
+    .resource-item:last-child { border-bottom: none; }
+    .resource-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    .resource-item p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .resource-item strong { color: var(--text); }
+    .resource-item a { color: var(--purple); text-decoration: none; }
+    .resource-item a:hover { text-decoration: underline; }
+
+    /* BACK LINK */
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--purple);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--purple-deep); }
+
+    /* NEWSLETTER */
+    .newsletter-section {
+      background: var(--warm-white);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .newsletter-section .eyebrow {
+      font-family: var(--ff-body);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .newsletter-section h3 {
+      font-family: var(--ff-display);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--purple);
+      margin-bottom: 0.5rem;
+    }
+
+    .newsletter-section p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      max-width: 460px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--purple-deep);
+      color: rgba(255,255,255,0.6);
+      padding: 2rem 4rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    footer a { color: rgba(255,255,255,0.8); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: white; }
+
+    .footer-logo {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links li { font-size: 0.85rem; }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; font-size: 0.7rem; }
+      main { padding: 2rem; }
+      .content { padding: 1.5rem; }
+    }
+
+    @media (max-width: 560px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      main { padding: 1.5rem; margin-top: 70px; }
+      .page-header h1 { font-size: 1.8rem; }
+      .content { padding: 1.25rem; }
+      .show-grid { grid-template-columns: 1fr; }
+      footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-circle"></div>
+      <div>
+        <span class="nav-logo-text">Evolving</span>
+        <span class="nav-logo-sub">Therapy & Wellness</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <a href="blog.html" class="back-link">← Back to Blog</a>
+
+    <div class="page-header">
+      <h1>Not All Screens Are Created Equal</h1>
+      <p>It is time to stop telling parents that all screen time is bad and start having a more honest, nuanced conversation about what actually matters.</p>
+      <div class="meta">Screen Time · Child Development · Parenting · Media Literacy</div>
+    </div>
+
+    <div class="content">
+
+      <h2>Can We Please Give Parents a Break?</h2>
+
+      <p>I am a pediatric occupational therapist. I am also a mom of two boys, I have ADHD, and I am in the season of life where I am doing most of this without a village nearby. So when I hear blanket statements like "no screens before age two" or "screens are destroying children's attention spans," I understand where it comes from, and I also feel how unhelpful it is for real families trying to survive real days.</p>
+
+      <p>The "all screens are bad" message puts parents in an impossible position. It makes us feel guilty for something that is sometimes the only realistic tool we have in a moment. And more importantly, it is not what the research actually says.</p>
+
+      <p>Times are different. We do not have the same family support structure many previous generations did. Grandparents are not down the street. Aunts and uncles are not dropping by. The community that used to surround child-rearing has largely disappeared for many families, and the expectation that parents can manage everything without any support, including a 20-minute Daniel Tiger episode while dinner gets made, is not grounded in reality.</p>
+
+      <p>So let's talk about what the research actually says, because it is both more nuanced and more useful than the headlines suggest.</p>
+
+      <h2>What the Research Actually Shows</h2>
+
+      <p>For years, the dominant concern in screen time research was <em>pace</em> — the idea that fast-moving, rapidly edited content was overwhelming children's brains and depleting their attention. The SpongeBob study from 2011 became the most-cited piece of evidence: children who watched nine minutes of fast-paced content performed worse on executive function tasks immediately afterward than those who watched slow-paced educational content or drew.</p>
+
+      <p>But more recent and more rigorous research has complicated that picture significantly. A 2025 meta-analysis published in <em>Developmental Science</em> — the most comprehensive analysis of this research to date, combining findings from dozens of studies — found that <strong>children performed similarly on attention and executive function tasks after watching fast-paced versus slow-paced media.</strong> The pace was not the primary driver of the problem.</p>
+
+      <p>What <em>was</em> the driver? <strong>Fantastical content.</strong> Shows featuring impossible events, reality-defying physics, and logic-violating scenarios were consistently associated with worse performance on attention and executive function tasks immediately after viewing. The research suggests that when children try to process content that does not match their understanding of how the world works, it exhausts cognitive resources in a way that realistic content does not.</p>
+
+      <div class="ot-tip">
+        <div class="tip-label">The Research Finding That Changes Everything</div>
+        <h3>It's Not the Pace. It's What's Happening on Screen.</h3>
+        <p>The distinction that matters is not fast versus slow. It is <strong>fantastical versus realistic</strong>, and <strong>addictive design versus intentional content.</strong></p>
+        <p>Content engineered specifically to be addictive — rapid unpredictable rewards, extreme visual stimulation, content that violates realistic expectations — creates real problems. It raises the baseline of what the brain finds interesting, making everyday life harder to engage with. It trains the brain to expect constant novelty.</p>
+        <p>Content that is realistic, educational, slow-paced, and designed with children's development in mind does not produce those effects. These are not the same thing and should not be treated as the same thing.</p>
+        <p>As a pediatric OT, the question I ask is not "how much screen time?" It is "what kind, in what context, and what is it replacing?"</p>
+      </div>
+
+      <h2>The Two Types of Screen Time Worth Separating</h2>
+
+      <h3>Screens Designed to Hook</h3>
+      <p>There is a category of digital content specifically engineered for maximum engagement in ways that mirror the mechanisms of addiction. These include fast-moving, highly stimulating shows with illogical or fantastical content, many YouTube channels designed for autoplay engagement, and video games built around variable reward loops, loot boxes, and escalating stimulation designed to be impossible to stop playing. The people who build this content are not building it for your child's development. They are building it for engagement metrics. These are worth limiting or avoiding, and the research supports that position clearly.</p>
+
+      <h3>Screens That Are Actually Serving Your Child</h3>
+      <p>There is a very different category of content that does not belong in the same conversation. Educational programming with clear developmental intent, slow-paced realistic storytelling, and content that involves a child actively rather than passively, all behave differently in the research — and in practice.</p>
+
+      <h2>Shows Worth Knowing About</h2>
+
+      <div class="show-grid">
+        <div class="show-card">
+          <span class="show-tag">Language Development · Ages 0–3</span>
+          <h4>Ms. Rachel — Songs for Littles</h4>
+          <p>Created by Rachel Accurso, an early childhood educator with a master's in music education. Uses speech-language therapy techniques including word repetition, pausing for response, slow speech rate, and gesture support. Speech-language pathologists across the field have praised her approach as aligned with evidence-based early intervention strategies. Best used alongside a caregiver who can pause and respond with the child, not as solo passive viewing for babies under 18 months.</p>
+        </div>
+        <div class="show-card">
+          <span class="show-tag">Literacy · Social Skills · Ages 2–8</span>
+          <h4>PBS Kids Programming</h4>
+          <p>Sesame Street remains one of the most studied educational programs in history, with decades of research linking it to improved literacy, numeracy, and social outcomes. PBS Kids programming broadly is designed with developmental goals, vetted by child development experts, and does not use the addictive design mechanics of commercial children's entertainment. Daniel Tiger, Curious George, Arthur — all in this category.</p>
+        </div>
+        <div class="show-card">
+          <span class="show-tag">Classic · Realistic Humor · Ages 4+</span>
+          <h4>Classic Cartoons: Flintstones, Tom & Jerry</h4>
+          <p>These hold up better than people give them credit for. The humor is physical and contextual, the pacing is slower by modern standards, and the content is grounded in relatable human situations rather than fantastical logic-breaking events. Worth a content check with Tom & Jerry depending on your family's comfort with slapstick, but the core content is very different from modern hyper-stimulating cartoons.</p>
+        </div>
+        <div class="show-card">
+          <span class="show-tag">Social Emotional Learning · Ages 3–7</span>
+          <h4>Daniel Tiger, Bluey, Mister Rogers</h4>
+          <p>Realistic emotional situations, slow pacing, and content that models problem solving, emotional regulation, and family relationships. Bluey in particular is exceptional — it consistently depicts realistic child play, parent-child connection, and age-appropriate emotional complexity. Mister Rogers' Neighborhood was literally the slowest-paced show ever coded in children's media research. Not a coincidence.</p>
+        </div>
+      </div>
+
+      <h2>What About Video Games?</h2>
+
+      <p>The same principle applies. Not all games are the same and the "video games are bad" blanket statement is not supported by current research.</p>
+
+      <p>A large-scale 2022 study published in <em>JAMA Network Open</em>, analyzing nearly 2,200 children as part of the national Adolescent Brain Cognitive Development study, found that children who played video games showed enhanced performance on tests of inhibitory control and working memory compared to non-gamers. Research in <em>Frontiers in Rehabilitation Sciences</em> found that video game-based interventions improved executive functions and motor skills in children with neurodevelopmental disorders. Action games specifically have been linked to improvements in hand-eye coordination, sustained attention, and processing speed.</p>
+
+      <p>The games that do cause problems share specific design features: variable reward mechanics designed to be compulsive, loot boxes, escalating stimulation, social pressure features that make it psychologically hard to stop. These mechanics are the issue, not games as a category.</p>
+
+      <p>Minecraft, building games, puzzle games, and cooperative games look very different developmentally from games engineered to maximize compulsive play. Strategy, creativity, and problem-solving games build real cognitive skills. The category "video games" is about as useful as the category "food." What kind matters enormously.</p>
+
+      <div class="ot-tip">
+        <div class="tip-label">Coming Soon</div>
+        <h3>A Therapeutic Game Designed for Children's Development</h3>
+        <p>I am currently developing a therapeutic app and game designed to improve attention, coordination, and processing skills in children — using engaging, well-designed graphics that are intentionally <em>not</em> built on addictive mechanics. The goal is a tool that gives children the engagement benefits of good game design without the compulsive hooks that make screen time problematic.</p>
+        <p>This is exactly the kind of content the research points toward: purposefully designed, developmentally grounded, and built to support the skills children need rather than exploit the reward pathways that make games hard to put down. More details coming soon.</p>
+      </div>
+
+      <h2>What Actually Matters When It Comes to Screen Time</h2>
+
+      <p>The most useful framework is not a time limit. It is a set of questions:</p>
+      <ul>
+        <li><strong>What is on the screen?</strong> Educational, realistic, and developmentally intentional is different from fantastical, rapidly rewarding, and addictive by design.</li>
+        <li><strong>What is it replacing?</strong> Thirty minutes of Daniel Tiger while a parent makes dinner is different from three hours of YouTube that replaces physical play, outdoor time, and conversation.</li>
+        <li><strong>Is the child active or passive?</strong> A toddler who watches Ms. Rachel and responds to her, points, dances, and talks back is engaging differently than one staring blankly at a screen with no interaction.</li>
+        <li><strong>How does the child behave after?</strong> If a child comes off a show regulated, happy, and able to transition, that is useful information. If they consistently come off screens dysregulated, unable to shift gears, or in meltdown, that content or amount of time is worth adjusting.</li>
+        <li><strong>Is the parent present?</strong> Research consistently shows that co-viewing and parent engagement with content significantly improves what children get out of educational media.</li>
+      </ul>
+
+      <h2>A Note to Parents Who Feel Judged</h2>
+
+      <p>If you have turned on a show today because you were exhausted, overwhelmed, or simply needed twenty minutes without someone needing something from you, you are not a bad parent. You are a real one.</p>
+
+      <p>The guilt that parents carry about screen time is not proportional to the actual harm caused by thoughtful, realistic use of good content. The conversation we need is not "screens are ruining your child" — it is "here is what to look for, here is what to avoid, and here is how to make it work for your family."</p>
+
+      <p>Children need present, regulated parents more than they need screen-free households. Sometimes those two things are connected. Give yourself grace.</p>
+
+      <div class="disclaimer">
+        This content is for educational and informational purposes only. Screen time guidelines vary by age, child, and context. Consult your child's pediatrician for individualized guidance.
+      </div>
+
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="download-section">
+      <h3>References and Resources</h3>
+
+      <div class="resource-item">
+        <div class="resource-icon">🔬</div>
+        <p><strong>Hinten et al. (2025).</strong> "Meta-Analytic Review of the Short-Term Effects of Media Exposure on Children's Attention and Executive Functions." <em>Developmental Science.</em> The most comprehensive meta-analysis to date, finding that fantastical content — not pace — is the primary driver of post-viewing attention deficits. <a href="https://onlinelibrary.wiley.com/doi/10.1111/desc.70069" target="_blank" rel="noopener">Read study</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">🔬</div>
+        <p><strong>Chaarani et al. (2022).</strong> "Association of Video Gaming With Cognitive Performance Among Children." <em>JAMA Network Open.</em> Large-scale study of 2,217 children showing enhanced inhibitory control and working memory in children who played video games. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9593235/" target="_blank" rel="noopener">Read study</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">🔬</div>
+        <p><strong>Frontiers in Rehabilitation Sciences (2026).</strong> Systematic review and meta-analysis finding video game-based interventions improved executive functions and gross motor skills in children with neurodevelopmental disorders. <a href="https://www.frontiersin.org/journals/rehabilitation-sciences/articles/10.3389/fresc.2026.1742526/full" target="_blank" rel="noopener">Read study</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📗</div>
+        <p><strong>ASHA — Ms. Rachel Clinical Guidance (2024):</strong> American Speech-Language-Hearing Association's clinical Q&A on Ms. Rachel, reviewing her use of evidence-based early intervention strategies including word repetition, pausing, and gesture support. <a href="https://www.aap.org/en/patient-care/media-and-children/center-of-excellence-on-social-media-and-youth-mental-health/qa-portal/qa-portal-library/qa-portal-library-questions/watching-ms.-rachel-how-to-advise-parents-of-infants-and-toddlers" target="_blank" rel="noopener">Read guidance</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📘</div>
+        <p><strong>Common Sense Media — Screen Time Reviews:</strong> Non-profit resource providing age-based ratings, content analysis, and developmental guidance for TV, movies, apps, and games. <a href="https://www.commonsensemedia.org" target="_blank" rel="noopener">commonsensemedia.org</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📘</div>
+        <p><strong>PBS Kids for Parents:</strong> Research-backed parenting resources including guidance on using educational media intentionally alongside child development information. <a href="https://www.pbs.org/parents" target="_blank" rel="noopener">pbs.org/parents</a></p>
+      </div>
+
+      <div class="resource-item">
+        <div class="resource-icon">📺</div>
+        <p><strong>Ms. Rachel — Songs for Littles:</strong> Available on YouTube and Netflix. Best for ages 0–3 with a caregiver present to encourage interaction. <a href="https://www.youtube.com/@SongsforLittles" target="_blank" rel="noopener">YouTube channel</a></p>
+      </div>
+
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div class="newsletter-section">
+      <p class="eyebrow">Stay in the loop</p>
+      <h3>New posts and resources, once a month.</h3>
+      <p>No spam, no clutter. Just good content when it's ready.</p>
+      <script src="https://f.convertkit.com/ckjs/ck.5.js"></script>
+      <form action="https://app.kit.com/forms/9467610/subscriptions" class="seva-form formkit-form" method="post" data-sv-form="9467610" data-uid="ac56365786" data-format="inline" data-version="5" data-options="{&quot;settings&quot;:{&quot;after_subscribe&quot;:{&quot;action&quot;:&quot;message&quot;,&quot;success_message&quot;:&quot;Success! Now check your email to confirm your subscription.&quot;,&quot;redirect_url&quot;:&quot;&quot;},&quot;analytics&quot;:{&quot;google&quot;:null,&quot;fathom&quot;:null,&quot;facebook&quot;:null,&quot;segment&quot;:null,&quot;pinterest&quot;:null,&quot;sparkloop&quot;:null,&quot;googletagmanager&quot;:null},&quot;modal&quot;:{&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;powered_by&quot;:{&quot;show&quot;:true,&quot;url&quot;:&quot;https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic&quot;},&quot;recaptcha&quot;:{&quot;enabled&quot;:false},&quot;return_visitor&quot;:{&quot;action&quot;:&quot;show&quot;,&quot;custom_content&quot;:&quot;&quot;},&quot;slide_in&quot;:{&quot;display_in&quot;:&quot;bottom_right&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;sticky_bar&quot;:{&quot;display_in&quot;:&quot;top&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15}},&quot;version&quot;:&quot;5&quot;}" min-width="400 500 600 700 800"><div data-style="clean"><ul class="formkit-alert formkit-alert-error" data-element="errors" data-group="alert"></ul><div data-element="fields" data-stacked="false" class="seva-fields formkit-fields"><div class="formkit-field"><input class="formkit-input" name="email_address" aria-label="Email Address" placeholder="Email Address" required="" type="email" style="color: rgb(0, 0, 0); border-color: rgb(227, 227, 227); border-radius: 4px; font-weight: 400;"></div><button data-element="submit" class="formkit-submit formkit-submit" style="color: rgb(255, 255, 255); background-color: rgb(92, 68, 144); border-radius: 4px; font-weight: 400;"><div class="formkit-spinner"><div></div><div></div><div></div></div><span class="">Subscribe</span></button></div><div class="formkit-powered-by-convertkit-container"><a href="https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic" data-element="powered-by" class="formkit-powered-by-convertkit" data-variant="dark" target="_blank" rel="nofollow noopener">Built with Kit</a></div></div><style>.formkit-form[data-uid="ac56365786"] *{box-sizing:border-box;}.formkit-form[data-uid="ac56365786"] .formkit-input{background:#ffffff;font-size:15px;padding:12px;border:1px solid #e3e3e3;flex:1 0 auto;line-height:1.4;margin:0;transition:border-color ease-out 300ms;}.formkit-form[data-uid="ac56365786"] .formkit-input:focus{outline:none;border-color:#5C4490;}.formkit-form[data-uid="ac56365786"] .formkit-button,.formkit-form[data-uid="ac56365786"] .formkit-submit{border:0;border-radius:5px;color:#ffffff;cursor:pointer;display:inline-block;text-align:center;font-size:15px;font-weight:500;margin-bottom:15px;overflow:hidden;padding:0;position:relative;vertical-align:middle;}.formkit-form[data-uid="ac56365786"] .formkit-submit > span{display:block;transition:all 300ms ease-in-out;padding:12px 24px;}.formkit-form[data-uid="ac56365786"] .formkit-alert{background:#f9fafb;border:1px solid #e3e3e3;border-radius:5px;flex:1 0 auto;list-style:none;margin:25px auto;padding:12px;text-align:center;width:100%;}.formkit-form[data-uid="ac56365786"] .formkit-alert:empty{display:none;}.formkit-form[data-uid="ac56365786"] .formkit-alert-success{background:#EDE8F5;border-color:rgba(92,68,144,0.2);color:#3E2D6E;}.formkit-form[data-uid="ac56365786"] .formkit-alert-error{background:#fde8e2;border-color:#f2643b;color:#ea4110;}.formkit-form[data-uid="ac56365786"] .formkit-spinner{display:flex;height:0;width:0;margin:0 auto;position:absolute;top:0;left:0;right:0;overflow:hidden;text-align:center;transition:all 300ms ease-in-out;}.formkit-form[data-uid="ac56365786"] .formkit-spinner > div{margin:auto;width:12px;height:12px;background-color:#fff;opacity:0.3;border-radius:100%;display:inline-block;}.formkit-form[data-uid="ac56365786"] .formkit-submit[data-active] .formkit-spinner{opacity:1;height:100%;width:50px;}.formkit-form[data-uid="ac56365786"] .formkit-submit[data-active] .formkit-spinner ~ span{opacity:0;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit-container{display:flex;width:100%;margin:10px 0;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit{background-color:#ffffff;border-radius:9px;cursor:pointer;display:block;height:36px;margin:0 auto;opacity:0.95;text-decoration:none;text-indent:100%;white-space:nowrap;overflow:hidden;width:157px;background-repeat:no-repeat;background-position:center;}.formkit-form[data-uid="ac56365786"]{max-width:700px;margin:0 auto;}.formkit-form[data-uid="ac56365786"] [data-style="clean"]{width:100%;}.formkit-form[data-uid="ac56365786"] .formkit-fields{display:flex;flex-wrap:wrap;margin:0 auto;}.formkit-form[data-uid="ac56365786"] .formkit-field,.formkit-form[data-uid="ac56365786"] .formkit-submit{margin:0 0 15px 0;flex:1 0 100%;}.formkit-form[data-uid="ac56365786"] .formkit-powered-by-convertkit-container{margin:0;}</style></form>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-logo">Evolving Therapy & Wellness</div>
+    <ul class="footer-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="patient-portal.html">Patient Portal</a></li>
+      <li><a href="employment.html">Employment</a></li>
+      <li><a href="refer-a-patient.html">Refer Patient</a></li>
+      <li><a href="index.html#discounts">Discounts</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Evolving Therapy & Wellness. All rights reserved.</p>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+</body>
+</html>
