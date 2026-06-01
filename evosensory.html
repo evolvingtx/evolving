@@ -195,6 +195,19 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   .mx{max-width:560px;}
   .nav,.hud,.pb-wrap,.drift-box,#tap-btns{max-width:860px;}
 
+  /* ── FONT SIZES — desktop legibility ── */
+  .btn-sm{font-size:13px;padding:9px 16px;min-height:38px;}
+  .label{font-size:12px;letter-spacing:.12em;}
+  .tog-label{font-size:14px;}
+  .tog-sub{font-size:12px;}
+  .mod-pick-name{font-size:15px;}
+  .mod-pick-desc{font-size:13px;}
+  .mods-section-label{font-size:12px;letter-spacing:.12em;}
+  .pill-btn{font-size:12px;padding:9px 8px;}
+  .step-desc,.step-title{font-size:13px;}
+  .hud-val{font-size:15px;}
+  .hud-lbl{font-size:11px;}
+
   /* ── MAP SCREEN — two-column ── */
   #screen-map{
     align-items:flex-start;
@@ -370,6 +383,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
     </div>
 
     <!-- Suggested BPM callout — updates dynamically -->
+    <div id="mobile-modality-note" style="display:none;font-size:10px;color:var(--go);background:var(--gop);border:1px solid rgba(196,146,42,.3);border-radius:7px;padding:7px 10px;margin-bottom:8px;line-height:1.7;">
+      📱 <strong>Phone or tablet detected.</strong> Most children tap with one thumb — select the single-hand option if that applies to this patient. Bilateral is correct if using two hands or an external switch.
+    </div>
     <div id="new-user-bpm-hint" style="background:var(--gp);border:1px solid var(--gn);border-radius:8px;padding:7px 10px;font-size:10px;color:var(--tx);margin-bottom:12px;line-height:1.7;"></div>
 
     <!-- Color -->
@@ -1462,8 +1478,9 @@ const MODULE_META={
   oculomotor:{
     icon:'👁️', title:'Oculomotor', sub:'Visual tracking on the beat',
     clinical:'Visual targets move in sync with the beat. Choose a sub-mode below. Tap when the target reaches the cued position. Optional camera gaze screening on Chrome desktop.',
-    hasLevel:false, hasBPM:false, hasSub:'ocu',
+    hasLevel:false, hasBPM:true, hasSub:'ocu',
     defaultMode:'oculomotor',
+    defaultBPM:44,
   },
   cognitive:{
     icon:'🧠', title:'Cognitive', sub:'Language and math on the beat',
@@ -1487,6 +1504,13 @@ const MODULE_META={
 
 function pickModule(group){
   _pickedModuleGroup=group;
+  const meta=MODULE_META[group];
+  // Apply module-specific BPM default if defined and user hasn't customised
+  if(meta?.defaultBPM && !G.customBpm){
+    G.bpm=meta.defaultBPM;
+    const el=document.getElementById('bpm-disp');
+    if(el) el.textContent=G.bpm;
+  }
   showScreen('modsettings');
 }
 
@@ -2060,12 +2084,14 @@ function playFeedback(devMs,rating){
   if(ctx.createStereoPanner){pan=ctx.createStereoPanner();pan.connect(ctx.destination);dest=pan;}
   if(['miss','wrong','ghost'].includes(rating)){if(pan)pan.pan.value=0;const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);o.frequency.setValueAtTime(180,now);o.frequency.exponentialRampToValueAtTime(80,now+.13);g.gain.setValueAtTime(.1,now);g.gain.exponentialRampToValueAtTime(.001,now+.16);o.start(now);o.stop(now+.18);return;}
   if(rating==='perfect'){if(pan)pan.pan.value=0;[660,1320].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);o.frequency.value=f;g.gain.setValueAtTime(i?.10:.22,now);g.gain.exponentialRampToValueAtTime(.001,now+.32);o.start(now);o.stop(now+.35);});return;}
+  // devMs < 0 = tapped early (before the beat) → left ear
+  // devMs > 0 = tapped late  (after the beat)  → right ear
   const isE=devMs<0,abs=Math.abs(devMs);
   if(pan)pan.pan.value=isE?-Math.min(abs/120,1):Math.min(abs/120,1);
   const semi=Math.min((abs/50)*1.2,5),ratio=Math.pow(2,semi/12),drift=calcDrift();
   let sf,ef,dur;
-  if(isE){sf=520/ratio;ef=520*ratio;dur=drift.trend==='accelerating'?.13:.22;}
-  else{sf=520*ratio;ef=520/ratio;dur=drift.trend==='dragging'?.32:.22;}
+  if(isE){sf=520/ratio;ef=520*ratio;dur=drift.trend==='accelerating'?.13:.22;}  // descending tone = rushing early
+  else{sf=520*ratio;ef=520/ratio;dur=drift.trend==='dragging'?.32:.22;}          // ascending tone = dragging late
   const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);
   o.frequency.setValueAtTime(sf,now);o.frequency.exponentialRampToValueAtTime(ef,now+dur*.72);
   g.gain.setValueAtTime(rating==='good'?.18:.14,now);g.gain.exponentialRampToValueAtTime(.001,now+dur);
@@ -3271,10 +3297,10 @@ function renderRes(){
   const devEl=document.getElementById('res-dev');
   devEl.textContent=(avgDev>0?'+':'')+avgDev+'ms';
   devEl.style.color=absdev<=30?'var(--gn)':absdev<=70?'var(--go)':'var(--rd)';
-  const dirLabel=avgDev>15?' (tapping early)':avgDev<-15?' (tapping late)':'';
+  const dirLabel=avgDev<-15?' (tapping early)':avgDev>15?' (tapping late)':'';
   const devInterp=absdev<=20?'Excellent precision — responses were well-timed'+dirLabel+'.'
     :absdev<=40?'Good precision — mild timing variability'+dirLabel+'.'
-    :absdev<=70?'Moderate difficulty — consistent '+( avgDev>0?'early':'late')+'-tap pattern. May affect handwriting, bilateral tasks, and sequencing.'
+    :absdev<=70?'Moderate difficulty — consistent '+( avgDev<0?'early':'late')+'-tap pattern. May affect handwriting, bilateral tasks, and sequencing.'
     :absdev<=100?'Significant difficulty — errors averaging '+Math.abs(avgDev)+'ms '+(avgDev>0?'early':'late')+'. Document functional impact.'
     :'Severe difficulty — consider reducing BPM and adding sensory feedback supports.';
   document.getElementById('res-dev-interp').textContent=devInterp;
@@ -3420,7 +3446,7 @@ function generateSOAP(sess){
 
   // ── TIMING ERROR (deviation) ───────────────────────────────────────────
   const absdev=Math.abs(dev);
-  const devDir=dev>15?'tapping early (ahead of the beat)':dev<-15?'tapping late (behind the beat)':'centered on the beat';
+  const devDir=dev<-15?'tapping early (ahead of the beat)':dev>15?'tapping late (behind the beat)':'centered on the beat';
   const devInterp=
     absdev<=30 ? `responses were accurate and well-timed (average error: ${dev>0?'+':''}${dev}ms)`
     :absdev<=60 ? `responses were moderately accurate with a tendency toward ${devDir} (average error: ${dev>0?'+':''}${dev}ms)`
@@ -3567,8 +3593,8 @@ Accuracy: % of beats the patient responded to within the acceptable window.
 Timing deviation: average distance in milliseconds (ms) between the beat and where the tap landed.
   LOWER IS BETTER. Zero = perfectly on the beat.
   0–20ms = excellent · 21–40ms = good · 41–70ms = moderate difficulty · 71–100ms = significant · 100ms+ = severe
-  Positive (+) = tapping early (before the beat) → may reflect impulsivity or response inhibition difficulty
-  Negative (−) = tapping late (after the beat) → may reflect processing speed delay or motor initiation difficulty
+  Negative (−) = tapping early (before the beat) → may reflect impulsivity or response inhibition difficulty
+  Positive (+) = tapping late (after the beat) → may reflect processing speed delay or motor initiation difficulty
 
 A patient can score high accuracy AND have significant deviation. Both findings matter independently.
 
@@ -4521,6 +4547,22 @@ async function startWGCalibration(){
   }
 
   try{
+    // Validate webgazer is actually functional — a partial/broken load
+    // will have the object but key methods won't be functions
+    if(window.webgazer && typeof window.webgazer.begin !== 'function'){
+      console.warn('WebGazer loaded but .begin() is not a function — clearing and reloading');
+      window.webgazer = null;
+      WG.wgStarted = false;
+      // Remove old script tag so it reloads fresh
+      const oldScript = document.querySelector('script[src*="webgazer"]');
+      if(oldScript) oldScript.remove();
+      // Reload
+      const reloaded = await loadWebGazer();
+      if(!reloaded || typeof window.webgazer?.begin !== 'function'){
+        throw new Error('WebGazer could not be loaded correctly. Try refreshing the page and using Chrome on a desktop or laptop.');
+      }
+    }
+
     // If WebGazer already started, resume — but check it's still functional
     if(WG.wgStarted&&window.webgazer){
       try{webgazer.resume();}
@@ -4574,7 +4616,12 @@ async function startWGCalibration(){
     } else if(e?.name==='NotAllowedError'||e?.message?.includes('Permission')){
       msg='Camera permission denied. Click the camera icon in the Chrome address bar and allow access, then try again.';
     } else {
-      msg='Eye tracking could not start: '+(e.message||e.name||'unknown error');
+      // "t is not a function" type errors come from WebGazer loading in a broken state
+      const rawMsg = e.message||e.name||'unknown error';
+      const isBrokenLoad = rawMsg.length <= 30 && rawMsg.includes('function');
+      msg = isBrokenLoad
+        ? 'Eye tracking library loaded in a broken state. Refresh the page and try again. Make sure you are using Chrome on a desktop or laptop.'
+        : 'Eye tracking could not start: '+rawMsg;
     }
     if(loadMsg) loadMsg.style.color='var(--rd)';
     if(loadMsg) loadMsg.textContent='✗ '+msg;
