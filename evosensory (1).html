@@ -1,0 +1,2315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<!-- PWA Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="EvoSensory"/>
+<meta name="theme-color" content="#3E2D6E"/>
+<meta name="description" content="EvoSensory — Multi-Sensory Rhythmic Timing Training by Evolving Therapy & Wellness"/>
+<title>EvoSensory | Evolving Therapy & Wellness</title>
+<!-- Favicon: purple circle with ES lettering -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%233E2D6E'/%3E%3Ccircle cx='50' cy='50' r='43' fill='none' stroke='%239B88C4' stroke-width='3'/%3E%3Ctext x='50' y='63' font-family='Georgia%2Cserif' font-size='38' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
+<!-- Apple home screen icon (Save to Home Screen on iPhone/iPad) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='38' fill='%233E2D6E'/%3E%3Ccircle cx='90' cy='90' r='76' fill='none' stroke='%239B88C4' stroke-width='4.5'/%3E%3Ctext x='90' y='114' font-family='Georgia%2Cserif' font-size='70' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap"/></noscript>
+<script>
+// Must be first — catches errors from all subsequent scripts including CDN
+window.onerror = function(msg, src, line, col, err){
+  // Swallow ALL script errors when opening as local file or from CDN failures
+  if(!msg || msg === 'Script error.' || msg === 'Script error') return true;
+  if(!src) return true; // no source = cross-origin suppressed error
+  if(src && (src.includes('webgazer') || src.includes('mediapipe') ||
+     src.includes('jsdelivr') || src.includes('unpkg'))) return true;
+  console.warn('EvoSensory error:', msg, src, line);
+  return false;
+};
+window.addEventListener('unhandledrejection', function(e){
+  const msg = e?.reason?.message || String(e?.reason || '');
+  if(msg.includes('webgazer') || msg.includes('mediapipe') ||
+     msg.includes('Script error') || msg.includes('Loading chunk')) {
+    e.preventDefault();
+  }
+});
+</script>
+<!-- chart.js loaded async — stats charts work when online, degrade gracefully offline -->
+<script>
+(function(){
+  var s=document.createElement("script");
+  s.src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js";
+  s.async=true;
+  s.crossOrigin="anonymous";
+  s.onerror=function(){console.log("Chart.js unavailable — stats will show text only");};
+  document.head.appendChild(s);
+})();
+</script>
+<style>
+:root{
+  --p:#5C4490;--pl:#9B88C4;--pp:#EDE8F5;--pd:#3E2D6E;
+  --cr:#FDFBF9;--ww:#F7F4FB;--tx:#1E1830;--tl:#5A4E72;
+  --gn:#4A8C6F;--gp:#E8F5EF;--go:#C4922A;--gop:#FBF2EA;
+  --rd:#B85450;--rp:#FBEAEA;--br:rgba(92,68,144,.15);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Jost',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cr);color:var(--tx);overflow-x:hidden;}
+.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;}
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;padding:calc(var(--safe-top) + 14px) 12px calc(var(--safe-bot) + 14px);gap:11px;}
+.screen.active{display:flex;}
+.card{width:100%;background:#fff;border-radius:16px;border:1px solid var(--br);padding:14px;}
+.btn{width:100%;padding:13px;background:var(--p);color:#fff;border:none;border-radius:11px;font:500 15px/1 'Jost',sans-serif;cursor:pointer;transition:opacity .15s;}
+.btn:hover{opacity:.9;}
+.btn-out{padding:12px;background:#fff;color:var(--p);border:1.5px solid var(--p);border-radius:11px;font:400 14px/1 'Jost',sans-serif;cursor:pointer;}
+.btn-sm{padding:7px 12px;font:400 11px/1 'Jost',sans-serif;cursor:pointer;border:1.5px solid var(--br);background:#fff;color:var(--tl);border-radius:8px;}
+.label{font-size:11px;font-weight:500;color:var(--tl);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;}
+.row{display:flex;gap:9px;width:100%;}
+.mx{max-width:400px;width:100%;}
+.nav{width:100%;max-width:400px;display:flex;justify-content:space-between;align-items:center;}
+/* PWA install banner */
+#install-banner{display:none;width:100%;max-width:400px;background:var(--pp);border:1px solid var(--p);border-radius:12px;padding:12px 14px;align-items:center;gap:10px;}
+#install-banner.show{display:flex;}
+.install-icon{font-size:22px;flex-shrink:0;}
+.install-txt{flex:1;font-size:11px;color:var(--tx);line-height:1.6;}
+.install-txt strong{color:var(--p);}
+/* Welcome */
+#screen-welcome{background:linear-gradient(160deg,var(--pp) 0%,var(--cr) 55%);}
+.hw-step{display:flex;gap:11px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--br);}
+.hw-step:last-child{border-bottom:none;}
+.hw-num{width:24px;height:24px;border-radius:50%;background:var(--p);color:#fff;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.hw-txt{font-size:12px;color:var(--tx);line-height:1.7;}
+.hw-txt strong{color:var(--p);}
+.warn{background:#FFF8E8;border:1px solid var(--go);border-radius:11px;padding:12px;font-size:12px;color:var(--tx);line-height:1.8;}
+/* Settings */
+#overlay-settings{display:none;position:fixed;inset:0;z-index:200;background:rgba(30,24,48,.55);backdrop-filter:blur(4px);}
+#overlay-settings.active{display:flex;align-items:flex-end;justify-content:center;}
+.s-panel{width:100%;max-width:420px;background:var(--cr);border-radius:20px 20px 0 0;padding:20px 16px calc(var(--safe-bot) + 28px);max-height:90vh;overflow-y:auto;}
+.s-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--tl);}
+.tog-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--br);}
+.tog-row:last-of-type{border-bottom:none;}
+.tog-label{font-size:12px;color:var(--tx);}
+.tog-sub{font-size:10px;color:var(--tl);}
+.tog{position:relative;width:42px;height:22px;flex-shrink:0;}
+.tog input{opacity:0;width:0;height:0;}
+.tog-tk{position:absolute;inset:0;background:#ccc;border-radius:11px;cursor:pointer;transition:background .2s;}
+.tog input:checked+.tog-tk{background:var(--p);}
+.tog-tk::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;}
+.tog input:checked+.tog-tk::after{transform:translateX(20px);}
+/* Sound + game mode pills */
+.pill-row{display:grid;gap:5px;margin-bottom:11px;}
+.pill-row.cols3{grid-template-columns:1fr 1fr 1fr;}
+.pill-row.cols2{grid-template-columns:1fr 1fr;}
+.pill-btn{padding:8px 4px;border-radius:7px;border:1.5px solid var(--br);background:#fff;color:var(--tl);font:400 11px/1.3 'Jost',sans-serif;cursor:pointer;text-align:center;transition:all .15s;}
+.pill-btn .pi{font-size:18px;display:block;margin-bottom:3px;}
+.pill-btn.active{border-color:var(--p);background:var(--pp);color:var(--p);font-weight:500;}
+/* Word list editor */
+#word-editor{display:none;}
+#word-editor.show{display:block;}
+.word-textarea{width:100%;border:1.5px solid var(--br);border-radius:9px;padding:10px;font:400 13px/1.7 'Jost',sans-serif;color:var(--tx);resize:vertical;min-height:100px;}
+/* Math controls */
+#math-controls{display:none;}
+#math-controls.show{display:block;}
+.math-op-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
+/* Map */
+#screen-map svg text{dominant-baseline:middle;}
+/* BPM */
+.bpm-ctrl{display:flex;align-items:center;gap:9px;}
+.bpm-btn{width:40px;height:40px;background:var(--pp);color:var(--p);border:1.5px solid var(--br);border-radius:9px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+/* Countdown */
+#screen-countdown{justify-content:center;gap:18px;}
+.cd-num{font-size:88px;font-weight:700;color:var(--p);line-height:1;animation:popIn .3s ease;}
+/* Game */
+#screen-game{gap:6px;padding-top:calc(var(--safe-top) + 8px);padding-bottom:calc(var(--safe-bot) + 8px);padding-left:9px;padding-right:9px;}
+#cw{width:100%;max-width:400px;height:260px;position:relative;flex-shrink:0;border-radius:13px;overflow:hidden;border:1px solid var(--br);}
+#gc{position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:10;touch-action:none;}
+.hud{width:100%;max-width:400px;display:flex;justify-content:space-between;align-items:center;}
+.tap-btn{padding:16px 0;color:#fff;border:none;border-radius:13px;font:500 17px/1 'Jost',sans-serif;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .07s;}
+.tap-btn:active{transform:scale(.96);}
+.tap-btn.L{background:var(--p);box-shadow:0 4px 16px rgba(92,68,144,.38);}
+.tap-btn.R{background:var(--gn);box-shadow:0 4px 16px rgba(74,140,111,.38);}
+.tap-btn.C{background:var(--p);box-shadow:0 4px 16px rgba(92,68,144,.38);width:100%;}
+.pb-wrap{width:100%;max-width:400px;height:5px;background:rgba(92,68,144,.1);border-radius:3px;overflow:hidden;}
+.pb-fill{height:100%;background:var(--p);border-radius:3px;transition:width .3s;}
+.drift-box{width:100%;max-width:400px;background:var(--ww);border-radius:9px;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;font-size:11px;}
+.ds{font-weight:600;font-size:11px;}
+.ds.stabilized{color:var(--gn);}.ds.accelerating{color:var(--p);}.ds.dragging{color:var(--go);}
+/* Results */
+.star{font-size:38px;transition:color .4s,filter .4s;}
+.star.lit{color:var(--go);filter:drop-shadow(0 2px 4px rgba(196,146,42,.4));}
+.star.dim{color:var(--br);}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.st{background:var(--pp);border-radius:9px;padding:9px;text-align:center;}
+/* Stats */
+.sess-tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.sess-tbl th{background:var(--pp);color:var(--pd);padding:6px 4px;text-align:left;font-weight:500;}
+.sess-tbl td{padding:5px 4px;border-bottom:1px solid var(--br);}
+.sess-tbl tr:nth-child(even) td{background:var(--ww);}
+@keyframes popIn{from{transform:scale(.6);opacity:.5}to{transform:scale(1);opacity:1}}
+@keyframes milePulse{0%,100%{transform:scale(1)}40%{transform:scale(1.2)}70%{transform:scale(.97)}}
+/* Desktop / Surface optimizations */
+@media (hover:hover) and (pointer:fine){
+  .user-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(92,68,144,.12);}
+  .tap-btn:hover{opacity:.88;transform:translateY(-1px);}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(92,68,144,.3);}
+  .btn-out:hover{background:var(--pp);transform:translateY(-1px);}
+  .btn-sm:hover{border-color:var(--p);color:var(--p);}
+  .pill-btn:hover{border-color:var(--pl);color:var(--p);}
+  .bpm-btn:hover{background:var(--pp);transform:scale(1.08);}
+  .tap-btn{padding:22px 0;font-size:19px;}
+  #cw{height:300px;}
+  .mx,.user-grid,.hud,.pb-wrap,.drift-box,#tap-btns{max-width:480px;}
+}
+button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offset:2px;}
+/* ── MODULE PICKER SCREEN ── */
+.mod-pick-card{display:flex;align-items:center;gap:14px;background:white;border:1.5px solid var(--br);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all .18s;margin-bottom:9px;text-decoration:none;}
+.mod-pick-card:hover,.mod-pick-card.active{border-color:var(--p);background:var(--pp);transform:translateY(-2px);box-shadow:0 4px 16px var(--br);}
+.mod-pick-icon{font-size:28px;flex-shrink:0;}
+.mod-pick-body{flex:1;}
+.mod-pick-name{font-size:14px;font-weight:600;color:var(--p);margin-bottom:2px;}
+.mod-pick-desc{font-size:11px;color:var(--tl);line-height:1.6;}
+.mod-pick-badge{font-size:9px;background:var(--go);color:white;padding:2px 7px;border-radius:6px;margin-left:6px;}
+.mod-pick-arrow{font-size:16px;color:var(--pl);flex-shrink:0;}
+/* ── MODULE SETTINGS SCREEN ── */
+#screen-modsettings{background:var(--cr);}
+.mods-header{background:var(--pd);padding:18px 20px 20px;margin-bottom:0;}
+.mods-header-title{font-family:'Cormorant Garamond',serif;font-size:24px;color:white;margin-bottom:2px;}
+.mods-header-sub{font-size:11px;color:rgba(255,255,255,.65);}
+.mods-section{padding:14px 20px;max-width:480px;margin:0 auto;}
+.mods-section-label{font-size:10px;font-weight:600;color:var(--pl);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
+
+.tap-btn:focus-visible{outline:4px solid white;outline-offset:3px;}
+.btn-sm{min-height:36px;}
+.bpm-btn{min-width:44px;min-height:44px;}
+
+/* ═══ DESKTOP LAYOUT ≥900px ═══════════════════════════════════
+   Two-column map. Large game canvas. Wide welcome/stats/results.
+═══════════════════════════════════════════════════════════════ */
+@media (min-width:900px){
+
+  /* Global container widening */
+  .screen{padding:20px 32px 32px;}
+  .mx{max-width:560px;}
+  .nav,.hud,.pb-wrap,.drift-box,#tap-btns{max-width:860px;}
+
+  /* ── MAP SCREEN — two-column ── */
+  #screen-map{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  #screen-map .nav{max-width:100%;width:100%;}
+  #screen-map > .nav{margin-bottom:8px;}
+
+  /* Two-column wrapper — injected by JS */
+  .dt-map-cols{
+    display:grid;
+    grid-template-columns:300px 1fr;
+    gap:16px;
+    width:100%;
+    max-width:1000px;
+    align-items:start;
+  }
+  .dt-map-left{display:flex;flex-direction:column;gap:10px;}
+  .dt-map-right{display:flex;flex-direction:column;gap:10px;}
+
+  /* Map SVG panel wider */
+  #screen-map > div:has(#map-svg){max-width:100%;}
+  .dt-map-right > div:has(#map-svg){
+    height:200px;
+    min-width:0;
+  }
+  .dt-map-right > div:has(#map-svg) svg{
+    width:100%;height:200px;
+  }
+  #buddy-pos{transform:translate(-50%,-100%) scale(.55);}
+
+  /* Cards full width inside their column */
+  .dt-map-left .card,
+  .dt-map-right .card,
+  .dt-map-left .btn,
+  .dt-map-right .btn{
+    max-width:100%;width:100%;
+  }
+
+  /* ── GAME SCREEN — big canvas ── */
+  #screen-game{
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:flex-start;
+    gap:12px;
+    padding:16px 24px;
+  }
+  #cw{
+    width:660px;
+    height:500px;
+    max-width:calc(100vw - 280px);
+    flex-shrink:0;
+  }
+  /* Game sidebar — HUD, drift, tap buttons stacked on right */
+  .dt-game-sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:240px;
+    flex-shrink:0;
+  }
+  /* On mobile the sidebar doesn't exist — show original layout */
+  .hud,.drift-box,.pb-wrap,#tap-btns{max-width:100%;}
+
+  /* ── WELCOME — two-column hardware + modules ── */
+  #screen-welcome{align-items:center;}
+  #screen-welcome > .mx{max-width:860px;}
+  #screen-welcome .card{max-width:860px;}
+  #screen-welcome .btn{max-width:860px;}
+
+  /* ── RESULTS ── */
+  #screen-results > .mx,
+  #screen-results > .card{max-width:760px;}
+
+  /* ── STATS ── */
+  #screen-stats > .mx,
+  #screen-stats > .card{max-width:900px;}
+
+  /* ── COUNTDOWN ── */
+  .cd-num{font-size:140px;}
+
+  /* ── MODALS wider ── */
+  .modal-box{max-width:520px;}
+  .s-panel{max-width:560px;border-radius:20px;margin:auto;margin-top:auto;align-self:center;}
+  #overlay-settings.active{align-items:center;}
+
+  /* ── tap buttons larger on desktop ── */
+  .tap-btn{padding:26px 0;font-size:20px;border-radius:14px;}
+  .tap-btn.C{padding:26px 0;}
+
+  /* ── BPM display larger ── */
+  #bpm-disp{font-size:36px!important;}
+
+  /* ── Canvas size ── */
+  #cw{height:480px;}
+}
+/* User profiles */
+#screen-users{background:linear-gradient(160deg,var(--pp) 0%,var(--cr) 55%);}
+.user-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:400px;}
+.user-card{background:#fff;border:2px solid var(--br);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .15s;}
+.user-card:hover,.user-card.active-u{border-color:var(--p);background:var(--pp);}
+.user-avatar{width:48px;height:48px;border-radius:50%;margin:0 auto 7px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;}
+.user-name{font-size:12px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-sessions{font-size:10px;color:var(--tl);margin-top:2px;}
+.add-user-card{background:var(--ww);border:2px dashed var(--br);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .15s;}
+.add-user-card:hover{border-color:var(--p);background:var(--pp);}
+/* Active user chip */
+.active-user-chip{display:flex;align-items:center;gap:6px;background:var(--pp);border:1px solid var(--p);border-radius:20px;padding:4px 10px 4px 6px;cursor:pointer;}
+.auc-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.auc-name{font-size:11px;font-weight:500;color:var(--p);}
+/* New user modal */
+#new-user-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(30,24,48,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+#new-user-modal.active{display:flex;}
+.modal-box{background:var(--cr);border-radius:20px;padding:24px 20px;width:90%;max-width:360px;}
+.modal-title{font-size:18px;font-weight:500;color:var(--pd);margin-bottom:16px;}
+.modal-input{width:100%;border:1.5px solid var(--br);border-radius:10px;padding:11px 13px;font:400 15px 'Jost',sans-serif;color:var(--tx);margin-bottom:10px;}
+.modal-input:focus{outline:none;border-color:var(--p);}
+.avatar-picker{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.av-opt{width:38px;height:38px;border-radius:50%;border:2px solid transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;transition:all .15s;}
+.av-opt.selected{border-color:var(--pd);transform:scale(1.12);}
+</style>
+</head>
+<body>
+
+<!-- PWA INSTALL BANNER -->
+<div id="install-banner">
+  <div class="install-icon">📱</div>
+  <div class="install-txt">
+    <strong>Install EvoSensory</strong> for the best experience.<br>
+    Tap <strong>Share → Add to Home Screen</strong> in Safari for full haptic access.
+  </div>
+  <button class="btn-sm" onclick="document.getElementById('install-banner').classList.remove('show');localStorage.setItem('rhythmrx_banner','0')">✕</button>
+</div>
+
+<!-- USER SELECT SCREEN -->
+<div id="screen-users" class="screen">
+  <div class="mx" style="text-align:center;margin-top:16px;">
+    <div class="serif" style="font-size:32px;color:var(--pd);">EvoSensory</div>
+    <div style="font-size:11px;color:var(--p);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:500;">Multi-Sensory Rhythmic Timing Training</div>
+    <div style="font-size:11px;color:var(--tl);margin-top:2px;">Evolving Therapy &amp; Wellness</div>
+  </div>
+  <div style="font-size:13px;color:var(--tl);margin-top:4px;">Who's playing?</div>
+  <div class="user-grid" id="user-grid"></div>
+  <div style="font-size:10px;color:var(--tl);margin-top:4px;">www.evolve-ot.com</div>
+</div>
+
+<!-- NEW USER MODAL -->
+<div id="new-user-modal">
+  <div class="modal-box" style="max-height:92vh;overflow-y:auto;">
+    <div class="modal-title">New Player</div>
+
+    <!-- Name -->
+    <input class="modal-input" id="new-user-name" placeholder="Name or initials (e.g. Mia, J.T.)" maxlength="20" autocomplete="off"/>
+
+    <!-- Age category -->
+    <div style="font-size:11px;color:var(--tl);margin-bottom:5px;font-weight:500;">Age Category</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:12px;" id="age-cat-row">
+      <button class="pill-btn active" data-ac="peds" onclick="pickAgeCat('peds')" style="font-size:10px;padding:6px 4px;">🧒 Pediatric<br><span style="font-size:9px;color:var(--tl);">0–17</span></button>
+      <button class="pill-btn" data-ac="adult" onclick="pickAgeCat('adult')" style="font-size:10px;padding:6px 4px;">🧑 Adult<br><span style="font-size:9px;color:var(--tl);">18–64</span></button>
+      <button class="pill-btn" data-ac="older" onclick="pickAgeCat('older')" style="font-size:10px;padding:6px 4px;">🧓 Older Adult<br><span style="font-size:9px;color:var(--tl);">65+</span></button>
+    </div>
+
+    <!-- Modality -->
+    <div style="font-size:11px;color:var(--tl);margin-bottom:5px;font-weight:500;">Primary Training Modality</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;" id="modality-row">
+      <button class="pill-btn active" data-mod="hands-bi" onclick="pickModality('hands-bi')" style="font-size:10px;padding:6px 4px;">🤲 Hands<br><span style="font-size:9px;color:var(--tl);">Bilateral</span></button>
+      <button class="pill-btn" data-mod="hands-r" onclick="pickModality('hands-r')" style="font-size:10px;padding:6px 4px;">✋ Hand<br><span style="font-size:9px;color:var(--tl);">Right only</span></button>
+      <button class="pill-btn" data-mod="hands-l" onclick="pickModality('hands-l')" style="font-size:10px;padding:6px 4px;">🤚 Hand<br><span style="font-size:9px;color:var(--tl);">Left only</span></button>
+      <button class="pill-btn" data-mod="feet-bi" onclick="pickModality('feet-bi')" style="font-size:10px;padding:6px 4px;">👣 Feet<br><span style="font-size:9px;color:var(--tl);">Bilateral</span></button>
+      <button class="pill-btn" data-mod="feet-r" onclick="pickModality('feet-r')" style="font-size:10px;padding:6px 4px;">🦵 Foot<br><span style="font-size:9px;color:var(--tl);">Right only</span></button>
+      <button class="pill-btn" data-mod="feet-l" onclick="pickModality('feet-l')" style="font-size:10px;padding:6px 4px;">🦵 Foot<br><span style="font-size:9px;color:var(--tl);">Left only</span></button>
+    </div>
+
+    <!-- Suggested BPM callout — updates dynamically -->
+    <div id="mobile-modality-note" style="display:none;font-size:10px;color:var(--go);background:var(--gop);border:1px solid rgba(196,146,42,.3);border-radius:7px;padding:7px 10px;margin-bottom:8px;line-height:1.7;">
+      📱 <strong>Phone or tablet detected.</strong> Most children tap with one thumb — select the single-hand option if that applies to this patient. Bilateral is correct if using two hands or an external switch.
+    </div>
+    <div id="new-user-bpm-hint" style="background:var(--gp);border:1px solid var(--gn);border-radius:8px;padding:7px 10px;font-size:10px;color:var(--tx);margin-bottom:12px;line-height:1.7;"></div>
+
+    <!-- Color -->
+    <div style="font-size:11px;color:var(--tl);margin-bottom:6px;">Pick a color:</div>
+    <div class="avatar-picker" id="avatar-picker"></div>
+
+    <div class="row">
+      <button class="btn-out" style="flex:1;" onclick="closeNewUser()">Cancel</button>
+      <button class="btn" style="flex:2;" onclick="saveNewUser()">Add Player ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- WELCOME -->
+<div id="screen-welcome" class="screen">
+  <div class="mx" style="text-align:center;margin-top:10px;">
+    <div class="serif" style="font-size:32px;color:var(--pd);letter-spacing:.02em;">EvoSensory</div>
+    <div style="font-size:12px;color:var(--p);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:500;">Multi-Sensory Rhythmic Timing Training</div>
+    <div style="font-size:11px;color:var(--tl);margin-top:2px;">Evolving Therapy &amp; Wellness</div>
+  </div>
+
+  <!-- Five modules overview -->
+  <div class="card mx" style="padding:13px 14px;">
+    <div class="label" style="margin-bottom:9px;">The Five Modules</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="background:var(--pp);border-radius:10px;padding:9px;">
+        <div style="font-size:13px;font-weight:500;color:var(--p);">🎮 Classic</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Core timing engine. Millisecond tap tracking with spatial audio, XAC haptic pillow, and adaptive hit window.</div>
+      </div>
+      <div style="background:var(--pp);border-radius:10px;padding:9px;">
+        <div style="font-size:13px;font-weight:500;color:var(--p);">👁️ Oculomotor</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Pursuits, saccades, depth pulse, and gaze hold — all synced to the beat. Optional camera eye tracking on Chrome.</div>
+      </div>
+      <div style="background:var(--pp);border-radius:10px;padding:9px;">
+        <div style="font-size:13px;font-weight:500;color:var(--p);">🧠 Cognitive</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Vocab spelling + syllables and math sequences spoken on the beat. Language and number fluency meets timing.</div>
+      </div>
+      <div style="background:var(--pp);border-radius:10px;padding:9px;">
+        <div style="font-size:13px;font-weight:500;color:var(--p);">📷 Motion</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Camera detects clapping, knee taps, marching, and jumps timed to the beat. Requires Chrome on a computer.</div>
+      </div>
+      <div style="background:var(--pp);border-radius:10px;padding:9px;grid-column:span 2;">
+        <div style="font-size:13px;font-weight:500;color:var(--p);">🎯 Active Games</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Catch stars, pop balloons, kick soccer balls, duck and jump, balance zones. Body movement controls the game. Targets vestibular, bilateral coordination, motor planning, and dynamic balance. Requires Chrome on a computer.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Start Steps -->
+  <div class="card mx" style="border-left:3px solid var(--p);">
+    <div class="label" style="margin-bottom:9px;">How to Run a Session</div>
+    <div class="hw-step"><div class="hw-num">1</div><div class="hw-txt"><strong>Create a patient profile</strong> — tap <strong>+ New Player</strong> on the next screen. Set name, age category, and training modality (hands or feet, bilateral or one side). Starting BPM is set automatically.</div></div>
+    <div class="hw-step"><div class="hw-num">2</div><div class="hw-txt"><strong>Pick a module and level</strong> — start with <strong>Classic → Level 1</strong>. Adjust BPM with the + / − buttons if needed. Other modules unlock as you explore.</div></div>
+    <div class="hw-step"><div class="hw-num">3</div><div class="hw-txt"><strong>Confirm hardware</strong> — a quick screen before each session asks what's connected (headphones, vibration, XAC pillow). Only what you confirm gets documented in the SOAP note.</div></div>
+    <div class="hw-step"><div class="hw-num">4</div><div class="hw-txt"><strong>Tap with the beat</strong> — tap the large button, the canvas, or press spacebar. One tap per beat. The app scores every response.</div></div>
+    <div class="hw-step"><div class="hw-num">5</div><div class="hw-txt"><strong>Get your SOAP note</strong> — when the session ends, tap <strong>Generate SOAP Note</strong>. Copy to clipboard or print. Edit before pasting into your EMR.</div></div>
+    <div class="hw-step" style="border-bottom:none;background:var(--gp);border-radius:8px;padding:8px 10px;margin-top:6px;"><div class="hw-num" style="background:var(--gn);">?</div><div class="hw-txt" style="color:var(--tx);">Lost? The full manual is at <strong>evolve-ot.com/resources</strong> — a printable 5-page PDF covering every feature, the interpretation scale, and SOAP note guide.</div></div>
+  </div>
+
+  <div class="warn mx">
+    <strong>🎧 Use wired headphones.</strong> Bluetooth adds 100–200ms delay that completely defeats the therapeutic feedback loop. The stereo left/right error tones require precise timing to work.
+  </div>
+  <div class="warn mx" style="background:#FFF0F8;border-color:#E080B0;">
+    <strong>📱 iPhone users:</strong> For full haptic feedback, tap <strong>Share → Add to Home Screen</strong> in Safari after this screen. Installed apps get better vibration access. The Android app (coming soon) has full haptics.
+  </div>
+  <div class="card mx">
+    <div class="label" style="margin-bottom:9px;">Hardware Setup</div>
+    <div class="hw-step"><div class="hw-num">1</div><div class="hw-txt"><strong>Wired headphones:</strong> Left ear = you're rushing. Right ear = you're dragging. This spatial feedback is the core mechanism.</div></div>
+    <div class="hw-step"><div class="hw-num">2</div><div class="hw-txt"><strong>Hand switches:</strong> Left → f, ←, z, Shift-L. Right → j, →, /, Ctrl-R. Any USB switch or jelly bean that sends a keystroke works instantly.</div></div>
+    <div class="hw-step"><div class="hw-num">3</div><div class="hw-txt"><strong>Foot switches:</strong> Same key mapping. Level 6 is designed specifically for bilateral foot tap training.</div></div>
+    <div class="hw-step"><div class="hw-num">4</div><div class="hw-txt"><strong>Xbox Adaptive Controller ($100):</strong> This is where EvoSensory transforms. Your existing AAC switch plugs directly into the XAC 3.5mm back jack — no adapter needed. Button 0 = LEFT, Button 1 = RIGHT. The XAC routes independent vibration to each side: left fires when you tap early, right fires when you tap late. Connect a haptic cushion to the output jack and the child feels timing feedback through their body.</div></div>
+    <div class="hw-step"><div class="hw-num">5</div><div class="hw-txt"><strong>No hardware?</strong> Tap the on-screen buttons, tap the canvas, or press any keyboard key. All modes work without accessories. Wired earbuds ($10) are the single best upgrade.</div></div>
+  </div>
+  <button class="btn mx" style="font-size:16px;padding:15px;" onclick="localStorage.setItem('rr_seen','1');localStorage.setItem('rr_seen_'+(activeUserId||''),'1');showScreen('module');">Get Started ▶</button>
+  <div style="text-align:center;">
+    <div style="font-size:11px;color:var(--p);">www.evolve-ot.com</div>
+    <div style="font-size:10px;color:var(--tl);margin-top:2px;">Vanessa Dorado Walker, MS, OTR/L · © 2026 Evolving Therapy &amp; Wellness</div>
+  </div>
+</div>
+
+<!-- MODULE PICKER SCREEN -->
+<div id="screen-module" class="screen">
+  <!-- Nav -->
+  <div class="nav mx">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="serif" style="font-size:19px;color:var(--pd);">EvoSensory</div>
+      <div class="active-user-chip" id="auc2-chip" onclick="showScreen('users')" title="Switch player">
+        <div class="auc-dot" id="auc2-dot"></div>
+        <div class="auc-name" id="auc2-name"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;">
+      <button class="btn-sm" onclick="showScreen('stats')">📊</button>
+      <button class="btn-sm" onclick="openSettings()">⚙️</button>
+    </div>
+  </div>
+
+  <div class="mx" style="padding:12px 0 4px;">
+    <div style="font-size:13px;font-weight:500;color:var(--pd);margin-bottom:2px;">Choose a Module</div>
+    <div style="font-size:11px;color:var(--tl);">Tap to see options and settings.</div>
+  </div>
+
+  <div class="mx">
+    <div class="mod-pick-card" onclick="pickModule('classic')">
+      <div class="mod-pick-icon">🎮</div>
+      <div class="mod-pick-body">
+        <div class="mod-pick-name">EvoSensory Classic</div>
+        <div class="mod-pick-desc">Core timing engine. Six levels. Spatial audio, haptic feedback, bilateral tapping.</div>
+      </div>
+      <div class="mod-pick-arrow">›</div>
+    </div>
+    <div class="mod-pick-card" onclick="pickModule('cognitive')">
+      <div class="mod-pick-icon">🧠</div>
+      <div class="mod-pick-body">
+        <div class="mod-pick-name">EvoSensory Cognitive</div>
+        <div class="mod-pick-desc">Language and math spoken on the beat. Dual-task timing training.</div>
+      </div>
+      <div class="mod-pick-arrow">›</div>
+    </div>
+    <div class="mod-pick-card" onclick="pickModule('oculomotor')">
+      <div class="mod-pick-icon">👁️</div>
+      <div class="mod-pick-body">
+        <div class="mod-pick-name">EvoSensory Oculomotor</div>
+        <div class="mod-pick-desc">Visual tracking synced to the beat. Pursuits, saccades, depth, gaze hold.</div>
+      </div>
+      <div class="mod-pick-arrow">›</div>
+    </div>
+    <div class="mod-pick-card" onclick="pickModule('motion')">
+      <div class="mod-pick-icon">📷</div>
+      <div class="mod-pick-body">
+        <div class="mod-pick-name">EvoSensory Motion <span class="mod-pick-badge">BETA</span></div>
+        <div class="mod-pick-desc">Camera detects body gestures timed to the beat. Chrome on computer required.</div>
+      </div>
+      <div class="mod-pick-arrow">›</div>
+    </div>
+    <div class="mod-pick-card" onclick="pickModule('activegames')">
+      <div class="mod-pick-icon">🎯</div>
+      <div class="mod-pick-body">
+        <div class="mod-pick-name">EvoSensory Active Games <span class="mod-pick-badge" style="background:var(--p);">BETA</span></div>
+        <div class="mod-pick-desc">Body movement controls 5 camera-based games. Chrome on computer required.</div>
+      </div>
+      <div class="mod-pick-arrow">›</div>
+    </div>
+
+    <!-- Progress note -->
+    <div style="background:var(--gp);border:1px solid var(--gn);border-radius:10px;padding:10px 13px;margin-top:6px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:11px;font-weight:600;color:var(--gn);">📊 Recent Sessions</div>
+        <div style="font-size:10px;color:var(--p);cursor:pointer;text-decoration:underline;" onclick="showScreen('stats')">View all →</div>
+      </div>
+      <div id="module-progress-strip" style="font-size:10.5px;color:var(--tx);line-height:1.8;"></div>
+      <div style="font-size:10px;color:var(--tl);margin-top:5px;border-top:1px solid rgba(74,140,111,.2);padding-top:5px;"><strong>Save SOAP notes locally</strong> after each session — use Copy or Print from the results screen.</div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-modsettings" class="screen">
+  <!-- Breadcrumb nav -->
+  <div class="nav mx">
+    <button class="btn-sm" onclick="showScreen('module')" style="font-size:13px;padding:6px 12px;">← Modules</button>
+    <div style="display:flex;gap:7px;">
+      <button class="btn-sm" onclick="showScreen('stats')">📊</button>
+      <button class="btn-sm" onclick="openSettings()">⚙️</button>
+    </div>
+  </div>
+
+  <!-- Module header — filled by JS -->
+  <div id="mods-header" style="padding:14px 20px 0;max-width:480px;margin:0 auto;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+      <span id="mods-icon" style="font-size:26px;"></span>
+      <div>
+        <div id="mods-title" class="serif" style="font-size:22px;color:var(--pd);"></div>
+        <div id="mods-sub" style="font-size:11px;color:var(--tl);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mods-section">
+
+    <!-- STEP A: Sub-mode / game picker (if module has sub-modes) -->
+    <div id="mods-submodes-section" style="display:none;margin-bottom:14px;">
+      <div class="mods-section-label" id="mods-submodes-label">Choose an Option</div>
+      <div id="mods-submode-cards"></div>
+    </div>
+
+    <!-- STEP B: Settings for selected sub-mode — revealed after sub-mode pick -->
+    <div id="mods-settings-section">
+
+      <!-- Level (Classic only) -->
+      <div id="mods-level-wrap" style="display:none;margin-bottom:14px;">
+        <div class="mods-section-label">Level</div>
+        <div id="mods-level-pills" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+      </div>
+
+      <!-- BPM -->
+      <div id="mods-bpm-wrap" style="display:none;margin-bottom:14px;">
+        <div class="mods-section-label">Tempo (BPM)</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="btn-sm bpm-btn" onclick="modsChangeBPM(-4)">−</button>
+          <div id="mods-bpm-disp" style="font-size:30px;font-weight:700;color:var(--pd);min-width:64px;text-align:center;"></div>
+          <button class="btn-sm bpm-btn" onclick="modsChangeBPM(+4)">+</button>
+          <div style="font-size:10px;color:var(--tl);flex:1;line-height:1.55;">Recommended for age &amp; modality.</div>
+        </div>
+      </div>
+
+      <!-- Module-specific toggles (speech, eye tracking, etc) — filled by JS -->
+      <div id="mods-extra-settings"></div>
+
+      <!-- Modality -->
+      <div id="mods-modality-wrap" style="margin-bottom:14px;">
+        <div class="mods-section-label">Training Modality</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;" id="mods-modality-row">
+          <button class="pill-btn" data-mod="hands-bi" onclick="modsPickModality('hands-bi')" style="font-size:10px;padding:7px 4px;">🤲 Hands<br><span style="font-size:9px;color:var(--tl);">Bilateral</span></button>
+          <button class="pill-btn" data-mod="hands-r"  onclick="modsPickModality('hands-r')"  style="font-size:10px;padding:7px 4px;">✋ Hand<br><span style="font-size:9px;color:var(--tl);">Right only</span></button>
+          <button class="pill-btn" data-mod="hands-l"  onclick="modsPickModality('hands-l')"  style="font-size:10px;padding:7px 4px;">🤚 Hand<br><span style="font-size:9px;color:var(--tl);">Left only</span></button>
+          <button class="pill-btn" data-mod="feet-bi"  onclick="modsPickModality('feet-bi')"  style="font-size:10px;padding:7px 4px;">👣 Feet<br><span style="font-size:9px;color:var(--tl);">Bilateral</span></button>
+          <button class="pill-btn" data-mod="feet-r"   onclick="modsPickModality('feet-r')"   style="font-size:10px;padding:7px 4px;">🦵 Foot<br><span style="font-size:9px;color:var(--tl);">Right only</span></button>
+          <button class="pill-btn" data-mod="feet-l"   onclick="modsPickModality('feet-l')"   style="font-size:10px;padding:7px 4px;">🦵 Foot<br><span style="font-size:9px;color:var(--tl);">Left only</span></button>
+        </div>
+        <div id="mods-modality-note" style="display:none;font-size:10px;color:var(--tl);background:var(--gop);border-radius:7px;padding:6px 9px;margin-top:6px;line-height:1.7;">📱 On phones/tablets, most children tap with one hand — verify bilateral applies before selecting bilateral.</div>
+      </div>
+
+      <!-- Play button -->
+      <div style="display:flex;gap:8px;margin-bottom:6px;">
+        <button class="btn" style="flex:1;font-size:17px;padding:15px;" id="mods-play-btn" onclick="modsStartSession()">▶ Start Session</button>
+      </div>
+      <div style="text-align:center;font-size:10px;color:var(--tl);">Settings saved to this patient's profile automatically.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS OVERLAY -->
+<div id="overlay-settings">
+<div class="s-panel">
+  <button class="s-close" onclick="closeSettings()">✕</button>
+  <div class="serif" style="font-size:21px;color:var(--pd);margin-bottom:14px;">Settings</div>
+
+  <div class="label">Beat Sound</div>
+  <div class="pill-row cols3" id="sound-pills">
+    <button class="pill-btn" data-sm="click" onclick="setSM('click')">Single Beat</button>
+    <button class="pill-btn active" data-sm="count" onclick="setSM('count')">Double Beat</button>
+    <button class="pill-btn" data-sm="spoken" onclick="setSM('spoken')">1–2 Spoken</button>
+  </div>
+
+  <div class="label">Sensory Outputs</div>
+  <div class="tog-row"><div><div class="tog-label">🔊 Audio Feedback (spatial)</div><div class="tog-sub">Left ear = rushing · Right ear = dragging</div></div><label class="tog"><input type="checkbox" id="tog-audio" checked onchange="S.audioOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">🎵 Metronome</div></div><label class="tog"><input type="checkbox" id="tog-metro" checked onchange="S.metroOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">📳 Haptics</div><div class="tog-sub">Device vibration + audio haptic fallback for iPhone</div></div><label class="tog"><input type="checkbox" id="tog-hap" checked onchange="S.hapticOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">🎮 XAC Pillow Rumble</div><div class="tog-sub">Xbox Adaptive Controller dual-rumble</div></div><label class="tog"><input type="checkbox" id="tog-rum" checked onchange="S.rumbleOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">👀 Visuals</div></div><label class="tog"><input type="checkbox" id="tog-vis" checked onchange="S.visualOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">🗣 Speech (Vocab/Math)</div><div class="tog-sub">Speaks letters, words, and numbers aloud</div></div><label class="tog"><input type="checkbox" id="tog-speech" checked onchange="S.speechOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">🕶 Blind Training</div><div class="tog-sub">Visuals fade after 10s</div></div><label class="tog"><input type="checkbox" id="tog-bld" onchange="S.blindMode=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">👩‍⚕️ Therapist View</div><div class="tog-sub">ms deviation + clinical notes</div></div><label class="tog"><input type="checkbox" id="tog-th" onchange="S.therapistMode=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">✅ Session Setup Prompt</div><div class="tog-sub">Ask about headphones & haptics before each session</div></div><label class="tog"><input type="checkbox" id="tog-hwcheck" checked onchange="S.hwCheckOn=this.checked"/><span class="tog-tk"></span></label></div>
+
+  <!-- Modality quick-change in settings -->
+  <div style="margin-top:14px;">
+    <div class="label">Training Modality (current session)</div>
+    <div style="font-size:10px;color:var(--tl);margin-bottom:7px;">Changes apply to current and future sessions for this patient. Also editable on the module settings screen before each session.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;" id="settings-modality-row">
+      <button class="pill-btn" data-mod="hands-bi" onclick="setModalityFromSettings('hands-bi')" style="font-size:10px;padding:6px 4px;">🤲 Hands<br><span style="font-size:9px;color:var(--tl);">Bilateral</span></button>
+      <button class="pill-btn" data-mod="hands-r"  onclick="setModalityFromSettings('hands-r')"  style="font-size:10px;padding:6px 4px;">✋ Hand<br><span style="font-size:9px;color:var(--tl);">Right</span></button>
+      <button class="pill-btn" data-mod="hands-l"  onclick="setModalityFromSettings('hands-l')"  style="font-size:10px;padding:6px 4px;">🤚 Hand<br><span style="font-size:9px;color:var(--tl);">Left</span></button>
+      <button class="pill-btn" data-mod="feet-bi"  onclick="setModalityFromSettings('feet-bi')"  style="font-size:10px;padding:6px 4px;">👣 Feet<br><span style="font-size:9px;color:var(--tl);">Bilateral</span></button>
+      <button class="pill-btn" data-mod="feet-r"   onclick="setModalityFromSettings('feet-r')"   style="font-size:10px;padding:6px 4px;">🦵 Foot<br><span style="font-size:9px;color:var(--tl);">Right</span></button>
+      <button class="pill-btn" data-mod="feet-l"   onclick="setModalityFromSettings('feet-l')"   style="font-size:10px;padding:6px 4px;">🦵 Foot<br><span style="font-size:9px;color:var(--tl);">Left</span></button>
+    </div>
+  </div>
+
+  <div style="margin-top:11px;"><div class="label">Haptic Intensity</div>
+  <input type="range" min="0" max="100" value="80" id="hi-sl" oninput="S.hapticIntensity=this.value/100;document.getElementById('hi-v').textContent=this.value+'%'" style="width:100%;accent-color:var(--go);"/>
+  <div style="font-size:10px;color:var(--tl);text-align:right;margin-top:2px;" id="hi-v">80%</div></div>
+
+  <!-- Vocabulary word list -->
+  <div style="margin-top:14px;">
+    <div class="label">Vocabulary Mode — Word List</div>
+    <div style="font-size:11px;color:var(--tl);margin-bottom:7px;">One word per line. Use hyphens to mark syllable breaks: <strong>BUT-TER-FLY</strong>, <strong>MON-KEY</strong>, <strong>EL-E-PHANT</strong>. Without hyphens, syllables are detected automatically.</div>
+    <textarea class="word-textarea" id="word-list" placeholder="cat&#10;dog&#10;run&#10;jump&#10;play">cat
+dog
+run
+jump
+play
+red
+blue
+big
+come
+here</textarea>
+    <div style="font-size:10px;color:var(--tl);margin-top:4px;" id="word-count">10 words loaded</div>
+  </div>
+
+  <!-- Math controls -->
+  <div style="margin-top:14px;">
+    <div class="label">Math Mode</div>
+    <div class="pill-row cols3" id="math-op-pills">
+      <button class="pill-btn active" data-mo="count" onclick="setMathOp('count')">Count Sets</button>
+      <button class="pill-btn" data-mo="add" onclick="setMathOp('add')">Addition</button>
+      <button class="pill-btn" data-mo="multiply" onclick="setMathOp('multiply')">Multiply</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+      <div style="font-size:12px;color:var(--tl);flex-shrink:0;" id="math-param-label">Count by:</div>
+      <input type="number" id="math-param" value="2" min="1" max="12" style="width:60px;border:1.5px solid var(--br);border-radius:8px;padding:6px;font:500 16px 'Jost',sans-serif;text-align:center;"/>
+      <div style="font-size:11px;color:var(--tl);" id="math-param-hint">2, 4, 6, 8…</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:7px;margin-top:14px;">
+    <button class="btn-sm" style="flex:1;" onclick="testVib()">📳 Test Vibration</button>
+    <button class="btn-sm" style="flex:1;" onclick="testRumble()">🎮 Test XAC</button>
+  </div>
+  <div style="margin-top:8px;"><button class="btn-out" style="width:100%;" onclick="closeSettings();showScreen('calibrate');">🎯 Calibration</button></div>
+  <div style="font-size:10px;color:var(--tl);text-align:center;margin-top:5px;" id="calib-status">No calibration set</div>
+</div>
+</div>
+
+<!-- MAP -->
+<div id="screen-map" class="screen">
+  <div class="nav mx">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="serif" style="font-size:19px;color:var(--pd);">EvoSensory</div>
+      <div class="active-user-chip" id="active-user-chip" onclick="showScreen('users')" title="Switch player">
+        <div class="auc-dot" id="auc-dot"></div>
+        <div class="auc-name" id="auc-name"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;">
+      <button class="btn-sm" onclick="showScreen('stats')">📊</button>
+      <button class="btn-sm" onclick="openSettings()">⚙️</button>
+    </div>
+  </div>
+  <!-- Map SVG removed — level/BPM controls retained for engine -->
+  <!-- Game mode selector -->
+  <div class="card mx" style="padding:12px 14px;">
+    <div class="label">Module</div>
+    <div class="pill-row" style="grid-template-columns:repeat(3,1fr);gap:5px;" id="gm-pills">
+      <button class="pill-btn active" data-gm="standard" onclick="setGM('standard')"><span class="pi">🎵</span>Classic</button>
+      <button class="pill-btn" data-gm="bubblegum" onclick="setGM('bubblegum')"><span class="pi">🫧</span>Bubble</button>
+      <button class="pill-btn" data-gm="targetrange" onclick="setGM('targetrange')"><span class="pi">🎯</span>Target</button>
+      <button class="pill-btn" data-gm="vocab" onclick="setGM('vocab')"><span class="pi">📖</span>Cognitive: Words</button>
+      <button class="pill-btn" data-gm="math" onclick="setGM('math')"><span class="pi">🔢</span>Cognitive: Math</button>
+      <button class="pill-btn" data-gm="oculomotor" onclick="setGM('oculomotor')"><span class="pi">👁️</span>Oculomotor</button>
+      <button class="pill-btn" data-gm="motion" onclick="setGM('motion')" style="grid-column:span 3;border-color:var(--gn);"><span class="pi">📷</span>Motion — Rhythm Training <span style="font-size:9px;background:var(--gn);color:white;padding:1px 6px;border-radius:8px;margin-left:4px;">BETA</span></button>
+      <button class="pill-btn" data-gm="activegames" onclick="setGM('activegames')" style="grid-column:span 3;border-color:var(--p);"><span class="pi">🎮</span>Active Games — Move Your Body <span style="font-size:9px;background:var(--p);color:white;padding:1px 6px;border-radius:8px;margin-left:4px;">BETA</span></button>
+    </div>
+    <!-- Motion sub-mode selector — shown only when motion active -->
+    <div id="motion-submode" style="display:none;margin-top:8px;">
+      <div class="label" style="margin-bottom:5px;">Movement Type</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="pill-btn active" id="mot-btn-clap" onclick="setMotMode('clap')"><span class="pi" style="font-size:13px;">👏</span>Clapping</button>
+        <button class="pill-btn" id="mot-btn-knee" onclick="setMotMode('knee')"><span class="pi" style="font-size:13px;">🤸</span>Knee Taps / Midline</button>
+        <button class="pill-btn" id="mot-btn-march" onclick="setMotMode('march')"><span class="pi" style="font-size:13px;">🦵</span>Marching</button>
+        <button class="pill-btn" id="mot-btn-jump" onclick="setMotMode('jump')"><span class="pi" style="font-size:13px;">⬆️</span>Jumps</button>
+      </div>
+      <div id="mot-clinical-note" style="font-size:10px;color:var(--gn);background:var(--gp);border-radius:7px;padding:6px 9px;margin-top:7px;line-height:1.65;"></div>
+    </div>
+    <!-- Active Games sub-mode selector -->
+    <div id="ag-submode" style="display:none;margin-top:8px;">
+      <div class="label" style="margin-bottom:5px;">Choose a Game</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="pill-btn active" id="ag-btn-stars"    onclick="setAGMode('stars')"><span class="pi" style="font-size:13px;">⭐</span>Catch Stars</button>
+        <button class="pill-btn"        id="ag-btn-balloons" onclick="setAGMode('balloons')"><span class="pi" style="font-size:13px;">🎈</span>Pop Balloons</button>
+        <button class="pill-btn"        id="ag-btn-soccer"   onclick="setAGMode('soccer')"><span class="pi" style="font-size:13px;">⚽</span>Kick Soccer</button>
+        <button class="pill-btn"        id="ag-btn-dodge"    onclick="setAGMode('dodge')"><span class="pi" style="font-size:13px;">🏃</span>Duck &amp; Jump</button>
+        <button class="pill-btn"        id="ag-btn-sidestep" onclick="setAGMode('sidestep')" style="grid-column:span 2;"><span class="pi" style="font-size:13px;">↔️</span>Side Steps &amp; Balance</button>
+      </div>
+      <div id="ag-clinical-note" style="font-size:10px;color:var(--gn);background:var(--gp);border-radius:7px;padding:6px 9px;margin-top:7px;line-height:1.65;"></div>
+    </div>
+    <div id="ocu-submode" style="display:none;margin-top:8px;">
+      <div class="label" style="margin-bottom:5px;">Vision Training Type</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="pill-btn active" id="ocu-btn-pursuits" onclick="setOcuMode('pursuits')"><span class="pi" style="font-size:13px;">↔️</span>Smooth Pursuits</button>
+        <button class="pill-btn" id="ocu-btn-saccades" onclick="setOcuMode('saccades')"><span class="pi" style="font-size:13px;">⚡</span>Saccadic Jumps</button>
+        <button class="pill-btn" id="ocu-btn-depth" onclick="setOcuMode('depth')"><span class="pi" style="font-size:13px;">🔮</span>Depth Pulse</button>
+        <button class="pill-btn" id="ocu-btn-gaze" onclick="setOcuMode('gaze')"><span class="pi" style="font-size:13px;">🎯</span>Gaze Hold</button>
+      </div>
+      <div id="ocu-clinical-note" style="font-size:10px;color:var(--gn);background:var(--gp);border-radius:7px;padding:6px 9px;margin-top:7px;line-height:1.65;"></div>
+      <!-- WebGazer eye tracking toggle — oculomotor only -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:9px 12px;background:var(--ww);border-radius:9px;border:1px solid var(--br);">
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--tx);">👁️ Eye Tracking <span style="font-size:9px;background:var(--p);color:white;padding:1px 6px;border-radius:7px;margin-left:3px;">Phase 2</span></div>
+          <div style="font-size:10px;color:var(--tl);margin-top:1px;">Chrome on Windows, Mac, or Android · Not supported on iOS/Safari</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;">
+          <input type="checkbox" id="wg-toggle" onchange="toggleEyeTracking(this.checked)" style="opacity:0;width:0;height:0;">
+          <span id="wg-toggle-knob" style="position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:24px;transition:.2s;"></span>
+          <span id="wg-knob" style="position:absolute;content:'';height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;"></span>
+        </label>
+      </div>
+    </div>
+    <div id="gm-desc" style="font-size:11px;color:var(--tl);line-height:1.65;margin-top:6px;"></div>
+  </div>
+  <!-- Level info -->
+  <div class="card mx" id="lv-card" style="background:var(--pp);padding:12px 15px;">
+    <div style="display:flex;align-items:center;gap:9px;">
+      <span id="lv-icon" style="font-size:22px;"></span>
+      <div style="flex:1;">
+        <div id="lv-name" style="font-weight:500;color:var(--p);font-size:15px;"></div>
+        <div id="lv-desc" style="font-size:11px;color:var(--tl);margin-top:2px;line-height:1.6;"></div>
+        <div id="lv-xac" style="font-size:10px;color:var(--gn);margin-top:5px;line-height:1.6;display:none;"></div>
+      </div>
+    </div>
+  </div>
+  <!-- BPM -->
+  <div class="card mx" style="padding:12px 15px;">
+    <div class="label">Tempo</div>
+    <div class="bpm-ctrl">
+      <button class="bpm-btn" onclick="chBpm(-4)">−</button>
+      <div style="flex:1;text-align:center;"><div id="bpm-disp" style="font-size:27px;font-weight:700;color:var(--p);line-height:1;"></div><div style="font-size:10px;color:var(--tl);">BPM</div></div>
+      <button class="bpm-btn" onclick="chBpm(+4)">+</button>
+    </div>
+    <input type="range" min="30" max="160" step="2" id="bpm-slider" oninput="setBpm(parseInt(this.value))" style="margin-top:8px;width:100%;accent-color:var(--p);"/>
+    <div id="bpm-rst" style="display:none;font-size:11px;color:var(--p);text-align:center;margin-top:4px;cursor:pointer;" onclick="resetBpm()">Reset to default</div>
+  </div>
+  <button class="btn mx" style="font-size:16px;padding:14px;" id="play-btn" onclick="startCountdown()">Play ▶</button>
+</div>
+
+<!-- CALIBRATE -->
+<div id="screen-calibrate" class="screen">
+  <button class="btn-sm" style="align-self:flex-start;" onclick="showScreen('module')">← Back</button>
+  <div class="serif mx" style="font-size:25px;color:var(--pd);text-align:center;">Calibration</div>
+  <div class="warn mx"><strong>🎧 Wired headphones required</strong> — Bluetooth lag corrupts the offset reading.</div>
+  <div id="cp-intro" class="mx" style="display:flex;flex-direction:column;gap:8px;">
+    <div class="card" style="font-size:12px;color:var(--tx);line-height:1.8;">You'll hear 8 beeps at 60 BPM. Tap on each one. The app measures your device audio latency and corrects all timing automatically.</div>
+    <button class="btn mx" onclick="startCalib()">Start Calibration ▶</button>
+    <div style="text-align:center;font-size:12px;color:var(--tl);cursor:pointer;" onclick="skipCalib()">Skip for now</div>
+  </div>
+  <div id="cp-tap" class="mx" style="display:none;flex-direction:column;align-items:center;gap:12px;">
+    <div id="cb-count" style="font-size:36px;font-weight:700;color:var(--p);">0 / 8</div>
+    <div style="font-size:12px;color:var(--tl);">Tap on each beep</div>
+    <button class="btn mx" style="padding:20px;font-size:20px;" ontouchstart="ct(event)" onmousedown="ct(event)">TAP</button>
+  </div>
+  <div id="cp-done" class="mx" style="display:none;flex-direction:column;align-items:center;gap:10px;">
+    <div class="card" style="background:var(--gp);border:1px solid var(--gn);text-align:center;padding:18px;">
+      <div id="cr-ms" style="font-size:32px;font-weight:700;color:var(--gn);"></div>
+      <div id="cr-msg" style="font-size:12px;color:var(--tx);margin-top:5px;"></div>
+    </div>
+    <button class="btn mx" onclick="applyCalib()">Use This Calibration ▶</button>
+    <div style="font-size:12px;color:var(--tl);cursor:pointer;" onclick="skipCalib()">Skip calibration</div>
+  </div>
+</div>
+
+<!-- COUNTDOWN -->
+<div id="screen-countdown" class="screen">
+  <div class="serif" style="font-size:21px;color:var(--tl);">Get ready…</div>
+  <div class="cd-num" id="cd-num">3</div>
+  <div id="cd-icon" style="font-size:30px;"></div>
+  <div id="cd-sub" style="font-size:12px;color:var(--tl);text-align:center;max-width:300px;"></div>
+</div>
+
+<!-- GAME -->
+<div id="screen-game" class="screen">
+  <div class="hud mx">
+    <div id="g-lv-lbl" style="font-size:11px;font-weight:500;color:var(--p);"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button style="background:none;border:none;font-size:16px;cursor:pointer;" id="mute-btn" onclick="toggleMute()">🔊</button>
+      <span id="xac-ind" style="font-size:10px;padding:2px 7px;border-radius:7px;border:1px solid var(--br);color:var(--tl);">🎮 —</span>
+      <div id="g-score" style="font-size:19px;font-weight:700;">0</div>
+    </div>
+  </div>
+  <div class="pb-wrap mx"><div class="pb-fill" id="pb" style="width:0%"></div></div>
+  <div class="hud mx" style="min-height:22px;">
+    <div style="font-size:10px;color:var(--tl);" id="g-beats">0/0</div>
+    <div style="display:flex;gap:5px;align-items:center;">
+      <span id="streak-b" style="display:none;font-size:11px;color:var(--gn);font-weight:500;background:var(--gp);border-radius:18px;padding:2px 11px;border:1px solid var(--gn);"></span>
+      <span id="mult-b" style="display:none;background:var(--go);color:#fff;border-radius:10px;padding:2px 10px;font-size:11px;font-weight:700;"></span>
+    </div>
+  </div>
+  <div class="hud mx" style="min-height:25px;">
+    <div id="rat-lbl" style="font-size:15px;font-weight:500;color:var(--tl);transition:color .15s;"></div>
+    <div id="dev-lbl" style="font-size:11px;font-weight:600;"></div>
+  </div>
+  <div class="drift-box mx">
+    <div style="color:var(--tl);font-size:10px;">Session Trend</div>
+    <div class="ds stabilized" id="ds">Stabilized ✓</div>
+  </div>
+  <div id="cw" class="mx"><canvas id="gc"></canvas></div>
+  <div id="tap-btns" class="mx" style="display:grid;gap:9px;"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="screen-results" class="screen">
+  <div class="serif mx" style="font-size:25px;color:var(--pd);text-align:center;" id="res-title">Session Complete!</div>
+  <div style="display:flex;gap:7px;justify-content:center;" id="stars-row"></div>
+  <svg id="res-buddy" viewBox="0 0 100 100" width="72" height="72">
+    <circle cx="50" cy="54" r="36" id="rb-body" fill="#9B88C4"/>
+    <circle cx="37" cy="46" r="5.5" fill="#fff"/><circle cx="63" cy="46" r="5.5" fill="#fff"/>
+    <circle cx="38" cy="47" r="2.8" fill="#3E2D6E"/><circle cx="64" cy="47" r="2.8" fill="#3E2D6E"/>
+    <path id="rb-mouth" d="M 38 60 Q 50 66 62 60" stroke="#3E2D6E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Core metrics — clear, labeled, plain -->
+  <div class="card mx" style="padding:14px;">
+    <div style="text-align:center;font-size:11px;color:var(--tl);margin-bottom:10px;" id="res-meta"></div>
+
+    <!-- Accuracy -->
+    <div style="background:var(--pp);border-radius:9px;padding:10px 13px;margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--pd);">Accuracy</div>
+          <div style="font-size:10px;color:var(--tl);">% of beats hit</div>
+        </div>
+        <span id="res-acc" style="font-size:24px;font-weight:700;color:var(--p);"></span>
+      </div>
+      <div id="res-acc-interp" style="font-size:10.5px;color:var(--tl);margin-top:5px;line-height:1.6;"></div>
+    </div>
+
+    <!-- Deviation -->
+    <div style="background:var(--ww);border-radius:9px;padding:10px 13px;margin-bottom:6px;border:1px solid var(--br);">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--pd);">Timing</div>
+          <div style="font-size:10px;color:var(--tl);">ms from beat · lower = better</div>
+        </div>
+        <span id="res-dev" style="font-size:18px;font-weight:700;"></span>
+      </div>
+      <div id="res-dev-interp" style="font-size:10.5px;color:var(--tl);margin-top:5px;line-height:1.6;"></div>
+    </div>
+
+    <!-- Session trend -->
+    <div style="background:var(--ww);border-radius:9px;padding:10px 13px;border:1px solid var(--br);">
+      <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:3px;">Session Trend</div>
+      <div id="res-drift" style="font-size:10.5px;color:var(--tx);line-height:1.7;"></div>
+    </div>
+  </div>
+
+  <!-- Tap breakdown -->
+  <div class="card mx" style="padding:11px 14px;">
+    <div class="sg" id="res-sg"></div>
+  </div>
+
+  <!-- Therapist notes -->
+  <div class="card mx" id="th-notes" style="background:var(--gp);border:1px solid var(--gn);display:none;padding:12px;">
+    <div class="label" style="color:var(--gn);margin-bottom:5px;">Therapist Notes</div>
+    <div id="th-body" style="font-size:11px;color:var(--tx);line-height:1.9;"></div>
+  </div>
+
+  <!-- Session observation — populates S section of SOAP -->
+  <div class="card mx" style="padding:12px 14px;">
+    <div class="label" style="margin-bottom:5px;">Session Observation <span style="font-size:9px;font-weight:400;color:var(--tl);">— goes into SOAP note S section</span></div>
+    <textarea id="session-obs" placeholder="Patient response, engagement level, behavior, fatigue, comments made during session…" style="width:100%;height:72px;border:1px solid var(--br);border-radius:8px;padding:8px;font-family:Jost,sans-serif;font-size:12px;resize:none;background:var(--ww);color:var(--tx);line-height:1.6;"></textarea>
+  </div>
+
+  <div class="row mx">
+    <button class="btn-out" style="flex:1;" onclick="showScreen('module')">Menu</button>
+    <button class="btn" style="flex:2;" onclick="startCountdown()">Play Again ▶</button>
+  </div>
+  <div id="next-lv" style="display:none;font-size:12px;color:var(--gn);cursor:pointer;font-weight:500;text-decoration:underline;text-align:center;" onclick="goNextLv()"></div>
+  <button class="btn-sm mx" style="padding:11px;background:var(--gp);border-color:var(--gn);color:var(--gn);font-size:13px;" onclick="openSOAP(G.lastResult,G.sessions[G.sessions.length-1])">📋 Generate SOAP Note</button>
+  <div style="display:flex;gap:14px;margin-top:3px;justify-content:center;">
+    <div style="font-size:11px;color:var(--p);cursor:pointer;text-decoration:underline;" onclick="showScreen('stats')">📊 View Progress</div>
+    <div style="font-size:10px;color:var(--tl);">www.evolve-ot.com</div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div id="screen-stats" class="screen">
+  <button class="btn-sm" style="align-self:flex-start;" onclick="showScreen('module')">← Back</button>
+  <div class="mx" style="display:flex;align-items:center;justify-content:space-between;">
+    <div class="serif" style="font-size:23px;color:var(--pd);">Progress</div>
+    <div id="stats-user-chip" style="display:flex;align-items:center;gap:6px;background:var(--pp);border:1px solid var(--p);border-radius:20px;padding:3px 10px 3px 5px;">
+      <div id="stats-auc-dot" style="width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;"></div>
+      <div id="stats-auc-name" style="font-size:11px;font-weight:500;color:var(--p);"></div>
+    </div>
+  </div>
+  <button class="btn-sm mx" style="align-self:flex-start;" onclick="showScreen('users')">👥 Switch Player</button>
+  <div class="card mx"><div id="stats-sum" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;text-align:center;"></div></div>
+  <!-- Oculomotor score panel — shown only when OM sessions exist -->
+  <div class="card mx" id="om-stats" style="display:none;padding:13px;background:var(--pp);border:1px solid var(--pl);"></div>
+  <div class="card mx" style="padding:13px;">
+    <div class="label">Progress Over Time</div>
+    <div style="height:175px;position:relative;margin-top:7px;">
+      <canvas id="prog-chart" style="display:none;"></canvas>
+      <div id="chart-empty" style="height:175px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--tl);">Complete sessions to see your progress chart</div>
+    </div>
+  </div>
+  <div class="card mx" style="padding:13px;">
+    <div class="label" style="margin-bottom:7px;">Recent Sessions</div>
+    <table class="sess-tbl" id="sess-tbl"></table>
+  </div>
+  <div class="row mx">
+    <button class="btn-sm" style="flex:1;padding:10px;" onclick="expCSV()">📥 CSV</button>
+    <button class="btn-sm" style="flex:1;padding:10px;" onclick="printRpt()">🖨️ Print</button>
+    <button class="btn-sm" style="flex:1;padding:10px;background:var(--gp);border-color:var(--gn);color:var(--gn);" onclick="openSOAP(null,G.sessions[G.sessions.length-1])">📋 SOAP</button>
+  </div>
+</div>
+
+<!-- SOAP NOTE MODAL -->
+<div id="soap-modal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(30,24,48,.6);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;">
+  <div style="width:100%;max-width:480px;background:var(--cr);border-radius:20px 20px 0 0;padding:20px 16px 30px;max-height:92vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div class="serif" style="font-size:21px;color:var(--pd);">Draft SOAP Note</div>
+      <button onclick="closeSOAP()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--tl);">✕</button>
+    </div>
+    <div style="font-size:11px;color:var(--tl);background:var(--pp);border-radius:9px;padding:9px 12px;margin-bottom:12px;line-height:1.65;">
+      ⚠️ AI-generated draft. Review and edit before use. Add patient-specific observations not captured by the app. This does not constitute clinical documentation.
+    </div>
+    <textarea id="soap-text" style="width:100%;border:1.5px solid var(--br);border-radius:11px;padding:12px;font:400 12px/1.85 'Jost',sans-serif;color:var(--tx);resize:vertical;min-height:320px;" spellcheck="true"></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="btn" style="flex:2;" onclick="copySOAP()">📋 Copy to Clipboard</button>
+      <button class="btn-out" style="flex:1;" onclick="printSOAP()">🖨️ Print</button>
+    </div>
+    <div id="soap-copied" style="display:none;text-align:center;font-size:11px;color:var(--gn);margin-top:6px;font-weight:500;">✓ Copied to clipboard</div>
+    <div style="font-size:10px;color:var(--tl);text-align:center;margin-top:8px;">Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L</div>
+  </div>
+</div>
+
+<!-- PRE-SESSION HARDWARE CONFIRMATION -->
+<div id="hw-check-overlay" style="display:none;position:fixed;inset:0;z-index:220;background:rgba(30,24,48,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="width:90%;max-width:380px;background:var(--cr);border-radius:20px;padding:22px 18px 24px;">
+    <div class="serif" style="font-size:21px;color:var(--pd);margin-bottom:4px;">Session Setup</div>
+    <div style="font-size:11px;color:var(--tl);margin-bottom:16px;line-height:1.6;">Confirm what's connected. The SOAP note will only report feedback that was actually active.</div>
+
+    <!-- Headphones -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--ww);border-radius:10px;margin-bottom:7px;border:1px solid var(--br);">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--tx);">🎧 Wired Headphones</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Spatial audio — left ear early, right ear late</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="hw-headphones" onchange="updateHWSummary()"/><span class="tog-tk"></span></label>
+    </div>
+
+    <!-- Device haptics -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--ww);border-radius:10px;margin-bottom:7px;border:1px solid var(--br);">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--tx);">📳 Device Vibration</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Phone or tablet haptic feedback</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="hw-haptic" onchange="updateHWSummary()"/><span class="tog-tk"></span></label>
+    </div>
+
+    <!-- XAC pillow -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--ww);border-radius:10px;margin-bottom:12px;border:1px solid var(--br);">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--tx);">🎮 XAC Haptic Pillow</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Xbox Adaptive Controller + vibration cushion</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="hw-xac" onchange="updateHWSummary()"/><span class="tog-tk"></span></label>
+    </div>
+
+    <!-- Summary line -->
+    <div id="hw-summary" style="font-size:10px;color:var(--tl);background:var(--pp);border-radius:8px;padding:7px 10px;margin-bottom:14px;line-height:1.7;min-height:32px;"></div>
+
+    <!-- Don't ask again -->
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px;">
+      <input type="checkbox" id="hw-skip-always" style="accent-color:var(--p);width:14px;height:14px;"/>
+      <label for="hw-skip-always" style="font-size:11px;color:var(--tl);cursor:pointer;">Don't show this again (can reset in Settings)</label>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button class="btn-out" style="flex:1;" onclick="closeHWCheck()">Cancel</button>
+      <button class="btn" style="flex:2;" onclick="confirmHWAndStart()">Start Session ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- WEBGAZER EYE TRACKING CALIBRATION OVERLAY -->
+<div id="wg-setup" style="display:none;position:fixed;inset:0;z-index:260;background:rgba(4,4,16,.95);flex-direction:column;align-items:center;justify-content:center;">
+  <!-- Step 1: Intro -->
+  <div id="wg-intro" style="width:90%;max-width:440px;background:var(--cr);border-radius:20px;padding:24px 20px 26px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:10px;">👁️</div>
+    <div class="serif" style="font-size:22px;color:var(--pd);margin-bottom:8px;">Eye Tracking — Phase 2</div>
+    <div style="font-size:11px;color:var(--tl);line-height:1.75;margin-bottom:16px;">Uses your front camera to estimate where your eyes are looking. Not a clinical eye tracker — this is a therapy-grade screening proxy. Requires good lighting and a steady head position.</div>
+    <div style="background:var(--pp);border-radius:10px;padding:11px 14px;font-size:11px;color:var(--tx);line-height:1.7;text-align:left;margin-bottom:16px;">
+      <strong style="color:var(--p);">You'll need:</strong> Front camera, good lighting on the child's face, device at eye level, wired earbuds still recommended.
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-out" style="flex:1;" onclick="closeWGSetup()">Cancel</button>
+      <button class="btn" style="flex:2;" onclick="startWGCalibration()">Start Calibration →</button>
+    </div>
+  </div>
+  <!-- Step 2: Calibration -->
+  <div id="wg-calibration" style="display:none;width:100%;height:100%;position:relative;">
+    <div id="wg-instruction" style="position:absolute;top:16px;left:0;right:0;text-align:center;color:white;font-size:14px;font-weight:500;z-index:2;background:rgba(0,0,0,.55);padding:10px;">Look at each dot and click or tap it. 9 points total.</div>
+    <div id="wg-progress" style="position:absolute;top:56px;left:0;right:0;text-align:center;color:rgba(255,255,255,.6);font-size:12px;z-index:2;">0 / 9 calibrated</div>
+    <!-- Calibration dots injected by JS -->
+    <div id="wg-dots" style="position:absolute;inset:0;"></div>
+    <!-- Small face preview bottom right -->
+    <video id="wg-face-vid" autoplay playsinline muted style="position:absolute;bottom:16px;right:16px;width:90px;height:68px;border-radius:8px;object-fit:cover;border:2px solid var(--pl);opacity:.7;transform:scaleX(-1);"></video>
+  </div>
+  <!-- Step 3: Ready -->
+  <div id="wg-ready" style="display:none;width:90%;max-width:400px;background:var(--cr);border-radius:20px;padding:24px 20px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:8px;">✓</div>
+    <div class="serif" style="font-size:20px;color:var(--pd);margin-bottom:8px;">Calibration Complete</div>
+    <div style="font-size:12px;color:var(--tl);margin-bottom:18px;line-height:1.7;">Eye tracking is active. During the session you'll see a small dot showing estimated gaze position. The therapist view shows gaze lag vs target in milliseconds.</div>
+    <div style="background:var(--gp);border:1px solid var(--gn);border-radius:9px;padding:10px 13px;font-size:11px;color:var(--tx);line-height:1.7;margin-bottom:16px;">
+      <strong style="color:var(--gn);">Note:</strong> Eye tracking accuracy is ±60–80px on most devices. This is screening-level data, not clinical-grade eye movement recording.
+    </div>
+    <button class="btn" style="width:100%;" onclick="startAfterWGCalib()">Start Session ▶</button>
+  </div>
+</div>
+<div id="motion-setup" style="display:none;position:fixed;inset:0;z-index:250;background:rgba(10,8,24,.92);align-items:center;justify-content:center;overflow-y:auto;">
+  <div style="width:90%;max-width:440px;background:var(--cr);border-radius:20px;padding:22px 18px 26px;margin:16px auto;">
+    <div class="serif" style="font-size:22px;color:var(--pd);margin-bottom:4px;">📷 Camera Setup</div>
+    <div id="mot-setup-mode-label" style="font-size:11px;color:var(--p);font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;"></div>
+
+    <!-- Positioning guide — changes per sub-mode -->
+    <div id="mot-position-guide" style="background:var(--pp);border-radius:11px;padding:11px 13px;margin-bottom:12px;font-size:11px;color:var(--tx);line-height:1.75;">
+      <strong style="color:var(--pd);display:block;margin-bottom:4px;">📐 Camera Positioning</strong>
+      <div id="mot-guide-text"></div>
+    </div>
+
+    <!-- Silhouette diagram — simple SVG showing correct framing -->
+    <div id="mot-silhouette" style="background:#111;border-radius:10px;padding:10px;margin-bottom:12px;text-align:center;font-size:10px;color:rgba(255,255,255,.5);">
+      <svg id="mot-svg-guide" viewBox="0 0 200 150" width="100%" style="max-height:110px;"></svg>
+      <div style="margin-top:4px;" id="mot-svg-caption"></div>
+    </div>
+
+    <!-- Camera preview -->
+    <div style="position:relative;width:100%;aspect-ratio:4/3;background:#111;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+      <video id="motion-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);"></video>
+      <canvas id="motion-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
+      <!-- Skeleton overlay for MediaPipe -->
+      <canvas id="mp-skeleton-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
+      <div id="motion-status" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;color:white;background:rgba(0,0,0,.55);padding:4px;">Requesting camera…</div>
+      <div id="mot-gesture-feedback" style="position:absolute;top:8px;left:0;right:0;text-align:center;font-size:13px;font-weight:600;color:#4AC878;display:none;text-shadow:0 1px 4px rgba(0,0,0,.8);"></div>
+    </div>
+
+    <!-- MP loading status -->
+    <div id="mp-load-status" style="font-size:10px;color:var(--tl);text-align:center;margin-bottom:8px;display:none;">⏳ Loading pose detection…</div>
+
+    <div style="display:flex;gap:8px;">
+      <button class="btn-out" style="flex:1;" onclick="closeMotionSetup()">Cancel</button>
+      <button class="btn" style="flex:2;" id="motion-start-btn" onclick="startCountdownFromMotion()" disabled>Start ▶</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ═══ CONSTANTS ════════════════════════════════════ */
+const SK='rhythmrx_v1';
+const FB=2.8;
+const LVS=[
+  {id:1,name:'Warm Up',      bpm:56,  icon:'🎵',
+   desc:'One button, any key. Tap every beat. Start here — no wrong side.',
+   xac:'Button A fires every tap. Pillow vibrates on each hit. Great intro for sensory-seeking kids.'},
+  {id:2,name:'Finding It',   bpm:66,  icon:'🎈',
+   desc:'Left & right alternating. Process which hand AND when to tap.',
+   xac:'Left jack = left tap, right jack = right tap. Pillow fires left for early, right for late.'},
+  {id:3,name:'In the Groove',bpm:76,  icon:'🎯',
+   desc:'Rests added — hold back on silent beats. Targets impulse control.',
+   xac:'Tapping on a rest fires the miss feedback immediately. Powerful inhibition training without verbal correction.'},
+  {id:4,name:'Steady Beat',  bpm:88,  icon:'🚗',
+   desc:'Complex L/R sequences + longer rests. Working memory + timing together.',
+   xac:'Asymmetric pillow vibration now carries significant therapeutic weight — left/right errors are unmistakable.'},
+  {id:5,name:'Beat Master',  bpm:100, icon:'⚽',
+   desc:'Full challenge. Irregular patterns, multiple rests, higher tempo.',
+   xac:'Reserve for children consistently hitting 70%+ on Level 4. Upper range of clinical timing protocols.'},
+  {id:6,name:'Foot Tap',     bpm:60,  icon:'🦶',
+   desc:'Bilateral foot patterns. Use foot pedal switches. Lower body timing.',
+   xac:'Foot pedals plug into XAC 3.5mm jacks. Floor transducer fires under the feet for full proprioceptive feedback.'},
+];
+const PATS={
+  1:['B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'],
+  2:['L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R'],
+  3:['L','R','L','R',null,'L','R','L','R',null,'L','R',null,'L','R','L',null,'R','L','R',null,'R'],
+  4:['L','L','R','R',null,'L','R',null,'L','R','L',null,'R','L','R',null,'L','R',null,'L','R','L',null,'R'],
+  5:['L','R',null,'L',null,'R','L','R',null,'L','R',null,'L',null,'R','L',null,'R',null,'L','R','L',null,'R','L',null,'R',null,'L','R',null,'R'],
+  6:['L','R','L','R',null,'L','R','L','R',null,'L',null,'R','L','R',null,'L','R',null,'L','R','L',null,'R'],
+};
+const THEMES={
+  1:{bg:'#F8F4FF',colL:'#C4922A',colR:'#C4922A',colB:'#C4922A'},
+  2:{bg:'#FDF0FF',colL:'#E04848',colR:'#4878D8',colB:'#C4922A'},
+  3:{bg:'#FFF8F0',colL:'#B85450',colR:'#5C4490',colB:'#C4922A'},
+  4:{bg:'#F4F4F4',colL:'#D84040',colR:'#3878D0',colB:'#D0A020'},
+  5:{bg:'#F0FFF4',colL:'#4A8C6F',colR:'#3E2D6E',colB:'#C4922A'},
+  6:{bg:'#FFF8E8',colL:'#C4922A',colR:'#4A8C6F',colB:'#C4922A'},
+};
+const RM={
+  perfect:{label:'⭐ Perfect!',color:'#4A8C6F',pts:100},
+  good:   {label:'👍 Good',    color:'#C4922A',pts:60},
+  close:  {label:'↔ Close',    color:'#9B88C4',pts:20},
+  miss:   {label:'✗ Miss',      color:'#B85450',pts:0},
+  wrong:  {label:'← Wrong',    color:'#B85450',pts:0},
+  ghost:  {label:'Wait…',      color:'#5A4E72',pts:0},
+};
+const GM_DESC={
+  standard:   'EvoSensory Classic — Items fall from the top. Tap the matching button when each item crosses the catch line.',
+  bubblegum:  'EvoSensory Classic — Tap every beat to grow your bubble. Hit 10 in a row and it BURSTS! Miss and it pops.',
+  targetrange:'EvoSensory Classic — Animals cross the scene in time with the beat. Tap when the animal is inside the crosshair.',
+  vocab:      'EvoSensory Cognitive — App SPEAKS each letter as the beat. Tap it. Then syllables. Then the whole word. 3 loops per word. Speech IS the beat.',
+  math:       'EvoSensory Cognitive — App SPEAKS each number as the beat. Tap it. Addition and multiplication problems spoken aloud. Speech IS the beat.',
+  oculomotor: 'EvoSensory Oculomotor — Visual tracking synced to the metronome. Follow the target with your eyes. Tap when it reaches the turnaround or jumps.',
+};
+
+/* ═══ SETTINGS ══════════════════════════════════════ */
+const S={soundMode:'count',audioOn:true,metroOn:true,hapticOn:true,rumbleOn:true,
+  hwCheckOn:true,  // show hardware confirmation before each session
+  mathOp:'count',  // math mode operation default
+  visualOn:true,speechOn:true,blindMode:false,therapistMode:false,hapticIntensity:.8};
+
+/* ═══ GAME STATE ════════════════════════════════════ */
+const G={
+  lvId:1,bpm:56,customBpm:false,gameMode:'standard',
+  calibOff:0,hitWin:115,sessions:[],acc:{},
+  playing:false,score:0,streak:0,maxStreak:0,beatsDone:0,total:0,
+  items:[],beats:[],nextBeat:0,hits:[],particles:[],popups:[],
+  consecMiss:0,recentDev:[],recentAcc:[],
+  audioCtx:null,schedTimer:null,animFr:null,
+  blindStart:null,cvOpacity:1,crossGlow:0,
+  bubble:{size:0,max:68,burstParts:[],mood:'idle'},
+  // Vocab/math
+  vocabSeq:[],vocabIdx:0,mathSeq:[],mathIdx:0,
+  mathOp:'count',mathParam:2,
+  // Oculomotor
+  ocuMode:'pursuits',    // 'pursuits' | 'saccades'
+  lastBeatTime:0,        // audioCtx.currentTime when last beat fired
+  lastBeatIdx:0,         // index of last beat — drives direction
+  ocuTrail:[],           // smooth pursuit trail positions
+  ocuFlash:0,            // green flash intensity on hit (0-1)
+  lastResult:null,
+};
+
+/* ═══ MULTI-USER STORAGE ═════════════════════════════
+   Each user has: id, name, color, sessions[]
+   Active user id stored separately.
+   All data keyed by user id in localStorage.
+════════════════════════════════════════════════════ */
+const UK = 'rhythmrx_users_v1';
+const AU_KEY = 'rhythmrx_active_user';
+
+const AVATAR_COLORS = [
+  '#5C4490','#4A8C6F','#C4922A','#B85450','#3878D0',
+  '#9B4490','#2A8C8C','#D0601A','#5A7A2A','#885088',
+];
+const AVATAR_EMOJIS = ['🎵','⭐','🎯','🌟','🦋','🔥','🎈','🚀','🌈','💫'];
+
+let USERS = [];    // array of {id, name, color, colorIdx}
+let activeUserId = null;
+
+function loadUsers(){
+  try{ USERS = JSON.parse(localStorage.getItem(UK)||'[]'); }catch(e){ USERS=[]; }
+  activeUserId = localStorage.getItem(AU_KEY)||null;
+  if(USERS.length && !USERS.find(u=>u.id===activeUserId)){
+    activeUserId = USERS[0].id;
+    localStorage.setItem(AU_KEY, activeUserId);
+  }
+}
+
+function saveUsers(){
+  try{ localStorage.setItem(UK, JSON.stringify(USERS)); }catch(e){}
+}
+
+function getUserKey(uid){ return SK+'_'+uid; }
+
+function loadSess(){
+  const uid = activeUserId;
+  if(!uid){ G.sessions=[]; return; }
+  try{ G.sessions = JSON.parse(localStorage.getItem(getUserKey(uid))||'[]'); }
+  catch(e){ G.sessions=[]; }
+}
+
+function saveSess(){
+  const uid = activeUserId;
+  if(!uid) return;
+  try{ localStorage.setItem(getUserKey(uid), JSON.stringify(G.sessions)); }catch(e){}
+}
+
+function getActiveUser(){ return USERS.find(u=>u.id===activeUserId)||null; }
+
+function setActiveUser(uid){
+  activeUserId = uid;
+  localStorage.setItem(AU_KEY, uid);
+  loadSess();
+  const u = getActiveUser();
+  if(u){
+    if(u.bpmDefault && !G.customBpm){ G.bpm = u.bpmDefault; }
+    if(u.hitWindowBase){ G.hitWindowBase = u.hitWindowBase; }
+    // Sync modality pill in settings
+    const mod=u.modality||'hands-bi';
+    document.querySelectorAll('#settings-modality-row .pill-btn').forEach(b=>{
+      b.classList.toggle('active',b.dataset.mod===mod);
+    });
+  }
+  updateUserChip();
+  updateModuleChip();
+}
+
+function updateUserChip(){
+  const u = getActiveUser();
+  const dot = document.getElementById('auc-dot');
+  const name = document.getElementById('auc-name');
+  if(!u||!dot||!name) return;
+  dot.style.background = u.color||'#5C4490';
+  dot.textContent = u.name.slice(0,2).toUpperCase();
+  name.textContent = u.name;
+}
+
+/* ─── Render user grid ─────────────────────────── */
+function renderUsers(){
+  const grid = document.getElementById('user-grid');
+  if(!grid) return;
+  let h = '';
+  USERS.forEach(u=>{
+    const sessions = (() => { try{ return JSON.parse(localStorage.getItem(getUserKey(u.id))||'[]'); }catch(e){ return []; } })();
+    const best = sessions.length ? Math.min(...sessions.map(s=>Math.abs(s.avgDev))) : null;
+    const isActive = u.id === activeUserId;
+    h += `<div class="user-card${isActive?' active-u':''}" onclick="selectUser('${u.id}')">
+      <div class="user-avatar" style="background:${u.color}">${u.name.slice(0,2).toUpperCase()}</div>
+      <div class="user-name">${escHtml(u.name)}</div>
+      <div class="user-sessions">${sessions.length} session${sessions.length!==1?'s':''}${best!==null?' · '+best+'ms best':''}</div>
+    </div>`;
+  });
+  h += `<div class="add-user-card" onclick="openNewUser()">
+    <div style="font-size:26px;margin-bottom:5px;">＋</div>
+    <div style="font-size:11px;font-weight:500;color:var(--p);">Add Player</div>
+  </div>`;
+  grid.innerHTML = h;
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function selectUser(uid){
+  setActiveUser(uid);
+  renderUsers();
+  // Go to welcome if first time, else map
+  if(!localStorage.getItem('rr_seen_'+uid)) showScreen('welcome');
+  else showScreen('map');
+}
+
+/* ─── New user modal ───────────────────────────── */
+let pendingColorIdx = 0;
+let pendingAgeCat   = 'peds';   // peds | adult | older
+let pendingModality = 'hands-bi'; // hands-bi | hands-r | hands-l | feet-bi | feet-r | feet-l
+
+// BPM defaults by category + modality
+const BPM_DEFAULTS = {
+  // [startBPM, label description]
+  'peds-hands-bi':  [60, 'Pediatric · Bilateral hands · Start 60 BPM'],
+  'peds-hands-r':   [60, 'Pediatric · Right hand · Start 60 BPM'],
+  'peds-hands-l':   [60, 'Pediatric · Left hand · Start 60 BPM'],
+  'peds-feet-bi':   [52, 'Pediatric · Bilateral feet · Start 52 BPM (motor loop longer for feet)'],
+  'peds-feet-r':    [52, 'Pediatric · Right foot · Start 52 BPM'],
+  'peds-feet-l':    [52, 'Pediatric · Left foot · Start 52 BPM'],
+  'adult-hands-bi': [66, 'Adult · Bilateral hands · Start 66 BPM'],
+  'adult-hands-r':  [66, 'Adult · Right hand · Start 66 BPM'],
+  'adult-hands-l':  [66, 'Adult · Left hand · Start 66 BPM'],
+  'adult-feet-bi':  [56, 'Adult · Bilateral feet · Start 56 BPM'],
+  'adult-feet-r':   [56, 'Adult · Right foot · Start 56 BPM'],
+  'adult-feet-l':   [56, 'Adult · Left foot · Start 56 BPM'],
+  'older-hands-bi': [52, 'Older Adult · Bilateral hands · Start 52 BPM · Wider hit window applied'],
+  'older-hands-r':  [52, 'Older Adult · Right hand · Start 52 BPM · Wider hit window applied'],
+  'older-hands-l':  [52, 'Older Adult · Left hand · Start 52 BPM · Wider hit window applied'],
+  'older-feet-bi':  [44, 'Older Adult · Bilateral feet · Start 44 BPM · Floor switch recommended'],
+  'older-feet-r':   [44, 'Older Adult · Right foot · Start 44 BPM · Floor switch recommended'],
+  'older-feet-l':   [44, 'Older Adult · Left foot · Start 44 BPM · Floor switch recommended'],
+};
+
+function updateBPMHint(){
+  const key=`${pendingAgeCat}-${pendingModality}`;
+  const def=BPM_DEFAULTS[key];
+  const hint=document.getElementById('new-user-bpm-hint');
+  if(!hint) return;
+  if(def){
+    const isFeet=pendingModality.startsWith('feet');
+    const isOlder=pendingAgeCat==='older';
+    hint.innerHTML=`<strong style="color:var(--gn);">📊 Suggested starting BPM: ${def[0]}</strong><br>${def[1]}${isFeet?'<br>💡 Foot taps start 8–10 BPM slower than hand taps — longer motor loop from hip to floor contact.':''}${isOlder?'<br>⚡ Hit window starts wider for older adults to capture timing pattern, not penalize latency.':''}`;
+  }
+}
+
+function pickAgeCat(cat){
+  pendingAgeCat=cat;
+  document.querySelectorAll('#age-cat-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.ac===cat));
+  updateBPMHint();
+}
+
+function pickModality(mod){
+  pendingModality=mod;
+  document.querySelectorAll('#modality-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mod===mod));
+  updateBPMHint();
+}
+
+function openNewUser(){
+  pendingColorIdx = USERS.length % AVATAR_COLORS.length;
+  pendingAgeCat   = 'peds';
+  pendingModality = 'hands-bi';
+  // Build color picker
+  const picker = document.getElementById('avatar-picker');
+  if(picker){
+    picker.innerHTML = AVATAR_COLORS.map((c,i)=>
+      `<div class="av-opt${i===pendingColorIdx?' selected':''}" style="background:${c}" data-ci="${i}" onclick="pickColor(${i})">${AVATAR_EMOJIS[i]}</div>`
+    ).join('');
+  }
+  // Reset pickers
+  document.querySelectorAll('#age-cat-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.ac==='peds'));
+  document.querySelectorAll('#modality-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mod==='hands-bi'));
+  document.getElementById('new-user-name').value = '';
+  updateBPMHint();
+  // Mobile note is shown in the module settings screen (mods-modality-note)
+  document.getElementById('new-user-modal').classList.add('active');
+  setTimeout(()=>document.getElementById('new-user-name').focus(), 100);
+}
+
+function pickColor(idx){
+  pendingColorIdx = idx;
+  document.querySelectorAll('.av-opt').forEach(el=>{
+    el.classList.toggle('selected', parseInt(el.dataset.ci)===idx);
+  });
+}
+
+function saveNewUser(){
+  const nameEl = document.getElementById('new-user-name');
+  const name = nameEl?.value?.trim();
+  if(!name){ nameEl?.focus(); return; }
+  const id = 'u_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  const color = AVATAR_COLORS[pendingColorIdx];
+  const key=`${pendingAgeCat}-${pendingModality}`;
+  const bpmDefault=BPM_DEFAULTS[key]?.[0]||60;
+  const hitWindowBase=pendingAgeCat==='older'?160:120; // wider for older adults
+  USERS.push({
+    id, name, color, colorIdx:pendingColorIdx,
+    ageCat:pendingAgeCat,
+    modality:pendingModality,
+    bpmDefault,
+    hitWindowBase,
+  });
+  saveUsers();
+  closeNewUser();
+  setActiveUser(id);
+  renderUsers();
+  localStorage.setItem('rr_seen_'+id, '0');
+  showScreen('welcome');
+}
+
+function closeNewUser(){
+  document.getElementById('new-user-modal').classList.remove('active');
+}
+
+// Enter key in name field
+document.getElementById('new-user-name').addEventListener('keydown', e=>{
+  if(e.key==='Enter') saveNewUser();
+});
+
+/* ═══ SCREENS ════════════════════════════════════════ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('screen-'+id);
+  if(el) el.classList.add('active');
+  if(id==='stats')       renderStats();
+  if(id==='map')         { renderMap(); updateUserChip(); applyDesktopMapLayout(); SESSION_HW.checked=false; }
+  if(id==='results')     renderRes();
+  if(id==='users')       renderUsers();
+  if(id==='module')      { updateModuleChip(); SESSION_HW.checked=false; }
+  if(id==='modsettings') buildModSettings();
+}
+
+/* ── MODULE CHIP on picker screen ─────────────────────────── */
+function updateModuleChip(){
+  const u=getActiveUser();
+  ['auc2-dot','auc2-name'].forEach((eid,i)=>{
+    const el=document.getElementById(eid);
+    if(!el||!u) return;
+    if(i===0){el.style.background=u.color||'var(--p)';el.textContent=u.name.slice(0,2).toUpperCase();}
+    else el.textContent=u.name;
+  });
+  // Mini progress strip — last 3 sessions
+  const strip=document.getElementById('module-progress-strip');
+  if(!strip) return;
+  const sessions=G.sessions||[];
+  if(sessions.length===0){
+    strip.textContent='No sessions yet for this patient.';
+    return;
+  }
+  const recent=sessions.slice(-3).reverse();
+  strip.innerHTML=recent.map((s,i)=>{
+    const date=new Date(s.date||Date.now()).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const accColor=s.accuracy>=85?'var(--gn)':s.accuracy>=70?'var(--go)':'var(--rd)';
+    const devAbs=Math.abs(s.avgDev||0);
+    const devColor=devAbs<=40?'var(--gn)':devAbs<=70?'var(--go)':'var(--rd)';
+    const trend=s.driftTrend==='stabilized'?'✓ stable':s.driftTrend==='accelerating'?'↑ early':'↓ late';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;${i<recent.length-1?'border-bottom:1px solid rgba(74,140,111,.15);':''}">
+      <span style="color:var(--tl);">${date}</span>
+      <span style="font-weight:600;color:${accColor};">${s.accuracy}%</span>
+      <span style="color:${devColor};">${s.avgDev>0?'+':''}${s.avgDev}ms</span>
+      <span style="color:var(--tl);">${trend}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ── MODULE PICKER FLOW ───────────────────────────────────── */
+// Which top-level module was picked
+let _pickedModuleGroup='classic'; // classic|oculomotor|cognitive|motion|activegames
+
+const MODULE_META={
+  classic:{
+    icon:'🎮', title:'Classic', sub:'Core timing training',
+    clinical:'Millisecond-precision tapping against a metronome. Spatial audio (left ear = early, right ear = late), haptic feedback, and adaptive hit window. Six progressive levels.',
+    hasLevel:true, hasBPM:true, hasSub:false,
+    defaultMode:'standard',
+  },
+  oculomotor:{
+    icon:'👁️', title:'Oculomotor', sub:'Visual tracking on the beat',
+    clinical:'Visual targets move in sync with the beat. Choose a sub-mode below. Tap when the target reaches the cued position. Optional camera gaze screening on Chrome desktop.',
+    hasLevel:false, hasBPM:false, hasSub:'ocu',
+    defaultMode:'oculomotor',
+  },
+  cognitive:{
+    icon:'🧠', title:'Cognitive', sub:'Language and math on the beat',
+    clinical:'Speech replaces the beat sound — words spelled by syllable, math sequences spoken aloud. Tap along while processing. Dual-task timing.',
+    hasLevel:false, hasBPM:true, hasSub:'cog',
+    defaultMode:'vocab',
+  },
+  motion:{
+    icon:'📷', title:'Motion', sub:'Camera gesture training · Chrome required',
+    clinical:'MediaPipe Pose detects specific body movements timed to the beat. Choose a movement type below. Start button activates when body is detected in frame.',
+    hasLevel:false, hasBPM:true, hasSub:'mot',
+    defaultMode:'motion',
+  },
+  activegames:{
+    icon:'🎯', title:'Active Games', sub:'Body movement games · Chrome required',
+    clinical:'Body position controls camera-based games. Choose a game below. No tapping required — movement is the input.',
+    hasLevel:false, hasBPM:false, hasSub:'ag',
+    defaultMode:'activegames',
+  },
+};
+
+function pickModule(group){
+  _pickedModuleGroup=group;
+  showScreen('modsettings');
+}
+
+function buildModSettings(){
+  const u=getActiveUser();
+  const meta=MODULE_META[_pickedModuleGroup]||MODULE_META.classic;
+
+  // Header
+  const iconEl=document.getElementById('mods-icon');
+  const titleEl=document.getElementById('mods-title');
+  const subEl=document.getElementById('mods-sub');
+  if(iconEl) iconEl.textContent=meta.icon;
+  if(titleEl) titleEl.textContent='EvoSensory '+meta.title;
+  if(subEl)   subEl.textContent=meta.sub;
+
+  // ── SUB-MODE CARDS (stacked, one column) ─────────────────────────────
+  const subSection=document.getElementById('mods-submodes-section');
+  const subCards=document.getElementById('mods-submode-cards');
+  const subLabel=document.getElementById('mods-submodes-label');
+
+  function makeSubCard(id,icon,name,desc,isActive,onclickFn){
+    return `<div class="mod-pick-card${isActive?' active':''}" onclick="${onclickFn}" style="margin-bottom:7px;${isActive?'border-color:var(--p);background:var(--pp);':''}">
+      <div class="mod-pick-icon" style="font-size:22px;">${icon}</div>
+      <div class="mod-pick-body">
+        <div class="mod-pick-name" style="font-size:13px;">${name}</div>
+        <div class="mod-pick-desc">${desc}</div>
+      </div>
+      ${isActive?'<div style="font-size:11px;color:var(--p);flex-shrink:0;">✓</div>':'<div class="mod-pick-arrow">›</div>'}
+    </div>`;
+  }
+
+  if(meta.hasSub){
+    subSection.style.display='block';
+
+    if(meta.hasSub==='cog'){
+      if(subLabel) subLabel.textContent='Choose a Mode';
+      subCards.innerHTML=
+        makeSubCard('vocab','📖','Vocabulary',
+          'Words spelled by syllable, spoken on the beat. Phonological processing and reading rhythm.',
+          G.gameMode==='vocab'||G.gameMode!=='math',
+          "G.gameMode='vocab';buildModSettings()")+
+        makeSubCard('math','🔢','Math',
+          'Counting sets, addition, and multiplication spoken on the beat. Number fluency and working memory.',
+          G.gameMode==='math',
+          "G.gameMode='math';buildModSettings()");
+
+    } else if(meta.hasSub==='ocu'){
+      if(subLabel) subLabel.textContent='Choose a Training Type';
+      const ocuModes=[
+        ['pursuits','↔️','Smooth Pursuits','Target sweeps left and right. Tap at each turnaround. Targets smooth visual tracking and bilateral timing.'],
+        ['saccades','⚡','Saccadic Jumps','Target jumps between two positions on the beat. Tap at each appearance. Targets saccadic initiation speed.'],
+        ['depth',   '🔮','Depth Pulse',    'Circle expands from center on each beat. Tap at maximum expansion. Targets visual convergence and accommodation.'],
+        ['gaze',    '🎯','Gaze Hold',      'Stationary target — hold gaze and tap the beat. Targets sustained visual attention and dual-task timing.'],
+      ];
+      subCards.innerHTML=ocuModes.map(([id,ic,nm,ds])=>
+        makeSubCard(id,ic,nm,ds,G.ocuMode===id,`setOcuMode('${id}');buildModSettings()`)
+      ).join('');
+
+    } else if(meta.hasSub==='mot'){
+      if(subLabel) subLabel.textContent='Choose a Movement Type';
+      const motModes=[
+        ['clap',  '👏','Clapping',                  'Both wrists come together on the beat. Waist-up camera. Bilateral upper extremity coordination.'],
+        ['knee',  '🤸','Knee Taps / Midline',        'Right hand to left knee, left hand to right knee, alternating. Midline crossing and bilateral integration.'],
+        ['march', '🦵','Marching',                   'Alternating knee raises above hip height. Full body required. Bilateral lower extremity coordination.'],
+        ['jump',  '⬆️','Jumps',                      'Both feet leave the ground on the beat. Full body + clearance required. Vestibular processing and motor planning.'],
+      ];
+      subCards.innerHTML=motModes.map(([id,ic,nm,ds])=>
+        makeSubCard(id,ic,nm,ds,M.motMode===id,`setMotMode('${id}');buildModSettings()`)
+      ).join('');
+
+    } else if(meta.hasSub==='ag'){
+      if(subLabel) subLabel.textContent='Choose a Game';
+      const agModes=[
+        ['stars',    '⭐','Catch the Stars',        'Side-step left or right to catch falling stars. Lateral weight shifting, vestibular, dynamic balance.'],
+        ['balloons', '🎈','Pop Balloons',            'Reach overhead to pop balloons as they float up. Shoulder ROM, visual-motor integration.'],
+        ['soccer',   '⚽','Kick Soccer',             'Kick balls rolling in from either side with the matching foot. Unilateral lower extremity, single-leg balance.'],
+        ['dodge',    '🏃','Duck & Jump',             'Duck under high obstacles, jump over low ones. Motor planning, reaction time, whole-body movement.'],
+        ['sidestep', '↔️','Side Steps & Balance',   'Step into highlighted zones and hold still for score multipliers. Static and dynamic balance, proprioception.'],
+      ];
+      subCards.innerHTML=agModes.map(([id,ic,nm,ds])=>
+        makeSubCard(id,ic,nm,ds,AG.mode===id,`setAGMode('${id}');buildModSettings()`)
+      ).join('');
+    }
+
+  } else {
+    subSection.style.display='none';
+  }
+
+  // ── CLASSIC VISUAL MODE CARDS ─────────────────────────────────────────
+  // Show visual mode picker stacked for Classic
+  const extSettings=document.getElementById('mods-extra-settings');
+  extSettings.innerHTML='';
+
+  if(_pickedModuleGroup==='classic'){
+    const vmodes=[
+      ['standard',    '🎵','Falling Notes',  'Notes fall from the top. Tap when they reach the catch line. Clean, clear, best default.'],
+      ['bubblegum',   '🫧','Bubble Blast',   'Tap every beat to grow your bubble. 10 in a row and it bursts! Good for engagement and motivation.'],
+      ['targetrange', '🎯','Target Range',   'Animals cross the scene to the beat. Tap when inside the crosshair. Less visual clutter — good for sensory-sensitive patients.'],
+    ];
+    extSettings.innerHTML=`<div class="mods-section-label" style="margin-bottom:7px;">Visual Mode</div>`+
+      vmodes.map(([id,ic,nm,ds])=>
+        makeSubCard(id,ic,nm,ds,G.gameMode===id,`setGM('${id}');buildModSettings()`)
+      ).join('');
+  }
+
+  // Cognitive: speech + word list + math sub-settings
+  if(_pickedModuleGroup==='cognitive'){
+    const isMath=G.gameMode==='math';
+    const isVocab=G.gameMode==='vocab'||!isMath;
+    const mathOpVal=G.mathOp||'count';
+    // Math sub-options based on operation
+    let mathSubHtml='';
+    if(isMath){
+      if(mathOpVal==='count'){
+        mathSubHtml=`<div style="font-size:11px;color:var(--tl);margin-bottom:10px;background:var(--pp);border-radius:8px;padding:7px 10px;line-height:1.7;">
+          Count by: <strong>${G.mathStep||1}</strong> — adjust in the Math Mode section of full Settings (⚙️).</div>`;
+      } else if(mathOpVal==='add'){
+        mathSubHtml=`<div style="font-size:11px;color:var(--tl);margin-bottom:10px;background:var(--pp);border-radius:8px;padding:7px 10px;line-height:1.7;">
+          Adding numbers 1–10. Each beat adds a new pair. Answers spoken aloud when Speech is on.</div>`;
+      } else if(mathOpVal==='multiply'){
+        mathSubHtml=`<div style="font-size:11px;color:var(--tl);margin-bottom:10px;background:var(--pp);border-radius:8px;padding:7px 10px;line-height:1.7;">
+          Multiplication tables. Each beat states a new problem. Answers spoken aloud when Speech is on.</div>`;
+      }
+    }
+    // Word list preview for vocab
+    const wordLines=(document.getElementById('word-list')?.value||'').trim().split('\n').filter(w=>w.trim());
+    const wordPreview=wordLines.slice(0,6).map(w=>`<span style="display:inline-block;background:var(--pp);border-radius:5px;padding:2px 7px;font-size:11px;margin:2px;">${w.trim()}</span>`).join('');
+    const wordCount=wordLines.length;
+    extSettings.innerHTML=`
+      <div class="tog-row" style="margin-bottom:10px;background:var(--ww);border-radius:9px;padding:9px 12px;border:1px solid var(--br);">
+        <div>
+          <div class="tog-label">🗣 Speech</div>
+          <div class="tog-sub">Speaks letters, words, and numbers aloud on the beat</div>
+        </div>
+        <label class="tog"><input type="checkbox" id="mods-speech-tog" ${S.speechOn?'checked':''} onchange="S.speechOn=this.checked;document.getElementById('tog-speech').checked=this.checked;"/><span class="tog-tk"></span></label>
+      </div>
+      ${isMath?`
+      <div class="mods-section-label" style="margin-bottom:6px;">Math Operation</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+        <button class="pill-btn${mathOpVal==='count'?' active':''}" onclick="setMathOp('count');buildModSettings()">Count Sets</button>
+        <button class="pill-btn${mathOpVal==='add'?' active':''}" onclick="setMathOp('add');buildModSettings()">Addition</button>
+        <button class="pill-btn${mathOpVal==='multiply'?' active':''}" onclick="setMathOp('multiply');buildModSettings()">Multiply</button>
+      </div>
+      ${mathSubHtml}
+      `:''}
+      ${isVocab?`
+      <div class="mods-section-label" style="margin-bottom:5px;">Word List (${wordCount} words)</div>
+      <div style="margin-bottom:6px;line-height:1.8;">${wordPreview}${wordCount>6?`<span style="font-size:11px;color:var(--tl);"> +${wordCount-6} more</span>`:''}
+      </div>
+      <textarea style="width:100%;height:100px;border:1px solid var(--br);border-radius:8px;padding:8px;font-family:Jost,sans-serif;font-size:12px;resize:vertical;background:var(--ww);" placeholder="One word per line. Use hyphens for syllables: BUT-TER-FLY" oninput="document.getElementById('word-list').value=this.value;updateWordCount();buildModSettings()">${(document.getElementById('word-list')?.value||'').trim()}</textarea>
+      <div style="font-size:10px;color:var(--tl);margin-top:3px;">One word per line · Hyphens mark syllable breaks: BUT-TER-FLY · Changes sync with Settings ⚙️</div>
+      `:''}`;
+  }
+
+  // Oculomotor: eye tracking toggle after sub-mode
+  if(_pickedModuleGroup==='oculomotor'){
+    extSettings.innerHTML+=`
+      <div class="tog-row" style="background:var(--ww);border-radius:9px;padding:9px 12px;border:1px solid var(--br);margin-bottom:12px;">
+        <div>
+          <div class="tog-label">👁️ Eye Tracking <span style="font-size:9px;background:var(--p);color:white;padding:1px 6px;border-radius:6px;margin-left:4px;">Phase 2</span></div>
+          <div class="tog-sub">Chrome on Windows, Mac, or Android only — not iOS/Safari</div>
+        </div>
+        <label class="tog"><input type="checkbox" id="wg-toggle2" ${WG.active?'checked':''} onchange="toggleEyeTracking(this.checked);document.getElementById('wg-toggle').checked=this.checked;"/><span class="tog-tk"></span></label>
+      </div>`;
+  }
+
+  // Motion: show BPM
+  if(_pickedModuleGroup==='motion'){
+    const bpmWrapM=document.getElementById('mods-bpm-wrap');
+    if(bpmWrapM) bpmWrapM.style.display='block';
+    const bpmElM=document.getElementById('mods-bpm-disp');
+    if(bpmElM) bpmElM.textContent=G.bpm;
+  }
+
+  // ── LEVEL PILLS (Classic only) ────────────────────────────────────────
+  const lvWrap=document.getElementById('mods-level-wrap');
+  const lvPills=document.getElementById('mods-level-pills');
+  if(meta.hasLevel&&lvWrap&&lvPills){
+    lvWrap.style.display='block';
+    lvPills.innerHTML=LVS.map(lv=>
+      `<button class="pill-btn${G.lvId===lv.id?' active':''}" onclick="modsSelectLevel(${lv.id})" style="font-size:10px;padding:7px 4px;">
+        <span style="display:block;font-size:12px;font-weight:700;">Lvl ${lv.id}</span>
+        <span style="font-size:8.5px;color:var(--tl);line-height:1.3;">${lv.name.split('—')[0].trim()}</span>
+      </button>`
+    ).join('');
+  } else if(lvWrap){
+    lvWrap.style.display='none';
+  }
+
+  // ── BPM ────────────────────────────────────────────────────────────────
+  const bpmWrap=document.getElementById('mods-bpm-wrap');
+  if(bpmWrap){
+    bpmWrap.style.display=meta.hasBPM?'block':'none';
+    if(meta.hasBPM){
+      const bpmEl=document.getElementById('mods-bpm-disp');
+      if(bpmEl) bpmEl.textContent=G.bpm;
+    }
+  }
+
+  // ── MODALITY sync ─────────────────────────────────────────────────────
+  const curMod=u?.modality||'hands-bi';
+  document.querySelectorAll('#mods-modality-row .pill-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.mod===curMod);
+  });
+  const mobNote=document.getElementById('mods-modality-note');
+  if(mobNote) mobNote.style.display=IS_MOBILE?'block':'none';
+}
+
+function modsSelectLevel(id){
+  selLv(id);
+  buildModSettings(); // refresh active state
+}
+
+function modsChangeBPM(delta){
+  G.bpm=Math.max(30,Math.min(220,G.bpm+delta));
+  const el=document.getElementById('mods-bpm-disp');
+  if(el) el.textContent=G.bpm;
+  // Also sync main BPM display
+  const main=document.getElementById('bpm-disp');
+  if(main) main.textContent=G.bpm;
+}
+
+function modsPickModality(mod){
+  // Update user profile modality
+  const u=getActiveUser();
+  if(u){
+    u.modality=mod;
+    saveUsers();
+    // Update BPM default if user has one
+    const key=`${u.ageCat||'peds'}-${mod}`;
+    if(BPM_DEFAULTS[key]&&!G.customBpm){
+      G.bpm=BPM_DEFAULTS[key][0];
+      const el=document.getElementById('mods-bpm-disp');
+      if(el) el.textContent=G.bpm;
+      const main=document.getElementById('bpm-disp');
+      if(main) main.textContent=G.bpm;
+    }
+  }
+  // Update pill states
+  document.querySelectorAll('#mods-modality-row .pill-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.mod===mod);
+  });
+  // Also sync settings panel
+  document.querySelectorAll('#settings-modality-row .pill-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.mod===mod);
+  });
+}
+
+function setModalityFromSettings(mod){
+  const u=getActiveUser();
+  if(u){u.modality=mod;saveUsers();}
+  document.querySelectorAll('#settings-modality-row .pill-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.mod===mod);
+  });
+  document.querySelectorAll('#mods-modality-row .pill-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.mod===mod);
+  });
+  const key=`${u?.ageCat||'peds'}-${mod}`;
+  if(BPM_DEFAULTS[key]&&!G.customBpm){
+    G.bpm=BPM_DEFAULTS[key][0];
+    const el=document.getElementById('mods-bpm-disp');if(el) el.textContent=G.bpm;
+    const main=document.getElementById('bpm-disp');if(main) main.textContent=G.bpm;
+  }
+}
+
+function modsStartSession(){
+  const meta=MODULE_META[_pickedModuleGroup];
+  if(!meta) return;
+  // Set game mode without showing map screen
+  if(_pickedModuleGroup!=='cognitive') setGM(meta.defaultMode);
+  else setGM(G.gameMode==='math'?'math':'vocab');
+  // Trigger countdown directly — map screen stays hidden
+  startCountdown();
+}
+
+function applyDesktopMapLayout(){
+  const isDesktop=window.innerWidth>=900;
+  const map=document.getElementById('screen-map');
+  if(!map) return;
+
+  // Remove any existing desktop wrapper
+  const existing=document.getElementById('dt-map-cols');
+  if(existing){
+    while(existing.firstChild){
+      const child=existing.firstChild;
+      if(child.classList&&child.classList.contains('dt-map-left')){
+        while(child.firstChild) map.insertBefore(child.firstChild, existing);
+      } else if(child.classList&&child.classList.contains('dt-map-right')){
+        while(child.firstChild) map.insertBefore(child.firstChild, existing);
+      } else {
+        map.insertBefore(child, existing);
+      }
+    }
+    existing.remove();
+  }
+
+  if(!isDesktop) return;
+
+  const cols=document.createElement('div');
+  cols.id='dt-map-cols';cols.className='dt-map-cols';
+  const left=document.createElement('div');left.className='dt-map-left';
+  const right=document.createElement('div');right.className='dt-map-right';
+
+  const children=[...map.children];
+  children.forEach(child=>{
+    if(child.classList&&child.classList.contains('nav')) return;
+    if(child.id==='dt-map-cols') return;
+    const isModuleCard=child.querySelector&&child.querySelector('#gm-pills');
+    if(isModuleCard) left.appendChild(child);
+    else right.appendChild(child);
+  });
+
+  cols.appendChild(left);cols.appendChild(right);
+  map.appendChild(cols);
+}
+
+function applyDesktopGameLayout(){
+  const isDesktop=window.innerWidth>=900;
+  const gameScreen=document.getElementById('screen-game');
+  if(!gameScreen) return;
+
+  const existingWrap=document.getElementById('dt-game-wrap');
+  if(existingWrap){
+    while(existingWrap.firstChild) gameScreen.insertBefore(existingWrap.firstChild, existingWrap);
+    existingWrap.remove();
+  }
+
+  if(!isDesktop) return;
+
+  // Move canvas to left, everything else to right sidebar
+  const wrap=document.createElement('div');
+  wrap.id='dt-game-wrap';
+  wrap.style.cssText='display:flex;gap:14px;width:100%;max-width:960px;align-items:flex-start;';
+
+  const cwEl=document.getElementById('cw');
+  const sidebar=document.createElement('div');
+  sidebar.className='dt-game-sidebar';
+
+  const gameChildren=[...gameScreen.children];
+  gameChildren.forEach(child=>{
+    if(child===cwEl){
+      wrap.appendChild(cwEl);
+    } else {
+      sidebar.appendChild(child);
+    }
+  });
+
+  wrap.appendChild(sidebar);
+  gameScreen.appendChild(wrap);
+}
+
+// Re-apply on resize
+window.addEventListener('resize',()=>{
+  if(document.getElementById('screen-map')?.classList.contains('active')){
+    applyDesktopMapLayout();
+  }
+  if(document.getElementById('screen-game')?.classList.contains('active')){
+    applyDesktopGameLayout();
+  }
+});
+function setSM(m){S.soundMode=m;document.querySelectorAll('#sound-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.sm===m));}
+function setGM(m){
+  if(G.gameMode==='motion'&&m!=='motion') stopMotionCamera();
+  if(G.gameMode==='activegames'&&m!=='activegames') stopMotionCamera();
+  G.gameMode=m;
+  document.querySelectorAll('#gm-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.gm===m));
+  const sub=document.getElementById('ocu-submode');
+  if(sub) sub.style.display=m==='oculomotor'?'block':'none';
+  const msub=document.getElementById('motion-submode');
+  if(msub) msub.style.display=m==='motion'?'block':'none';
+  const agsub=document.getElementById('ag-submode');
+  if(agsub) agsub.style.display=m==='activegames'?'block':'none';
+  if(m==='oculomotor'){
+    setOcuMode(G.ocuMode||'pursuits');
+  } else if(m==='motion'){
+    setMotMode(M.motMode||'clap');
+    const d=document.getElementById('gm-desc');if(d) d.textContent='';
+    const cn=document.getElementById('ocu-clinical-note');if(cn)cn.textContent='';
+  } else if(m==='activegames'){
+    setAGMode(AG.mode||'stars');
+    const d=document.getElementById('gm-desc');if(d) d.textContent='';
+    const cn=document.getElementById('ocu-clinical-note');if(cn)cn.textContent='';
+  } else {
+    const d=document.getElementById('gm-desc');
+    if(d) d.textContent=GM_DESC[m]||'';
+    const cn=document.getElementById('ocu-clinical-note');if(cn)cn.textContent='';
+  }
+}
+const OCU_MODES = ['pursuits','saccades','depth','gaze'];
+const OCU_DESC = {
+  pursuits: 'Smooth Pursuits — Follow the glowing target as it sweeps left and right at constant speed. Tap precisely when it hits each turnaround point.',
+  saccades: 'Saccadic Jumps — Two target boxes left and right. The dot JUMPS on the beat. Tap the moment it appears in its new position. Return gaze to center cross between jumps.',
+  depth:    'Depth Pulse — A target expands from a tiny point to fill the screen on each beat — simulating an object flying toward your face. Tap when it reaches full size. Trains convergence and accommodation.',
+  gaze:     'Gaze Hold — A stationary fixation ring in the center. Content flashes inside on every beat. Keep your eyes locked on the center while tapping the rhythm. Trains sustained fixation + dual-tasking.',
+};
+const OCU_CLINICAL = {
+  pursuits: '🏥 Targets extraocular muscle control and smooth pursuit eye movement. Difficulty can be increased by raising BPM.',
+  saccades: '🏥 Targets saccadic initiation speed and accuracy. Fixation cross trains return fixation — the full saccade cycle.',
+  depth:    '🏥 Targets convergence (eyes turning in), accommodation (focus change), and accommodative facility. Simulates near-far depth shift on every beat.',
+  gaze:     '🏥 Targets sustained visual fixation and dual-task visual attention. Appropriate for ADHD, TBI, and nystagmus. Content inside circle adds cognitive load without breaking fixation demand.',
+};
+function setOcuMode(m){
+  G.ocuMode=m;
+  OCU_MODES.forEach(id=>{
+    const btn=document.getElementById('ocu-btn-'+id);
+    if(btn) btn.classList.toggle('active',id===m);
+  });
+  const d=document.getElementById('gm-desc');
+  if(d) d.textContent=OCU_DESC[m]||'';
+  const cn=document.getElementById('ocu-clinical-note');
+  if(cn) cn.textContent=OCU_CLINICAL[m]||'';
+}
+function setMathOp(m){G.mathOp=m;document.querySelectorAll('#math-op-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mo===m));updateMathParamLabel();}
+function updateMathParamLabel(){const lbl=document.getElementById('math-param-label'),hint=document.getElementById('math-param-hint'),v=parseInt(document.getElementById('math-param')?.value||2);if(G.mathOp==='count'){if(lbl)lbl.textContent='Count by:';if(hint)hint.textContent=`${v}, ${v*2}, ${v*3}…`;}else if(G.mathOp==='add'){if(lbl)lbl.textContent='Add up to:';if(hint)hint.textContent=`Problems up to ${v}+${v}`;}else{if(lbl)lbl.textContent='Up to ×:';if(hint)hint.textContent=`Times tables up to ×${v}`;}}
+function openSettings(){document.getElementById('overlay-settings').classList.add('active');updateWordCount();}
+function closeSettings(){document.getElementById('overlay-settings').classList.remove('active');updateWordCount();}
+document.getElementById('overlay-settings').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSettings();});
+document.getElementById('math-param').addEventListener('input',updateMathParamLabel);
+document.getElementById('word-list').addEventListener('input',updateWordCount);
+function updateWordCount(){const wl=document.getElementById('word-list')?.value||'';const words=wl.split('\n').map(w=>w.trim()).filter(Boolean);const el=document.getElementById('word-count');if(el)el.textContent=words.length+' word'+(words.length!==1?'s':'')+' loaded';}
+
+/* ═══ PWA MANIFEST (injected dynamically) ═══════════ */
+(function(){
+  const manifest={name:'EvoSensory',short_name:'EvoSensory',description:'Multi-Sensory Rhythmic Timing Training',start_url:'.',display:'standalone',background_color:'#FDFBF9',theme_color:'#5C4490',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%235C4490'/%3E%3Ccircle cx='50' cy='54' r='30' fill='%239B88C4'/%3E%3Ccircle cx='38' cy='46' r='5' fill='white'/%3E%3Ccircle cx='62' cy='46' r='5' fill='white'/%3E%3C/svg%3E",sizes:'192x192',type:'image/svg+xml'}]};
+  const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('link');
+  link.rel='manifest';link.href=url;
+  document.head.appendChild(link);
+})();
+
+// Show iOS install banner if not in standalone and not dismissed
+try{
+  if(!navigator.standalone&&!localStorage.getItem('rhythmrx_banner')){
+    setTimeout(()=>{
+      const b=document.getElementById('install-banner');
+      if(b&&/iPhone|iPad|iPod/.test(navigator.userAgent)) b.classList.add('show');
+    },3000);
+  }
+}catch(e){}
+
+/* ═══ MAP ════════════════════════════════════════════ */
+const MN=[{id:1,x:55,y:205},{id:2,x:170,y:158},{id:3,x:265,y:108},{id:4,x:145,y:58},{id:5,x:265,y:14},{id:6,x:50,y:58}];
+function renderMap(){
+  const svg=document.getElementById('map-svg');if(!svg)return;let h='';
+  const pts=MN.slice(0,5);
+  const d=pts.map((n,i)=>(i===0?'M':'L')+n.x+','+n.y).join(' ');
+  h+=`<path d="${d}" fill="none" stroke="rgba(92,68,144,.14)" stroke-width="5" stroke-dasharray="8 6" stroke-linecap="round"/>`;
+  pts.slice(0,-1).forEach((n,i)=>{const nx=pts[i+1];h+=`<line x1="${n.x}" y1="${n.y}" x2="${nx.x}" y2="${nx.y}" stroke="#9B88C4" stroke-width="4" stroke-linecap="round" opacity=".5"/>`;});
+  MN.forEach(node=>{
+    const lv=LVS.find(l=>l.id===node.id);if(!lv)return;
+    const isSel=node.id===G.lvId,r=isSel?21:16;
+    h+=`<circle cx="${node.x}" cy="${node.y}" r="${r}" fill="${isSel?'#5C4490':'#9B88C4'}" opacity=".95" onclick="selLv(${node.id})" style="cursor:pointer"/>`;
+    h+=`<circle cx="${node.x}" cy="${node.y}" r="${r-5}" fill="white" opacity=".9"/>`;
+    h+=`<text x="${node.x}" y="${node.y}" text-anchor="middle" font-size="13" fill="${isSel?'#5C4490':'#3E2D6E'}" onclick="selLv(${node.id})" style="cursor:pointer">${lv.icon}</text>`;
+    h+=`<text x="${node.x}" y="${node.y+30}" text-anchor="middle" font-size="9" fill="#5A4E72">${lv.name}</text>`;
+  });
+  svg.innerHTML=h;
+  const cur=MN.find(n=>n.id===G.lvId)||MN[0];
+  const bp=document.getElementById('buddy-pos');if(bp){bp.style.left=(cur.x/340*100)+'%';bp.style.top=(cur.y/228*100)+'%';}
+  const lv=LVS.find(l=>l.id===G.lvId);
+  document.getElementById('lv-icon').textContent=lv.icon;
+  document.getElementById('lv-name').textContent='Level '+lv.id+': '+lv.name;
+  document.getElementById('lv-desc').textContent=lv.desc;
+  // Show XAC tip if available
+  const xcEl=document.getElementById('lv-xac');
+  if(xcEl){xcEl.textContent=lv.xac?'🎮 With XAC: '+lv.xac:'';xcEl.style.display=lv.xac?'block':'none';}
+  document.getElementById('play-btn').textContent='Play '+lv.icon+' Level '+lv.id+' ▶';
+  document.getElementById('bpm-disp').textContent=G.bpm;
+  document.getElementById('bpm-slider').value=G.bpm;
+  document.getElementById('bpm-rst').style.display=G.customBpm?'block':'none';
+  const gd=document.getElementById('gm-desc');if(gd)gd.textContent=GM_DESC[G.gameMode]||'';
+}
+function selLv(id){G.lvId=id;if(!G.customBpm){G.bpm=LVS.find(l=>l.id===id).bpm;}renderMap();}
+function chBpm(d){setBpm(Math.max(30,Math.min(160,G.bpm+d)));}
+function setBpm(v){G.bpm=v;G.customBpm=true;document.getElementById('bpm-disp').textContent=v;document.getElementById('bpm-slider').value=v;document.getElementById('bpm-rst').style.display='block';}
+function resetBpm(){G.customBpm=false;G.bpm=LVS.find(l=>l.id===G.lvId).bpm;renderMap();}
+
+/* ═══ AUDIO ══════════════════════════════════════════ */
+function initAudio(){if(!G.audioCtx)G.audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(G.audioCtx.state==='suspended')G.audioCtx.resume();}
+
+function playBeat(when,idx){
+  // In vocab and math modes, spoken content replaces the beat sound entirely
+  if(G.gameMode==='vocab'||G.gameMode==='math') return;
+  if(!S.metroOn||!G.audioCtx) return;
+  const ctx=G.audioCtx, acc=idx%2===0, m=S.soundMode;
+
+  if(m==='click'){
+    // Single beat — one clean click per beat, louder accent on beat 1
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=acc?1050:1050; // same pitch both beats — single pattern
+    g.gain.setValueAtTime(acc?.32:.32,when);
+    g.gain.exponentialRampToValueAtTime(.001,when+.04);
+    o.start(when);o.stop(when+.06);
+
+  } else if(m==='count'){
+    // Double beat — high tone beat 1, low tone beat 2
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='triangle';
+    o.frequency.value=acc?900:500;
+    g.gain.setValueAtTime(acc?.30:.20,when);
+    g.gain.exponentialRampToValueAtTime(.001,when+.1);
+    o.start(when);o.stop(when+.12);
+
+  } else if(m==='spoken'){
+    // 1-2 Spoken — tone + speech. Says "one" on beat 1, "two" on beat 2.
+    // Tone still fires so there's immediate auditory feedback before speech latency
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';
+    o.frequency.value=acc?660:440;
+    g.gain.setValueAtTime(acc?.18:.12,when);
+    g.gain.exponentialRampToValueAtTime(.001,when+.06);
+    o.start(when);o.stop(when+.08);
+    // Schedule speech — small delay to align with the beat
+    const delayMs=Math.max(0,(when-ctx.currentTime)*1000);
+    setTimeout(()=>{
+      if(!S.speechOn&&S.soundMode==='spoken'){
+        // Force speak even if speech toggle is off — spoken count IS the beat
+        speakCount(acc?'one':'two');
+      } else if(S.soundMode==='spoken'){
+        speakCount(acc?'one':'two');
+      }
+    }, delayMs);
+  }
+}
+
+function speakCount(word){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(word);
+  u.rate=1.1; u.pitch=1.1; u.volume=1.0;
+  // Use a clear voice if available
+  const voices=window.speechSynthesis.getVoices();
+  const pref=voices.find(v=>v.lang==='en-US'&&v.localService)||
+             voices.find(v=>v.lang.startsWith('en')&&v.localService)||
+             voices.find(v=>v.lang.startsWith('en'))||null;
+  if(pref) u.voice=pref;
+  window.speechSynthesis.speak(u);
+}
+
+/* ═══ AUDIO HAPTICS (mobile-only fallback) ══════════
+   Low-frequency tone felt through phone/tablet speaker.
+   Only fires on mobile — desktop speakers sound bad.
+══════════════════════════════════════════════════ */
+const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+function audioHaptic(type){
+  if(!IS_MOBILE||!G.audioCtx||!S.hapticOn)return;
+  const ctx=G.audioCtx,now=ctx.currentTime+.005;
+  const freqs={perfect:110,early:80,late:60,miss:55};
+  const durs={perfect:.04,early:.08,late:.12,miss:.07};
+  const f=freqs[type]||80,dur=durs[type]||.07;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.type='sine';o.frequency.value=f;
+  g.gain.setValueAtTime(.9,now);g.gain.exponentialRampToValueAtTime(.001,now+dur);
+  o.start(now);o.stop(now+dur+.01);
+  // Double pulse for early
+  if(type==='early'){const o2=ctx.createOscillator(),g2=ctx.createGain();o2.connect(g2);g2.connect(ctx.destination);o2.type='sine';o2.frequency.value=f;const t2=now+.07;g2.gain.setValueAtTime(.7,t2);g2.gain.exponentialRampToValueAtTime(.001,t2+.05);o2.start(t2);o2.stop(t2+.06);}
+}
+
+/* ═══ SPATIAL FEEDBACK ══════════════════════════════ */
+function calcDrift(){const r=G.recentDev;if(r.length<3)return{trend:'stabilized',velocity:0};const n=r.length,sx=(n*(n-1))/2,sy=r.reduce((s,v)=>s+v,0),sxy=r.reduce((s,v,i)=>s+i*v,0),sx2=r.reduce((s,_,i)=>s+i*i,0),den=n*sx2-sx*sx;if(!den)return{trend:'stabilized',velocity:0};const slope=(n*sxy-sx*sy)/den;if(slope<-8)return{trend:'accelerating',velocity:slope};if(slope>8)return{trend:'dragging',velocity:slope};return{trend:'stabilized',velocity:slope};}
+
+function playFeedback(devMs,rating){
+  if(!S.audioOn||!G.audioCtx)return;
+  const ctx=G.audioCtx,now=ctx.currentTime+.012;
+  let dest=ctx.destination,pan=null;
+  if(ctx.createStereoPanner){pan=ctx.createStereoPanner();pan.connect(ctx.destination);dest=pan;}
+  if(['miss','wrong','ghost'].includes(rating)){if(pan)pan.pan.value=0;const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);o.frequency.setValueAtTime(180,now);o.frequency.exponentialRampToValueAtTime(80,now+.13);g.gain.setValueAtTime(.1,now);g.gain.exponentialRampToValueAtTime(.001,now+.16);o.start(now);o.stop(now+.18);return;}
+  if(rating==='perfect'){if(pan)pan.pan.value=0;[660,1320].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);o.frequency.value=f;g.gain.setValueAtTime(i?.10:.22,now);g.gain.exponentialRampToValueAtTime(.001,now+.32);o.start(now);o.stop(now+.35);});return;}
+  const isE=devMs<0,abs=Math.abs(devMs);
+  if(pan)pan.pan.value=isE?-Math.min(abs/120,1):Math.min(abs/120,1);
+  const semi=Math.min((abs/50)*1.2,5),ratio=Math.pow(2,semi/12),drift=calcDrift();
+  let sf,ef,dur;
+  if(isE){sf=520/ratio;ef=520*ratio;dur=drift.trend==='accelerating'?.13:.22;}
+  else{sf=520*ratio;ef=520/ratio;dur=drift.trend==='dragging'?.32:.22;}
+  const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);
+  o.frequency.setValueAtTime(sf,now);o.frequency.exponentialRampToValueAtTime(ef,now+dur*.72);
+  g.gain.setValueAtTime(rating==='good'?.18:.14,now);g.gain.exponentialRampToValueAtTime(.001,now+dur);
+  o.start(now);o.stop(now+dur+.02);
+}
+
+function playMile(){if(!S.audioOn||!G.audioCtx)return;const ctx=G.audioCtx,now=ctx.currentTime+.02;[523,659,784,1047].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=f;const t=now+i*.1;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.2,t+.04);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.start(t);o.stop(t+.45);});}
+
+/* ═══ HAPTICS ════════════════════════════════════════ */
+function haptic(type,dev){
+  const I=S.hapticIntensity;
+  // 1. Audio haptic (works on iPhone through speaker)
+  audioHaptic(type);
+  // 2. Native vibration (Android, some PWA installs)
+  if(S.hapticOn&&navigator.vibrate){
+    if(type==='perfect')navigator.vibrate(15);
+    else if(type==='early')navigator.vibrate([30,50,30]);
+    else if(type==='late')navigator.vibrate(Math.round(100*I));
+    else navigator.vibrate(50);
+  }
+  // 3. XAC dual-rumble
+  if(S.rumbleOn)rumble(type,I);
+}
+function rumble(type,I){const gps=navigator.getGamepads?navigator.getGamepads():[];for(const gp of gps){if(!gp?.vibrationActuator)continue;try{if(type==='perfect')gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:50,strongMagnitude:.5*I,weakMagnitude:.5*I});else if(type==='early')gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:150,strongMagnitude:1.0*I,weakMagnitude:0});else if(type==='late')gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:150,strongMagnitude:0,weakMagnitude:1.0*I});}catch(e){}}}
+function testVib(){audioHaptic('perfect');if(navigator.vibrate)navigator.vibrate([50,30,50,30,50]);else alert('Native vibration not available on this browser.\nAudio haptic (felt through speaker) is active.');}
+function testRumble(){const gps=navigator.getGamepads?navigator.getGamepads():[];let f=false;for(const gp of gps){if(!gp?.vibrationActuator)continue;f=true;try{gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:200,strongMagnitude:.8,weakMagnitude:.8});}catch(e){}}if(!f)alert('No XAC detected.\nConnect via USB and reload.');}
+function toggleMute(){S.audioOn=!S.audioOn;S.metroOn=!S.metroOn;document.getElementById('mute-btn').textContent=S.audioOn?'🔊':'🔇';}
+
+/* ═══ SPEECH ═════════════════════════════════════════ */
+function speak(text,rate=0.9){
+  if(!S.speechOn||!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=rate;u.pitch=1.1;u.volume=0.85;
+  window.speechSynthesis.speak(u);
+}
+
+/* ═══ SYLLABLE SPLITTER ════════════════════════════
+   Supports manual breaks with hyphens: BUT-TER-FLY
+   Auto-detects for unmarked words using vowel groups.
+   For precision, always use hyphens in the word list.
+══════════════════════════════════════════════════ */
+function autoSyllables(word){
+  word=word.toLowerCase().replace(/-/g,'');
+  if(word.length<=3) return [word.toUpperCase()];
+  const vowels=new Set(['a','e','i','o','u']);
+  // Count vowel groups (each group = one syllable nucleus)
+  let groups=0,inVowel=false;
+  for(let i=0;i<word.length;i++){
+    const v=vowels.has(word[i]);
+    if(v&&!inVowel){groups++;}
+    inVowel=v;
+  }
+  // Silent terminal 'e' after consonant: reduce
+  if(word.endsWith('e')&&!vowels.has(word[word.length-2])&&groups>1) groups--;
+  if(groups<=1) return [word.toUpperCase()];
+  // Split heuristic: find mid-consonant clusters between vowel groups
+  const syllables=[];let cur='';
+  for(let i=0;i<word.length;i++){
+    cur+=word[i];
+    const v=vowels.has(word[i]);
+    const nv=i+1<word.length?vowels.has(word[i+1]):false;
+    const nnv=i+2<word.length?vowels.has(word[i+2]):false;
+    // Split between consonant and following vowel if we have vowel..consonant..vowel pattern
+    if(!v&&nv&&cur.length>1&&syllables.length<groups-1){
+      syllables.push(cur.toUpperCase()); cur='';
+    } else if(!v&&!nv&&nnv&&cur.length>1&&syllables.length<groups-1){
+      syllables.push(cur.toUpperCase()); cur='';
+    }
+  }
+  if(cur) syllables.push(cur.toUpperCase());
+  return syllables.length>1?syllables:[word.toUpperCase()];
+}
+
+/* ═══ VOCAB SEQUENCE BUILDER ═══════════════════════
+   Per-word loop (×3 before moving to next word):
+     Loop 1: spell letter by letter → syllables → say word
+     Loop 2: spell letter by letter → say word
+     Loop 3: spell letter by letter → say word → rest
+   Beat sound is REPLACED by spoken content.
+   Use hyphens for precise syllable breaks: BUT-TER-FLY
+══════════════════════════════════════════════════ */
+function buildVocabSeq(){
+  const raw=document.getElementById('word-list')?.value||'cat\ndog\nrun';
+  const entries=raw.split('\n').map(w=>w.trim().toUpperCase()).filter(w=>w.length>0&&w.replace(/-/g,'').length<=14);
+  const seq=[];
+  entries.forEach(rawWord=>{
+    const syllables=rawWord.includes('-')?rawWord.split('-').map(s=>s.trim()).filter(Boolean):autoSyllables(rawWord);
+    const word=rawWord.replace(/-/g,'');
+    const letters=word.split('');
+    const isMultiSyl=syllables.length>1;
+    for(let loop=0;loop<3;loop++){
+      // Spell it — one beat per letter
+      letters.forEach((letter,li)=>{
+        seq.push({type:'letter',letter,word,syllables,loop,letterIdx:li,totalLetters:letters.length});
+      });
+      // Syllables — only loop 0, only if multi-syllable
+      if(loop===0&&isMultiSyl){
+        syllables.forEach((syl,si)=>{
+          seq.push({type:'syllable',letter:syl,word,syllables,loop,sylIdx:si,totalSyls:syllables.length});
+        });
+      }
+      // Say the whole word
+      seq.push({type:'word',letter:word,word,syllables,loop});
+      // Short rest between loops; longer after loop 2
+      const restCount=loop===2?2:1;
+      for(let r=0;r<restCount;r++) seq.push({type:'rest',letter:'',word,loop});
+    }
+    // Extra pause between words
+    seq.push({type:'wordbreak',letter:'',word,loop:0});
+  });
+  return seq;
+}
+
+/* ═══ MATH SEQUENCE BUILDER ═══════════════════════
+   Numbers spoken aloud replace the beat sound.
+   count: 2, 4, 6, 8 … each number = one beat
+   add/multiply: say problem twice, then count up answer
+══════════════════════════════════════════════════ */
+function buildMathSeq(){
+  const op=G.mathOp, param=parseInt(document.getElementById('math-param')?.value||2);
+  G.mathParam=param;
+  const seq=[];
+  if(op==='count'){
+    for(let n=param;n<=param*16;n+=param){
+      seq.push({type:'count',display:String(n),spoken:String(n),value:n,param});
+    }
+  } else if(op==='add'){
+    for(let i=0;i<8;i++){
+      const a=Math.floor(Math.random()*param)+1, b=Math.floor(Math.random()*param)+1;
+      const ans=a+b;
+      seq.push({type:'problem',display:`${a} + ${b} = ?`,spoken:`${a} plus ${b} equals`,value:0,ans});
+      seq.push({type:'problem',display:`${a} + ${b} = ?`,spoken:'',value:0,ans});
+      for(let n=1;n<=ans;n++) seq.push({type:'count',display:String(n),spoken:String(n),value:n,ans,a,b});
+      seq.push({type:'rest',display:'',spoken:'',value:0});
+      seq.push({type:'rest',display:'',spoken:'',value:0});
+    }
+  } else {
+    for(let i=0;i<6;i++){
+      const a=Math.floor(Math.random()*param)+1, b=Math.floor(Math.random()*param)+1;
+      const ans=a*b;
+      seq.push({type:'problem',display:`${a} × ${b} = ?`,spoken:`${a} times ${b} equals`,value:0,ans});
+      seq.push({type:'problem',display:`${a} × ${b} = ?`,spoken:'',value:0,ans});
+      for(let n=1;n<=ans;n++) seq.push({type:'count',display:String(n),spoken:String(n),value:n,ans,a,b});
+      seq.push({type:'rest',display:'',spoken:'',value:0});
+      seq.push({type:'rest',display:'',spoken:'',value:0});
+    }
+  }
+  return seq;
+}
+
+/* ═══ CANVAS DRAWING ═════════════════════════════════ */
+function getRating(ms){const a=Math.abs(ms);if(a<=42)return 'perfect';if(a<=G.hitWin)return 'good';if(a<=G.hitWin*1.85)return 'close';return 'miss';}
+function getMult(s){return s>=20?3:s>=10?2:1;}
+
+function bPart(x,y,color,n=18){return Array.from({length:n},(_,i)=>{const a=(i/n)*Math.PI*2+Math.random()*.4,sp=2+Math.random()*4;return{x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2.5,color,size:2+Math.random()*4,life:28+Math.random()*18};});}
+function rainConf(W,n=40){const cl=['#5C4490','#C4922A','#4A8C6F','#9B88C4','#E06070','#60B0E0'];return Array.from({length:n},()=>({x:Math.random()*W,y:-10,vx:(Math.random()-.5)*3,vy:3+Math.random()*4,color:cl[Math.floor(Math.random()*cl.length)],size:4+Math.random()*5,life:60+Math.random()*28}));}
+
+function drawItem(ctx,x,y,sz,side,lvId){
+  const col=THEMES[lvId]?.['col'+side]||'#5C4490';
+  if(lvId===1){ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y+sz*.28,sz*.44,sz*.32,-.42,0,Math.PI*2);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=sz*.11;ctx.beginPath();ctx.moveTo(x+sz*.36,y+sz*.2);ctx.lineTo(x+sz*.36,y-sz*.72);ctx.stroke();ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x+sz*.36,y-sz*.72);ctx.bezierCurveTo(x+sz*.9,y-sz*.5,x+sz*.8,y-sz*.08,x+sz*.38,y-sz*.24);ctx.fill();}
+  else if(lvId===2){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y-sz*.18,sz*.58,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.ellipse(x-sz*.18,y-sz*.42,sz*.16,sz*.1,-.5,0,Math.PI*2);ctx.fill();ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y+sz*.42,sz*.1,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(80,60,100,.35)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y+sz*.52);ctx.quadraticCurveTo(x+sz*.2,y+sz*.7,x+sz*.1,y+sz*.9);ctx.stroke();}
+  else if(lvId===3){[col,'#fff',col,'#fff'].forEach((c,i)=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,sz*(1-i*.22),0,Math.PI*2);ctx.fill();});ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,sz*.14,0,Math.PI*2);ctx.fill();}
+  else if(lvId===4){ctx.fillStyle=col;ctx.beginPath();ctx.roundRect(x-sz*.72,y-sz*.3,sz*1.44,sz*.62,sz*.14);ctx.fill();ctx.beginPath();ctx.roundRect(x-sz*.42,y-sz*.72,sz*.84,sz*.46,sz*.1);ctx.fill();ctx.fillStyle='rgba(180,220,255,.85)';ctx.beginPath();ctx.roundRect(x-sz*.35,y-sz*.67,sz*.28,sz*.3,sz*.04);ctx.fill();ctx.beginPath();ctx.roundRect(x+sz*.06,y-sz*.67,sz*.28,sz*.3,sz*.04);ctx.fill();[[-0.42,.3],[.42,.3]].forEach(([dx,dy])=>{ctx.fillStyle='#222';ctx.beginPath();ctx.arc(x+dx*sz,y+dy*sz,sz*.22,0,Math.PI*2);ctx.fill();ctx.fillStyle='#555';ctx.beginPath();ctx.arc(x+dx*sz,y+dy*sz,sz*.12,0,Math.PI*2);ctx.fill();});}
+  else if(lvId===5){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,sz,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.arc(x,y,sz*.28,0,Math.PI*2);ctx.fill();for(let i=0;i<5;i++){const a=(i/5)*Math.PI*2-Math.PI/2;ctx.beginPath();ctx.arc(x+Math.cos(a)*sz*.55,y+Math.sin(a)*sz*.55,sz*.17,0,Math.PI*2);ctx.fill();}}
+  else{ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y,sz*.8,sz*.4,.1,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(x-sz*.2,y-sz*.42,sz*.42,sz*.5,.05,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,.25)';ctx.beginPath();ctx.ellipse(x-sz*.3,y-sz*.55,sz*.14,sz*.18,.05,0,Math.PI*2);ctx.fill();}
+}
+
+function drawCatchLine(ctx,cx,CY,lw,glow,col){
+  const hw=lw*.44;
+  ctx.strokeStyle=col;ctx.lineWidth=glow>0?3.5+glow*3:2.5;ctx.globalAlpha=.3+glow*.7;
+  ctx.beginPath();ctx.moveTo(cx-hw,CY);ctx.lineTo(cx+hw,CY);ctx.stroke();
+  ctx.lineWidth=1.5;ctx.globalAlpha=.2+glow*.4;
+  ctx.beginPath();ctx.moveTo(cx-hw,CY-5);ctx.lineTo(cx-hw,CY+5);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx+hw,CY-5);ctx.lineTo(cx+hw,CY+5);ctx.stroke();
+  ctx.lineWidth=glow>0?2.5+glow*2:1.5;ctx.globalAlpha=.25+glow*.75;
+  ctx.beginPath();ctx.arc(cx,CY,8+glow*5,0,Math.PI*2);ctx.stroke();
+  ctx.globalAlpha=1;
+}
+
+/* ── STANDARD FALLING NOTES ── */
+function drawStandard(ctx,W,H,an){
+  const lvId=G.lvId,th=THEMES[lvId];
+  ctx.fillStyle=th.bg;ctx.fillRect(0,0,W,H);
+  const isSingle=lvId===1;
+  const lanes=isSingle?[{side:'B',x:W*.18,w:W*.64,cx:W/2}]:[{side:'L',x:W*.02,w:W*.44,cx:W*.02+W*.22},{side:'R',x:W*.54,w:W*.44,cx:W*.54+W*.22}];
+  const CY=Math.floor(H*.87),SZ=Math.max(12,Math.min(W*.057,20));
+  lanes.forEach(l=>{ctx.fillStyle='rgba(92,68,144,.07)';ctx.fillRect(l.x,0,l.w,H);ctx.strokeStyle='rgba(92,68,144,.1)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(l.x,0);ctx.lineTo(l.x,H);ctx.stroke();ctx.beginPath();ctx.moveTo(l.x+l.w,0);ctx.lineTo(l.x+l.w,H);ctx.stroke();});
+  const alive=[];
+  G.items.forEach(item=>{
+    const prog=(an-item.audioStart)/item.fallDur;
+    if(prog<-.05){alive.push(item);return;}
+    const iy=Math.max(-SZ,prog*CY);
+    const lane=lanes.find(l=>l.side===item.side)||(isSingle?lanes[0]:null);
+    if(!lane){alive.push(item);return;}
+    const ix=lane.cx;
+    if(prog>1.22&&item.status==='falling'){item.status='missed';G.particles.push(...bPart(ix,CY,'#B85450',7));G.hits.push({dev:999,rating:'miss'});showRat('miss',0);playFeedback(0,'miss');haptic('miss',0);missAdapt();}
+    if(item.status==='caught'){const age=an-item.caughtAt;if(age<.35){const a=1-(age/.35);ctx.strokeStyle=th['col'+item.side]||'#5C4490';ctx.lineWidth=2;ctx.globalAlpha=a;ctx.beginPath();ctx.arc(ix,CY,SZ+age*90,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;alive.push(item);return;}return;}
+    if(item.status!=='falling')return;
+    const tTo=item.audioBeat-an;
+    if(tTo>=0&&tTo<.5){const gl=1-tTo/.5,col=th['col'+item.side]||'#5C4490',grad=ctx.createRadialGradient(ix,iy,0,ix,iy,SZ*2.8);grad.addColorStop(0,col+'55');grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.beginPath();ctx.arc(ix,iy,SZ*2.8,0,Math.PI*2);ctx.fill();}
+    drawItem(ctx,ix,iy,SZ,item.side,lvId);
+    alive.push(item);
+  });
+  G.items=alive;
+  lanes.forEach(lane=>{
+    let glow=0;G.items.forEach(item=>{if(item.status!=='falling')return;if(lane.side!=='B'&&item.side!==lane.side)return;const t=item.audioBeat-an;if(t>=0&&t<=.45)glow=Math.max(glow,1-t/.45);});
+    drawCatchLine(ctx,lane.cx,CY,lane.w,glow,THEMES[G.lvId]['col'+lane.side]||'#5C4490');
+  });
+}
+
+/* ── BUBBLE GUM ── */
+function drawBubblegum(ctx,W,H,an){
+  const B=G.bubble;
+  ctx.fillStyle='#FFF0F8';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(255,182,193,.15)';for(let gx=20;gx<W;gx+=30)for(let gy=20;gy<H;gy+=30){ctx.beginPath();ctx.arc(gx,gy,2.5,0,Math.PI*2);ctx.fill();}
+  const charX=W/2,charY=H*.68,charR=Math.min(W,H)*.1;
+  const beatAgo=an-(G.beats[G.beats.length-1]||0);
+  if(beatAgo<.18){const ring=beatAgo/.18;ctx.strokeStyle='rgba(255,105,180,'+(1-ring)*.35+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(charX,charY,charR*(1.1+ring*.6),0,Math.PI*2);ctx.stroke();}
+  if(B.size>1){
+    const bx=charX,by=charY-charR*.4-B.size*.65;
+    const grad=ctx.createRadialGradient(bx-B.size*.2,by-B.size*.2,0,bx,by,B.size);
+    grad.addColorStop(0,'rgba(255,240,248,.9)');grad.addColorStop(.6,'rgba(255,150,200,.72)');grad.addColorStop(.9,'rgba(220,80,150,.5)');grad.addColorStop(1,'rgba(180,40,120,.3)');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(bx,by,B.size,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(200,60,130,.35)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(bx,by,B.size,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.ellipse(bx-B.size*.28,by-B.size*.28,B.size*.2,B.size*.13,-.4,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(220,100,160,.45)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(charX,charY-charR*.35);ctx.lineTo(bx,by+B.size);ctx.stroke();
+  }
+  B.burstParts=B.burstParts.map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+.25,vx:p.vx*.96,life:p.life-1})).filter(p=>p.life>0);
+  B.burstParts.forEach(p=>{ctx.globalAlpha=Math.min(1,p.life/28);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;
+  ctx.fillStyle='#FFD1DC';ctx.beginPath();ctx.arc(charX,charY,charR,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(255,150,180,.45)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(charX,charY,charR,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle='rgba(255,130,150,.22)';ctx.beginPath();ctx.ellipse(charX-charR*.44,charY+charR*.1,charR*.24,charR*.17,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(charX+charR*.44,charY+charR*.1,charR*.24,charR*.17,0,0,Math.PI*2);ctx.fill();
+  const mood=B.mood;
+  if(mood==='burst'){ctx.strokeStyle='#444';ctx.lineWidth=2.5;[[-1],[1]].forEach(([xs])=>{ctx.beginPath();ctx.moveTo(charX+xs*charR*.3-charR*.1,charY-charR*.12-charR*.08);ctx.lineTo(charX+xs*charR*.3+charR*.1,charY-charR*.12+charR*.08);ctx.stroke();ctx.beginPath();ctx.moveTo(charX+xs*charR*.3+charR*.1,charY-charR*.12-charR*.08);ctx.lineTo(charX+xs*charR*.3-charR*.1,charY-charR*.12+charR*.08);ctx.stroke();});}
+  else if(mood==='happy'){ctx.strokeStyle='#444';ctx.lineWidth=2.5;[-1,1].forEach(xs=>{ctx.beginPath();ctx.arc(charX+xs*charR*.3,charY-charR*.12,charR*.14,Math.PI*.08,Math.PI*.92);ctx.stroke();});}
+  else{ctx.fillStyle='#333';[[-1],[1]].forEach(([xs])=>{ctx.beginPath();ctx.arc(charX+xs*charR*.3,charY-charR*.12,charR*.1,0,Math.PI*2);ctx.fill();});}
+  ctx.fillStyle=B.size>2?'#FF69B4':'#FF99BB';ctx.beginPath();ctx.ellipse(charX,charY+charR*.28,charR*(B.size>2?.14:.09),charR*(B.size>2?.12:.07),0,0,Math.PI*2);ctx.fill();
+  // Size bar
+  const pct=B.size/B.max;ctx.fillStyle='rgba(220,100,160,.18)';ctx.beginPath();ctx.roundRect(W*.1,H*.9,W*.8,7,4);ctx.fill();if(pct>0){ctx.fillStyle='rgba(220,80,150,.5)';ctx.beginPath();ctx.roundRect(W*.1,H*.9,W*.8*pct,7,4);ctx.fill();}
+}
+function updateBubble(rating){
+  const B=G.bubble,W=document.getElementById('gc')?.width||380,H=document.getElementById('gc')?.height||260;
+  const bx=W/2,by=H*.68-H*.1*.4-B.size*.65;
+  if(rating==='perfect'){B.size=Math.m
