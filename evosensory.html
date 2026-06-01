@@ -516,8 +516,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
 
     <!-- Progress note -->
     <div style="background:var(--gp);border:1px solid var(--gn);border-radius:10px;padding:10px 13px;margin-top:6px;margin-bottom:16px;">
-      <div style="font-size:11px;font-weight:600;color:var(--gn);margin-bottom:3px;">📊 Progress Tracking</div>
-      <div style="font-size:10.5px;color:var(--tx);line-height:1.7;">Session history is stored per patient on this device — view charts in 📊 Stats above. <strong>Download SOAP notes locally</strong> after each session using Copy or Print from the results screen.</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:11px;font-weight:600;color:var(--gn);">📊 Recent Sessions</div>
+        <div style="font-size:10px;color:var(--p);cursor:pointer;text-decoration:underline;" onclick="showScreen('stats')">View all →</div>
+      </div>
+      <div id="module-progress-strip" style="font-size:10.5px;color:var(--tx);line-height:1.8;"></div>
+      <div style="font-size:10px;color:var(--tl);margin-top:5px;border-top:1px solid rgba(74,140,111,.2);padding-top:5px;"><strong>Save SOAP notes locally</strong> after each session — use Copy or Print from the results screen.</div>
     </div>
   </div>
 </div>
@@ -837,7 +841,7 @@ here</textarea>
     <div id="dev-lbl" style="font-size:11px;font-weight:600;"></div>
   </div>
   <div class="drift-box mx">
-    <div style="color:var(--tl);font-size:10px;">Drift Velocity</div>
+    <div style="color:var(--tl);font-size:10px;">Session Trend</div>
     <div class="ds stabilized" id="ds">Stabilized ✓</div>
   </div>
   <div id="cw" class="mx"><canvas id="gc"></canvas></div>
@@ -846,44 +850,75 @@ here</textarea>
 
 <!-- RESULTS -->
 <div id="screen-results" class="screen">
-  <div class="serif mx" style="font-size:25px;color:var(--pd);text-align:center;" id="res-title">Round Complete!</div>
+  <div class="serif mx" style="font-size:25px;color:var(--pd);text-align:center;" id="res-title">Session Complete!</div>
   <div style="display:flex;gap:7px;justify-content:center;" id="stars-row"></div>
-  <svg id="res-buddy" viewBox="0 0 100 100" width="88" height="88">
+  <svg id="res-buddy" viewBox="0 0 100 100" width="72" height="72">
     <circle cx="50" cy="54" r="36" id="rb-body" fill="#9B88C4"/>
     <circle cx="37" cy="46" r="5.5" fill="#fff"/><circle cx="63" cy="46" r="5.5" fill="#fff"/>
     <circle cx="38" cy="47" r="2.8" fill="#3E2D6E"/><circle cx="64" cy="47" r="2.8" fill="#3E2D6E"/>
     <path id="rb-mouth" d="M 38 60 Q 50 66 62 60" stroke="#3E2D6E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
   </svg>
-  <div class="card mx" style="padding:15px;">
-    <div style="text-align:center;font-size:28px;font-weight:700;color:var(--p);" id="res-score"></div>
-    <div style="text-align:center;font-size:11px;color:var(--tl);margin-bottom:12px;" id="res-meta"></div>
+
+  <!-- Core metrics — clear, labeled, plain -->
+  <div class="card mx" style="padding:14px;">
+    <div style="text-align:center;font-size:11px;color:var(--tl);margin-bottom:10px;" id="res-meta"></div>
+
+    <!-- Accuracy -->
+    <div style="background:var(--pp);border-radius:9px;padding:10px 13px;margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--pd);">Accuracy</div>
+          <div style="font-size:10px;color:var(--tl);">% of beats hit</div>
+        </div>
+        <span id="res-acc" style="font-size:24px;font-weight:700;color:var(--p);"></span>
+      </div>
+      <div id="res-acc-interp" style="font-size:10.5px;color:var(--tl);margin-top:5px;line-height:1.6;"></div>
+    </div>
+
+    <!-- Deviation -->
+    <div style="background:var(--ww);border-radius:9px;padding:10px 13px;margin-bottom:6px;border:1px solid var(--br);">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--pd);">Timing</div>
+          <div style="font-size:10px;color:var(--tl);">ms from beat · lower = better</div>
+        </div>
+        <span id="res-dev" style="font-size:18px;font-weight:700;"></span>
+      </div>
+      <div id="res-dev-interp" style="font-size:10.5px;color:var(--tl);margin-top:5px;line-height:1.6;"></div>
+    </div>
+
+    <!-- Session trend -->
+    <div style="background:var(--ww);border-radius:9px;padding:10px 13px;border:1px solid var(--br);">
+      <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:3px;">Session Trend</div>
+      <div id="res-drift" style="font-size:10.5px;color:var(--tx);line-height:1.7;"></div>
+    </div>
+  </div>
+
+  <!-- Tap breakdown -->
+  <div class="card mx" style="padding:11px 14px;">
     <div class="sg" id="res-sg"></div>
-    <div style="background:var(--pp);border-radius:9px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;margin-top:7px;">
-      <span style="font-size:12px;color:var(--tl);">Accuracy</span>
-      <span id="res-acc" style="font-size:19px;font-weight:700;color:var(--p);"></span>
-    </div>
-    <div style="background:var(--ww);border-radius:9px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-top:5px;">
-      <span style="font-size:12px;color:var(--tl);">Avg deviation</span>
-      <span id="res-dev" style="font-size:13px;font-weight:600;"></span>
-    </div>
   </div>
-  <div class="card mx" style="background:var(--pp);padding:12px 15px;">
-    <div class="label" style="margin-bottom:5px;">Drift Velocity Summary</div>
-    <div id="res-drift" style="font-size:12px;color:var(--tx);line-height:1.8;"></div>
-  </div>
+
+  <!-- Therapist notes -->
   <div class="card mx" id="th-notes" style="background:var(--gp);border:1px solid var(--gn);display:none;padding:12px;">
     <div class="label" style="color:var(--gn);margin-bottom:5px;">Therapist Notes</div>
     <div id="th-body" style="font-size:11px;color:var(--tx);line-height:1.9;"></div>
   </div>
+
+  <!-- Session observation — populates S section of SOAP -->
+  <div class="card mx" style="padding:12px 14px;">
+    <div class="label" style="margin-bottom:5px;">Session Observation <span style="font-size:9px;font-weight:400;color:var(--tl);">— goes into SOAP note S section</span></div>
+    <textarea id="session-obs" placeholder="Patient response, engagement level, behavior, fatigue, comments made during session…" style="width:100%;height:72px;border:1px solid var(--br);border-radius:8px;padding:8px;font-family:Jost,sans-serif;font-size:12px;resize:none;background:var(--ww);color:var(--tx);line-height:1.6;"></textarea>
+  </div>
+
   <div class="row mx">
     <button class="btn-out" style="flex:1;" onclick="showScreen('module')">Menu</button>
     <button class="btn" style="flex:2;" onclick="startCountdown()">Play Again ▶</button>
   </div>
-  <div id="next-lv" style="display:none;font-size:12px;color:var(--gn);cursor:pointer;font-weight:500;text-decoration:underline;" onclick="goNextLv()"></div>
-  <!-- SOAP note button — always visible after a session -->
-  <button class="btn-sm mx" style="padding:11px;background:var(--gp);border-color:var(--gn);color:var(--gn);font-size:13px;" onclick="openSOAP(G.lastResult,G.sessions[G.sessions.length-1])">📋 Draft SOAP Note</button>
-  <div style="display:flex;gap:14px;margin-top:3px;">
-    <div style="font-size:11px;color:var(--p);cursor:pointer;text-decoration:underline;" onclick="showScreen('stats')">📊 Progress</div>
+  <div id="next-lv" style="display:none;font-size:12px;color:var(--gn);cursor:pointer;font-weight:500;text-decoration:underline;text-align:center;" onclick="goNextLv()"></div>
+  <button class="btn-sm mx" style="padding:11px;background:var(--gp);border-color:var(--gn);color:var(--gn);font-size:13px;" onclick="openSOAP(G.lastResult,G.sessions[G.sessions.length-1])">📋 Generate SOAP Note</button>
+  <div style="display:flex;gap:14px;margin-top:3px;justify-content:center;">
+    <div style="font-size:11px;color:var(--p);cursor:pointer;text-decoration:underline;" onclick="showScreen('stats')">📊 View Progress</div>
     <div style="font-size:10px;color:var(--tl);">www.evolve-ot.com</div>
   </div>
 </div>
@@ -1322,9 +1357,7 @@ function openNewUser(){
   document.querySelectorAll('#modality-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mod==='hands-bi'));
   document.getElementById('new-user-name').value = '';
   updateBPMHint();
-  // Show mobile note if on a phone or tablet
-  const mobileNote = document.getElementById('mobile-modality-note');
-  if(mobileNote) mobileNote.style.display = IS_MOBILE ? 'block' : 'none';
+  // Mobile note is shown in the module settings screen (mods-modality-note)
   document.getElementById('new-user-modal').classList.add('active');
   setTimeout(()=>document.getElementById('new-user-name').focus(), 100);
 }
@@ -1391,6 +1424,28 @@ function updateModuleChip(){
     if(i===0){el.style.background=u.color||'var(--p)';el.textContent=u.name.slice(0,2).toUpperCase();}
     else el.textContent=u.name;
   });
+  // Mini progress strip — last 3 sessions
+  const strip=document.getElementById('module-progress-strip');
+  if(!strip) return;
+  const sessions=G.sessions||[];
+  if(sessions.length===0){
+    strip.textContent='No sessions yet for this patient.';
+    return;
+  }
+  const recent=sessions.slice(-3).reverse();
+  strip.innerHTML=recent.map((s,i)=>{
+    const date=new Date(s.date||Date.now()).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const accColor=s.accuracy>=85?'var(--gn)':s.accuracy>=70?'var(--go)':'var(--rd)';
+    const devAbs=Math.abs(s.avgDev||0);
+    const devColor=devAbs<=40?'var(--gn)':devAbs<=70?'var(--go)':'var(--rd)';
+    const trend=s.driftTrend==='stabilized'?'✓ stable':s.driftTrend==='accelerating'?'↑ early':'↓ late';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;${i<recent.length-1?'border-bottom:1px solid rgba(74,140,111,.15);':''}">
+      <span style="color:var(--tl);">${date}</span>
+      <span style="font-weight:600;color:${accColor};">${s.accuracy}%</span>
+      <span style="color:${devColor};">${s.avgDev>0?'+':''}${s.avgDev}ms</span>
+      <span style="color:var(--tl);">${trend}</span>
+    </div>`;
+  }).join('');
 }
 
 /* ── MODULE PICKER FLOW ───────────────────────────────────── */
@@ -1876,7 +1931,7 @@ try{
 /* ═══ MAP ════════════════════════════════════════════ */
 const MN=[{id:1,x:55,y:205},{id:2,x:170,y:158},{id:3,x:265,y:108},{id:4,x:145,y:58},{id:5,x:265,y:14},{id:6,x:50,y:58}];
 function renderMap(){
-  const svg=document.getElementById('map-svg');let h='';
+  const svg=document.getElementById('map-svg');if(!svg)return;let h='';
   const pts=MN.slice(0,5);
   const d=pts.map((n,i)=>(i===0?'M':'L')+n.x+','+n.y).join(' ');
   h+=`<path d="${d}" fill="none" stroke="rgba(92,68,144,.14)" stroke-width="5" stroke-dasharray="8 6" stroke-linecap="round"/>`;
@@ -1891,7 +1946,7 @@ function renderMap(){
   });
   svg.innerHTML=h;
   const cur=MN.find(n=>n.id===G.lvId)||MN[0];
-  const bp=document.getElementById('buddy-pos');bp.style.left=(cur.x/340*100)+'%';bp.style.top=(cur.y/228*100)+'%';
+  const bp=document.getElementById('buddy-pos');if(bp){bp.style.left=(cur.x/340*100)+'%';bp.style.top=(cur.y/228*100)+'%';}
   const lv=LVS.find(l=>l.id===G.lvId);
   document.getElementById('lv-icon').textContent=lv.icon;
   document.getElementById('lv-name').textContent='Level '+lv.id+': '+lv.name;
@@ -3109,7 +3164,8 @@ function startCountdown(){
   G.nextBeat=firstBeat;
   // Build tap buttons — single for Level 1, edu, bubblegum, target range, oculomotor, motion
   const tb=document.getElementById('tap-btns');
-  const isSingle=lv.id===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='oculomotor'||G.gameMode==='motion';
+  const isAGMode=G.gameMode==='activegames';
+  const isSingle=lv.id===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='oculomotor'||G.gameMode==='motion'||isAGMode;
   if(isSingle){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">any key · tap anywhere</div></button>';}
   else{tb.style.gridTemplateColumns='1fr 1fr';tb.innerHTML='<button class="tap-btn L" ontouchstart="ev=event;ev.preventDefault();handleTap(\'L\')" onmousedown="event.preventDefault();handleTap(\'L\')">LEFT<div style="font-size:8px;opacity:.65;margin-top:2px;">f ← z Shift</div></button><button class="tap-btn R" ontouchstart="ev=event;ev.preventDefault();handleTap(\'R\')" onmousedown="event.preventDefault();handleTap(\'R\')">RIGHT<div style="font-size:8px;opacity:.65;margin-top:2px;">j → / Ctrl</div></button>';}
   document.getElementById('g-lv-lbl').textContent=lv.icon+' '+lv.name+' · '+G.bpm+' BPM · '+G.gameMode;
@@ -3139,7 +3195,17 @@ function beginGame(){
   showScreen('game');
   applyDesktopGameLayout();
   const cw=document.getElementById('cw'),gc=document.getElementById('gc');
-  const sz=()=>{gc.width=cw.offsetWidth||380;gc.height=cw.offsetHeight||260;};sz();
+  // Defer canvas sizing until after browser has painted the game screen
+  // offsetWidth is 0 if measured before the screen is visible
+  const sz=()=>{
+    const w=cw.offsetWidth||window.innerWidth||380;
+    const h=cw.offsetHeight||(window.innerHeight*.55)||260;
+    if(w>0&&h>0){gc.width=w;gc.height=h;}
+  };
+  // Size immediately then again after paint to catch mobile layout
+  sz();
+  requestAnimationFrame(()=>{ sz(); });
+  setTimeout(()=>{ sz(); },100); // extra safety for slow mobile paint
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}}
   G._resizeObs=new ResizeObserver(sz);
   G._resizeObs.observe(cw);
@@ -3175,26 +3241,74 @@ function endGame(){
 function renderRes(){
   const r=G.lastResult;if(!r)return;
   const {counts,acc,avgDev,tend,earnedS,drift}=r;
-  const lv=LVS.find(l=>l.id===G.lvId);
-  document.getElementById('res-title').textContent='Round Complete! '+lv.icon;
+  const lv=LVS.find(l=>l.id===G.lvId)||LVS[0];
+  const absdev=Math.abs(avgDev);
+
+  // Title + buddy
+  document.getElementById('res-title').textContent='Session Complete! '+lv.icon;
   document.getElementById('stars-row').innerHTML=[1,2,3].map(i=>`<span class="star ${i<=earnedS?'lit':'dim'}">★</span>`).join('');
   const rb=document.getElementById('rb-body'),rm=document.getElementById('rb-mouth');
   if(earnedS>=2){rb.setAttribute('fill','#4A8C6F');rm.setAttribute('d','M 35 58 Q 50 72 65 58');}
   else if(earnedS===1){rb.setAttribute('fill','#6DB89A');rm.setAttribute('d','M 38 60 Q 50 64 62 60');}
   else{rb.setAttribute('fill','#9B88C4');rm.setAttribute('d','M 38 62 Q 50 58 62 62');}
-  document.getElementById('res-score').textContent=G.score;
+
+  // Meta line
   const u2=getActiveUser();
-  const ocuLabel=G.gameMode==='oculomotor'?' · '+({pursuits:'Pursuits',saccades:'Saccades',depth:'Depth Pulse',gaze:'Gaze Hold'}[G.ocuMode]||G.ocuMode):'';
-  document.getElementById('res-meta').textContent=(u2?u2.name+' · ':'')+G.score+' pts · streak: '+G.maxStreak+' · '+G.bpm+' BPM · '+G.gameMode+ocuLabel;
-  document.getElementById('res-sg').innerHTML=['perfect','good','close','miss'].map(rt=>`<div class="st"><div style="font-size:21px;font-weight:700;color:${RM[rt].color}">${counts[rt]}</div><div style="font-size:9px;font-weight:500;color:${RM[rt].color}">${RM[rt].label}</div></div>`).join('');
+  const modeLabel=G.gameMode==='oculomotor'?'Oculomotor · '+({pursuits:'Pursuits',saccades:'Saccades',depth:'Depth Pulse',gaze:'Gaze Hold'}[G.ocuMode]||G.ocuMode):G.gameMode;
+  document.getElementById('res-meta').textContent=(u2?u2.name+' · ':'')+G.bpm+' BPM · '+lv.name+' · '+modeLabel;
+
+  // Accuracy
   document.getElementById('res-acc').textContent=acc+'%';
-  const dv=document.getElementById('res-dev');dv.textContent=(avgDev>0?'+':'')+avgDev+'ms'+(tend!=='balanced'?' ('+tend+')':' ✓');dv.style.color=tend==='balanced'?'#4A8C6F':'#C4922A';
-  document.getElementById('res-drift').innerHTML=`<strong>Drift:</strong> ${drift.trend} (${Math.round(drift.velocity)}ms/beat slope)<br>${drift.trend==='accelerating'?'Trending earlier each beat. Left-ear cue active.':drift.trend==='dragging'?'Trending later each beat. Right-ear cue active.':'Stable across session.'}`;
+  const accColor=acc>=85?'var(--gn)':acc>=70?'var(--go)':'var(--rd)';
+  document.getElementById('res-acc').style.color=accColor;
+  const accInterp=acc>=85?'Functional range — skill is established at this level and tempo.'
+    :acc>=70?'Emerging — moderate consistency. Target 85% across two sessions before advancing.'
+    :acc>=50?'Below threshold — significant difficulty. Consider reducing BPM or adjusting supports.'
+    :'Well below threshold — this level or tempo may currently exceed capacity. Try reducing BPM.';
+  document.getElementById('res-acc-interp').textContent=accInterp;
+
+  // Deviation
+  const devEl=document.getElementById('res-dev');
+  devEl.textContent=(avgDev>0?'+':'')+avgDev+'ms';
+  devEl.style.color=absdev<=30?'var(--gn)':absdev<=70?'var(--go)':'var(--rd)';
+  const dirLabel=avgDev>15?' (tapping early)':avgDev<-15?' (tapping late)':'';
+  const devInterp=absdev<=20?'Excellent precision — responses were well-timed'+dirLabel+'.'
+    :absdev<=40?'Good precision — mild timing variability'+dirLabel+'.'
+    :absdev<=70?'Moderate difficulty — consistent '+( avgDev>0?'early':'late')+'-tap pattern. May affect handwriting, bilateral tasks, and sequencing.'
+    :absdev<=100?'Significant difficulty — errors averaging '+Math.abs(avgDev)+'ms '+(avgDev>0?'early':'late')+'. Document functional impact.'
+    :'Severe difficulty — consider reducing BPM and adding sensory feedback supports.';
+  document.getElementById('res-dev-interp').textContent=devInterp;
+
+  // Session trend — plain language
+  const driftEl=document.getElementById('res-drift');
+  const trendText={
+    stabilized:'Timing was consistent from start to finish. Patient maintained regulation throughout the session.',
+    accelerating:'Responses became progressively earlier as the session continued. May reflect difficulty sustaining inhibitory control — a pattern consistent with impulsivity under extended demand.',
+    dragging:'Responses became progressively later as the session continued. May reflect attention fatigue or processing slowdown under sustained demand.',
+  }[drift.trend]||'Insufficient data to determine a session trend.';
+  const tendText=tend==='early'?' Overall tendency: tapping early (anticipatory pattern).'
+    :tend==='late'?' Overall tendency: tapping late (delayed initiation).'
+    :'';
+  driftEl.textContent=trendText+tendText;
+
+  // Tap breakdown
+  document.getElementById('res-sg').innerHTML=['perfect','good','close','miss'].map(rt=>`<div class="st"><div style="font-size:21px;font-weight:700;color:${RM[rt].color}">${counts[rt]}</div><div style="font-size:9px;font-weight:500;color:${RM[rt].color}">${RM[rt].label}</div></div>`).join('');
+
+  // Therapist mode
   const tn=document.getElementById('th-notes');
-  if(S.therapistMode){tn.style.display='block';document.getElementById('th-body').innerHTML=`${lv.name} · ${G.bpm} BPM · ${r.total} beats · ±${G.hitWin}ms · ${G.gameMode}<br>Tendency: <strong>${tend}</strong> · Drift: <strong>${drift.trend}</strong> (${Math.round(drift.velocity)}ms/beat)<br><span style="font-size:10px;color:var(--tl);">${tend==='early'?'Left-ear spatial cue. May reflect impulsivity or anticipatory motor program.':tend==='late'?'Right-ear spatial cue. May reflect processing delay or motor planning difficulty.':'Balanced — no strong tendency.'}</span>`;}
-  else tn.style.display='none';
+  if(S.therapistMode){
+    tn.style.display='block';
+    document.getElementById('th-body').innerHTML=`${lv.name} · ${G.bpm} BPM · ${r.total} beats · ±${G.hitWin}ms window · ${G.gameMode}<br>Tendency: <strong>${tend}</strong> · Trend: <strong>${drift.trend}</strong> (${Math.round(drift.velocity)}ms/beat, session trend slope)<br><span style="font-size:10px;color:var(--tl);">${tend==='early'?'Left-ear spatial cue active. May reflect impulsivity or anticipatory motor program.':tend==='late'?'Right-ear spatial cue active. May reflect processing delay or motor planning difficulty.':'Balanced — no strong tendency.'}</span>`;
+  } else tn.style.display='none';
+
+  // Clear session obs for new session
+  const obsEl=document.getElementById('session-obs');
+  if(obsEl) obsEl.value='';
+
+  // Next level prompt
   const nl=document.getElementById('next-lv');
-  if(earnedS>=2&&G.lvId<6){nl.style.display='';nl.textContent='→ Next: Level '+(G.lvId+1)+' '+LVS[G.lvId].icon;}else nl.style.display='none';
+  if(earnedS>=2&&G.lvId<6){nl.style.display='block';nl.textContent='→ Ready for Level '+(G.lvId+1)+' '+LVS[G.lvId].icon+' — tap to advance';}
+  else nl.style.display='none';
 }
 function goNextLv(){G.lvId++;G.customBpm=false;G.bpm=LVS.find(l=>l.id===G.lvId).bpm;showScreen('module');}
 
@@ -3391,7 +3505,11 @@ function generateSOAP(sess){
     ?' Response window was widened per older adult protocol to capture timing patterns without penalizing age-related differences in reaction time.':'';
 
   // ── ASSEMBLE ──────────────────────────────────────────────────────────
-  const S2=`S: [Therapist to add — patient-reported experience, engagement level, behavior observations, fatigue, and any comments made during the session]`;
+  const obsEl=document.getElementById('session-obs');
+  const obsText=obsEl?.value?.trim()||'';
+  const S2=obsText
+    ?`S: ${obsText}`
+    :`S: [Therapist to add — patient-reported experience, engagement level, behavior observations, fatigue, and any comments made during the session]`;
 
   const O=`O: Patient (${ageCatLabel}) participated in a rhythmic timing training session using ${modeContext}. Session date: ${date}.
 
