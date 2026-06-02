@@ -845,7 +845,10 @@ here</textarea>
 <!-- GAME -->
 <div id="screen-game" class="screen">
   <div class="hud mx">
-    <div id="g-lv-lbl" style="font-size:11px;font-weight:500;color:var(--p);"></div>
+    <div style="display:flex;align-items:center;gap:7px;">
+      <button style="background:none;border:none;font-size:18px;cursor:pointer;padding:2px 4px;color:var(--tl);line-height:1;" onclick="exitGameEarly()" title="Exit session">←</button>
+      <div id="g-lv-lbl" style="font-size:11px;font-weight:500;color:var(--p);"></div>
+    </div>
     <div style="display:flex;align-items:center;gap:8px;">
       <button style="background:none;border:none;font-size:16px;cursor:pointer;" id="mute-btn" onclick="toggleMute()">🔊</button>
       <span id="xac-ind" style="font-size:10px;padding:2px 7px;border-radius:7px;border:1px solid var(--br);color:var(--tl);">🎮 —</span>
@@ -1646,15 +1649,40 @@ function buildModSettings(){
     // Math sub-options based on operation
     let mathSubHtml='';
     if(isMath){
+      const pv=G.mathParam||2;
       if(mathOpVal==='count'){
-        mathSubHtml=`<div style="font-size:11px;color:var(--tl);margin-bottom:10px;background:var(--pp);border-radius:8px;padding:7px 10px;line-height:1.7;">
-          Count by: <strong>${G.mathStep||1}</strong> — adjust in the Math Mode section of full Settings (⚙️).</div>`;
+        mathSubHtml=`
+        <div style="background:var(--pp);border-radius:9px;padding:9px 12px;margin-bottom:8px;">
+          <div style="font-size:11px;font-weight:600;color:var(--pd);margin-bottom:6px;">Count by:</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="number" id="mods-math-param-inp" value="${pv}" min="1" max="12" class="mods-math-p"
+              style="width:64px;border:1.5px solid var(--br);border-radius:8px;padding:6px;font:500 16px 'Jost',sans-serif;text-align:center;background:white;"
+              oninput="G.mathParam=parseInt(this.value)||2;document.getElementById('math-param').value=this.value;updateMathParamLabel();document.getElementById('mods-math-hint').textContent=G.mathParam+', '+(G.mathParam*2)+', '+(G.mathParam*3)+'…'"/>
+            <div style="font-size:11px;color:var(--tl);" id="mods-math-hint">${pv}, ${pv*2}, ${pv*3}…</div>
+          </div>
+        </div>`;
       } else if(mathOpVal==='add'){
-        mathSubHtml=`<div style="font-size:11px;color:var(--tl);margin-bottom:10px;background:var(--pp);border-radius:8px;padding:7px 10px;line-height:1.7;">
-          Adding numbers 1–10. Each beat adds a new pair. Answers spoken aloud when Speech is on.</div>`;
+        mathSubHtml=`
+        <div style="background:var(--pp);border-radius:9px;padding:9px 12px;margin-bottom:8px;">
+          <div style="font-size:11px;font-weight:600;color:var(--pd);margin-bottom:4px;">Add up to:</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="number" id="mods-math-param-inp" value="${pv}" min="2" max="20"
+              style="width:64px;border:1.5px solid var(--br);border-radius:8px;padding:6px;font:500 16px 'Jost',sans-serif;text-align:center;background:white;"
+              oninput="G.mathParam=parseInt(this.value)||2;document.getElementById('math-param').value=this.value;updateMathParamLabel();document.getElementById('mods-math-hint').textContent='Problems up to '+this.value+'+'+this.value"/>
+            <div style="font-size:11px;color:var(--tl);" id="mods-math-hint">Problems up to ${pv}+${pv}</div>
+          </div>
+        </div>`;
       } else if(mathOpVal==='multiply'){
-        mathSubHtml=`<div style="font-size:11px;color:var(--tl);margin-bottom:10px;background:var(--pp);border-radius:8px;padding:7px 10px;line-height:1.7;">
-          Multiplication tables. Each beat states a new problem. Answers spoken aloud when Speech is on.</div>`;
+        mathSubHtml=`
+        <div style="background:var(--pp);border-radius:9px;padding:9px 12px;margin-bottom:8px;">
+          <div style="font-size:11px;font-weight:600;color:var(--pd);margin-bottom:4px;">Times tables up to ×:</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="number" id="mods-math-param-inp" value="${pv}" min="2" max="12"
+              style="width:64px;border:1.5px solid var(--br);border-radius:8px;padding:6px;font:500 16px 'Jost',sans-serif;text-align:center;background:white;"
+              oninput="G.mathParam=parseInt(this.value)||2;document.getElementById('math-param').value=this.value;updateMathParamLabel();document.getElementById('mods-math-hint').textContent='Tables up to ×'+this.value"/>
+            <div style="font-size:11px;color:var(--tl);" id="mods-math-hint">Tables up to ×${pv}</div>
+          </div>
+        </div>`;
       }
     }
     // Word list preview for vocab
@@ -1673,8 +1701,8 @@ function buildModSettings(){
       <div class="mods-section-label" style="margin-bottom:6px;">Math Operation</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
         <button class="pill-btn${mathOpVal==='count'?' active':''}" data-mo="count" onclick="setMathOp('count');buildModSettings()">Count Sets</button>
-        <button class="pill-btn${mathOpVal==='add'?' active':''}" onclick="setMathOp('add');buildModSettings()">Addition</button>
-        <button class="pill-btn${mathOpVal==='multiply'?' active':''}" onclick="setMathOp('multiply');buildModSettings()">Multiply</button>
+        <button class="pill-btn${mathOpVal==='add'?' active':''}" data-mo="add" onclick="setMathOp('add');buildModSettings()">Addition</button>
+        <button class="pill-btn${mathOpVal==='multiply'?' active':''}" data-mo="multiply" onclick="setMathOp('multiply');buildModSettings()">Multiply</button>
       </div>
       ${mathSubHtml}
       `:''}
@@ -2090,16 +2118,12 @@ function playBeat(when,idx){
 
 function speakCount(word){
   if(!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
+  const ss=window.speechSynthesis;
+  if(ss.speaking&&ss.pending) ss.cancel();
   const u=new SpeechSynthesisUtterance(word);
   u.rate=1.1; u.pitch=1.1; u.volume=1.0;
-  // Use a clear voice if available
-  const voices=window.speechSynthesis.getVoices();
-  const pref=voices.find(v=>v.lang==='en-US'&&v.localService)||
-             voices.find(v=>v.lang.startsWith('en')&&v.localService)||
-             voices.find(v=>v.lang.startsWith('en'))||null;
-  if(pref) u.voice=pref;
-  window.speechSynthesis.speak(u);
+  const v=_getVoice();if(v) u.voice=v;
+  ss.speak(u);
 }
 
 /* ═══ AUDIO HAPTICS (mobile-only fallback) ══════════
@@ -2191,12 +2215,30 @@ function setRumbleMode(mode){
 function toggleMute(){S.audioOn=!S.audioOn;S.metroOn=!S.metroOn;document.getElementById('mute-btn').textContent=S.audioOn?'🔊':'🔇';}
 
 /* ═══ SPEECH ═════════════════════════════════════════ */
+// Cache preferred voice once loaded — avoids re-scanning on every beat
+let _prefVoice=null;
+function _getVoice(){
+  if(_prefVoice) return _prefVoice;
+  const voices=window.speechSynthesis?.getVoices()||[];
+  _prefVoice=voices.find(v=>v.lang==='en-US'&&v.localService)
+    ||voices.find(v=>v.lang.startsWith('en')&&v.localService)
+    ||voices.find(v=>v.lang.startsWith('en'))
+    ||null;
+  return _prefVoice;
+}
+// Reload voice cache when voices change (iOS loads them asynchronously)
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=()=>{_prefVoice=null;};
+
 function speak(text,rate=0.9){
   if(!S.speechOn||!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
+  // On iOS, cancel() can corrupt the queue — only cancel if actively speaking
+  // and the queue is getting long (more than 1 utterance behind)
+  const ss=window.speechSynthesis;
+  if(ss.speaking&&ss.pending) ss.cancel(); // only clear backlog, not mid-word
   const u=new SpeechSynthesisUtterance(text);
   u.rate=rate;u.pitch=1.1;u.volume=0.85;
-  window.speechSynthesis.speak(u);
+  const v=_getVoice();if(v) u.voice=v;
+  ss.speak(u);
 }
 
 /* ═══ SYLLABLE SPLITTER ════════════════════════════
@@ -3312,6 +3354,20 @@ function beginGame(){
     const {isEduMode,lv,iv,fd}=G._spawnData;
     const firstBeat=G.audioCtx.currentTime+1.5; // 1.5s from game screen appearing
     G.nextBeat=firstBeat;
+    // Schedule 3 count-in beats at BPM tempo before the first scored beat
+    // These play during the game screen fade-in so the user hears the rhythm first
+    for(let ci=0;ci<3;ci++){
+      const ciWhen=firstBeat-(3-ci)*iv;
+      if(ciWhen>G.audioCtx.currentTime+0.02){
+        const cio=G.audioCtx.createOscillator(),cig=G.audioCtx.createGain();
+        cio.connect(cig);cig.connect(G.audioCtx.destination);
+        cio.type='triangle';
+        cio.frequency.value=ci===2?1100:700; // higher pitch on beat 3 = "go!"
+        cig.gain.setValueAtTime(ci===2?.5:.3,ciWhen);
+        cig.gain.exponentialRampToValueAtTime(.001,ciWhen+.09);
+        cio.start(ciWhen);cio.stop(ciWhen+.12);
+      }
+    }
     if(!isEduMode){
       G.items=[];
       PATS[lv.id].forEach((side,idx)=>{
