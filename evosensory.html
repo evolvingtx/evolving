@@ -1185,6 +1185,7 @@ const GM_DESC={
   standard:   'EvoSensory Classic — Items fall from the top. Tap the matching button when each item crosses the catch line.',
   bubblegum:  'EvoSensory Classic — Tap every beat to grow your bubble. Hit 10 in a row and it BURSTS! Miss and it pops.',
   targetrange:'EvoSensory Classic — Animals cross the scene in time with the beat. Tap when the animal is inside the crosshair.',
+  moneycatch: 'EvoSensory Classic — Stars fall from the sky. Catch them with your hands. The more accurate your timing, the higher the bill — $100 for perfect!',
   vocab:      'EvoSensory Cognitive — App SPEAKS each letter as the beat. Tap it. Then syllables. Then the whole word. 3 loops per word. Speech IS the beat.',
   math:       'EvoSensory Cognitive — App SPEAKS each number as the beat. Tap it. Addition and multiplication problems spoken aloud. Speech IS the beat.',
   oculomotor: 'EvoSensory Oculomotor — Visual tracking synced to the metronome. Follow the target with your eyes. Tap when it reaches the turnaround or jumps.',
@@ -1635,6 +1636,7 @@ function buildModSettings(){
       ['standard',    '🎵','Falling Notes',  'Notes fall from the top. Tap when they reach the catch line. Clean, clear, best default.'],
       ['bubblegum',   '🫧','Bubble Blast',   'Tap every beat to grow your bubble. 10 in a row and it bursts! Good for engagement and motivation.'],
       ['targetrange', '🎯','Target Range',   'Animals cross the scene to the beat. Tap when inside the crosshair. Less visual clutter — good for sensory-sensitive patients.'],
+      ['moneycatch',  '💰','Money Catcher',  'Stars fall from the sky — catch them with your hands! Perfect timing = $100 bill. Great for motivation and reward.'],
     ];
     extSettings.innerHTML=`<div class="mods-section-label" style="margin-bottom:7px;">Visual Mode</div>`+
       vmodes.map(([id,ic,nm,ds])=>
@@ -1830,10 +1832,17 @@ function setModalityFromSettings(mod){
 function modsStartSession(){
   const meta=MODULE_META[_pickedModuleGroup];
   if(!meta) return;
-  // Set game mode without showing map screen
-  if(_pickedModuleGroup!=='cognitive') setGM(meta.defaultMode);
-  else setGM(G.gameMode==='math'?'math':'vocab');
-  // Trigger countdown directly — map screen stays hidden
+  // Set game mode — preserve sub-mode selection for classic and cognitive
+  if(_pickedModuleGroup==='classic'){
+    // Keep whichever visual mode the user picked; fall back to default only if none selected
+    const classicModes=['standard','bubblegum','targetrange','moneycatch'];
+    if(!classicModes.includes(G.gameMode)) setGM(meta.defaultMode);
+    // else G.gameMode is already correct — don't override it
+  } else if(_pickedModuleGroup==='cognitive'){
+    setGM(G.gameMode==='math'?'math':'vocab');
+  } else {
+    setGM(meta.defaultMode);
+  }
   startCountdown();
 }
 
@@ -2411,7 +2420,182 @@ function drawCatchLine(ctx,cx,CY,lw,glow,col){
   ctx.globalAlpha=1;
 }
 
-/* ── STANDARD FALLING NOTES ── */
+/* ── MONEY CATCHER ── */
+function drawMoneyCatch(ctx,W,H,an){
+  // ── Background: deep night sky gradient ──
+  const sky=ctx.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0,'#0A0520');sky.addColorStop(.6,'#160840');sky.addColorStop(1,'#1E0C50');
+  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+
+  // Twinkling background stars (static, seeded by position)
+  ctx.fillStyle='rgba(255,255,255,.55)';
+  for(let i=0;i<38;i++){
+    const sx=(i*137.508+W*.12)%W, sy=(i*97.3+H*.07)%( H*.75);
+    const twinkle=0.4+0.5*Math.sin(an*2.2+i*1.7);
+    ctx.globalAlpha=twinkle*.7;
+    ctx.beginPath();ctx.arc(sx,sy,1+twinkle*.8,0,Math.PI*2);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+
+  const isSingle=G.lvId===1;
+  const lanes=isSingle
+    ?[{side:'B',cx:W/2,lx:W*.18,lw:W*.64}]
+    :[{side:'L',cx:W*.25,lx:W*.03,lw:W*.44},{side:'R',cx:W*.75,lx:W*.53,lw:W*.44}];
+  const CY=Math.floor(H*.82);
+  const SZ=Math.max(13,Math.min(W*.06,22));
+
+  // ── Draw hands at catch line ──
+  lanes.forEach(lane=>{
+    const hx=lane.cx, hy=CY+SZ*.5;
+    const beatAgo=an-(G.beats[G.beats.length-1]||0);
+    // Check if any item near catch line for glow
+    let nearGlow=0;
+    G.items.forEach(item=>{
+      if(item.status!=='falling')return;
+      if(!isSingle&&item.side!==lane.side)return;
+      const t=item.audioBeat-an;
+      if(t>=0&&t<=.45) nearGlow=Math.max(nearGlow,1-t/.45);
+    });
+    // Hand glow when item approaching
+    if(nearGlow>0){
+      const g=ctx.createRadialGradient(hx,hy,0,hx,hy,SZ*2.2);
+      g.addColorStop(0,`rgba(255,220,80,${nearGlow*.45})`);
+      g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(hx,hy,SZ*2.2,0,Math.PI*2);ctx.fill();
+    }
+
+    function drawHand(x,y,sz,squeeze){
+      const sq=squeeze||0; // 0=open, 1=catching
+      ctx.save();ctx.translate(x,y);
+      // Palm
+      const palmW=sz*1.1,palmH=sz*(0.7+sq*.15);
+      ctx.fillStyle='#F5CBA7';
+      ctx.beginPath();ctx.roundRect(-palmW/2,-palmH*.3,palmW,palmH,sz*.28);ctx.fill();
+      ctx.strokeStyle='rgba(180,120,60,.4)';ctx.lineWidth=1;ctx.stroke();
+      // Fingers (4) — close together when squeezing
+      const fingerCount=4,fingerW=sz*.22,fingerSpread=squeeze?0.6:1.0;
+      for(let f=0;f<fingerCount;f++){
+        const fx=(f-(fingerCount-1)/2)*sz*.26*fingerSpread;
+        const fh=sz*(.55-sq*.15);
+        ctx.fillStyle='#F5CBA7';
+        ctx.beginPath();ctx.roundRect(fx-fingerW/2,-palmH*.3-fh,fingerW,fh+sz*.12,sz*.12);ctx.fill();
+        ctx.strokeStyle='rgba(180,120,60,.3)';ctx.lineWidth=1;ctx.stroke();
+      }
+      // Thumb
+      const thumbAngle=squeeze?-.3:-.55;
+      ctx.save();ctx.translate(palmW*.42,-palmH*.1);ctx.rotate(thumbAngle);
+      ctx.fillStyle='#F5CBA7';
+      ctx.beginPath();ctx.roundRect(-sz*.12,-sz*.28,sz*.24,sz*.32,sz*.1);ctx.fill();
+      ctx.strokeStyle='rgba(180,120,60,.3)';ctx.lineWidth=1;ctx.stroke();
+      ctx.restore();
+      ctx.restore();
+    }
+
+    // Squeeze if recently caught
+    let squeeze=0;
+    G.items.forEach(item=>{
+      if(item.status==='caught'&&item.caughtAt){
+        const age=an-item.caughtAt;
+        if(!isSingle&&item.side!==lane.side)return;
+        if(age<.28) squeeze=Math.max(squeeze,1-age/.28);
+      }
+    });
+    drawHand(hx,hy,SZ*1.5,squeeze);
+  });
+
+  // ── Falling stars ──
+  const alive=[];
+  G.items.forEach(item=>{
+    const prog=(an-item.audioStart)/item.fallDur;
+    if(prog<-.05){alive.push(item);return;}
+    const iy=Math.max(-SZ*2,prog*CY);
+    const lane=lanes.find(l=>l.side===item.side)||(isSingle?lanes[0]:null);
+    if(!lane){alive.push(item);return;}
+    const ix=lane.cx;
+
+    // Miss — fell through
+    if(prog>1.18&&item.status==='falling'){
+      item.status='missed';
+      G.particles.push(...bPart(ix,CY,'#5C4490',6));
+      G.hits.push({dev:999,rating:'miss'});showRat('miss',0);playFeedback(0,'miss');haptic('miss',0);missAdapt();
+    }
+
+    // Caught — brief ring flash, then gone
+    if(item.status==='caught'){
+      const age=an-item.caughtAt;
+      if(age<.4){
+        const fa=1-age/.4;
+        // Bill color flash ring
+        const billCols={100:'#C4922A',20:'#4A8C6F',5:'#9B88C4',0:'#B85450'};
+        const bc=billCols[item.billVal||0]||'#C4922A';
+        ctx.strokeStyle=bc;ctx.lineWidth=2+fa*4;ctx.globalAlpha=fa*.85;
+        ctx.beginPath();ctx.arc(ix,CY,SZ+age*80,0,Math.PI*2);ctx.stroke();
+        ctx.globalAlpha=1;
+        alive.push(item);return;
+      }
+      return;
+    }
+    if(item.status!=='falling')return;
+
+    // Approach glow
+    const tTo=item.audioBeat-an;
+    if(tTo>=0&&tTo<.5){
+      const gl=1-tTo/.5;
+      const grad=ctx.createRadialGradient(ix,iy,0,ix,iy,SZ*3);
+      grad.addColorStop(0,`rgba(255,230,80,${gl*.4})`);
+      grad.addColorStop(1,'transparent');
+      ctx.fillStyle=grad;ctx.beginPath();ctx.arc(ix,iy,SZ*3,0,Math.PI*2);ctx.fill();
+    }
+
+    // Star shape — 5 points, rotates slightly as it falls
+    const rot=an*.8+ix*.03;
+    const starR=SZ*.95, innerR=SZ*.42;
+    const twinkle=0.7+0.3*Math.sin(an*4.5+ix);
+    ctx.save();ctx.translate(ix,iy);ctx.rotate(rot);
+    ctx.fillStyle=`rgba(255,240,100,${twinkle})`;
+    ctx.shadowColor='rgba(255,220,50,.8)';ctx.shadowBlur=SZ*.8*twinkle;
+    ctx.beginPath();
+    for(let pt=0;pt<10;pt++){
+      const r=pt%2===0?starR:innerR;
+      const a=(pt/10)*Math.PI*2-Math.PI/2;
+      pt===0?ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r):ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+    }
+    ctx.closePath();ctx.fill();
+    ctx.shadowBlur=0;
+    // White sparkle center
+    ctx.fillStyle='rgba(255,255,220,.9)';
+    ctx.beginPath();ctx.arc(0,0,SZ*.18,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+
+    alive.push(item);
+  });
+  G.items=alive;
+
+  // ── Money total display ──
+  const total=G.moneyTotal||0;
+  const walletStr=`💵 $${total}`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font=`bold ${Math.floor(W*.06)}px Jost,sans-serif`;
+  ctx.fillStyle='rgba(255,220,60,.9)';
+  ctx.shadowColor='rgba(200,160,0,.6)';ctx.shadowBlur=8;
+  ctx.fillText(walletStr,W/2,H*.1);
+  ctx.shadowBlur=0;
+
+  // Bill value hint row (perfect=$100 etc)
+  const hints=[{l:'Perfect',v:'$100',c:'#C4922A'},{l:'Good',v:'$20',c:'#4A8C6F'},{l:'Close',v:'$5',c:'#9B88C4'}];
+  ctx.font=`${Math.floor(W*.028)}px Jost,sans-serif`;
+  const hintY=H*.93;
+  hints.forEach((h,i)=>{
+    const hx=W*.18+i*(W*.32);
+    ctx.fillStyle='rgba(255,255,255,.3)';
+    ctx.fillText(h.l,hx,hintY);
+    ctx.fillStyle=h.c;
+    ctx.fillText(h.v,hx,hintY+H*.045);
+  });
+  ctx.textBaseline='alphabetic';
+}
+
+/* ── END MONEY CATCHER ── */
 function drawStandard(ctx,W,H,an){
   const lvId=G.lvId,th=THEMES[lvId];
   ctx.fillStyle=th.bg;ctx.fillRect(0,0,W,H);
@@ -3205,6 +3389,7 @@ function gameDraw(){
   else if(G.cvOpacity<1){G.cvOpacity=1;canvas.style.opacity=1;}
   if(!S.visualOn){ctx.fillStyle='#1A1030';ctx.fillRect(0,0,W,H);if(G.playing)G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());return;}
   if(G.gameMode==='bubblegum')drawBubblegum(ctx,W,H,an);
+  else if(G.gameMode==='moneycatch')drawMoneyCatch(ctx,W,H,an);
   else if(G.gameMode==='targetrange')drawTargetRange(ctx,W,H,an);
   else if(G.gameMode==='vocab')drawVocab(ctx,W,H,an);
   else if(G.gameMode==='math')drawMath(ctx,W,H,an);
@@ -3265,7 +3450,7 @@ function handleTap(side){
   const isMotion=G.gameMode==='motion';
   const isAG=G.gameMode==='activegames';
   // Single-tap modes: Level 1, edu, bubblegum, target range, oculomotor, motion, activegames
-  const isSingle=G.lvId===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||isOcu||isMotion||isAG;
+  const isSingle=G.lvId===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||isOcu||isMotion||isAG;
   const lanes=isSingle?[{side:'B',cx:W/2}]:[{side:'L',cx:W*.02+W*.22},{side:'R',cx:W*.54+W*.22}];
   const CY=G.gameMode==='targetrange'?H*.42:H*.87;
   const tapSide=isSingle?'C':side;
@@ -3312,6 +3497,18 @@ function handleTap(side){
   const ht=Math.abs(dev)<=42?'perfect':dev<0?'early':'late';haptic(ht,dev);
   if(G.gameMode==='targetrange'&&(rating==='perfect'||rating==='good'))G.crossGlow=1;
   if(G.gameMode==='bubblegum')updateBubble(rating);
+  if(G.gameMode==='moneycatch'){
+    // Bill value based on accuracy — closer = bigger bill
+    const bills={perfect:{val:100,label:'$100',col:'#C4922A',sz:22},
+                 good:   {val:20, label:'$20', col:'#4A8C6F',sz:19},
+                 close:  {val:5,  label:'$5',  col:'#9B88C4',sz:16},
+                 miss:   {val:0,  label:'',    col:'#B85450',sz:14}};
+    const bill=bills[rating]||bills.miss;
+    G.moneyTotal=(G.moneyTotal||0)+bill.val;
+    if(bill.val>0) G.popups.push({text:bill.label,x:lane?.cx||W/2,y:H*.87-30,color:bill.col,sz:bill.sz+4,life:55});
+    // Mark caught item with its bill value for the catch animation
+    if(best) best.billVal=bill.val;
+  }
   // Oculomotor: green flash on good/perfect + special XAC confirmation
   if(isOcu&&(rating==='perfect'||rating==='good')){
     G.ocuFlash=1.0;
@@ -3360,7 +3557,7 @@ function startCountdown(){
   }
   initAudio();
   G.items=[];G.particles=[];G.popups=[];G.beats=[];G.hits=[];
-  G.score=0;G.streak=0;G.maxStreak=0;G.beatsDone=0;G.consecMiss=0;
+  G.score=0;G.streak=0;G.maxStreak=0;G.beatsDone=0;G.consecMiss=0;G.moneyTotal=0;
   G.recentDev=[];G.recentAcc=[];G.blindStart=null;G.cvOpacity=1;G.crossGlow=0;
   G.bubble={size:0,max:68,burstParts:[],mood:'idle'};
   G.vocabIdx=0;G.mathIdx=0;
@@ -3396,7 +3593,7 @@ function startCountdown(){
   // Build tap buttons — single for Level 1, edu, bubblegum, target range, oculomotor, motion
   const tb=document.getElementById('tap-btns');
   const isAGMode=G.gameMode==='activegames';
-  const isSingle=lv.id===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='oculomotor'||G.gameMode==='motion'||isAGMode;
+  const isSingle=lv.id===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||G.gameMode==='oculomotor'||G.gameMode==='motion'||isAGMode;
   if(isSingle){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">any key · tap anywhere</div></button>';}
   else{tb.style.gridTemplateColumns='1fr 1fr';tb.innerHTML='<button class="tap-btn L" ontouchstart="ev=event;ev.preventDefault();handleTap(\'L\')" onmousedown="event.preventDefault();handleTap(\'L\')">LEFT<div style="font-size:8px;opacity:.65;margin-top:2px;">f ← z Shift</div></button><button class="tap-btn R" ontouchstart="ev=event;ev.preventDefault();handleTap(\'R\')" onmousedown="event.preventDefault();handleTap(\'R\')">RIGHT<div style="font-size:8px;opacity:.65;margin-top:2px;">j → / Ctrl</div></button>';}
   document.getElementById('g-lv-lbl').textContent=lv.icon+' '+lv.name+' · '+G.bpm+' BPM · '+G.gameMode;
