@@ -3029,6 +3029,21 @@ function gameDraw(){
   else if(G.gameMode==='motion')       drawMotionGame(ctx,W,H,an);
   else if(G.gameMode==='activegames')  drawActiveGame(ctx,W,H,an);
   else drawStandard(ctx,W,H,an);
+  // GO! overlay — shown for 1s when scoring begins
+  if(G.goTime&&G.audioCtx){
+    const goAge=G.audioCtx.currentTime-G.goTime;
+    if(goAge>=-0.1&&goAge<0.9){
+      const alpha=Math.max(0,1-goAge/0.9);
+      const W2=canvas.width,H2=canvas.height;
+      ctx.globalAlpha=alpha;
+      ctx.fillStyle='rgba(74,200,120,0.18)';ctx.fillRect(0,0,W2,H2);
+      ctx.fillStyle=`rgba(74,200,120,${alpha})`;
+      ctx.font=`bold ${Math.floor(H2*.18)}px Jost,sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('GO!',W2/2,H2/2);
+      ctx.globalAlpha=1;
+    } else if(goAge>=0.9){G.goTime=null;}
+  }
   // Shared particles
   G.particles=G.particles.map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+.33,vx:p.vx*.96,life:p.life-1})).filter(p=>p.life>0);
   G.particles.forEach(p=>{ctx.globalAlpha=Math.min(1,p.life/34);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;
@@ -3177,7 +3192,6 @@ function startCountdown(){
   G.bubble={size:0,max:68,burstParts:[],mood:'idle'};
   G.vocabIdx=0;G.mathIdx=0;
   G.ocuTrail=[];G.ocuFlash=0;G.lastBeatTime=0;G.lastBeatIdx=0;
-  G.introBeats=3; // 3 count-in beats before scoring starts
   if(G.gameMode!=='motion') M.active=false; // keep active if motion mode
   const lv=LVS.find(l=>l.id===G.lvId),iv=60/G.bpm,fd=FB*iv;
   const isEduMode=G.gameMode==='vocab'||G.gameMode==='math';
@@ -3193,11 +3207,8 @@ function startCountdown(){
   } else {
     pattern=PATS[lv.id];G.total=pattern.length;
   }
-  // firstBeat: countdown (3.7s) + 3 intro beats so players hear rhythm before scoring
-  const firstBeat=G.audioCtx.currentTime+3.7+(3*iv);
-  // NOTE: items are pre-spawned inside beginGame() after AudioContext is confirmed running
-  G.nextBeat=firstBeat;
-  G._spawnData={isEduMode,lv,iv,fd,firstBeat};
+  // Timing data passed to beginGame — firstBeat computed fresh there after AudioContext confirmed
+  G._spawnData={isEduMode,lv,iv,fd};
   // Build tap buttons — single for Level 1, edu, bubblegum, target range, oculomotor, motion
   const tb=document.getElementById('tap-btns');
   const isAGMode=G.gameMode==='activegames';
@@ -3223,19 +3234,6 @@ function startCountdown(){
   document.getElementById('cd-sub').textContent=lv.name+' · '+G.bpm+' BPM · '+beatDesc+edNote;
   document.getElementById('screen-countdown').style.background=THEMES[G.lvId]?.bg||'#F8F4FF';
   showScreen('countdown');
-  // Schedule 3 audible count-in beats before game starts
-  // These fire during the countdown + lead-in period so player hears rhythm
-  const ciCtx=G.audioCtx;
-  const ciStart=ciCtx.currentTime+0.6; // start first intro beat 0.6s in
-  for(let ci=0;ci<3;ci++){
-    const ciWhen=ciStart+ci*iv;
-    const cio=ciCtx.createOscillator(),cig=ciCtx.createGain();
-    cio.connect(cig);cig.connect(ciCtx.destination);
-    cio.type='triangle';cio.frequency.value=ci===2?1100:700;
-    cig.gain.setValueAtTime(ci===2?.45:.3,ciWhen);
-    cig.gain.exponentialRampToValueAtTime(.001,ciWhen+.08);
-    cio.start(ciWhen);cio.stop(ciWhen+.1);
-  }
   let n=3;const cdi=setInterval(()=>{n--;if(n>0)document.getElementById('cd-num').textContent=n;else{clearInterval(cdi);beginGame();}},1000);
 }
 
@@ -3246,18 +3244,38 @@ function beginGame(){
     G.audioCtx.resume().then(()=>{ setTimeout(beginGame,80); }).catch(()=>{ setTimeout(beginGame,80); });
     return;
   }
-  G.playing=true;if(S.blindMode)G.blindStart=Date.now();
-  // Pre-spawn falling items now that AudioContext time is valid
-  if(G._spawnData&&!G._spawnData.isEduMode){
-    const {lv,iv,fd,firstBeat}=G._spawnData;
-    G.items=[];
-    PATS[lv.id].forEach((side,idx)=>{
-      if(side==null)return;
-      const bt=firstBeat+idx*iv;
-      G.items.push({id:idx+'_'+Math.random(),side,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'});
-    });
+  G.playing=true;G.goTime=G.audioCtx.currentTime+1.2;if(S.blindMode)G.blindStart=Date.now();
+  // Compute firstBeat NOW — AudioContext is confirmed running so currentTime is valid
+  if(G._spawnData){
+    const {isEduMode,lv,iv,fd}=G._spawnData;
+    // 0.4s grace period so first beat doesn't fire before draw loop starts
+    const firstBeat=G.audioCtx.currentTime+1.2; // 1.2s grace: canvas sizes, screen paints
+    G.nextBeat=firstBeat;
+    // Schedule 3 audible count-in clicks (already heard during countdown,
+    // these confirm the rhythm is live as the game screen appears)
+    // Play them just before firstBeat at BPM-accurate intervals
+    for(let ci=0;ci<3;ci++){
+      const ciWhen=firstBeat-(3-ci)*iv;
+      if(ciWhen>G.audioCtx.currentTime+0.05){
+        const cio=G.audioCtx.createOscillator(),cig=G.audioCtx.createGain();
+        cio.connect(cig);cig.connect(G.audioCtx.destination);
+        cio.type='triangle';cio.frequency.value=ci===2?1100:700;
+        cig.gain.setValueAtTime(ci===2?.45:.3,ciWhen);
+        cig.gain.exponentialRampToValueAtTime(.001,ciWhen+.08);
+        cio.start(ciWhen);cio.stop(ciWhen+.1);
+      }
+    }
+    // Pre-spawn falling items with fresh timestamps
+    if(!isEduMode){
+      G.items=[];
+      PATS[lv.id].forEach((side,idx)=>{
+        if(side==null)return;
+        const bt=firstBeat+idx*iv;
+        G.items.push({id:idx+'_'+Math.random(),side,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'});
+      });
+    }
+    G._spawnData=null;
   }
-  G._spawnData=null;
   showScreen('game');
   applyDesktopGameLayout();
   const cw=document.getElementById('cw'),gc=document.getElementById('gc');
@@ -3276,6 +3294,12 @@ function beginGame(){
   G._resizeObs=new ResizeObserver(sz);
   G._resizeObs.observe(cw);
   G.schedTimer=setInterval(schedTick,50);schedTick();
+  // Start motion gesture poll loop for camera modes
+  if(G.gameMode==='motion'||G.gameMode==='activegames'){
+    if(M.poseTimer) clearInterval(M.poseTimer);
+    M.tapCooldown=0;M.poseBusy=false;
+    M.poseTimer=setInterval(motionDetectLoop,50); // ~20fps poll
+  }
   G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());updateHUD();
 }
 
@@ -3294,26 +3318,13 @@ function exitGameEarly(){
     endGame();
   }
 }
-function exitGameEarly(){
-  if(!G.playing)return;
-  if(G.hits.length<2){
-    // Not enough data — go back to module picker without results
-    G.playing=false;
-    clearInterval(G.schedTimer);
-    cancelAnimationFrame(G.animFr);
-    if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}G._resizeObs=null;}
-    if(G.gameMode==='motion')stopMotionCamera();
-    showScreen('module');
-  } else {
-    endGame();
-  }
-}
 function endGame(){
   G.playing=false;
   clearInterval(G.schedTimer);
   cancelAnimationFrame(G.animFr);
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){} G._resizeObs=null;}
-  if(G.gameMode==='motion') stopMotionCamera();
+  if(G.gameMode==='motion'||G.gameMode==='activegames') stopMotionCamera();
+  if(M.poseTimer){clearInterval(M.poseTimer);M.poseTimer=null;}
   const hits=G.hits,total=G.total,lv=LVS.find(l=>l.id===G.lvId);
   const counts={perfect:0,good:0,close:0,miss:0};hits.forEach(h=>{if(counts[h.rating]!==undefined)counts[h.rating]++;});
   counts.miss+=Math.max(0,total-hits.length);
@@ -3715,6 +3726,8 @@ const M={
   poseLoaded:false,
   landmarks:null,
   tapCooldown:0,
+  poseBusy:false,  // guard against stacked MediaPipe.send() calls
+  poseTimer:null,  // setInterval handle for gesture poll loop
   prevAnkleY:null,
   jumpBaseline:null,
   beatCount:0,
@@ -3860,8 +3873,8 @@ async function loadMediaPipePose(){
     M.pose.setOptions({modelComplexity:1,smoothLandmarks:true,enableSegmentation:false,
       minDetectionConfidence:0.55,minTrackingConfidence:0.55});
     M.pose.onResults((results)=>{
-      M.landmarks=results.poseLandmarks||null;
       drawSkeletonOnCanvas(results);
+      onPoseResults(results); // handles gesture detection when game is running
     });
     await M.pose.initialize();
     M.poseLoaded=true;
@@ -4065,16 +4078,38 @@ function detectFallback(){
 
 /* ── GAME LOOP INTEGRATION ──────────────────────────── */
 function motionDetectLoop(){
+  // Called by setInterval at ~20fps — NOT from the draw loop
   if(!M.active||!G.playing) return;
-  if(M.tapCooldown>0){M.tapCooldown--;return;}
+  const now=Date.now();
+  if(M.tapCooldown>now) return; // time-based cooldown
   const vid=document.getElementById('motion-video');
-  if(M.pose&&vid&&vid.readyState>=2&&!M.useFallback){
-    M.pose.send({image:vid}).catch(()=>{});
+  if(M.pose&&vid&&vid.readyState>=2&&!M.useFallback&&!M.poseBusy){
+    M.poseBusy=true;
+    M.pose.send({image:vid})
+      .then(()=>{M.poseBusy=false;})
+      .catch(()=>{M.poseBusy=false;});
+    return; // wait for onResults callback to trigger detectGesture
   }
+  // Fallback path (no pose or pose busy): detect from last known landmarks
   const gesture=detectGesture();
   if(gesture){
     handleTap('C');
-    M.tapCooldown=18;
+    M.tapCooldown=now+320; // 320ms cooldown regardless of framerate
+    M.beatCount++;
+  }
+}
+
+function onPoseResults(results){
+  // Called by MediaPipe pose.onResults — triggered after each .send()
+  M.landmarks=results.poseLandmarks||null;
+  M.poseBusy=false;
+  if(!M.active||!G.playing) return;
+  const now=Date.now();
+  if(M.tapCooldown>now) return;
+  const gesture=detectGesture();
+  if(gesture){
+    handleTap('C');
+    M.tapCooldown=now+320;
     M.beatCount++;
   }
 }
@@ -4133,7 +4168,7 @@ function drawMotionGame(ctx,W,H,an){
   ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(0,H-5,W,5);
   if(prog>0){ctx.fillStyle='rgba(74,200,120,.8)';ctx.fillRect(0,H-5,W*(prog/100),5);}
   ctx.textBaseline='alphabetic';
-  motionDetectLoop();
+  // motionDetectLoop runs via its own setInterval — not called here
 }
 
 
@@ -4211,6 +4246,8 @@ function openAGSetup(){
     startBtn.onclick=()=>{
       document.getElementById('motion-setup').style.display='none';
       M.active=true;AG.objects=[];AG.score=0;AG.catches=0;AG.misses=0;AG.spawnTimer=0;
+      M.jumpBaseline=null; // reset so jump baseline calibrates fresh for new session
+      M.jumpBaseline=null; // reset so jump baseline calibrates fresh for new session
       startBtn.onclick=startCountdownFromMotion; // restore
       startCountdown();
     };
@@ -4399,10 +4436,7 @@ function drawActiveGame(ctx,W,H,an){
   // Dark overlay for readability
   ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(0,0,W,H);
 
-  // Feed pose
-  if(M.pose&&vid&&vid.readyState>=2&&!M.useFallback){
-    M.pose.send({image:vid}).catch(()=>{});
-  }
+  // Pose is fed via motionDetectLoop setInterval (not here — avoid 60fps stacking)
   updatePlayerFromPose();
   updateAGObjects();
   spawnAGObject(W,H);
