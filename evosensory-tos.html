@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#3E2D6E"/>
+<title>Terms of Service | EvoSensory</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%233E2D6E'/%3E%3Ccircle cx='50' cy='50' r='43' fill='none' stroke='%239B88C4' stroke-width='3'/%3E%3Ctext x='50' y='63' font-family='Georgia%2Cserif' font-size='38' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--p:#5C4490;--pl:#9B88C4;--pp:#EDE8F5;--pd:#3E2D6E;--cr:#FDFBF9;--ww:#F7F4FB;--tx:#1E1830;--tl:#5A4E72;--gn:#4A8C6F;--gp:#E8F5EF;--go:#C4922A;--gop:#FBF2EA;--rd:#B85450;--br:rgba(92,68,144,.15);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Jost',sans-serif;background:var(--cr);color:var(--tx);overflow-x:hidden;}
+
+/* ── NAV ── */
+nav{background:white;border-bottom:1px solid var(--br);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--pd);font-weight:500;text-decoration:none;}
+.nav-logo span{font-size:10px;color:var(--tl);display:block;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif;font-weight:400;}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nav-link{font-size:12px;color:var(--p);text-decoration:none;font-weight:500;padding:5px 10px;border-radius:6px;transition:background .15s;white-space:nowrap;}
+.nav-link:hover{background:var(--pp);}
+.nav-link.active{background:var(--pp);color:var(--pd);}
+.nav-launch{font-size:12px;background:var(--p);color:white;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:600;white-space:nowrap;transition:background .2s;}
+.nav-launch:hover{background:var(--pd);}
+
+/* ── PAGE HERO ── */
+.page-hero{background:linear-gradient(150deg,var(--pd) 0%,var(--p) 55%,#8B6DB8 100%);padding:48px 20px 52px;text-align:center;}
+.page-hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:11px;color:rgba(255,255,255,.85);letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px;}
+.page-hero-title{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:500;color:white;line-height:1.1;margin-bottom:8px;}
+.page-hero-sub{font-size:13px;color:rgba(255,255,255,.7);margin-top:6px;}
+
+/* ── LAYOUT ── */
+.tos-wrap{max-width:700px;margin:0 auto;padding:40px 20px 60px;}
+
+/* ── LAST UPDATED ── */
+.last-updated{font-size:11px;color:var(--pl);letter-spacing:.1em;text-transform:uppercase;margin-bottom:32px;padding-bottom:14px;border-bottom:1px solid var(--br);}
+
+/* ── SECTIONS ── */
+.tos-section{margin-bottom:36px;}
+.tos-num{font-size:10px;font-weight:600;color:var(--pl);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;}
+.tos-heading{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--pd);margin-bottom:12px;line-height:1.2;}
+.tos-body{font-size:14px;color:var(--tl);line-height:1.9;margin-bottom:10px;}
+.tos-body strong{color:var(--tx);}
+.tos-list{font-size:14px;color:var(--tl);line-height:1.9;padding-left:20px;margin-bottom:10px;}
+.tos-list li{margin-bottom:6px;}
+
+/* ── CALLOUT BOXES ── */
+.callout{border-radius:12px;padding:16px 18px;margin:16px 0;}
+.callout-purple{background:var(--pp);border-left:3px solid var(--p);}
+.callout-gold{background:var(--gop);border-left:3px solid var(--go);}
+.callout-green{background:var(--gp);border-left:3px solid var(--gn);}
+.callout strong{font-size:12px;font-weight:600;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;}
+.callout-purple strong{color:var(--pd);}
+.callout-gold strong{color:var(--go);}
+.callout-green strong{color:var(--gn);}
+.callout p{font-size:13px;color:var(--tx);line-height:1.75;margin:0;}
+
+/* ── DIVIDER ── */
+hr.tos-div{border:none;border-top:1px solid var(--br);margin:36px 0;}
+
+/* ── CONTACT BOX ── */
+.contact-box{background:var(--ww);border:1.5px solid var(--br);border-radius:14px;padding:22px 20px;margin-top:10px;}
+.contact-box h4{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--pd);margin-bottom:10px;}
+.contact-box p{font-size:13px;color:var(--tl);line-height:1.8;}
+.contact-box a{color:var(--p);text-decoration:none;font-weight:500;}
+.contact-box a:hover{text-decoration:underline;}
+
+/* ── FOOTER ── */
+footer{background:var(--pd);color:rgba(255,255,255,.65);padding:28px 20px;text-align:center;font-size:11px;line-height:2.1;}
+footer a{color:rgba(255,255,255,.8);text-decoration:none;}
+footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .page-hero-title{font-size:32px;}
+  .tos-heading{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="evosensory-about.html" class="nav-logo">EvoSensory<span>Evolving Therapy &amp; Wellness</span></a>
+  <div class="nav-links">
+    <a href="evosensory-about.html" class="nav-link">About</a>
+    <a href="evosensory-manual.html" class="nav-link">Manual</a>
+    <a href="evosensory-modules.html" class="nav-link">Modules</a>
+    <a href="evosensory-tos.html" class="nav-link active">Terms</a>
+  </div>
+  <a href="evosensory.html" class="nav-launch">Launch App →</a>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-badge">⚖️ Legal</div>
+  <h1 class="page-hero-title">Terms of Service</h1>
+  <div class="page-hero-sub">EvoSensory · Evolving Therapy &amp; Wellness</div>
+</div>
+
+<!-- CONTENT -->
+<div class="tos-wrap">
+
+  <div class="last-updated">Last updated: June 2026 · Effective immediately upon use</div>
+
+  <div class="callout callout-purple">
+    <strong>Please Read Before Using EvoSensory</strong>
+    <p>By accessing or using EvoSensory at www.evolve-ot.com, you agree to these Terms of Service. If you do not agree, please do not use this application.</p>
+  </div>
+
+  <!-- 1 -->
+  <div class="tos-section">
+    <div class="tos-num">Section 1</div>
+    <h2 class="tos-heading">Ownership &amp; Intellectual Property</h2>
+    <p class="tos-body">EvoSensory is owned and operated by <strong>Evolving Therapy &amp; Wellness</strong>, Vanessa Dorado Walker, MS, OTR/L. All content, features, and functionality of EvoSensory — including but not limited to the application design, user interface, visual layout, therapeutic logic, scoring algorithms, SOAP note generation system, module architecture, and underlying source code — are the exclusive intellectual property of Evolving Therapy &amp; Wellness.</p>
+    <p class="tos-body">EvoSensory and the EvoSensory module names (EvoSensory Classic, EvoSensory Cognitive, EvoSensory Oculomotor, EvoSensory Motion, EvoSensory Active Games) are trademarks of Evolving Therapy &amp; Wellness. All rights reserved.</p>
+    <div class="callout callout-gold">
+      <strong>⚠️ What You May Not Do</strong>
+      <p>You may not copy, reproduce, reverse-engineer, decompile, scrape, modify, distribute, create derivative works from, or commercially exploit any part of EvoSensory — including its source code, UI design, therapeutic protocols, or scoring methodology — without express written permission from Evolving Therapy &amp; Wellness.</p>
+    </div>
+  </div>
+
+  <hr class="tos-div"/>
+
+  <!-- 2 -->
+  <div class="tos-section">
+    <div class="tos-num">Section 2</div>
+    <h2 class="tos-heading">Permitted Use</h2>
+    <p class="tos-body">EvoSensory is intended exclusively for use by licensed healthcare professionals within a therapeutic relationship with their patients or clients. Authorized uses include:</p>
+    <ul class="tos-list">
+      <li>Using EvoSensory as a clinical tool during direct patient care sessions</li>
+      <li>Documenting session data using the built-in SOAP note generator</li>
+      <li>Sharing the application URL (<strong>www.evolve-ot.com/evosensory.html</strong>) with colleagues for authorized beta access</li>
+      <li>Providing feedback to Evolving Therapy &amp; Wellness to improve the application</li>
+    </ul>
+    <p class="tos-body">Any use outside of direct clinical care — including academic research publication, product demonstrations for commercial purposes, or integration into another product or service — requires prior written authorization.</p>
+  </div>
+
+  <hr class="tos-div"/>
+
+  <!-- 3 -->
+  <div class="tos-section">
+    <div class="tos-num">Section 3</div>
+    <h2 class="tos-heading">Clinical &amp; Medical Disclaimer</h2>
+    <p class="tos-body">EvoSensory is a <strong>clinical support tool</strong>, not a medical device. It is not FDA-cleared and is not intended to diagnose, treat, cure, or prevent any medical condition.</p>
+    <ul class="tos-list">
+      <li>Oculomotor screening data generated by EvoSensory is not clinical-grade eye movement recording and should not be used as a substitute for formal assessment by a qualified professional.</li>
+      <li>All SOAP notes generated by the application are clearly marked as drafts. The treating clinician is solely responsible for reviewing, editing, and finalizing all clinical documentation before inclusion in any medical record or EMR.</li>
+      <li>EvoSensory must be used only within an established therapeutic relationship by a licensed professional operating within their scope of practice.</li>
+    </ul>
+    <div class="callout callout-gold">
+      <strong>⚠️ Professional Responsibility</strong>
+      <p>The clinician using EvoSensory retains full professional and ethical responsibility for all clinical decisions, documentation, and patient outcomes. Evolving Therapy &amp; Wellness accepts no liability for clinical decisions made based on application output.</p>
+    </div>
+  </div>
+
+  <hr class="tos-div"/>
+
+  <!-- 4 -->
+  <div class="tos-section">
+    <div class="tos-num">Section 4</div>
+    <h2 class="tos-heading">Beta Access &amp; Availability</h2>
+    <p class="tos-body">EvoSensory is currently in private beta. Access is provided at no cost during the beta period as a courtesy to trusted clinical colleagues. This does not create any entitlement to continued free access, and pricing and access terms may change when the application exits beta.</p>
+    <p class="tos-body">Evolving Therapy &amp; Wellness reserves the right to modify, suspend, or discontinue EvoSensory — or any portion of it — at any time, with or without notice, without liability to any user.</p>
+  </div>
+
+  <hr class="tos-div"/>
+
+  <!-- 5 -->
+  <div class="tos-section">
+    <div class="tos-num">Section 5</div>
+    <h2 class="tos-heading">Data &amp; Privacy</h2>
+    <p class="tos-body">EvoSensory runs entirely in your browser. <strong>No patient data is transmitted to or stored on any server operated by Evolving Therapy &amp; Wellness.</strong> All session data, player profiles, and SOAP notes exist only in your browser's local storage on your device.</p>
+    <ul class="tos-list">
+      <li>You are solely responsible for the security of the device on which EvoSensory is used.</li>
+      <li>You are solely responsible for ensuring that your use of EvoSensory complies with HIPAA, your organization's privacy policies, and all applicable state and federal laws governing patient data.</li>
+      <li>Camera access (used by Motion and Active Games modules) is processed locally in your browser and is never transmitted or recorded by Evolving Therapy &amp; Wellness.</li>
+    </ul>
+  </div>
+
+  <hr class="tos-div"/>
+
+  <!-- 6 -->
+  <div class="tos-section">
+    <div class="tos-num">Section 6</div>
+    <h2 class="tos-heading">Limitation of Liability</h2>
+    <p class="tos-body">To the fullest extent permitted by applicable law, Evolving Therapy &amp; Wellness, its owner, and its affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of — or inability to use — EvoSensory, even if advised of the possibility of such damages.</p>
+    <p class="tos-body">EvoSensory is provided <strong>"as is"</strong> without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.</p>
+  </div>
+
+  <hr class="tos-div"/>
+
+  <!-- 7 -->
+  <div class="tos-section">
+    <div class="tos-num">Section 7</div>
+    <h2 class="tos-heading">Governing Law</h2>
+    <p class="tos-body">These Terms of Service are governed by and construed in accordance with the laws of the <strong>State of Mississippi</strong>, without regard to conflict of law principles. Any disputes arising from these terms or your use of EvoSensory shall be resolved in the courts of Mississippi.</p>
+  </div>
+
+  <hr class="tos-div"/>
+
+  <!-- 8 -->
+  <div class="tos-section">
+    <div class="tos-num">Section 8</div>
+    <h2 class="tos-heading">Changes to These Terms</h2>
+    <p class="tos-body">Evolving Therapy &amp; Wellness may update these Terms of Service at any time. The "Last updated" date at the top of this page reflects the most recent revision. Continued use of EvoSensory following any changes constitutes acceptance of the updated terms.</p>
+  </div>
+
+  <hr class="tos-div"/>
+
+  <!-- Contact -->
+  <div class="contact-box">
+    <h4>Questions or Permissions?</h4>
+    <p>For questions about these terms, permission requests, or to report a concern, contact:<br><br>
+    <strong>Vanessa Dorado Walker, MS, OTR/L</strong><br>
+    Evolving Therapy &amp; Wellness<br>
+    <a href="mailto:Admin@Evolve-OT.com">Admin@Evolve-OT.com</a> &nbsp;·&nbsp;
+    <a href="https://www.evolve-ot.com">www.evolve-ot.com</a>
+    </p>
+  </div>
+
+  <div class="callout callout-green" style="margin-top:28px;">
+    <strong>✅ Summary in Plain Language</strong>
+    <p>EvoSensory belongs to Vanessa / Evolving Therapy &amp; Wellness. You can use it to treat patients. You cannot copy it, reverse-engineer it, or build something with it. No patient data leaves your device. All clinical decisions are yours as the licensed professional.</p>
+  </div>
+
+</div><!-- end tos-wrap -->
+
+<footer>
+  <strong>Evolving Therapy &amp; Wellness</strong>
+  Vanessa Dorado Walker, MS, OTR/L<br>
+  <a href="mailto:Admin@Evolve-OT.com">Admin@Evolve-OT.com</a> &nbsp;·&nbsp; <a href="https://www.evolve-ot.com">www.evolve-ot.com</a><br><br>
+  &copy; 2026 Evolving Therapy &amp; Wellness. All rights reserved.<br>
+  EvoSensory is a trademark of Evolving Therapy &amp; Wellness.<br><br>
+  <span style="font-size:10px;opacity:.6;">EvoSensory is not a medical device. For use within a therapeutic relationship by a licensed professional only.</span>
+</footer>
+
+</body>
+</html>
