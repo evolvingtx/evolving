@@ -1507,6 +1507,7 @@ const MODULE_META={
     clinical:'Speech replaces the beat sound — words spelled by syllable, math sequences spoken aloud. Tap along while processing. Dual-task timing.',
     hasLevel:false, hasBPM:true, hasSub:'cog',
     defaultMode:'vocab',
+    defaultBPM:44,
   },
   motion:{
     icon:'📷', title:'Motion', sub:'Camera gesture training · Chrome required',
@@ -2119,10 +2120,10 @@ function playBeat(when,idx){
 function speakCount(word){
   if(!window.speechSynthesis) return;
   const ss=window.speechSynthesis;
-  if(ss.speaking&&ss.pending) ss.cancel();
+  if(ss.pending) ss.cancel();
   const u=new SpeechSynthesisUtterance(word);
   u.rate=1.1; u.pitch=1.1; u.volume=1.0;
-  const v=_getVoice();if(v) u.voice=v;
+  const v=_getVoice(); if(v) u.voice=v;
   ss.speak(u);
 }
 
@@ -2217,6 +2218,7 @@ function toggleMute(){S.audioOn=!S.audioOn;S.metroOn=!S.metroOn;document.getElem
 /* ═══ SPEECH ═════════════════════════════════════════ */
 // Cache preferred voice once loaded — avoids re-scanning on every beat
 let _prefVoice=null;
+let _speechWarmedUp=false;
 function _getVoice(){
   if(_prefVoice) return _prefVoice;
   const voices=window.speechSynthesis?.getVoices()||[];
@@ -2226,18 +2228,28 @@ function _getVoice(){
     ||null;
   return _prefVoice;
 }
-// Reload voice cache when voices change (iOS loads them asynchronously)
 if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=()=>{_prefVoice=null;};
 
+// Warm up speech synthesis on first tap — iOS requires a user-gesture before speak() works
+function _warmSpeech(){
+  if(_speechWarmedUp||!window.speechSynthesis) return;
+  _speechWarmedUp=true;
+  const u=new SpeechSynthesisUtterance('');
+  u.volume=0;
+  window.speechSynthesis.speak(u);
+}
+document.addEventListener('pointerdown',_warmSpeech,{once:true});
+document.addEventListener('keydown',_warmSpeech,{once:true});
+
 function speak(text,rate=0.9){
-  if(!S.speechOn||!window.speechSynthesis)return;
-  // On iOS, cancel() can corrupt the queue — only cancel if actively speaking
-  // and the queue is getting long (more than 1 utterance behind)
+  if(!S.speechOn||!window.speechSynthesis) return;
   const ss=window.speechSynthesis;
-  if(ss.speaking&&ss.pending) ss.cancel(); // only clear backlog, not mid-word
+  // Only cancel if there are queued utterances backing up — NOT based on ss.speaking
+  // which stays true on iOS even when nothing is audible (known WebKit bug)
+  if(ss.pending) ss.cancel();
   const u=new SpeechSynthesisUtterance(text);
-  u.rate=rate;u.pitch=1.1;u.volume=0.85;
-  const v=_getVoice();if(v) u.voice=v;
+  u.rate=rate; u.pitch=1.1; u.volume=0.9;
+  const v=_getVoice(); if(v) u.voice=v;
   ss.speak(u);
 }
 
@@ -2324,30 +2336,45 @@ function buildVocabSeq(){
    add/multiply: say problem twice, then count up answer
 ══════════════════════════════════════════════════ */
 function buildMathSeq(){
-  const op=G.mathOp, param=parseInt(document.getElementById('math-param')?.value||2);
+  const op=G.mathOp, param=parseInt(document.getElementById('math-param')?.value||G.mathParam||2);
   G.mathParam=param;
   const seq=[];
   if(op==='count'){
+    // Count by sets — each beat is the next number in the series
     for(let n=param;n<=param*16;n+=param){
       seq.push({type:'count',display:String(n),spoken:String(n),value:n,param});
     }
   } else if(op==='add'){
-    for(let i=0;i<8;i++){
-      const a=Math.floor(Math.random()*param)+1, b=Math.floor(Math.random()*param)+1;
+    // Beat 1: show A + A-blocks, say "A"
+    // Beat 2: show +B + B-blocks, say "plus B"
+    // Beat 3,4,5: silent pause — patient thinks
+    // Beat 6: show =ANS + all merged blocks, say "equals ANS"
+    // Beat 7,8: rest
+    for(let i=0;i<10;i++){
+      const a=Math.floor(Math.random()*param)+1;
+      const b=Math.floor(Math.random()*param)+1;
       const ans=a+b;
-      seq.push({type:'problem',display:`${a} + ${b} = ?`,spoken:`${a} plus ${b} equals`,value:0,ans});
-      seq.push({type:'problem',display:`${a} + ${b} = ?`,spoken:'',value:0,ans});
-      for(let n=1;n<=ans;n++) seq.push({type:'count',display:String(n),spoken:String(n),value:n,ans,a,b});
+      seq.push({type:'addend',display:`${a}`,spoken:String(a),a,b,ans,step:0});
+      seq.push({type:'addend',display:`+ ${b}`,spoken:`plus ${b}`,a,b,ans,step:1});
+      seq.push({type:'addpause',display:'?',spoken:'',a,b,ans,step:2});
+      seq.push({type:'addpause',display:'?',spoken:'',a,b,ans,step:2});
+      seq.push({type:'addpause',display:'?',spoken:'',a,b,ans,step:2});
+      seq.push({type:'addend',display:`= ${ans}`,spoken:`equals ${ans}`,a,b,ans,step:3});
       seq.push({type:'rest',display:'',spoken:'',value:0});
       seq.push({type:'rest',display:'',spoken:'',value:0});
     }
   } else {
-    for(let i=0;i<6;i++){
-      const a=Math.floor(Math.random()*param)+1, b=Math.floor(Math.random()*param)+1;
+    // Multiplication — same pattern
+    for(let i=0;i<10;i++){
+      const a=Math.floor(Math.random()*param)+2;
+      const b=Math.floor(Math.random()*param)+2;
       const ans=a*b;
-      seq.push({type:'problem',display:`${a} × ${b} = ?`,spoken:`${a} times ${b} equals`,value:0,ans});
-      seq.push({type:'problem',display:`${a} × ${b} = ?`,spoken:'',value:0,ans});
-      for(let n=1;n<=ans;n++) seq.push({type:'count',display:String(n),spoken:String(n),value:n,ans,a,b});
+      seq.push({type:'addend',display:`${a}`,spoken:String(a),a,b,ans,step:0});
+      seq.push({type:'addend',display:`× ${b}`,spoken:`times ${b}`,a,b,ans,step:1});
+      seq.push({type:'addpause',display:'?',spoken:'',a,b,ans,step:2});
+      seq.push({type:'addpause',display:'?',spoken:'',a,b,ans,step:2});
+      seq.push({type:'addpause',display:'?',spoken:'',a,b,ans,step:2});
+      seq.push({type:'addend',display:`= ${ans}`,spoken:`equals ${ans}`,a,b,ans,step:3});
       seq.push({type:'rest',display:'',spoken:'',value:0});
       seq.push({type:'rest',display:'',spoken:'',value:0});
     }
@@ -2586,44 +2613,105 @@ function drawMath(ctx,W,H,an){
   const cur=seq[Math.min(idx,seq.length-1)];
   // Beat pulse
   const beatAgo=an-(G.beats[G.beats.length-1]||0),pulse=Math.max(0,1-beatAgo/.28);
-  if(pulse>0&&cur?.type!=='rest'){
+  if(pulse>0&&cur?.type!=='rest'&&cur?.type!=='addpause'){
     ctx.strokeStyle=`rgba(74,140,111,${pulse*.35})`;ctx.lineWidth=pulse*20;
     ctx.beginPath();ctx.arc(W/2,H*.48,H*.2,0,Math.PI*2);ctx.stroke();
   }
   ctx.textAlign='center';ctx.textBaseline='middle';
   if(cur?.type==='count'){
-    // Show problem context small above if part of add/multiply
-    if(cur.a!==undefined&&cur.b!==undefined){
-      const op=cur.ans===cur.a+cur.b?`${cur.a} + ${cur.b} =`:`${cur.a} × ${cur.b} =`;
-      ctx.fillStyle='rgba(74,140,111,.45)';
-      ctx.font=`500 ${Math.floor(W*.04)}px Jost,sans-serif`;
-      ctx.fillText(op,W/2,H*.18);
-    } else if(cur.param){
+    // Count-by sets display
+    if(cur.param){
       ctx.fillStyle='rgba(74,140,111,.35)';
       ctx.font=`${Math.floor(W*.036)}px Jost,sans-serif`;
       ctx.fillText(`count by ${cur.param}`,W/2,H*.16);
     }
-    // Big number — this IS the beat
     ctx.fillStyle='#3E2D6E';
     ctx.font=`bold ${Math.floor(H*.36)}px Jost,sans-serif`;
     ctx.fillText(cur.display,W/2,H*.47);
-    // Progress within answer if applicable
-    if(cur.ans&&cur.value){
-      const pw=W*.7*(cur.value/cur.ans);
-      ctx.fillStyle='rgba(74,140,111,.12)';ctx.beginPath();ctx.roundRect(W*.15,H*.72,W*.7,7,4);ctx.fill();
-      ctx.fillStyle='rgba(74,140,111,.5)';ctx.beginPath();ctx.roundRect(W*.15,H*.72,pw,7,4);ctx.fill();
-      ctx.fillStyle='rgba(74,140,111,.55)';
-      ctx.font=`${Math.floor(W*.033)}px Jost,sans-serif`;
-      ctx.fillText(`${cur.value} of ${cur.ans}`,W/2,H*.84);
+  } else if(cur?.type==='addend'||cur?.type==='addpause'){
+    // ── NUMBER BLOCKS (Unifix-style) ─────────────────
+    const isAdd=cur.ans===cur.a+cur.b;
+    const step=cur.step; // 0=A, 1=+B, 2=pause, 3==ANS
+    const COL_A='#5C4490', COL_B='#C4922A', COL_ANS='#4A8C6F', COL_Q='rgba(92,68,144,.2)';
+
+    // Block layout — fit up to 20 blocks across, max 2 rows
+    const maxBlocks=Math.min(cur.ans,20);
+    const blockCols=Math.min(maxBlocks,10);
+    const bSize=Math.min(Math.floor(W*.07),Math.floor(H*.072),28);
+    const bGap=Math.floor(bSize*.18);
+    const bStep=bSize+bGap;
+    const totalW=blockCols*bStep-bGap;
+    const bx0=W/2-totalW/2;
+    const by0=H*.56;
+
+    function drawBlocks(count,color,offset){
+      for(let i=0;i<count&&(i+offset)<maxBlocks;i++){
+        const pos=i+offset;
+        const col=pos%blockCols, row=Math.floor(pos/blockCols);
+        const bx=bx0+col*bStep, by=by0+row*(bStep+2);
+        ctx.fillStyle=color;
+        ctx.beginPath();ctx.roundRect(bx,by,bSize,bSize,4);ctx.fill();
+        // white number inside block
+        ctx.fillStyle='rgba(255,255,255,.85)';
+        ctx.font=`600 ${Math.floor(bSize*.45)}px Jost,sans-serif`;
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(String(pos+1),bx+bSize/2,by+bSize/2);
+      }
     }
-  } else if(cur?.type==='problem'){
-    // Problem statement — speak it, student listens then counts
-    ctx.fillStyle='#5C4490';
-    ctx.font=`bold ${Math.floor(H*.19)}px Cormorant Garamond,serif`;
-    ctx.fillText(cur.display,W/2,H*.45);
-    ctx.fillStyle='rgba(92,68,144,.45)';
-    ctx.font=`${Math.floor(W*.035)}px Jost,sans-serif`;
-    ctx.fillText('listen…',W/2,H*.68);
+
+    if(step===0){
+      // Show A blocks, big number A
+      drawBlocks(Math.min(cur.a,maxBlocks), COL_A, 0);
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillStyle=COL_A;
+      ctx.font=`bold ${Math.floor(H*.32)}px Jost,sans-serif`;
+      ctx.fillText(String(cur.a), W/2, H*.32);
+      // tiny label
+      ctx.fillStyle='rgba(92,68,144,.4)';
+      ctx.font=`${Math.floor(W*.032)}px Jost,sans-serif`;
+      ctx.fillText(isAdd?'addition':'multiplication', W/2, H*.12);
+    } else if(step===1){
+      // Show A blocks + B blocks side by side
+      drawBlocks(Math.min(cur.a,maxBlocks), COL_A, 0);
+      drawBlocks(Math.min(cur.b,maxBlocks-Math.min(cur.a,maxBlocks)), COL_B, Math.min(cur.a,maxBlocks));
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      // Show equation so far: A + B
+      ctx.font=`bold ${Math.floor(H*.28)}px Jost,sans-serif`;
+      const eqX=W/2, eqY=H*.3;
+      ctx.fillStyle=COL_A; ctx.fillText(String(cur.a), eqX-W*.13, eqY);
+      ctx.fillStyle='rgba(92,68,144,.55)'; ctx.fillText('+', eqX, eqY);
+      ctx.fillStyle=COL_B; ctx.fillText(String(cur.b), eqX+W*.13, eqY);
+    } else if(step===2){
+      // Pause — show A + B = ? with blocks shown, question mark on answer
+      drawBlocks(Math.min(cur.a,maxBlocks), COL_A, 0);
+      drawBlocks(Math.min(cur.b,maxBlocks-Math.min(cur.a,maxBlocks)), COL_B, Math.min(cur.a,maxBlocks));
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=`bold ${Math.floor(H*.28)}px Jost,sans-serif`;
+      const eqX=W/2, eqY=H*.3;
+      ctx.fillStyle=COL_A; ctx.fillText(String(cur.a), eqX-W*.18, eqY);
+      ctx.fillStyle='rgba(92,68,144,.55)'; ctx.fillText('+', eqX-W*.05, eqY);
+      ctx.fillStyle=COL_B; ctx.fillText(String(cur.b), eqX+W*.07, eqY);
+      ctx.fillStyle='rgba(92,68,144,.4)'; ctx.fillText('=', eqX+W*.18, eqY);
+      // Pulsing ? — animate with beat
+      const beatAgoQ=an-(G.beats[G.beats.length-1]||0);
+      const qPulse=Math.max(0,1-beatAgoQ/.6);
+      ctx.fillStyle=`rgba(92,68,144,${0.3+qPulse*.5})`;
+      ctx.font=`bold ${Math.floor(H*(.34+qPulse*.04))}px Jost,sans-serif`;
+      ctx.fillText('?', eqX+W*.32, eqY);
+    } else if(step===3){
+      // Answer revealed — all blocks merge to green
+      drawBlocks(cur.ans, COL_ANS, 0);
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=`bold ${Math.floor(H*.28)}px Jost,sans-serif`;
+      const eqX=W/2, eqY=H*.3;
+      ctx.fillStyle=COL_A; ctx.fillText(String(cur.a), eqX-W*.22, eqY);
+      ctx.fillStyle='rgba(92,68,144,.55)'; ctx.fillText(isAdd?'+':'×', eqX-W*.08, eqY);
+      ctx.fillStyle=COL_B; ctx.fillText(String(cur.b), eqX+W*.06, eqY);
+      ctx.fillStyle='rgba(92,68,144,.5)'; ctx.fillText('=', eqX+W*.18, eqY);
+      ctx.fillStyle=COL_ANS;
+      ctx.font=`bold ${Math.floor(H*.34)}px Jost,sans-serif`;
+      ctx.fillText(String(cur.ans), eqX+W*.33, eqY);
+    }
   } else {
     // Rest
     ctx.fillStyle='rgba(74,140,111,.18)';
@@ -3098,6 +3186,8 @@ function schedTick(){
       } else if(G.gameMode==='math'){
         const cur=G.mathSeq[Math.min(idx,G.mathSeq.length-1)];
         if(cur?.type==='count'&&cur.spoken) speak(cur.spoken, .88);
+        else if(cur?.type==='addend'&&cur.spoken) speak(cur.spoken, .88);
+        else if(cur?.type==='addpause') {/* silent — patient thinks */}
         else if(cur?.type==='problem'&&cur.spoken) speak(cur.spoken, .82);
       }
       updateHUD();
@@ -3394,6 +3484,19 @@ function beginGame(){
   G._resizeObs.observe(cw);
   G.schedTimer=setInterval(schedTick,50);schedTick();
   G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());updateHUD();
+}
+
+function exitGameEarly(){
+  if(!G.playing) return;
+  G.playing=false;
+  clearInterval(G.schedTimer);
+  cancelAnimationFrame(G.animFr);
+  if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}G._resizeObs=null;}
+  if(G.gameMode==='motion'||G.gameMode==='activegames') stopMotionCamera();
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  // Enough data → results screen; otherwise back to module picker
+  if(G.hits.length>=2) endGame();
+  else showScreen('modsettings');
 }
 
 function endGame(){
