@@ -453,10 +453,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   </div>
   <div class="card mx">
     <div class="label" style="margin-bottom:9px;">Hardware Setup</div>
-    <div class="hw-step"><div class="hw-num">1</div><div class="hw-txt"><strong>Wired headphones:</strong> Left ear = you're rushing. Right ear = you're dragging. This spatial feedback is the core mechanism.</div></div>
+    <div class="hw-step"><div class="hw-num">1</div><div class="hw-txt"><strong>Wired headphones:</strong> Left ear tone = tapping early. Right ear tone = tapping late. This spatial feedback is the core mechanism.</div></div>
     <div class="hw-step"><div class="hw-num">2</div><div class="hw-txt"><strong>Hand switches:</strong> Left → f, ←, z, Shift-L. Right → j, →, /, Ctrl-R. Any USB switch or jelly bean that sends a keystroke works instantly.</div></div>
     <div class="hw-step"><div class="hw-num">3</div><div class="hw-txt"><strong>Foot switches:</strong> Same key mapping. Level 6 is designed specifically for bilateral foot tap training.</div></div>
-    <div class="hw-step"><div class="hw-num">4</div><div class="hw-txt"><strong>Xbox Adaptive Controller ($100):</strong> This is where EvoSensory transforms. Your existing AAC switch plugs directly into the XAC 3.5mm back jack — no adapter needed. Button 0 = LEFT, Button 1 = RIGHT. The XAC routes independent vibration to each side: left fires when you tap early, right fires when you tap late. Connect a haptic cushion to the output jack and the child feels timing feedback through their body.</div></div>
+    <div class="hw-step"><div class="hw-num">4</div><div class="hw-txt"><strong>Xbox Adaptive Controller ($100):</strong> AAC switches plug directly into the XAC 3.5mm back jacks — no adapter needed. Button 0 = LEFT tap, Button 1 = RIGHT tap. USB connection means no Bluetooth lag. Connect a vibration cushion and place it behind the patient or under them. In Settings, choose whether the cushion fires on correct taps (reward) or timing errors (correction).</div></div>
     <div class="hw-step"><div class="hw-num">5</div><div class="hw-txt"><strong>No hardware?</strong> Tap the on-screen buttons, tap the canvas, or press any keyboard key. All modes work without accessories. Wired earbuds ($10) are the single best upgrade.</div></div>
   </div>
   <button class="btn mx" style="font-size:16px;padding:15px;" onclick="localStorage.setItem('rr_seen','1');localStorage.setItem('rr_seen_'+(activeUserId||''),'1');showScreen('module');">Get Started ▶</button>
@@ -631,10 +631,18 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   </div>
 
   <div class="label">Sensory Outputs</div>
-  <div class="tog-row"><div><div class="tog-label">🔊 Audio Feedback (spatial)</div><div class="tog-sub">Left ear = rushing · Right ear = dragging</div></div><label class="tog"><input type="checkbox" id="tog-audio" checked onchange="S.audioOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">🔊 Audio Feedback (spatial)</div><div class="tog-sub">Left ear tone = tapping early · Right ear tone = tapping late</div></div><label class="tog"><input type="checkbox" id="tog-audio" checked onchange="S.audioOn=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">🎵 Metronome</div></div><label class="tog"><input type="checkbox" id="tog-metro" checked onchange="S.metroOn=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">📳 Haptics</div><div class="tog-sub">Device vibration + audio haptic fallback for iPhone</div></div><label class="tog"><input type="checkbox" id="tog-hap" checked onchange="S.hapticOn=this.checked"/><span class="tog-tk"></span></label></div>
-  <div class="tog-row"><div><div class="tog-label">🎮 XAC Pillow Rumble</div><div class="tog-sub">Xbox Adaptive Controller dual-rumble</div></div><label class="tog"><input type="checkbox" id="tog-rum" checked onchange="S.rumbleOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">🎮 XAC Pillow Rumble</div><div class="tog-sub">Xbox Adaptive Controller — vibration cushion</div></div><label class="tog"><input type="checkbox" id="tog-rum" checked onchange="S.rumbleOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div id="rumble-mode-row" style="background:var(--pp);border-radius:9px;padding:8px 11px;margin:-4px 0 6px;font-size:11px;color:var(--tx);">
+    <div style="font-weight:500;margin-bottom:5px;color:var(--pd);">Cushion fires on:</div>
+    <div style="display:flex;gap:6px;">
+      <button id="rm-hit" class="pill-btn active" style="flex:1;font-size:11px;padding:5px 4px;" onclick="setRumbleMode('hit')">✅ Correct tap<div style="font-size:9px;color:var(--tl);margin-top:1px;">Reward signal</div></button>
+      <button id="rm-error" class="pill-btn" style="flex:1;font-size:11px;padding:5px 4px;" onclick="setRumbleMode('error')">⚡ Timing error<div style="font-size:9px;color:var(--tl);margin-top:1px;">Error correction</div></button>
+    </div>
+    <div style="font-size:10px;color:var(--tl);margin-top:5px;line-height:1.55;" id="rumble-mode-hint">Cushion vibrates when the patient hits the beat — reinforces correct timing.</div>
+  </div>
   <div class="tog-row"><div><div class="tog-label">👀 Visuals</div></div><label class="tog"><input type="checkbox" id="tog-vis" checked onchange="S.visualOn=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">🗣 Speech (Vocab/Math)</div><div class="tog-sub">Speaks letters, words, and numbers aloud</div></div><label class="tog"><input type="checkbox" id="tog-speech" checked onchange="S.speechOn=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">🕶 Blind Training</div><div class="tog-sub">Visuals fade after 10s</div></div><label class="tog"><input type="checkbox" id="tog-bld" onchange="S.blindMode=this.checked"/><span class="tog-tk"></span></label></div>
@@ -1001,7 +1009,7 @@ here</textarea>
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--ww);border-radius:10px;margin-bottom:7px;border:1px solid var(--br);">
       <div>
         <div style="font-size:13px;font-weight:500;color:var(--tx);">🎧 Wired Headphones</div>
-        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Spatial audio — left ear early, right ear late</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Spatial audio — left ear tone = early, right ear tone = late</div>
       </div>
       <label class="tog"><input type="checkbox" id="hw-headphones" onchange="updateHWSummary()"/><span class="tog-tk"></span></label>
     </div>
@@ -1018,8 +1026,8 @@ here</textarea>
     <!-- XAC pillow -->
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--ww);border-radius:10px;margin-bottom:12px;border:1px solid var(--br);">
       <div>
-        <div style="font-size:13px;font-weight:500;color:var(--tx);">🎮 XAC Haptic Pillow</div>
-        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Xbox Adaptive Controller + vibration cushion</div>
+        <div style="font-size:13px;font-weight:500;color:var(--tx);">🎮 XAC Haptic Cushion</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:1px;">Xbox Adaptive Controller + vibration cushion (behind or under patient)</div>
       </div>
       <label class="tog"><input type="checkbox" id="hw-xac" onchange="updateHWSummary()"/><span class="tog-tk"></span></label>
     </div>
@@ -1094,13 +1102,22 @@ here</textarea>
 
     <!-- Camera preview -->
     <div style="position:relative;width:100%;aspect-ratio:4/3;background:#111;border-radius:12px;overflow:hidden;margin-bottom:12px;">
-      <video id="motion-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);"></video>
+      <video id="motion-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);transition:transform .15s;"></video>
       <canvas id="motion-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
       <!-- Skeleton overlay for MediaPipe -->
       <canvas id="mp-skeleton-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
       <div id="motion-status" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;color:white;background:rgba(0,0,0,.55);padding:4px;">Requesting camera…</div>
       <div id="mot-gesture-feedback" style="position:absolute;top:8px;left:0;right:0;text-align:center;font-size:13px;font-weight:600;color:#4AC878;display:none;text-shadow:0 1px 4px rgba(0,0,0,.8);"></div>
     </div>
+    <!-- Camera zoom control -->
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px;">
+      <span style="font-size:11px;color:var(--tl);white-space:nowrap;">🔍 Zoom</span>
+      <input type="range" min="100" max="200" value="100" step="5" id="cam-zoom-slider"
+        style="flex:1;accent-color:var(--p);"
+        oninput="applyCamZoom(this.value)"/>
+      <span style="font-size:11px;color:var(--p);font-weight:600;width:36px;text-align:right;" id="cam-zoom-label">1×</span>
+    </div>
+    <div style="font-size:10px;color:var(--tl);margin:-6px 0 10px;line-height:1.55;">Digital zoom — move the slider right so the patient can stand closer. Pose detection still works up to ~1.5×.</div>
 
     <!-- MP loading status -->
     <div id="mp-load-status" style="font-size:10px;color:var(--tl);text-align:center;margin-bottom:8px;display:none;">⏳ Loading pose detection…</div>
@@ -1120,22 +1137,22 @@ const FB=2.8;
 const LVS=[
   {id:1,name:'Warm Up',      bpm:56,  icon:'🎵',
    desc:'One button, any key. Tap every beat. Start here — no wrong side.',
-   xac:'Button A fires every tap. Pillow vibrates on each hit. Great intro for sensory-seeking kids.'},
+   xac:'Cushion vibrates on every correct tap — great intro for sensory-seeking kids. Set to "Correct tap" mode in Settings.'},
   {id:2,name:'Finding It',   bpm:66,  icon:'🎈',
    desc:'Left & right alternating. Process which hand AND when to tap.',
-   xac:'Left jack = left tap, right jack = right tap. Pillow fires left for early, right for late.'},
+   xac:'Try "Timing error" mode — cushion fires when the patient is early or late, pairing with the spatial audio cue.'},
   {id:3,name:'In the Groove',bpm:76,  icon:'🎯',
    desc:'Rests added — hold back on silent beats. Targets impulse control.',
-   xac:'Tapping on a rest fires the miss feedback immediately. Powerful inhibition training without verbal correction.'},
+   xac:'Error mode works well here — tapping on a rest fires the cushion immediately. Powerful inhibition feedback.'},
   {id:4,name:'Steady Beat',  bpm:88,  icon:'🚗',
    desc:'Complex L/R sequences + longer rests. Working memory + timing together.',
-   xac:'Asymmetric pillow vibration now carries significant therapeutic weight — left/right errors are unmistakable.'},
+   xac:'Either mode works. Hit mode rewards sustained accuracy; error mode targets the specific timing errors.'},
   {id:5,name:'Beat Master',  bpm:100, icon:'⚽',
    desc:'Full challenge. Irregular patterns, multiple rests, higher tempo.',
-   xac:'Reserve for children consistently hitting 70%+ on Level 4. Upper range of clinical timing protocols.'},
+   xac:'Reserve for patients consistently hitting 70%+ on Level 4. Hit mode reinforces confidence at this ceiling level.'},
   {id:6,name:'Foot Tap',     bpm:60,  icon:'🦶',
    desc:'Bilateral foot patterns. Use foot pedal switches. Lower body timing.',
-   xac:'Foot pedals plug into XAC 3.5mm jacks. Floor transducer fires under the feet for full proprioceptive feedback.'},
+   xac:'Foot pedals plug into XAC 3.5mm jacks. Cushion can sit under the feet or behind the patient — try both.'},
 ];
 const PATS={
   1:['B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'],
@@ -1171,7 +1188,7 @@ const GM_DESC={
 };
 
 /* ═══ SETTINGS ══════════════════════════════════════ */
-const S={soundMode:'count',audioOn:true,metroOn:true,hapticOn:true,rumbleOn:true,
+const S={soundMode:'count',audioOn:true,metroOn:true,hapticOn:true,rumbleOn:true,rumbleMode:'hit',
   hwCheckOn:true,  // show hardware confirmation before each session
   mathOp:'count',  // math mode operation default
   visualOn:true,speechOn:true,blindMode:false,therapistMode:false,hapticIntensity:.8};
@@ -1471,7 +1488,7 @@ let _pickedModuleGroup='classic'; // classic|oculomotor|cognitive|motion|activeg
 const MODULE_META={
   classic:{
     icon:'🎮', title:'Classic', sub:'Core timing training',
-    clinical:'Millisecond-precision tapping against a metronome. Spatial audio (left ear = early, right ear = late), haptic feedback, and adaptive hit window. Six progressive levels.',
+    clinical:'Millisecond-precision tapping against a metronome. Spatial audio (left ear tone = early, right ear tone = late), haptic feedback, and adaptive hit window. Six progressive levels.',
     hasLevel:true, hasBPM:true, hasSub:false,
     defaultMode:'standard',
   },
@@ -1515,6 +1532,11 @@ function pickModule(group){
 }
 
 function buildModSettings(){
+  const liveModsWords=document.getElementById('mods-word-list');
+  if(liveModsWords){
+    const mainList=document.getElementById('word-list');
+    if(mainList&&liveModsWords.value.trim()) mainList.value=liveModsWords.value;
+  }
   const u=getActiveUser();
   const meta=MODULE_META[_pickedModuleGroup]||MODULE_META.classic;
 
@@ -1650,17 +1672,17 @@ function buildModSettings(){
       ${isMath?`
       <div class="mods-section-label" style="margin-bottom:6px;">Math Operation</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
-        <button class="pill-btn${mathOpVal==='count'?' active':''}" onclick="setMathOp('count');buildModSettings()">Count Sets</button>
+        <button class="pill-btn${mathOpVal==='count'?' active':''}" data-mo="count" onclick="setMathOp('count');buildModSettings()">Count Sets</button>
         <button class="pill-btn${mathOpVal==='add'?' active':''}" onclick="setMathOp('add');buildModSettings()">Addition</button>
         <button class="pill-btn${mathOpVal==='multiply'?' active':''}" onclick="setMathOp('multiply');buildModSettings()">Multiply</button>
       </div>
       ${mathSubHtml}
       `:''}
       ${isVocab?`
-      <div class="mods-section-label" style="margin-bottom:5px;">Word List (${wordCount} words)</div>
-      <div style="margin-bottom:6px;line-height:1.8;">${wordPreview}${wordCount>6?`<span style="font-size:11px;color:var(--tl);"> +${wordCount-6} more</span>`:''}
+      <div id="mods-word-count-lbl" class="mods-section-label" style="margin-bottom:5px;">Word List (${wordCount} words)</div>
+      <div id="mods-word-preview" style="margin-bottom:6px;line-height:1.8;">${wordPreview}${wordCount>6?`<span style="font-size:11px;color:var(--tl);"> +${wordCount-6} more</span>`:''}
       </div>
-      <textarea style="width:100%;height:100px;border:1px solid var(--br);border-radius:8px;padding:8px;font-family:Jost,sans-serif;font-size:12px;resize:vertical;background:var(--ww);" placeholder="One word per line. Use hyphens for syllables: BUT-TER-FLY" oninput="document.getElementById('word-list').value=this.value;updateWordCount();buildModSettings()">${(document.getElementById('word-list')?.value||'').trim()}</textarea>
+      <textarea id="mods-word-list" style="width:100%;height:100px;border:1px solid var(--br);border-radius:8px;padding:8px;font-family:Jost,sans-serif;font-size:12px;resize:vertical;background:var(--ww);" placeholder="One word per line. Use hyphens for syllables: BUT-TER-FLY" oninput="syncWordListFromMods(this.value)">${(document.getElementById('word-list')?.value||'').trim()}</textarea>
       <div style="font-size:10px;color:var(--tl);margin-top:3px;">One word per line · Hyphens mark syllable breaks: BUT-TER-FLY · Changes sync with Settings ⚙️</div>
       `:''}`;
   }
@@ -1923,12 +1945,38 @@ function setOcuMode(m){
   const cn=document.getElementById('ocu-clinical-note');
   if(cn) cn.textContent=OCU_CLINICAL[m]||'';
 }
-function setMathOp(m){G.mathOp=m;document.querySelectorAll('#math-op-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mo===m));updateMathParamLabel();}
+function setMathOp(m){
+  G.mathOp=m;
+  document.querySelectorAll('#math-op-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mo===m));
+  document.querySelectorAll('#mods-extra-settings .pill-btn[data-mo]').forEach(b=>b.classList.toggle('active',b.dataset.mo===m));
+  updateMathParamLabel();
+}
+
+function syncWordListFromMods(val){
+  const mainList=document.getElementById('word-list');
+  if(mainList) mainList.value=val;
+  updateWordCount();
+  const wordLines=val.trim().split('\n').filter(w=>w.trim());
+  const previewEl=document.getElementById('mods-word-preview');
+  const countEl=document.getElementById('mods-word-count-lbl');
+  if(previewEl){
+    previewEl.innerHTML=wordLines.slice(0,6).map(w=>`<span style="display:inline-block;background:var(--pp);border-radius:5px;padding:2px 7px;font-size:11px;margin:2px;">${w.trim()}</span>`).join('')
+      +(wordLines.length>6?`<span style="font-size:11px;color:var(--tl);"> +${wordLines.length-6} more</span>`:'');
+  }
+  if(countEl) countEl.textContent=`Word List (${wordLines.length} words)`;
+}
 function updateMathParamLabel(){const lbl=document.getElementById('math-param-label'),hint=document.getElementById('math-param-hint'),v=parseInt(document.getElementById('math-param')?.value||2);if(G.mathOp==='count'){if(lbl)lbl.textContent='Count by:';if(hint)hint.textContent=`${v}, ${v*2}, ${v*3}…`;}else if(G.mathOp==='add'){if(lbl)lbl.textContent='Add up to:';if(hint)hint.textContent=`Problems up to ${v}+${v}`;}else{if(lbl)lbl.textContent='Up to ×:';if(hint)hint.textContent=`Times tables up to ×${v}`;}}
-function openSettings(){document.getElementById('overlay-settings').classList.add('active');updateWordCount();}
+function openSettings(){
+  document.getElementById('overlay-settings').classList.add('active');
+  updateWordCount();
+  const mp=document.getElementById('math-param');
+  if(mp) mp.value=G.mathParam||2;
+  updateMathParamLabel();
+  document.querySelectorAll('#math-op-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mo===(G.mathOp||'count')));
+}
 function closeSettings(){document.getElementById('overlay-settings').classList.remove('active');updateWordCount();}
 document.getElementById('overlay-settings').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSettings();});
-document.getElementById('math-param').addEventListener('input',updateMathParamLabel);
+document.getElementById('math-param').addEventListener('input',function(){G.mathParam=parseInt(this.value)||2;updateMathParamLabel();});
 document.getElementById('word-list').addEventListener('input',updateWordCount);
 function updateWordCount(){const wl=document.getElementById('word-list')?.value||'';const words=wl.split('\n').map(w=>w.trim()).filter(Boolean);const el=document.getElementById('word-count');if(el)el.textContent=words.length+' word'+(words.length!==1?'s':'')+' loaded';}
 
@@ -2115,9 +2163,31 @@ function haptic(type,dev){
   // 3. XAC dual-rumble
   if(S.rumbleOn)rumble(type,I);
 }
-function rumble(type,I){const gps=navigator.getGamepads?navigator.getGamepads():[];for(const gp of gps){if(!gp?.vibrationActuator)continue;try{if(type==='perfect')gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:50,strongMagnitude:.5*I,weakMagnitude:.5*I});else if(type==='early')gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:150,strongMagnitude:1.0*I,weakMagnitude:0});else if(type==='late')gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:150,strongMagnitude:0,weakMagnitude:1.0*I});}catch(e){}}}
+function rumble(type,I){
+  const gps=navigator.getGamepads?navigator.getGamepads():[];
+  for(const gp of gps){
+    if(!gp?.vibrationActuator)continue;
+    try{
+      if(S.rumbleMode==='hit'){
+        if(type==='perfect') gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:80,strongMagnitude:.7*I,weakMagnitude:.7*I});
+        else if(type==='good') gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:50,strongMagnitude:.4*I,weakMagnitude:.4*I});
+      } else {
+        if(type==='early'||type==='late') gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:120,strongMagnitude:.8*I,weakMagnitude:.8*I});
+      }
+    }catch(e){}
+  }
+}
 function testVib(){audioHaptic('perfect');if(navigator.vibrate)navigator.vibrate([50,30,50,30,50]);else alert('Native vibration not available on this browser.\nAudio haptic (felt through speaker) is active.');}
 function testRumble(){const gps=navigator.getGamepads?navigator.getGamepads():[];let f=false;for(const gp of gps){if(!gp?.vibrationActuator)continue;f=true;try{gp.vibrationActuator.playEffect('dual-rumble',{startDelay:0,duration:200,strongMagnitude:.8,weakMagnitude:.8});}catch(e){}}if(!f)alert('No XAC detected.\nConnect via USB and reload.');}
+function setRumbleMode(mode){
+  S.rumbleMode=mode;
+  document.getElementById('rm-hit').classList.toggle('active',mode==='hit');
+  document.getElementById('rm-error').classList.toggle('active',mode==='error');
+  const hint=document.getElementById('rumble-mode-hint');
+  if(hint) hint.textContent=mode==='hit'
+    ?'Cushion vibrates when the patient hits the beat — reinforces correct timing.'
+    :'Cushion vibrates when the patient taps early or late — pairs with the spatial audio error signal. Best for patients with good error awareness.';
+}
 function toggleMute(){S.audioOn=!S.audioOn;S.metroOn=!S.metroOn;document.getElementById('mute-btn').textContent=S.audioOn?'🔊':'🔇';}
 
 /* ═══ SPEECH ═════════════════════════════════════════ */
@@ -3178,7 +3248,7 @@ function startCountdown(){
   } else {
     pattern=PATS[lv.id];G.total=pattern.length;
   }
-  const firstBeat=G.audioCtx.currentTime+3.7;
+  const firstBeat=G.audioCtx.currentTime+5.2; // 3s countdown + ~2s ready buffer before first beat
   // Pre-spawn falling items (standard modes only)
   if(!isEduMode){
     PATS[lv.id].forEach((side,idx)=>{
@@ -3213,7 +3283,16 @@ function startCountdown(){
   document.getElementById('cd-sub').textContent=lv.name+' · '+G.bpm+' BPM · '+beatDesc+edNote;
   document.getElementById('screen-countdown').style.background=THEMES[G.lvId]?.bg||'#F8F4FF';
   showScreen('countdown');
-  let n=3;const cdi=setInterval(()=>{n--;if(n>0)document.getElementById('cd-num').textContent=n;else{clearInterval(cdi);beginGame();}},1000);
+  let n=3;const cdi=setInterval(()=>{
+    n--;
+    if(n>0){document.getElementById('cd-num').textContent=n;}
+    else{
+      clearInterval(cdi);
+      document.getElementById('cd-num').textContent='Go!';
+      document.getElementById('cd-num').style.color='var(--gn)';
+      setTimeout(()=>{document.getElementById('cd-num').style.color='';beginGame();},600);
+    }
+  },1000);
 }
 
 function beginGame(){
@@ -3513,7 +3592,7 @@ function generateSOAP(sess){
 
   // ── SENSORY FEEDBACK ──────────────────────────────────────────────────
   const fbParts=[];
-  if(SESSION_HW.headphones) fbParts.push('spatial audio feedback via wired headphones (left ear = early response; right ear = late response)');
+  if(SESSION_HW.headphones) fbParts.push('spatial audio feedback via wired headphones (left ear tone = tapping early; right ear tone = tapping late)');
   if(SESSION_HW.haptic)     fbParts.push('device vibration feedback');
   if(SESSION_HW.xac)        fbParts.push('bilateral haptic feedback via XAC haptic pillow');
   const fbNote=fbParts.length
@@ -3704,6 +3783,7 @@ function openMotionSetup(){
   const gt=document.getElementById('mot-guide-text');
   if(gt) gt.textContent=mo.guide;
   drawPositioningSVG(mo.svgType,mo.svgCaption);
+  applyCamZoom(100);
   document.getElementById('motion-setup').style.display='flex';
   startMotionCamera();
   loadMediaPipePose();
@@ -3825,6 +3905,17 @@ function stopMotionCamera(){
   if(M.stream){M.stream.getTracks().forEach(t=>t.stop());M.stream=null;}
   const vid=document.getElementById('motion-video');
   if(vid) vid.srcObject=null;
+}
+
+function applyCamZoom(val){
+  val=parseInt(val)||100;
+  const pct=val/100;
+  const lbl=document.getElementById('cam-zoom-label');
+  if(lbl) lbl.textContent=pct.toFixed(1).replace('.0','')+'×';
+  const vid=document.getElementById('motion-video');
+  if(vid) vid.style.transform=`scaleX(-1) scale(${pct})`;
+  const sl=document.getElementById('cam-zoom-slider');
+  if(sl&&parseInt(sl.value)!==val) sl.value=val;
 }
 
 /* ── SKELETON PREVIEW (during setup) ──────────────── */
@@ -4822,8 +4913,6 @@ function confirmHWAndStart(){
 }
 
 function proceedWithCountdown(){
-  // Continue the countdown flow that was intercepted
-  // Re-check other intercepts (WG, motion)
   if(G.gameMode==='motion'&&(!M.active||!M.stream)){openMotionSetup();return;}
   if(G.gameMode==='activegames'&&(!M.active||!M.stream)){openAGSetup();return;}
   if(G.gameMode==='oculomotor'&&WG.active&&!WG.calibrated){openWGSetup();return;}
@@ -4842,7 +4931,12 @@ function proceedWithCountdown(){
   const cdIv=setInterval(()=>{
     cd--;
     if(cd>0){document.getElementById('cd-num').textContent=cd;}
-    else{clearInterval(cdIv);beginGame();}
+    else{
+      clearInterval(cdIv);
+      document.getElementById('cd-num').textContent='Go!';
+      document.getElementById('cd-num').style.color='var(--gn)';
+      setTimeout(()=>{document.getElementById('cd-num').style.color='';beginGame();},600);
+    }
   },1000);
 }
 
