@@ -363,7 +363,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
       <tr><td>Audio On/Off</td><td>Mutes all audio feedback</td></tr>
       <tr><td>Metronome</td><td>Toggles the beat click — turn off to test internal timing without auditory cue</td></tr>
       <tr><td>Device Haptics</td><td>Phone or tablet vibration feedback on each tap</td></tr>
-      <tr><td>XAC Pillow Rumble</td><td>Drives haptic pillow through the Xbox Adaptive Controller — left rumble for early, right for late</td></tr>
+      <tr><td>XAC Pillow Rumble</td><td>Drives vibration cushion via Xbox Adaptive Controller. Choose <strong>Correct tap</strong> (vibrates on clean hits — reward signal) or <strong>Timing error</strong> (vibrates on early/late taps — error correction). Switchable session to session.</td></tr>
       <tr><td>Blind Training Mode</td><td>Fades the visual display after 10 seconds — patient must rely on audio and haptic feedback only</td></tr>
       <tr><td>Therapist View</td><td>Shows ms deviation and clinical notes in real time on screen during the session</td></tr>
       <tr><td>Session Setup Prompt</td><td>Shows hardware confirmation before each session. Turn off once your workflow is established — or use "Don't show again" in the prompt itself.</td></tr>
@@ -410,25 +410,57 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
 <section id="hardware">
   <div class="section-label">Equipment</div>
   <h2>Hardware Guide</h2>
+
+  <p>EvoSensory works on any device with a browser — no accessories required. On a computer tap with <strong>spacebar</strong> or <strong>Enter</strong>. On a phone or tablet, tap anywhere on screen. Everything below is optional and additive.</p>
+
+  <div class="callout callout-gold">
+    <strong>🎧 Wired headphones — required for spatial audio feedback</strong>
+    <p>The spatial audio is the core clinical mechanism: left ear tone = tapping early, right ear tone = tapping late. Without wired headphones this feedback is not available. Bluetooth adds 100–200ms of lag that defeats the feedback loop entirely. Any wired earbuds work — including old phone earbuds.</p>
+  </div>
+
+  <h3>Recommended Accessories</h3>
+
+  <div style="background:var(--ww);border:1px solid var(--br);border-radius:12px;padding:16px 18px;margin:10px 0 14px;">
+    <div style="font-size:14px;font-weight:600;color:var(--pd);margin-bottom:6px;">📳 Vibrating Cushion</div>
+    <p>Place behind the patient (against the seatback) or under them on the seat — adds a whole-body proprioceptive feedback channel. In Settings, choose when it fires:</p>
+    <div style="display:flex;gap:10px;margin:10px 0 0;">
+      <div style="flex:1;background:var(--gp);border-left:3px solid var(--gn);border-radius:8px;padding:10px 12px;">
+        <div style="font-size:12px;font-weight:600;color:var(--gn);margin-bottom:3px;">✅ Correct tap — reward</div>
+        <div style="font-size:12px;color:var(--tx);line-height:1.65;">Vibrates on clean hits. Best for early learners and sensory-seeking patients.</div>
+      </div>
+      <div style="flex:1;background:var(--pp);border-left:3px solid var(--p);border-radius:8px;padding:10px 12px;">
+        <div style="font-size:12px;font-weight:600;color:var(--pd);margin-bottom:3px;">⚡ Timing error — correction</div>
+        <div style="font-size:12px;color:var(--tx);line-height:1.65;">Vibrates when patient taps early or late. Pairs with spatial audio cue.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--ww);border:1px solid var(--br);border-radius:12px;padding:16px 18px;margin:10px 0 14px;">
+    <div style="font-size:14px;font-weight:600;color:var(--pd);margin-bottom:6px;">🔌 External Button / Switch — for foot taps</div>
+    <p>Any USB switch or jelly bean button works as foot tap input. Level 6 is designed for bilateral foot training. The app automatically sets a lower starting BPM for foot modality — foot motor patterns take longer to execute than hand patterns. You can run a hand switch and a foot switch simultaneously if enough USB ports are available.</p>
+  </div>
+
+  <div style="background:var(--ww);border:1px solid var(--br);border-radius:12px;padding:16px 18px;margin:10px 0 14px;">
+    <div style="font-size:14px;font-weight:600;color:var(--pd);margin-bottom:6px;">🎮 Xbox Adaptive Controller (XAC) — connects everything</div>
+    <p>To seamlessly connect external buttons or switches <em>and</em> a vibrating cushion in one device, the XAC is the recommended hub. AAC switches plug directly into the 3.5mm back jacks — no adapter needed. Button 0 = LEFT tap, Button 1 = RIGHT tap. USB connection means no Bluetooth lag.</p>
+    <div class="callout callout-purple" style="margin:10px 0 0;">
+      <strong>Why XAC instead of a USB hub?</strong>
+      <p>The XAC gives you simultaneous L/R switch input for bilateral training <em>and</em> drives the vibration cushion — all in one device with a single USB connection and no Bluetooth involved.</p>
+    </div>
+  </div>
+
+  <h3>At a Glance</h3>
   <table>
     <thead><tr><th>Setup</th><th>Approx. Cost</th><th>What It Adds</th></tr></thead>
     <tbody>
-      <tr><td>Any device + browser</td><td>$0</td><td>Full timing training, all modules, SOAP notes, multi-user profiles</td></tr>
-      <tr><td>+ Wired earbuds</td><td>~$10</td><td>Spatial audio: left ear tone = tapping early, right ear tone = tapping late. Most important upgrade.</td></tr>
-      <tr><td>+ USB switches / jelly bean</td><td>~$20–60</td><td>Motor-accessible tapping; bilateral hand or foot switch training</td></tr>
-      <tr><td>+ Xbox Adaptive Controller</td><td>~$100</td><td>Bilateral switch input + independent left/right haptic output for pillow</td></tr>
-      <tr><td>+ XAC + haptic cushion</td><td>~$150–200</td><td>Directional whole-body haptic feedback — left body = early, right body = late</td></tr>
-      <tr><td>Windows/Mac/Android + Chrome</td><td>—</td><td>Required for Motion and Active Games camera modules and eye tracking</td></tr>
+      <tr><td>Any device + browser</td><td>$0</td><td>Full timing training, all modules, SOAP notes, multi-user profiles. Tap with spacebar, Enter, or screen tap.</td></tr>
+      <tr><td>+ Wired headphones</td><td>~$10</td><td><strong>Required for spatial audio.</strong> Left ear tone = tapping early, right ear tone = tapping late.</td></tr>
+      <tr><td>+ Vibrating cushion</td><td>~$30–80</td><td>Whole-body proprioceptive feedback — reward or error correction (your choice in Settings)</td></tr>
+      <tr><td>+ USB switch / jelly bean</td><td>~$20–60</td><td>External button for hand or foot input; larger tap target</td></tr>
+      <tr><td>+ Xbox Adaptive Controller</td><td>~$100</td><td>Connects switches + cushion together via USB. Bilateral L/R input + cushion output in one device.</td></tr>
+      <tr><td>Chrome on computer</td><td>—</td><td>Required for Motion, Active Games, and Oculomotor eye tracking</td></tr>
     </tbody>
   </table>
-  <div class="callout callout-purple">
-    <strong>XAC setup</strong>
-    <p>Your existing AAC switch plugs directly into the 3.5mm back jacks on the XAC — no adapter needed. Button 0 = LEFT tap, Button 1 = RIGHT tap. Place a haptic cushion on the left and right sides of the chair seat. Left side fires when the patient taps early; right side fires when late. The patient feels timing correction through their body.</p>
-  </div>
-  <div class="callout callout-purple">
-    <strong>Foot tap setup</strong>
-    <p>Any USB switch or jelly bean works as a foot tap button in Classic mode. Level 6 is specifically designed for bilateral foot tap training. The app automatically applies lower starting BPM for foot modality profiles.</p>
-  </div>
 </section>
 
 <hr class="divider"/>
