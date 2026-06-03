@@ -667,6 +667,19 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   <div class="tog-row"><div><div class="tog-label">👩‍⚕️ Therapist View</div><div class="tog-sub">ms deviation + clinical notes</div></div><label class="tog"><input type="checkbox" id="tog-th" onchange="S.therapistMode=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">✅ Session Setup Prompt</div><div class="tog-sub">Ask about headphones & haptics before each session</div></div><label class="tog"><input type="checkbox" id="tog-hwcheck" checked onchange="S.hwCheckOn=this.checked"/><span class="tog-tk"></span></label></div>
 
+  <!-- Therapist email — saved to localStorage, auto-fills email SOAP -->
+  <div style="margin-top:14px;">
+    <div class="label">✉️ Therapist Email</div>
+    <div style="font-size:10px;color:var(--tl);margin-bottom:6px;line-height:1.55;">Saved for SOAP note emails. Used to auto-fill the To field and to send directly (no app needed) when email is configured.</div>
+    <div style="display:flex;gap:7px;align-items:center;">
+      <input type="email" id="therapist-email-input" placeholder="your@email.com"
+        style="flex:1;padding:9px 11px;border:1.5px solid var(--br);border-radius:9px;font:400 13px Jost,sans-serif;color:var(--tx);background:var(--ww);"
+        oninput="S.therapistEmail=this.value.trim();localStorage.setItem('evo_therapist_email',this.value.trim());document.getElementById('email-saved-badge').style.opacity='1';setTimeout(()=>{const b=document.getElementById('email-saved-badge');if(b)b.style.opacity='0';},1600);"
+        value=""/>
+      <span id="email-saved-badge" style="font-size:11px;color:var(--gn);transition:opacity .4s;opacity:0;">✓ Saved</span>
+    </div>
+  </div>
+
   <!-- Modality quick-change in settings -->
   <div style="margin-top:14px;">
     <div class="label">Training Modality (current session)</div>
@@ -1015,10 +1028,12 @@ here</textarea>
     </div>
     <textarea id="soap-text" style="width:100%;border:1.5px solid var(--br);border-radius:11px;padding:12px;font:400 12px/1.85 'Jost',sans-serif;color:var(--tx);resize:vertical;min-height:320px;" spellcheck="true"></textarea>
     <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="btn" style="flex:2;" onclick="copySOAP()">📋 Copy to Clipboard</button>
+      <button class="btn" style="flex:2;" onclick="copySOAP()">📋 Copy</button>
       <button class="btn-out" style="flex:1;" onclick="printSOAP()">🖨️ Print</button>
+      <button class="btn-out" style="flex:1;" onclick="emailSOAP()">✉️ Email</button>
     </div>
     <div id="soap-copied" style="display:none;text-align:center;font-size:11px;color:var(--gn);margin-top:6px;font-weight:500;">✓ Copied to clipboard</div>
+    <div id="email-sent-badge" style="display:none;text-align:center;font-size:11px;color:var(--gn);margin-top:6px;font-weight:500;"></div>
     <div style="font-size:10px;color:var(--tl);text-align:center;margin-top:8px;">Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L</div>
   </div>
 </div>
@@ -1074,6 +1089,8 @@ here</textarea>
 
 <!-- WEBGAZER EYE TRACKING CALIBRATION OVERLAY -->
 <div id="wg-setup" style="display:none;position:fixed;inset:0;z-index:260;background:rgba(4,4,16,.95);flex-direction:column;align-items:center;justify-content:center;">
+  <!-- Close button always visible -->
+  <button onclick="closeWGSetup()" style="position:absolute;top:18px;right:18px;background:rgba(255,255,255,.12);border:none;color:white;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
   <!-- Step 1: Intro -->
   <div id="wg-intro" style="width:90%;max-width:440px;background:var(--cr);border-radius:20px;padding:24px 20px 26px;text-align:center;">
     <div style="font-size:32px;margin-bottom:10px;">👁️</div>
@@ -1108,6 +1125,8 @@ here</textarea>
   </div>
 </div>
 <div id="motion-setup" style="display:none;position:fixed;inset:0;z-index:250;background:rgba(10,8,24,.92);align-items:center;justify-content:center;overflow-y:auto;">
+  <!-- X close button -->
+  <button onclick="closeMotionSetup()" style="position:absolute;top:18px;right:18px;background:rgba(255,255,255,.12);border:none;color:white;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer;z-index:10;">✕</button>
   <div style="width:90%;max-width:440px;background:var(--cr);border-radius:20px;padding:22px 18px 26px;margin:16px auto;">
     <div class="serif" style="font-size:22px;color:var(--pd);margin-bottom:4px;">📷 Camera Setup</div>
     <div id="mot-setup-mode-label" style="font-size:11px;color:var(--p);font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;"></div>
@@ -1230,7 +1249,8 @@ const GM_DESC={
 const S={soundMode:'count',audioOn:true,metroOn:true,hapticOn:true,rumbleOn:true,rumbleMode:'hit',
   hwCheckOn:true,  // show hardware confirmation before each session
   mathOp:'count',  // math mode operation default
-  visualOn:true,speechOn:true,vocabTrackAcc:true,blindMode:false,therapistMode:false,hapticIntensity:.8};
+  visualOn:true,speechOn:true,vocabTrackAcc:true,blindMode:false,therapistMode:false,hapticIntensity:.8,
+  therapistEmail:localStorage.getItem('evo_therapist_email')||''};
 
 /* ═══ GAME STATE ════════════════════════════════════ */
 const G={
@@ -2055,6 +2075,9 @@ function openSettings(){
   if(mp) mp.value=G.mathParam||2;
   updateMathParamLabel();
   document.querySelectorAll('#math-op-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mo===(G.mathOp||'count')));
+  // Populate saved therapist email
+  const emailInput=document.getElementById('therapist-email-input');
+  if(emailInput) emailInput.value=S.therapistEmail||'';
 }
 function closeSettings(){document.getElementById('overlay-settings').classList.remove('active');updateWordCount();}
 document.getElementById('overlay-settings').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSettings();});
@@ -2521,6 +2544,10 @@ function drawMoneyCatch(ctx,W,H,an){
   const isSingle=isLvSingle(G.lvId);
   const CY=Math.floor(H*.82);
   const SZ=Math.max(13,Math.min(W*.06,22));
+  // lanes must be defined here — isSingle = one center lane, else L+R
+  const lanes=isSingle
+    ?[{side:'B',cx:W/2}]
+    :[{side:'L',cx:W*.28},{side:'R',cx:W*.72}];
 
   // ── Draw hands at catch line ──
   lanes.forEach(lane=>{
@@ -3498,6 +3525,9 @@ function _wmSpawn(){
   WM._autoMiss=setTimeout(()=>{
     if(WM.mole&&WM.mole.state==='up'){
       WM.misses++;WM.mole.state='down';
+      G.hits.push({dev:0,rating:'miss',rt:2500,isWM:true});
+      G.beatsDone++;G.streak=0;
+      playFeedback(0,'miss');updateHUD();
       setTimeout(_wmNextMole,400);
     }
   },2500);
@@ -3513,21 +3543,29 @@ function handleWMTap(side){
   clearTimeout(WM._autoMiss);
   const rt=Date.now()-WM.mole.spawnTime;
   if(WM.mole.side===side){
+    // Correct side — score as a hit
     WM.hits++;WM.lastReaction=rt;
-    WM.reactions.push(rt);if(WM.reactions.length>8)WM.reactions.shift();
+    WM.reactions.push(rt);if(WM.reactions.length>20)WM.reactions.shift();
     WM.mole.state='hit';
-    // Register as a scored tap for the session
-    const dev=0,rating=rt<350?'perfect':rt<600?'good':rt<900?'close':'miss';
-    G.hits.push({dev,rating,rt});
+    // Rating by RT: <400ms=perfect, <700ms=good, <1000ms=close, else miss
+    const rating=rt<400?'perfect':rt<700?'good':rt<1000?'close':'miss';
+    // dev=0 for WM — deviation is meaningless without a fixed beat
+    G.hits.push({dev:0,rating,rt,isWM:true});
+    G.score+=RM[rating]?.pts||0;
+    G.streak++;if(G.streak>G.maxStreak)G.maxStreak=G.streak;
+    G.beatsDone++;
     playFeedback(0,rating);haptic(rating==='perfect'?'perfect':'good',0);
-    G.score+=RM[rating]?.pts||0;G.streak++;if(G.streak>G.maxStreak)G.maxStreak=G.streak;
-    G.beatsDone++;updateHUD();
-    showRat(rating,0);
+    showRat(rating,0);updateHUD();
   } else {
-    // Wrong side
-    WM.mole.state='wrong';WM.misses++;G.streak=0;
+    // Wrong side — miss
+    WM.misses++;WM.mole.state='wrong';
+    G.streak=0;
+    G.hits.push({dev:0,rating:'wrong',rt,isWM:true});
+    G.beatsDone++;
     playFeedback(0,'wrong');
+    showRat('wrong',0);updateHUD();
   }
+  WM.mole.riseT=1; // start falling immediately
   setTimeout(_wmNextMole,500);
   return true;
 }
@@ -3896,16 +3934,6 @@ function schedTick(){
       document.getElementById('screen-game')?.appendChild(overlay);
     }
   }
-  // Open-ended modes: auto-end after 2 minutes of active play
-  const openEndedModes=['oculomotor','motion','activegames'];
-  if(!G.restPrompted&&openEndedModes.includes(G.gameMode)){
-    const elapsed=(Date.now()-G.sessionStart)/1000/60;
-    if(elapsed>=2){
-      G.restPrompted=true; // prevent repeat fire
-      setTimeout(endGame,400);
-      return;
-    }
-  }
   const iv=60/G.bpm,now=G.audioCtx.currentTime;
   while(G.beats.length<G.total&&G.nextBeat<now+.18){
     const idx=G.beats.length,when=G.nextBeat;
@@ -3956,10 +3984,7 @@ function schedTick(){
         else if(cur?.type==='problem'&&cur.spoken) speak(cur.spoken, .82);
       }
       updateHUD();
-      // Only auto-end for fixed-beat modes (Classic, Vocab, Math)
-      // Oculomotor/Motion/ActiveGames are open-ended — exit manually or via session timer
-      const isOpenEnded=G.gameMode==='oculomotor'||G.gameMode==='motion'||G.gameMode==='activegames';
-      if(!isOpenEnded&&idx+1>=G.total)setTimeout(endGame,2400);
+      if(idx+1>=G.total) setTimeout(endGame,2400);
     },ms);
   }
 }
@@ -4179,8 +4204,9 @@ function startCountdown(){
     openAGSetup();
     return;
   }
-  // Oculomotor + eye tracking: calibrate first if not done
-  if(G.gameMode==='oculomotor'&&WG.active&&!WG.calibrated){
+  // Oculomotor + eye tracking: only block for pursuits2 if WG is active but not calibrated
+  // For attention hold and other modes, eye tracking is optional — don't block game start
+  if(G.gameMode==='oculomotor'&&WG.active&&!WG.calibrated&&G.ocuMode==='pursuits2'){
     openWGSetup();
     return;
   }
@@ -4209,10 +4235,10 @@ function startCountdown(){
     pattern=seq.map((_,i)=>i%2===0?'L':'R');// just for beat count
     G.total=seq.length;
   } else if(G.gameMode==='oculomotor'||G.gameMode==='motion'||G.gameMode==='activegames'){
-    // Open-ended modes — no fixed beat count, endGame fires manually or via session timer
-    // Use a large number so schedTick never stops the beat
-    G.total=999;
-    pattern=Array(999).fill('B');
+    // 1-minute session: total beats = BPM * 1 minute
+    // endGame fires when all beats are done (same as Classic)
+    G.total=G.bpm;  // BPM beats = exactly 1 minute at current tempo
+    pattern=Array(G.total).fill('B');
   } else {
     pattern=PATS[lv.id];G.total=pattern.length;
   }
@@ -4395,7 +4421,7 @@ function endGame(){
   clearInterval(G.motionTimer);G.motionTimer=null;
   cancelAnimationFrame(G.animFr);
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){} G._resizeObs=null;}
-  if(G.gameMode==='motion') stopMotionCamera();
+  if(G.gameMode==='motion'||G.gameMode==='activegames') stopMotionCamera();
   // Clean up attention hold and reach state
   AH.holdStart=null;AH.phase='waiting';AH.particles=[];AH._burst=false;
   clearTimeout(WM._timer);clearTimeout(WM._autoMiss);WM._started=false;WM.mole=null;
@@ -4563,7 +4589,9 @@ function printRpt(){
   const imp=f3&&l3&&f3>0?Math.round((1-l3/f3)*100):null;
   const rows=last.map(x=>`<tr><td>${new Date(x.date).toLocaleDateString()}</td><td>Lv${x.level}</td><td>${x.bpm}</td><td>${x.accuracy}%</td><td>${x.avgDev>0?'+':''}${x.avgDev}ms</td><td>${x.score}</td><td>${x.driftTrend||'—'}</td><td style="color:#4A8C6F">${x.ocuMode||'—'}</td></tr>`).join('');
   const w=window.open('','_blank');if(!w)return;
-  w.document.write(`<!DOCTYPE html><html><head><title>EvoSensory Progress Report</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;}h1{color:#3E2D6E;font-size:20px;border-bottom:2px solid #EDE8F5;padding-bottom:8px;}h2{color:#5C4490;font-size:13px;margin-top:20px;}.meta{font-size:11px;color:#5A4E72;margin-bottom:14px;}table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#EDE8F5;color:#3E2D6E;padding:7px 5px;text-align:left;font-weight:500;}td{padding:5px;border-bottom:1px solid #EDE8F5;}tr:nth-child(even) td{background:#F7F4FB;}.stats{display:flex;gap:20px;flex-wrap:wrap;margin:10px 0;}.stat .v{font-size:20px;font-weight:700;color:#5C4490;}.stat .k{font-size:10px;color:#5A4E72;}.note{margin-top:16px;font-size:10px;color:#9B88C4;border-top:1px solid #EDE8F5;padding-top:8px;}</style></head><body><h1>EvoSensory Progress Report</h1><div class="meta">Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · www.evolve-ot.com · ${new Date().toLocaleDateString()}</div><h2>Summary</h2><div class="stats"><div class="stat"><div class="v">${s.length}</div><div class="k">Sessions</div></div><div class="stat"><div class="v">${best}ms</div><div class="k">Best Variance</div></div>${imp!=null?`<div class="stat"><div class="v">${imp>0?'+':''}${imp}%</div><div class="k">Improvement</div></div>`:''}</div><h2>Last ${last.length} Sessions</h2><table><tr><th>Date</th><th>Level</th><th>BPM</th><th>Accuracy</th><th>Avg Dev</th><th>Score</th><th>Drift</th><th>OM Mode</th></tr>${rows}</table><p class="note">EvoSensory — Multi-Sensory Rhythmic Timing Training. Modules: Classic (rhythmic timing + haptics), Oculomotor (visual tracking), Cognitive (vocabulary + math), Motion (coming soon). The Micro-Timing Drift Engine (MTDE) tracks timing trends using linear regression. Oculomotor tracking is tap-based: motor response timing to visual stimuli, providing a proxy measure of visual detection and reaction.</p><p class="note">© 2026 Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · vanessa@evolve-ot.com · www.evolve-ot.com</p></body></html>`);
+  w.document.write(`<!DOCTYPE html><html><head><title>EvoSensory Progress Report</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;}h1{color:#3E2D6E;font-size:20px;border-bottom:2px solid #EDE8F5;padding-bottom:8px;}h2{color:#5C4490;font-size:13px;margin-top:20px;}.meta{font-size:11px;color:#5A4E72;margin-bottom:14px;}table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#EDE8F5;color:#3E2D6E;padding:7px 5px;text-align:left;font-weight:500;}td{padding:5px;border-bottom:1px solid #EDE8F5;}tr:nth-child(even) td{background:#F7F4FB;}.stats{display:flex;gap:20px;flex-wrap:wrap;margin:10px 0;}.stat .v{font-size:20px;font-weight:700;color:#5C4490;}.stat .k{font-size:10px;color:#5A4E72;}.note{margin-top:16px;font-size:10px;color:#9B88C4;border-top:1px solid #EDE8F5;padding-top:8px;}</style></head><body><h1>EvoSensory Progress Report</h1><div class="meta">Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · www.evolve-ot.com · ${new Date().toLocaleDateString()}</div><h2>Summary</h2><div class="stats"><div class="stat"><div class="v">${s.length}</div><div class="k">Sessions</div></div><div class="stat"><div class="v">${best}ms</div><div class="k">Best Variance</div></div>${imp!=null?`<div class="stat"><div class="v">${imp>0?'+':''}${imp}%</div><div class="k">Improvement</div></div>`:''}</div><h2>Last ${last.length} Sessions</h2><table><tr><th>Date</th><th>Level</th><th>BPM</th><th>Accuracy</th><th>Avg Dev</th><th>Score</th><th>Drift</th><th>OM Mode</th></tr>${rows}</table><p class="note">EvoSensory — Multi-Sensory Rhythmic Timing Training. Modules: Classic (rhythmic timing + haptics), Oculomotor (visual tracking), Cognitive (vocabulary + math), Motion (coming soon). The Micro-Timing Drift Engine (MTDE) tracks timing trends using linear regression. Oculomotor tracking is tap-based: motor response timing to visual stimuli, providing a proxy measure of visual detection and reaction.</p><p class="note">© 2026 Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · vanessa@evolve-ot.com · www.evolve-ot.com</p>
+
+</body></html>`);
   w.document.close();setTimeout(()=>w.print(),400);
 }
 
@@ -4787,6 +4815,31 @@ function copySOAP(){
 }
 function showSoapCopied(){const el=document.getElementById('soap-copied');el.style.display='block';setTimeout(()=>el.style.display='none',2500);}
 function printSOAP(){const t=document.getElementById('soap-text').value;const w=window.open('','_blank');if(!w)return;w.document.write(`<!DOCTYPE html><html><head><title>SOAP Note</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;white-space:pre-wrap;font-size:12px;line-height:1.8;}h1{font-size:16px;color:#3E2D6E;margin-bottom:20px;}</style></head><body><h1>EvoSensory SOAP Note Draft</h1>${t.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</body></html>`);w.document.close();setTimeout(()=>w.print(),400);}
+function emailSOAP(){
+  const t=document.getElementById('soap-text')?.value||'';
+  const u=getActiveUser();
+  const patName=u?.name||'Patient';
+  const sess=G.sessions[G.sessions.length-1];
+  const dateStr=sess?new Date(sess.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Session';
+  const subject=`EvoSensory SOAP Note — ${patName} — ${dateStr}`;
+  const fullBody=`EvoSensory SOAP Note Draft\nGenerated by EvoSensory — Evolving Therapy & Wellness\n\n`+t+
+    `\n\n---\nDraft SOAP note. Review and edit before use in official documentation.\nEvoSensory by Vanessa Dorado Walker, MS, OTR/L | evolve-ot.com`;
+
+  let to=S.therapistEmail||'';
+  if(!to){
+    // Prompt once — save for next time
+    const entered=prompt('Enter your email address.\nTip: save it in ⚙️ Settings → Therapist Email so you never have to type it again.','');
+    if(!entered||!entered.includes('@')) return;
+    to=entered.trim();
+    S.therapistEmail=to;
+    localStorage.setItem('evo_therapist_email',to);
+  }
+  // Pre-fill To field — user taps Send in their mail app (one tap)
+  window.location.href=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullBody)}`;
+}
+function _emailFallback(to,subject,body){
+  window.location.href=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 // Close SOAP on backdrop
 document.getElementById('soap-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSOAP();});
@@ -5937,6 +5990,14 @@ async function startWGCalibration(){
       wgStatus.appendChild(msg);
     } else existing.textContent='⏳ Opening camera…';
   }
+  // Safety timeout — if camera takes >12s, show a useful message instead of hanging
+  const wgTimeout=setTimeout(()=>{
+    const loadMsg=document.getElementById('wg-loading-msg');
+    if(loadMsg&&loadMsg.textContent.includes('Opening')){
+      loadMsg.style.color='var(--go)';
+      loadMsg.textContent='Taking longer than expected. Try refreshing if nothing happens.';
+    }
+  },12000);
 
   try{
     // Validate webgazer is actually functional — a partial/broken load
@@ -5993,6 +6054,7 @@ async function startWGCalibration(){
     }
     const loadMsg=document.getElementById('wg-loading-msg');
     if(loadMsg) loadMsg.textContent='✓ Camera ready';
+    clearTimeout(wgTimeout);
     // Move WG video into calibration div
     setTimeout(()=>{
       const wgVid=document.getElementById('webgazerVideoFeed')||
@@ -6004,6 +6066,7 @@ async function startWGCalibration(){
       }
     },800);
   }catch(e){
+    clearTimeout(wgTimeout);
     console.error('WebGazer begin error:',e);
     const loadMsg=document.getElementById('wg-loading-msg');
     let msg='Eye tracking could not start.';

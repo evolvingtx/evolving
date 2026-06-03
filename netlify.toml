@@ -1,5 +1,7 @@
+# EvoSensory — Netlify Configuration
 [build]
-  functions = "netlify/functions"
+  command = "npm install terser && node build-obfuscate.js"
+  publish = "."
 
 [[headers]]
   for = "/*"
