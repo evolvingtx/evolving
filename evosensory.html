@@ -15,37 +15,57 @@
 <!-- Apple home screen icon (Save to Home Screen on iPhone/iPad) -->
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='38' fill='%233E2D6E'/%3E%3Ccircle cx='90' cy='90' r='76' fill='none' stroke='%239B88C4' stroke-width='4.5'/%3E%3Ctext x='90' y='114' font-family='Georgia%2Cserif' font-size='70' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+<!-- Fonts: load async via media swap; onerror removes tag gracefully in sandboxed contexts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" media="print" onload="this.media='all';this.onload=null;" onerror="this.remove()"/>
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap"/></noscript>
 <script>
 // Must be first — catches errors from all subsequent scripts including CDN
 window.onerror = function(msg, src, line, col, err){
-  // Swallow ALL script errors when opening as local file or from CDN failures
-  if(!msg || msg === 'Script error.' || msg === 'Script error') return true;
-  if(!src) return true; // no source = cross-origin suppressed error
-  if(src && (src.includes('webgazer') || src.includes('mediapipe') ||
-     src.includes('jsdelivr') || src.includes('unpkg'))) return true;
-  console.warn('EvoSensory error:', msg, src, line);
-  return false;
+  // Suppress ALL cross-origin and CDN errors — these fire in Claude's artifact
+  // sandbox where external scripts are blocked by CSP and reported as "Script error."
+  if(!msg) return true;
+  const m=String(msg);
+  if(m==='Script error.'||m==='Script error'||m==='') return true;
+  if(!src||src==='') return true; // cross-origin suppressed
+  const s=String(src||'');
+  if(s.includes('webgazer')||s.includes('mediapipe')||
+     s.includes('jsdelivr')||s.includes('unpkg')||
+     s.includes('googleapis')||s.includes('gstatic')||
+     s.includes('chart')) return true;
+  // Suppress any error that looks like a network/CSP block
+  if(m.includes('Script error')||m.includes('Network')||
+     m.includes('CSP')||m.includes('blocked')||
+     m.includes('Loading')||m.includes('fetch')||
+     m.includes('CORS')||m.includes('cross-origin')) return true;
+  console.warn('EvoSensory:', m, s, line);
+  return false; // let genuine app errors through to console only
 };
 window.addEventListener('unhandledrejection', function(e){
-  const msg = e?.reason?.message || String(e?.reason || '');
-  if(msg.includes('webgazer') || msg.includes('mediapipe') ||
-     msg.includes('Script error') || msg.includes('Loading chunk')) {
+  const msg=String(e?.reason?.message||e?.reason||'');
+  if(!msg||msg.includes('webgazer')||msg.includes('mediapipe')||
+     msg.includes('Script error')||msg.includes('Loading')||
+     msg.includes('Network')||msg.includes('fetch')||
+     msg.includes('CORS')||msg.includes('CSP')||
+     msg.includes('Failed to load')||msg.includes('net::')) {
     e.preventDefault();
+    return;
   }
 });
 </script>
-<!-- chart.js loaded async — stats charts work when online, degrade gracefully offline -->
+<!-- chart.js loaded async — degrades gracefully if blocked by sandbox/offline -->
 <script>
-(function(){
-  var s=document.createElement("script");
-  s.src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js";
-  s.async=true;
-  s.crossOrigin="anonymous";
-  s.onerror=function(){console.log("Chart.js unavailable — stats will show text only");};
-  document.head.appendChild(s);
-})();
+try{
+  (function(){
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+    s.async=true;
+    // No crossOrigin attribute — avoids CORS preflight error in sandboxed iframes
+    s.onerror=function(){
+      // Silently handled — stats will render as text fallback
+    };
+    document.head.appendChild(s);
+  })();
+}catch(e){/* Chart.js unavailable — non-fatal */}
 </script>
 <style>
 :root{
@@ -438,26 +458,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   <div class="card mx" style="border-left:3px solid var(--p);">
     <div class="label" style="margin-bottom:9px;">How to Run a Session</div>
     <div class="hw-step"><div class="hw-num">1</div><div class="hw-txt"><strong>Create a patient profile</strong> — tap <strong>+ New Player</strong> on the next screen. Set name, age category, and training modality (hands or feet, bilateral or one side). Starting BPM is set automatically.</div></div>
-    <div class="hw-step"><div class="hw-num">2</div><div class="hw-txt"><strong>Pick a module and level</strong> — start with <strong>Classic → Level 1</strong>. Adjust BPM with the + / − buttons if needed. Other modules unlock as you explore.</div></div>
-    <div class="hw-step"><div class="hw-num">3</div><div class="hw-txt"><strong>Confirm hardware</strong> — a quick screen before each session asks what's connected (headphones, vibration, XAC pillow). Only what you confirm gets documented in the SOAP note.</div></div>
-    <div class="hw-step"><div class="hw-num">4</div><div class="hw-txt"><strong>Tap with the beat</strong> — tap the large button, the canvas, or press spacebar. One tap per beat. The app scores every response.</div></div>
-    <div class="hw-step"><div class="hw-num">5</div><div class="hw-txt"><strong>Get your SOAP note</strong> — when the session ends, tap <strong>Generate SOAP Note</strong>. Copy to clipboard or print. Edit before pasting into your EMR.</div></div>
-    <div class="hw-step" style="border-bottom:none;background:var(--gp);border-radius:8px;padding:8px 10px;margin-top:6px;"><div class="hw-num" style="background:var(--gn);">?</div><div class="hw-txt" style="color:var(--tx);">Lost? The full manual is at <strong>evolve-ot.com/resources</strong> — a printable 5-page PDF covering every feature, the interpretation scale, and SOAP note guide.</div></div>
+    <div class="hw-step"><div class="hw-num">2</div><div class="hw-txt"><strong>Plug in wired headphones.</strong> Left ear tone = tapping early. Right ear tone = tapping late. This is the core clinical mechanism — Bluetooth adds 100–200ms delay that defeats it entirely. Any wired earbuds work, including old phone earbuds.</div></div>
+    <div class="hw-step"><div class="hw-num">3</div><div class="hw-txt"><strong>Pick a module and level</strong> — start with <strong>Classic → Level 1</strong>. Adjust BPM with the + / − buttons if needed.</div></div>
+    <div class="hw-step"><div class="hw-num">4</div><div class="hw-txt"><strong>Tap with the beat</strong> — tap the large button, the canvas, or press spacebar. One tap per beat. The app scores every response in real time.</div></div>
+    <div class="hw-step"><div class="hw-num">5</div><div class="hw-txt"><strong>Generate your SOAP note</strong> — when the session ends, tap <strong>Generate SOAP Note</strong>. Edit and paste into your EMR.</div></div>
+    <div class="hw-step" style="border-bottom:none;"><div class="hw-num" style="background:var(--gn);">📱</div><div class="hw-txt"><strong>iPhone users:</strong> tap <strong>Share → Add to Home Screen</strong> in Safari for better haptic feedback. Motion and Active Games require Chrome on a computer — they don't run in Safari or on iPhone.</div></div>
   </div>
 
-  <div class="warn mx">
-    <strong>🎧 Use wired headphones.</strong> Bluetooth adds 100–200ms delay that completely defeats the therapeutic feedback loop. The stereo left/right error tones require precise timing to work.
-  </div>
-  <div class="warn mx" style="background:#FFF0F8;border-color:#E080B0;">
-    <strong>📱 iPhone users:</strong> For full haptic feedback, tap <strong>Share → Add to Home Screen</strong> in Safari after this screen. Installed apps get better vibration access. The Android app (coming soon) has full haptics.
-  </div>
-  <div class="card mx">
-    <div class="label" style="margin-bottom:9px;">Hardware Setup</div>
-    <div class="hw-step"><div class="hw-num">1</div><div class="hw-txt"><strong>Wired headphones:</strong> Left ear tone = tapping early. Right ear tone = tapping late. This spatial feedback is the core mechanism.</div></div>
-    <div class="hw-step"><div class="hw-num">2</div><div class="hw-txt"><strong>Hand switches:</strong> Left → f, ←, z, Shift-L. Right → j, →, /, Ctrl-R. Any USB switch or jelly bean that sends a keystroke works instantly.</div></div>
-    <div class="hw-step"><div class="hw-num">3</div><div class="hw-txt"><strong>Foot switches:</strong> Same key mapping. Level 6 is designed specifically for bilateral foot tap training.</div></div>
-    <div class="hw-step"><div class="hw-num">4</div><div class="hw-txt"><strong>Xbox Adaptive Controller ($100):</strong> AAC switches plug directly into the XAC 3.5mm back jacks — no adapter needed. Button 0 = LEFT tap, Button 1 = RIGHT tap. USB connection means no Bluetooth lag. Connect a vibration cushion and place it behind the patient or under them. In Settings, choose whether the cushion fires on correct taps (reward) or timing errors (correction).</div></div>
-    <div class="hw-step"><div class="hw-num">5</div><div class="hw-txt"><strong>No hardware?</strong> Tap the on-screen buttons, tap the canvas, or press any keyboard key. All modes work without accessories. Wired earbuds ($10) are the single best upgrade.</div></div>
+  <div class="warn mx" style="margin-top:4px;">
+    <strong>📖 Full manual:</strong> The interpretation scale, SOAP note guide, hardware options, and clinical reference are at <strong>evolve-ot.com/resources</strong> — also available as a printable PDF.
   </div>
   <button class="btn mx" style="font-size:16px;padding:15px;" onclick="localStorage.setItem('rr_seen','1');localStorage.setItem('rr_seen_'+(activeUserId||''),'1');showScreen('module');">Get Started ▶</button>
   <div style="text-align:center;">
@@ -1138,9 +1147,15 @@ here</textarea>
 const SK='rhythmrx_v1';
 const FB=2.8;
 const LVS=[
+  {id:0,name:'First Beat',    bpm:48,  icon:'🌱',
+   desc:'Single hand, same side every beat. Build a steady internal clock before adding complexity.',
+   xac:'Cushion on "Correct tap" mode — every hit reinforces the timing foundation. Great entry point for any patient.'},
   {id:1,name:'Warm Up',      bpm:56,  icon:'🎵',
    desc:'One button, any key. Tap every beat. Start here — no wrong side.',
    xac:'Cushion vibrates on every correct tap — great intro for sensory-seeking kids. Set to "Correct tap" mode in Settings.'},
+  {id:'1b',name:'Both Hands', bpm:56,  icon:'🤝',
+   desc:'Both hands or feet tap together on every beat. Synchronizes left and right sides simultaneously — the research foundation for bilateral coordination training.',
+   xac:'Both sides together — try "Correct tap" mode. When both are on time the cushion fires, reinforcing bilateral timing.'},
   {id:2,name:'Finding It',   bpm:66,  icon:'🎈',
    desc:'Left & right alternating. Process which hand AND when to tap.',
    xac:'Try "Timing error" mode — cushion fires when the patient is early or late, pairing with the spatial audio cue.'},
@@ -1158,6 +1173,8 @@ const LVS=[
    xac:'Foot pedals plug into XAC 3.5mm jacks. Cushion can sit under the feet or behind the patient — try both.'},
 ];
 const PATS={
+  0:['B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'],    // Level 0: unilateral, same hand every beat
+  '1b':['S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'], // Level 1b: simultaneous bilateral (S = both)
   1:['B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'],
   2:['L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R'],
   3:['L','R','L','R',null,'L','R','L','R',null,'L','R',null,'L','R','L',null,'R','L','R',null,'R'],
@@ -1166,14 +1183,19 @@ const PATS={
   6:['L','R','L','R',null,'L','R','L','R',null,'L',null,'R','L','R',null,'L','R',null,'L','R','L',null,'R'],
 };
 const THEMES={
+  0:{bg:'#F0F8F0',colL:'#4A8C6F',colR:'#4A8C6F',colB:'#4A8C6F'},   // Level 0: calm green — unilateral
   1:{bg:'#F8F4FF',colL:'#C4922A',colR:'#C4922A',colB:'#C4922A'},
+  '1b':{bg:'#F4F0FF',colL:'#5C4490',colR:'#5C4490',colB:'#5C4490'}, // Level 1b: purple — bilateral together
   2:{bg:'#FDF0FF',colL:'#E04848',colR:'#4878D8',colB:'#C4922A'},
   3:{bg:'#FFF8F0',colL:'#B85450',colR:'#5C4490',colB:'#C4922A'},
   4:{bg:'#F4F4F4',colL:'#D84040',colR:'#3878D0',colB:'#D0A020'},
   5:{bg:'#F0FFF4',colL:'#4A8C6F',colR:'#3E2D6E',colB:'#C4922A'},
   6:{bg:'#FFF8E8',colL:'#C4922A',colR:'#4A8C6F',colB:'#C4922A'},
 };
-const RM={
+// Level 0 and Level 1 are single-lane (unilateral or simple bilateral);
+// Level '1b' is SIMULTANEOUS bilateral — two lanes both fire together
+function isLvSingle(lvId){return lvId===0||lvId===1||lvId==='1b';}
+function isLvSimul(lvId){return lvId==='1b';} // both sides fire simultaneously
   perfect:{label:'⭐ Perfect!',color:'#4A8C6F',pts:100},
   good:   {label:'👍 Good',    color:'#C4922A',pts:60},
   close:  {label:'↔ Close',    color:'#9B88C4',pts:20},
@@ -1203,12 +1225,13 @@ const G={
   calibOff:0,hitWin:115,sessions:[],acc:{},
   playing:false,score:0,streak:0,maxStreak:0,beatsDone:0,total:0,
   items:[],beats:[],nextBeat:0,hits:[],particles:[],popups:[],
-  consecMiss:0,recentDev:[],recentAcc:[],
+  consecMiss:0,recentDev:[],recentAcc:[],moneyTotal:0,_spawnData:null,
+  sessionStart:0,restPrompted:false,  // session timer for rest-break prompt
   audioCtx:null,schedTimer:null,animFr:null,
   blindStart:null,cvOpacity:1,crossGlow:0,
   bubble:{size:0,max:68,burstParts:[],mood:'idle'},
   // Vocab/math
-  vocabSeq:[],vocabIdx:0,mathSeq:[],mathIdx:0,
+  vocabSeq:[],vocabIdx:0,mathSeq:[],mathIdx:0,vocabFlash:0,
   mathOp:'count',mathParam:2,
   // Oculomotor
   ocuMode:'pursuits',    // 'pursuits' | 'saccades'
@@ -1743,12 +1766,15 @@ function buildModSettings(){
   const lvPills=document.getElementById('mods-level-pills');
   if(meta.hasLevel&&lvWrap&&lvPills){
     lvWrap.style.display='block';
-    lvPills.innerHTML=LVS.map(lv=>
-      `<button class="pill-btn${G.lvId===lv.id?' active':''}" onclick="modsSelectLevel(${lv.id})" style="font-size:10px;padding:7px 4px;">
-        <span style="display:block;font-size:12px;font-weight:700;">Lvl ${lv.id}</span>
-        <span style="font-size:8.5px;color:var(--tl);line-height:1.3;">${lv.name.split('—')[0].trim()}</span>
-      </button>`
-    ).join('');
+    lvPills.innerHTML=LVS.map(lv=>{
+      const idJson=JSON.stringify(lv.id);
+      const label=lv.id===0?'Lvl 0':lv.id==='1b'?'1b':('Lvl '+lv.id);
+      const sublabel=lv.id==='1b'?'Both Hands':lv.id===0?'Unilateral':lv.name.split('—')[0].trim();
+      return `<button class="pill-btn${G.lvId===lv.id?' active':''}" onclick="modsSelectLevel(${idJson})" style="font-size:10px;padding:7px 4px;">
+        <span style="display:block;font-size:12px;font-weight:700;">${label}</span>
+        <span style="font-size:8.5px;color:var(--tl);line-height:1.3;">${sublabel}</span>
+      </button>`;
+    }).join('');
   } else if(lvWrap){
     lvWrap.style.display='none';
   }
@@ -2039,7 +2065,7 @@ try{
 }catch(e){}
 
 /* ═══ MAP ════════════════════════════════════════════ */
-const MN=[{id:1,x:55,y:205},{id:2,x:170,y:158},{id:3,x:265,y:108},{id:4,x:145,y:58},{id:5,x:265,y:14},{id:6,x:50,y:58}];
+const MN=[{id:0,x:55,y:228},{id:1,x:55,y:185},{id:'1b',x:140,y:218},{id:2,x:170,y:148},{id:3,x:265,y:100},{id:4,x:145,y:50},{id:5,x:265,y:10},{id:6,x:50,y:50}];
 function renderMap(){
   const svg=document.getElementById('map-svg');if(!svg)return;let h='';
   const pts=MN.slice(0,5);
@@ -2049,22 +2075,24 @@ function renderMap(){
   MN.forEach(node=>{
     const lv=LVS.find(l=>l.id===node.id);if(!lv)return;
     const isSel=node.id===G.lvId,r=isSel?21:16;
-    h+=`<circle cx="${node.x}" cy="${node.y}" r="${r}" fill="${isSel?'#5C4490':'#9B88C4'}" opacity=".95" onclick="selLv(${node.id})" style="cursor:pointer"/>`;
+    const idJson=JSON.stringify(node.id);
+    h+=`<circle cx="${node.x}" cy="${node.y}" r="${r}" fill="${isSel?'#5C4490':'#9B88C4'}" opacity=".95" onclick="selLv(${idJson})" style="cursor:pointer"/>`;
     h+=`<circle cx="${node.x}" cy="${node.y}" r="${r-5}" fill="white" opacity=".9"/>`;
-    h+=`<text x="${node.x}" y="${node.y}" text-anchor="middle" font-size="13" fill="${isSel?'#5C4490':'#3E2D6E'}" onclick="selLv(${node.id})" style="cursor:pointer">${lv.icon}</text>`;
+    h+=`<text x="${node.x}" y="${node.y+4}" text-anchor="middle" font-size="13" fill="${isSel?'#5C4490':'#3E2D6E'}" onclick="selLv(${idJson})" style="cursor:pointer">${lv.icon}</text>`;
     h+=`<text x="${node.x}" y="${node.y+30}" text-anchor="middle" font-size="9" fill="#5A4E72">${lv.name}</text>`;
   });
   svg.innerHTML=h;
   const cur=MN.find(n=>n.id===G.lvId)||MN[0];
   const bp=document.getElementById('buddy-pos');if(bp){bp.style.left=(cur.x/340*100)+'%';bp.style.top=(cur.y/228*100)+'%';}
   const lv=LVS.find(l=>l.id===G.lvId);
+  const lvLabel=lv.id==='1b'?'Level 1b':('Level '+lv.id);
   document.getElementById('lv-icon').textContent=lv.icon;
-  document.getElementById('lv-name').textContent='Level '+lv.id+': '+lv.name;
+  document.getElementById('lv-name').textContent=lvLabel+': '+lv.name;
   document.getElementById('lv-desc').textContent=lv.desc;
   // Show XAC tip if available
   const xcEl=document.getElementById('lv-xac');
   if(xcEl){xcEl.textContent=lv.xac?'🎮 With XAC: '+lv.xac:'';xcEl.style.display=lv.xac?'block':'none';}
-  document.getElementById('play-btn').textContent='Play '+lv.icon+' Level '+lv.id+' ▶';
+  document.getElementById('play-btn').textContent='Play '+lv.icon+' '+lvLabel+' ▶';
   document.getElementById('bpm-disp').textContent=G.bpm;
   document.getElementById('bpm-slider').value=G.bpm;
   document.getElementById('bpm-rst').style.display=G.customBpm?'block':'none';
@@ -2166,18 +2194,25 @@ function playFeedback(devMs,rating){
   if(ctx.createStereoPanner){pan=ctx.createStereoPanner();pan.connect(ctx.destination);dest=pan;}
   if(['miss','wrong','ghost'].includes(rating)){if(pan)pan.pan.value=0;const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);o.frequency.setValueAtTime(180,now);o.frequency.exponentialRampToValueAtTime(80,now+.13);g.gain.setValueAtTime(.1,now);g.gain.exponentialRampToValueAtTime(.001,now+.16);o.start(now);o.stop(now+.18);return;}
   if(rating==='perfect'){if(pan)pan.pan.value=0;[660,1320].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);o.frequency.value=f;g.gain.setValueAtTime(i?.10:.22,now);g.gain.exponentialRampToValueAtTime(.001,now+.32);o.start(now);o.stop(now+.35);});return;}
-  // devMs < 0 = tapped early (before the beat) → left ear
-  // devMs > 0 = tapped late  (after the beat)  → right ear
+  // devMs < 0 = early (before beat) → left ear
+  // devMs > 0 = late  (after beat)  → right ear
   const isE=devMs<0,abs=Math.abs(devMs);
-  if(pan)pan.pan.value=isE?-Math.min(abs/120,1):Math.min(abs/120,1);
+  // ── GRADED FEEDBACK (research-aligned) ──
+  // Pan: scales 0→1 over 0→120ms
+  if(pan) pan.pan.value=isE?-Math.min(abs/120,1):Math.min(abs/120,1);
+  // Volume: scales with error — small errors are soft, large errors are louder
+  // 0–20ms: very soft (good zone) → 100ms+: full volume
+  const volScale=Math.min(1,0.08+abs/110);  // 20ms≈0.26, 50ms≈0.53, 100ms≈1.0
+  // Duration: small errors are short/crisp, large errors are longer
+  const durScale=Math.min(1,0.35+abs/150);  // short for good taps, longer for big errors
   const semi=Math.min((abs/50)*1.2,5),ratio=Math.pow(2,semi/12),drift=calcDrift();
   let sf,ef,dur;
-  if(isE){sf=520/ratio;ef=520*ratio;dur=drift.trend==='accelerating'?.13:.22;}  // descending tone = rushing early
-  else{sf=520*ratio;ef=520/ratio;dur=drift.trend==='dragging'?.32:.22;}          // ascending tone = dragging late
+  if(isE){sf=520/ratio;ef=520*ratio;dur=durScale*(drift.trend==='accelerating'?.13:.22);}
+  else{sf=520*ratio;ef=520/ratio;dur=durScale*(drift.trend==='dragging'?.32:.22);}
   const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(dest);
   o.frequency.setValueAtTime(sf,now);o.frequency.exponentialRampToValueAtTime(ef,now+dur*.72);
-  g.gain.setValueAtTime(rating==='good'?.18:.14,now);g.gain.exponentialRampToValueAtTime(.001,now+dur);
-  o.start(now);o.stop(now+dur+.02);
+  g.gain.setValueAtTime(volScale*(rating==='good'?.18:.14),now);g.gain.exponentialRampToValueAtTime(.001,now+Math.max(dur,.06));
+  o.start(now);o.stop(now+Math.max(dur,.08)+.02);
 }
 
 function playMile(){if(!S.audioOn||!G.audioCtx)return;const ctx=G.audioCtx,now=ctx.currentTime+.02;[523,659,784,1047].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=f;const t=now+i*.1;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.2,t+.04);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.start(t);o.stop(t+.45);});}
@@ -2400,7 +2435,7 @@ function rainConf(W,n=40){const cl=['#5C4490','#C4922A','#4A8C6F','#9B88C4','#E0
 
 function drawItem(ctx,x,y,sz,side,lvId){
   const col=THEMES[lvId]?.['col'+side]||'#5C4490';
-  if(lvId===1){ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y+sz*.28,sz*.44,sz*.32,-.42,0,Math.PI*2);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=sz*.11;ctx.beginPath();ctx.moveTo(x+sz*.36,y+sz*.2);ctx.lineTo(x+sz*.36,y-sz*.72);ctx.stroke();ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x+sz*.36,y-sz*.72);ctx.bezierCurveTo(x+sz*.9,y-sz*.5,x+sz*.8,y-sz*.08,x+sz*.38,y-sz*.24);ctx.fill();}
+  if(lvId===0||lvId===1||lvId==='1b'){ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y+sz*.28,sz*.44,sz*.32,-.42,0,Math.PI*2);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=sz*.11;ctx.beginPath();ctx.moveTo(x+sz*.36,y+sz*.2);ctx.lineTo(x+sz*.36,y-sz*.72);ctx.stroke();ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x+sz*.36,y-sz*.72);ctx.bezierCurveTo(x+sz*.9,y-sz*.5,x+sz*.8,y-sz*.08,x+sz*.38,y-sz*.24);ctx.fill();}
   else if(lvId===2){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y-sz*.18,sz*.58,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.ellipse(x-sz*.18,y-sz*.42,sz*.16,sz*.1,-.5,0,Math.PI*2);ctx.fill();ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y+sz*.42,sz*.1,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(80,60,100,.35)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y+sz*.52);ctx.quadraticCurveTo(x+sz*.2,y+sz*.7,x+sz*.1,y+sz*.9);ctx.stroke();}
   else if(lvId===3){[col,'#fff',col,'#fff'].forEach((c,i)=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,sz*(1-i*.22),0,Math.PI*2);ctx.fill();});ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,sz*.14,0,Math.PI*2);ctx.fill();}
   else if(lvId===4){ctx.fillStyle=col;ctx.beginPath();ctx.roundRect(x-sz*.72,y-sz*.3,sz*1.44,sz*.62,sz*.14);ctx.fill();ctx.beginPath();ctx.roundRect(x-sz*.42,y-sz*.72,sz*.84,sz*.46,sz*.1);ctx.fill();ctx.fillStyle='rgba(180,220,255,.85)';ctx.beginPath();ctx.roundRect(x-sz*.35,y-sz*.67,sz*.28,sz*.3,sz*.04);ctx.fill();ctx.beginPath();ctx.roundRect(x+sz*.06,y-sz*.67,sz*.28,sz*.3,sz*.04);ctx.fill();[[-0.42,.3],[.42,.3]].forEach(([dx,dy])=>{ctx.fillStyle='#222';ctx.beginPath();ctx.arc(x+dx*sz,y+dy*sz,sz*.22,0,Math.PI*2);ctx.fill();ctx.fillStyle='#555';ctx.beginPath();ctx.arc(x+dx*sz,y+dy*sz,sz*.12,0,Math.PI*2);ctx.fill();});}
@@ -2437,10 +2472,7 @@ function drawMoneyCatch(ctx,W,H,an){
   }
   ctx.globalAlpha=1;
 
-  const isSingle=G.lvId===1;
-  const lanes=isSingle
-    ?[{side:'B',cx:W/2,lx:W*.18,lw:W*.64}]
-    :[{side:'L',cx:W*.25,lx:W*.03,lw:W*.44},{side:'R',cx:W*.75,lx:W*.53,lw:W*.44}];
+  const isSingle=isLvSingle(G.lvId);
   const CY=Math.floor(H*.82);
   const SZ=Math.max(13,Math.min(W*.06,22));
 
@@ -2599,7 +2631,7 @@ function drawMoneyCatch(ctx,W,H,an){
 function drawStandard(ctx,W,H,an){
   const lvId=G.lvId,th=THEMES[lvId];
   ctx.fillStyle=th.bg;ctx.fillRect(0,0,W,H);
-  const isSingle=lvId===1;
+  const isSingle=isLvSingle(lvId);
   const lanes=isSingle?[{side:'B',x:W*.18,w:W*.64,cx:W/2}]:[{side:'L',x:W*.02,w:W*.44,cx:W*.02+W*.22},{side:'R',x:W*.54,w:W*.44,cx:W*.54+W*.22}];
   const CY=Math.floor(H*.87),SZ=Math.max(12,Math.min(W*.057,20));
   lanes.forEach(l=>{ctx.fillStyle='rgba(92,68,144,.07)';ctx.fillRect(l.x,0,l.w,H);ctx.strokeStyle='rgba(92,68,144,.1)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(l.x,0);ctx.lineTo(l.x,H);ctx.stroke();ctx.beginPath();ctx.moveTo(l.x+l.w,0);ctx.lineTo(l.x+l.w,H);ctx.stroke();});
@@ -2624,9 +2656,32 @@ function drawStandard(ctx,W,H,an){
     let glow=0;G.items.forEach(item=>{if(item.status!=='falling')return;if(lane.side!=='B'&&item.side!==lane.side)return;const t=item.audioBeat-an;if(t>=0&&t<=.45)glow=Math.max(glow,1-t/.45);});
     drawCatchLine(ctx,lane.cx,CY,lane.w,glow,THEMES[G.lvId]['col'+lane.side]||'#5C4490');
   });
+  ctx.textBaseline='alphabetic';
+  // ── Patient deviation needle (research-aligned real-time feedback) ──
+  // Shows running average of last 3 taps so patient can self-correct
+  if(G.recentDev.length>0&&!S.blindMode){
+    const avgDev=G.recentDev.slice(-3).reduce((a,b)=>a+b,0)/Math.min(3,G.recentDev.length);
+    const barW=W*.7,barX=W/2-barW/2,barY=H*.955,barH=5;
+    // Track background
+    ctx.fillStyle='rgba(92,68,144,.1)';ctx.beginPath();ctx.roundRect(barX,barY,barW,barH,2);ctx.fill();
+    // Center line
+    ctx.fillStyle='rgba(92,68,144,.35)';ctx.fillRect(W/2-1,barY-2,2,barH+4);
+    // Needle position — clamp to ±150ms range
+    const norm=Math.max(-1,Math.min(1,avgDev/150));
+    const nx=W/2+norm*barW/2;
+    const nCol=Math.abs(avgDev)<=42?'#4A8C6F':Math.abs(avgDev)<=G.hitWin?'#C4922A':'#B85450';
+    ctx.fillStyle=nCol;ctx.beginPath();ctx.roundRect(nx-3,barY-2,6,barH+4,2);ctx.fill();
+    // Tiny label
+    if(Math.abs(avgDev)>10){
+      ctx.fillStyle='rgba(92,68,144,.5)';ctx.font=`${Math.floor(W*.022)}px Jost,sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(avgDev<0?'← early':'late →',nx,barY-7);
+      ctx.textBaseline='alphabetic';
+    }
+  }
 }
 
-/* ── BUBBLE GUM ── */
+/* ── END STANDARD ── */
 function drawBubblegum(ctx,W,H,an){
   const B=G.bubble;
   ctx.fillStyle='#FFF0F8';ctx.fillRect(0,0,W,H);
@@ -2654,6 +2709,7 @@ function drawBubblegum(ctx,W,H,an){
   ctx.fillStyle=B.size>2?'#FF69B4':'#FF99BB';ctx.beginPath();ctx.ellipse(charX,charY+charR*.28,charR*(B.size>2?.14:.09),charR*(B.size>2?.12:.07),0,0,Math.PI*2);ctx.fill();
   // Size bar
   const pct=B.size/B.max;ctx.fillStyle='rgba(220,100,160,.18)';ctx.beginPath();ctx.roundRect(W*.1,H*.9,W*.8,7,4);ctx.fill();if(pct>0){ctx.fillStyle='rgba(220,80,150,.5)';ctx.beginPath();ctx.roundRect(W*.1,H*.9,W*.8*pct,7,4);ctx.fill();}
+  ctx.textBaseline='alphabetic';
 }
 function updateBubble(rating){
   const B=G.bubble,W=document.getElementById('gc')?.width||380,H=document.getElementById('gc')?.height||260;
@@ -2696,6 +2752,7 @@ function drawTargetRange(ctx,W,H,an){
     alive.push(item);
   });
   G.items=alive;
+  ctx.textBaseline='alphabetic';
 }
 
 /* ── VOCAB CANVAS ── */
@@ -2778,6 +2835,25 @@ function drawVocab(ctx,W,H,an){
     ctx.fillStyle='rgba(92,68,144,.18)';
     ctx.font=`${Math.floor(H*.06)}px Jost,sans-serif`;
     ctx.fillText('• • •',W/2,H*.52);
+  }
+  // ── Fireworks burst on accurate tap ──
+  if(G.vocabFlash>0){
+    G.vocabFlash=Math.max(0,G.vocabFlash-.055);
+    const f=G.vocabFlash, age=1-f;
+    const cols=['#5C4490','#C4922A','#9B88C4','#4A8C6F','#E06070','#60B0E0'];
+    const burstX=W/2, burstY=H*.45;
+    for(let i=0;i<18;i++){
+      const a=(i/18)*Math.PI*2+(age*2);
+      const r=age*H*.35;
+      const px=burstX+Math.cos(a)*r, py=burstY+Math.sin(a)*r;
+      ctx.globalAlpha=f*.85;
+      ctx.fillStyle=cols[i%cols.length];
+      ctx.beginPath();ctx.arc(px,py,Math.max(1,3.5*(1-age*.8)),0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=f*.3;
+    ctx.strokeStyle='#C4922A';ctx.lineWidth=2+f*10;
+    ctx.beginPath();ctx.arc(burstX,burstY,H*.1+age*H*.12,0,Math.PI*2);ctx.stroke();
+    ctx.globalAlpha=1;
   }
   // Progress bar
   const prog=seq.length>0?(idx/seq.length)*100:0;
@@ -3238,6 +3314,7 @@ function drawDepthPulse(ctx,W,H,an){
   const prog=G.total>0?(G.beatsDone/G.total)*100:0;
   ctx.fillStyle='rgba(92,68,144,.12)';ctx.beginPath();ctx.roundRect(W*.08,H*.91,W*.84,6,3);ctx.fill();
   if(prog>0){ctx.fillStyle=`rgba(${r},${g2},${b},.45)`;ctx.beginPath();ctx.roundRect(W*.08,H*.91,W*.84*(prog/100),6,3);ctx.fill();}
+  drawGazeOverlay(ctx,W,H);
   ctx.textBaseline='alphabetic';
 }
 
@@ -3341,12 +3418,31 @@ function drawGazeHold(ctx,W,H,an){
   const prog=G.total>0?(G.beatsDone/G.total)*100:0;
   ctx.fillStyle='rgba(92,68,144,.1)';ctx.beginPath();ctx.roundRect(W*.08,H*.9,W*.84,6,3);ctx.fill();
   if(prog>0){ctx.fillStyle='rgba(92,68,144,.38)';ctx.beginPath();ctx.roundRect(W*.08,H*.9,W*.84*(prog/100),6,3);ctx.fill();}
+  drawGazeOverlay(ctx,W,H);
   ctx.textBaseline='alphabetic';
 }
 
 /* ═══ MAIN GAME LOOP ═══════════════════════════════ */
 function schedTick(){
   if(!G.audioCtx||!G.playing)return;
+  // Session timer — rest break prompt at ~12 minutes of active tapping
+  const classicModes=['standard','bubblegum','targetrange','moneycatch'];
+  if(!G.restPrompted&&classicModes.includes(G.gameMode)){
+    const elapsed=(Date.now()-G.sessionStart)/1000/60;
+    if(elapsed>=12&&G.beatsDone>=20){
+      G.restPrompted=true;
+      // Show rest prompt overlay on game screen
+      const overlay=document.createElement('div');
+      overlay.id='rest-prompt-overlay';
+      overlay.style.cssText='position:absolute;inset:0;z-index:80;background:rgba(14,10,32,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;';
+      overlay.innerHTML=`<div style="font-size:28px;">😌</div>
+        <div style="font-size:16px;font-weight:600;color:white;">Rest Break</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.7;max-width:240px;">You've been tapping for 12 minutes. Research protocols recommend a 2-minute break before continuing — it helps lock in the timing gains.</div>
+        <button onclick="document.getElementById('rest-prompt-overlay').remove();G.restPrompted=true;" style="margin-top:8px;padding:10px 24px;background:var(--p);color:white;border:none;border-radius:10px;font:600 14px Jost,sans-serif;cursor:pointer;">Continue Session</button>
+        <button onclick="exitGameEarly();" style="padding:8px 20px;background:none;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.2);border-radius:10px;font:500 12px Jost,sans-serif;cursor:pointer;">End Session &amp; Get SOAP Note</button>`;
+      document.getElementById('screen-game')?.appendChild(overlay);
+    }
+  }
   const iv=60/G.bpm,fd=FB*iv,now=G.audioCtx.currentTime;
   while(G.beats.length<G.total&&G.nextBeat<now+.18){
     const idx=G.beats.length,when=G.nextBeat;
@@ -3441,7 +3537,13 @@ function pollGP(){
 
 /* ═══ TAP HANDLER ════════════════════════════════════ */
 function handleTap(side){
-  if(!G.playing||!G.audioCtx)return;
+  if(tapSide==='S'){
+    // Simultaneous bilateral — register as both L and R
+    handleTap('L'); handleTap('R'); return;
+  }
+  if(tapSide==='C'&&isLvSimul(G.lvId)){
+    handleTap('L'); handleTap('R'); return;
+  }
   const tapTime=G.audioCtx.currentTime;
   const canvas=document.getElementById('gc');
   const W=canvas?.width||380,H=canvas?.height||260;
@@ -3450,7 +3552,7 @@ function handleTap(side){
   const isMotion=G.gameMode==='motion';
   const isAG=G.gameMode==='activegames';
   // Single-tap modes: Level 1, edu, bubblegum, target range, oculomotor, motion, activegames
-  const isSingle=G.lvId===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||isOcu||isMotion||isAG;
+  const isSingle=isLvSingle(G.lvId)||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||isOcu||isMotion||isAG;
   const lanes=isSingle?[{side:'B',cx:W/2}]:[{side:'L',cx:W*.02+W*.22},{side:'R',cx:W*.54+W*.22}];
   const CY=G.gameMode==='targetrange'?H*.42:H*.87;
   const tapSide=isSingle?'C':side;
@@ -3474,6 +3576,7 @@ function handleTap(side){
     hitAdapt(rating);
     if(rating==='perfect'||rating==='good'){G.streak++;if(G.streak>G.maxStreak)G.maxStreak=G.streak;if(G.streak===10||G.streak===20||G.streak===30){playMile();G.particles.push(...rainConf(W,G.streak>=20?50:26));const sb=document.getElementById('streak-b');if(sb){sb.classList.add('mile-pulse');setTimeout(()=>sb.classList.remove('mile-pulse'),800);}}}else G.streak=0;
     const m=getMult(G.streak),earned=Math.round(RM[rating].pts*m);G.score+=earned;
+    if(G.gameMode==='vocab'&&(rating==='perfect'||rating==='good')) G.vocabFlash=1.0;
     if(earned>0)G.popups.push({text:`+${earned}${m>1?` ×${m}`:''}`,x:W/2,y:CY-26,color:rating==='perfect'?'#C4922A':'#fff',sz:rating==='perfect'?19:14,life:42});
     G.hits.push({dev,rating});showRat(rating,dev);updateHUD();
     return;
@@ -3497,16 +3600,17 @@ function handleTap(side){
   const ht=Math.abs(dev)<=42?'perfect':dev<0?'early':'late';haptic(ht,dev);
   if(G.gameMode==='targetrange'&&(rating==='perfect'||rating==='good'))G.crossGlow=1;
   if(G.gameMode==='bubblegum')updateBubble(rating);
+  // Resolve lane early so moneycatch block can use it
+  const lane=lanes.find(l=>l.side===(isSingle?'B':best.side))||lanes[0];
+  const col=THEMES[G.lvId]?.['col'+(isSingle?'B':best.side)]||'#5C4490';
   if(G.gameMode==='moneycatch'){
-    // Bill value based on accuracy — closer = bigger bill
     const bills={perfect:{val:100,label:'$100',col:'#C4922A',sz:22},
                  good:   {val:20, label:'$20', col:'#4A8C6F',sz:19},
                  close:  {val:5,  label:'$5',  col:'#9B88C4',sz:16},
                  miss:   {val:0,  label:'',    col:'#B85450',sz:14}};
     const bill=bills[rating]||bills.miss;
     G.moneyTotal=(G.moneyTotal||0)+bill.val;
-    if(bill.val>0) G.popups.push({text:bill.label,x:lane?.cx||W/2,y:H*.87-30,color:bill.col,sz:bill.sz+4,life:55});
-    // Mark caught item with its bill value for the catch animation
+    if(bill.val>0) G.popups.push({text:bill.label,x:lane.cx,y:H*.82-30,color:bill.col,sz:bill.sz+4,life:55});
     if(best) best.billVal=bill.val;
   }
   // Oculomotor: green flash on good/perfect + special XAC confirmation
@@ -3522,14 +3626,30 @@ function handleTap(side){
   hitAdapt(rating);
   if(rating==='perfect'||rating==='good'){G.streak++;if(G.streak>G.maxStreak)G.maxStreak=G.streak;if(G.streak===10||G.streak===20||G.streak===30){playMile();G.particles.push(...rainConf(W,G.streak>=20?55:28));const sb2=document.getElementById('streak-b');if(sb2){sb2.classList.add('mile-pulse');setTimeout(()=>sb2.classList.remove('mile-pulse'),800);}}}else G.streak=0;
   const m=getMult(G.streak),earned=Math.round(RM[rating].pts*m);G.score+=earned;
-  const lane=lanes.find(l=>l.side===(isSingle?'B':best.side))||lanes[0];
-  const col=THEMES[G.lvId]?.['col'+(isSingle?'B':best.side)]||'#5C4490';
   if(rating==='perfect'||rating==='good')G.particles.push(...bPart(lane.cx,CY,col,rating==='perfect'?22:11));
   if(earned>0)G.popups.push({text:rating==='perfect'?`+${earned}${m>1?` ×${m}`:''} ⭐`:`+${earned}`,x:lane.cx,y:CY-26,color:rating==='perfect'?'#C4922A':'#fff',sz:rating==='perfect'?19:14,life:42});
   G.hits.push({dev,rating});showRat(rating,dev);updateHUD();
 }
 
-function hitAdapt(r){if(r==='perfect'||r==='good'){G.consecMiss=0;G.recentAcc.push(1);if(G.recentAcc.length>10)G.recentAcc.shift();if(G.recentAcc.length>=8&&G.recentAcc.filter(x=>x).length/G.recentAcc.length>=.8){G.hitWin=Math.max(30,G.hitWin-10);G.recentAcc=[];}}else if(r==='miss')missAdapt();}
+function hitAdapt(r){
+  if(r==='perfect'||r==='good'){
+    G.consecMiss=0;G.recentAcc.push(1);
+    if(G.recentAcc.length>10)G.recentAcc.shift();
+    if(G.recentAcc.length>=8&&G.recentAcc.filter(x=>x).length/G.recentAcc.length>=.8){
+      G.hitWin=Math.max(30,G.hitWin-10);G.recentAcc=[];
+    }
+  } else if(r==='miss') missAdapt();
+}
+// After session ends, persist the tightened window back to the user profile
+function saveAdaptiveWindow(){
+  const u=getActiveUser();
+  if(!u)return;
+  // Only tighten, never auto-widen cross-session — widening is for in-session recovery only
+  if(G.hitWin<(u.hitWindowBase||120)){
+    u.hitWindowBase=G.hitWin;
+    saveUsers();
+  }
+}
 function missAdapt(){G.consecMiss++;G.recentAcc.push(0);if(G.recentAcc.length>10)G.recentAcc.shift();if(G.consecMiss>=3){G.hitWin=Math.min(200,G.hitWin+20);G.consecMiss=0;if(S.blindMode){G.blindStart=null;G.cvOpacity=1;}}}
 
 /* ═══ GAME START / END ════════════════════════════ */
@@ -3558,9 +3678,10 @@ function startCountdown(){
   initAudio();
   G.items=[];G.particles=[];G.popups=[];G.beats=[];G.hits=[];
   G.score=0;G.streak=0;G.maxStreak=0;G.beatsDone=0;G.consecMiss=0;G.moneyTotal=0;
+  G.sessionStart=Date.now();G.restPrompted=false;
   G.recentDev=[];G.recentAcc=[];G.blindStart=null;G.cvOpacity=1;G.crossGlow=0;
   G.bubble={size:0,max:68,burstParts:[],mood:'idle'};
-  G.vocabIdx=0;G.mathIdx=0;
+  G.vocabIdx=0;G.mathIdx=0;G.vocabFlash=0;
   G.ocuTrail=[];G.ocuFlash=0;G.lastBeatTime=0;G.lastBeatIdx=0;
   if(G.gameMode!=='motion') M.active=false; // keep active if motion mode
   const lv=LVS.find(l=>l.id===G.lvId),iv=60/G.bpm,fd=FB*iv;
@@ -3587,14 +3708,21 @@ function startCountdown(){
     PATS[lv.id].forEach((side,idx)=>{
       if(side==null)return;
       const bt=firstBeat+idx*iv;
-      G.items.push({id:idx+'_'+Math.random(),side,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'});
+      const itemSide=G.gameMode==='moneycatch'?'B':side;
+      if(itemSide==='S'){
+        ['L','R'].forEach(s=>G.items.push({id:idx+'_'+s+'_'+Math.random(),side:s,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:s==='L'?'bird':'deer'}));
+      } else {
+        G.items.push({id:idx+'_'+Math.random(),side:itemSide,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'});
+      }
     });
   }
   // Build tap buttons — single for Level 1, edu, bubblegum, target range, oculomotor, motion
   const tb=document.getElementById('tap-btns');
   const isAGMode=G.gameMode==='activegames';
-  const isSingle=lv.id===1||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||G.gameMode==='oculomotor'||G.gameMode==='motion'||isAGMode;
-  if(isSingle){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">any key · tap anywhere</div></button>';}
+  const isSingle=isLvSingle(lv.id)||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||G.gameMode==='oculomotor'||G.gameMode==='motion'||isAGMode;
+  const isSimul=isLvSimul(lv.id);
+  if(isSingle&&!isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">any key · tap anywhere</div></button>';}
+  else if(isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" style="background:linear-gradient(135deg,#B85450,#5C4490);" ontouchstart="ev=event;ev.preventDefault();handleTap(\'S\')" onmousedown="event.preventDefault();handleTap(\'S\')">BOTH HANDS<div style="font-size:8px;opacity:.75;margin-top:3px;">tap with both · any key</div></button>';}
   else{tb.style.gridTemplateColumns='1fr 1fr';tb.innerHTML='<button class="tap-btn L" ontouchstart="ev=event;ev.preventDefault();handleTap(\'L\')" onmousedown="event.preventDefault();handleTap(\'L\')">LEFT<div style="font-size:8px;opacity:.65;margin-top:2px;">f ← z Shift</div></button><button class="tap-btn R" ontouchstart="ev=event;ev.preventDefault();handleTap(\'R\')" onmousedown="event.preventDefault();handleTap(\'R\')">RIGHT<div style="font-size:8px;opacity:.65;margin-top:2px;">j → / Ctrl</div></button>';}
   document.getElementById('g-lv-lbl').textContent=lv.icon+' '+lv.name+' · '+G.bpm+' BPM · '+G.gameMode;
   document.getElementById('rat-lbl').textContent='Tap the beat!';document.getElementById('rat-lbl').style.color='var(--tl)';
@@ -3660,7 +3788,13 @@ function beginGame(){
       PATS[lv.id].forEach((side,idx)=>{
         if(side==null)return;
         const bt=firstBeat+idx*iv;
-        G.items.push({id:idx+'_'+Math.random(),side,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'});
+        const itemSide=G.gameMode==='moneycatch'?'B':side;
+        if(itemSide==='S'){
+          // Simultaneous bilateral — spawn both L and R at the same beat
+          ['L','R'].forEach(s=>G.items.push({id:idx+'_'+s+'_'+Math.random(),side:s,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:s==='L'?'bird':'deer'}));
+        } else {
+          G.items.push({id:idx+'_'+Math.random(),side:itemSide,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'});
+        }
       });
     }
     G._spawnData=null;
@@ -3702,6 +3836,7 @@ function endGame(){
   cancelAnimationFrame(G.animFr);
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){} G._resizeObs=null;}
   if(G.gameMode==='motion') stopMotionCamera();
+  saveAdaptiveWindow(); // persist tightened window cross-session
   const hits=G.hits,total=G.total,lv=LVS.find(l=>l.id===G.lvId);
   const counts={perfect:0,good:0,close:0,miss:0};hits.forEach(h=>{if(counts[h.rating]!==undefined)counts[h.rating]++;});
   counts.miss+=Math.max(0,total-hits.length);
@@ -3790,7 +3925,11 @@ function renderRes(){
 
   // Next level prompt
   const nl=document.getElementById('next-lv');
-  if(earnedS>=2&&G.lvId<6){nl.style.display='block';nl.textContent='→ Ready for Level '+(G.lvId+1)+' '+LVS[G.lvId].icon+' — tap to advance';}
+  const lvOrder=[0,1,'1b',2,3,4,5,6];
+  const curLvIdx=lvOrder.indexOf(G.lvId);
+  const nextLvId=curLvIdx>=0&&curLvIdx<lvOrder.length-1?lvOrder[curLvIdx+1]:null;
+  const nextLv=nextLvId!=null?LVS.find(l=>l.id===nextLvId):null;
+  if(earnedS>=2&&nextLv){nl.style.display='block';nl.textContent='→ Ready for '+nextLv.name+' '+nextLv.icon+' — tap to advance';}
   else nl.style.display='none';
 }
 function goNextLv(){G.lvId++;G.customBpm=false;G.bpm=LVS.find(l=>l.id===G.lvId).bpm;showScreen('module');}
@@ -4102,6 +4241,7 @@ const M={
   pose:null,
   poseLoaded:false,
   landmarks:null,
+  clapFlash:0,
   tapCooldown:0,
   prevAnkleY:null,
   jumpBaseline:null,
@@ -4191,12 +4331,14 @@ function drawPositioningSVG(type,caption){
 }
 
 function closeMotionSetup(){
+  _cancelAutoStart();
   stopMotionCamera();
   document.getElementById('motion-setup').style.display='none';
   setGM('standard');
 }
 
 function startCountdownFromMotion(){
+  _cancelAutoStart();
   document.getElementById('motion-setup').style.display='none';
   M.active=true;
   M.jumpBaseline=null;
@@ -4279,6 +4421,7 @@ function loadScript(src){
 
 function stopMotionCamera(){
   M.active=false;_previewRunning=false;
+  _cancelAutoStart();
   M.prevFrame=null;M.landmarks=null;M.jumpBaseline=null;
   if(M.stream){M.stream.getTracks().forEach(t=>t.stop());M.stream=null;}
   const vid=document.getElementById('motion-video');
@@ -4296,41 +4439,86 @@ function applyCamZoom(val){
   if(sl&&parseInt(sl.value)!==val) sl.value=val;
 }
 
-/* ── SKELETON PREVIEW (during setup) ──────────────── */
+/* ── SKELETON PREVIEW (during setup) + AUTO-START ──── */
 let _previewRunning=false;
+let _autoStartTimer=null;   // setInterval handle for auto-start countdown
+let _autoStartCount=0;      // beats remaining before auto-fire
+
+function _cancelAutoStart(){
+  if(_autoStartTimer){clearInterval(_autoStartTimer);_autoStartTimer=null;}
+  _autoStartCount=0;
+  const startBtn=document.getElementById('motion-start-btn');
+  const status=document.getElementById('motion-status');
+  if(startBtn) startBtn.disabled=true;
+  if(status&&status.textContent.includes('Starting in'))
+    status.textContent='Looking for body… position yourself in frame';
+}
+
+function _beginAutoStart(){
+  if(_autoStartTimer) return; // already counting
+  _autoStartCount=3;
+  const status=document.getElementById('motion-status');
+  if(status) status.textContent=`Starting in ${_autoStartCount}…`;
+  _autoStartTimer=setInterval(()=>{
+    _autoStartCount--;
+    const s2=document.getElementById('motion-status');
+    if(_autoStartCount>0){
+      if(s2) s2.textContent=`Starting in ${_autoStartCount}…`;
+    } else {
+      clearInterval(_autoStartTimer);_autoStartTimer=null;
+      // Double-check body still in frame before firing
+      if(M.landmarks&&M.poseLoaded){
+        const key=[PL.L_SHOULDER,PL.R_SHOULDER,PL.L_HIP,PL.R_HIP];
+        if(key.every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.5)){
+          startCountdownFromMotion();
+          return;
+        }
+      }
+      // Body left frame — reset
+      if(s2) s2.textContent='Body left frame — step back into view';
+    }
+  },1000);
+}
+
 function previewSkeletonLoop(){
   if(!M.stream||_previewRunning) return;
   _previewRunning=true;
   const vid=document.getElementById('motion-video');
   async function frame(){
-    if(!M.stream){_previewRunning=false;return;}
+    if(!M.stream){_previewRunning=false;_cancelAutoStart();return;}
     if(M.pose&&vid&&vid.readyState>=2){try{await M.pose.send({image:vid});}catch(e){}}
-    // Auto-enable Start when enough body landmarks are visible
-    const startBtn=document.getElementById('motion-start-btn');
-    if(startBtn&&M.landmarks&&M.poseLoaded&&!M.useFallback){
-      const keyLandmarks=[PL.L_SHOULDER,PL.R_SHOULDER,PL.L_HIP,PL.R_HIP];
-      const allVisible=keyLandmarks.every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.5);
-      if(allVisible){
-        startBtn.disabled=false;
-        // Check if full-body modes need ankles too
-        const fullBodyModes=['march','jump','sidestep','soccer','stars','dodge'];
-        const needsFullBody=fullBodyModes.includes(M.motMode)||fullBodyModes.includes(AG.mode);
-        if(needsFullBody){
-          const anklesOk=[PL.L_ANKLE,PL.R_ANKLE].every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.4);
-          const status=document.getElementById('motion-status');
-          if(status) status.textContent=anklesOk?'✓ Full body detected — ready!':'⬇️ Step back — need to see full body including feet';
-          startBtn.disabled=!anklesOk;
-        } else {
-          const status=document.getElementById('motion-status');
-          if(status) status.textContent='✓ Body detected — ready!';
+
+    if(M.landmarks&&M.poseLoaded&&!M.useFallback){
+      const startBtn=document.getElementById('motion-start-btn');
+      const status=document.getElementById('motion-status');
+      const keyPts=[PL.L_SHOULDER,PL.R_SHOULDER,PL.L_HIP,PL.R_HIP];
+      const bodyOk=keyPts.every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.5);
+      const fullBodyModes=['march','jump','sidestep','soccer','stars','dodge'];
+      const needsFull=fullBodyModes.includes(M.motMode)||fullBodyModes.includes(AG.mode);
+      const anklesOk=needsFull
+        ?[PL.L_ANKLE,PL.R_ANKLE].every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.4)
+        :true;
+      const readyToStart=bodyOk&&anklesOk;
+
+      if(readyToStart){
+        if(startBtn) startBtn.disabled=false;
+        // Trigger auto-start countdown if not already running
+        if(!_autoStartTimer){
+          if(status&&!status.textContent.includes('Starting'))
+            status.textContent=needsFull?'✓ Full body detected':'✓ Body detected';
+          _beginAutoStart();
         }
       } else {
-        const status=document.getElementById('motion-status');
-        if(status) status.textContent='Looking for body… position yourself in frame';
-        startBtn.disabled=true;
+        _cancelAutoStart();
+        if(startBtn) startBtn.disabled=true;
+        if(status){
+          status.textContent=!bodyOk
+            ?'Looking for body… position yourself in frame'
+            :'⬇️ Step back — need to see full body including feet';
+        }
       }
-    }
-    if(M.useFallback&&vid&&vid.readyState>=2&&M.offCtx){
+    } else if(M.useFallback&&vid&&vid.readyState>=2&&M.offCtx){
+      // Fallback motion detection preview
       M.offCtx.drawImage(vid,0,0,80,60);
       const curr=M.offCtx.getImageData(0,0,80,60).data;
       if(M.prevFrame){
@@ -4344,6 +4532,9 @@ function previewSkeletonLoop(){
         }
       }
       M.prevFrame=new Uint8Array(curr);
+      // Fallback: enable start button immediately
+      const startBtn=document.getElementById('motion-start-btn');
+      if(startBtn) startBtn.disabled=false;
     }
     requestAnimationFrame(frame);
   }
@@ -4398,8 +4589,9 @@ function detectClap(){
   const lw=lm(PL.L_WRIST),rw=lm(PL.R_WRIST);
   if(!lw||!rw) return null;
   const d=dist2D(lw,rw);
-  if(d<0.18&&!_clapState){_clapState=true;return 'Clap';}
-  if(d>0.24) _clapState=false;
+  // Threshold 0.28 = wrists within 28% of frame width — works at normal distances
+  if(d<0.28&&!_clapState){_clapState=true;return 'Clap';}
+  if(d>0.36) _clapState=false; // must open hands before counting next clap
   return null;
 }
 
@@ -4473,8 +4665,14 @@ function motionDetectLoop(){
   }
   const gesture=detectGesture();
   if(gesture){
+    // Fire the tap and check the resulting rating for flash
+    const hitsBefore=G.hits.length;
     handleTap('C');
-    M.tapCooldown=18;
+    if(G.hits.length>hitsBefore){
+      const r=G.hits[G.hits.length-1]?.rating;
+      if(r==='perfect'||r==='good') M.clapFlash=1.0;
+    }
+    M.tapCooldown=8; // ~400ms at 20fps — allow catching every beat
     M.beatCount++;
   }
 }
@@ -4512,6 +4710,37 @@ function drawMotionGame(ctx,W,H,an){
       ctx.beginPath();ctx.moveTo(la2.x*W,la2.y*H);ctx.lineTo(lb2.x*W,lb2.y*H);ctx.stroke();
     });
     ctx.restore();
+  }
+  // ── Clap fireworks burst ──
+  if(M.clapFlash>0){
+    M.clapFlash=Math.max(0,M.clapFlash-.065);
+    const f=M.clapFlash, age=1-f;
+    const cols=['#4AC878','#C4922A','#fff','#9B88C4','#60D0FF'];
+    // Two burst points at wrist positions if available, else center
+    const lw3=lm(PL.L_WRIST),rw3=lm(PL.R_WRIST);
+    const points=lw3&&rw3
+      ?[{x:W-(lw3.x*W),y:lw3.y*H},{x:W-(rw3.x*W),y:rw3.y*H}] // mirrored
+      :[{x:W*.35,y:H*.4},{x:W*.65,y:H*.4}];
+    points.forEach(pt=>{
+      for(let i=0;i<14;i++){
+        const a=(i/14)*Math.PI*2+(age*3);
+        const r=age*H*.28;
+        const px=pt.x+Math.cos(a)*r, py=pt.y+Math.sin(a)*r;
+        ctx.globalAlpha=f*.9;
+        ctx.fillStyle=cols[i%cols.length];
+        ctx.beginPath();ctx.arc(px,py,Math.max(1.5,4*(1-age*.7)),0,Math.PI*2);ctx.fill();
+      }
+      // Ring flash
+      ctx.globalAlpha=f*.4;
+      ctx.strokeStyle='#4AC878';ctx.lineWidth=2+f*8;
+      ctx.beginPath();ctx.arc(pt.x,pt.y,H*.06+age*H*.1,0,Math.PI*2);ctx.stroke();
+    });
+    // Full-screen green flash at peak
+    if(f>0.7){
+      ctx.globalAlpha=(f-0.7)/0.3*0.18;
+      ctx.fillStyle='#4AC878';ctx.fillRect(0,0,W,H);
+    }
+    ctx.globalAlpha=1;
   }
   // Mode label bar top
   const mo2=MOT_MODES[M.motMode];
@@ -5047,7 +5276,11 @@ async function startWGCalibration(){
       }
       if(typeof webgazer.setGazeListener==='function'){
         webgazer.setGazeListener((data)=>{
-          if(data){WG.gazeX=data.x;WG.gazeY=data.y;}
+          if(data){
+            WG.gazeX=data.x;WG.gazeY=data.y;
+            // Pre-smooth in real time so overlay is ready on next frame
+            _updateGazeSmooth(data.x,data.y);
+          }
         });
       }
       // showVideoPreview and showPredictionPoints may not exist in all builds
@@ -5168,6 +5401,7 @@ function startAfterWGCalib(){
   const wgVid=document.getElementById('webgazerVideoFeed')||document.querySelector('video[id*="webgazer"]');
   if(wgVid) wgVid.style.display='none';
   WG.gazeLag=[];
+  _gaze.x=null;_gaze.y=null;_gaze.trail=[];
   startCountdown();
 }
 
@@ -5181,34 +5415,60 @@ function checkAndOpenWGSetup(){
 }
 
 // Overlay gaze dot during oculomotor game draw
+// Smoothed gaze position — exponential moving average to reduce jitter
+const _gaze={x:null,y:null,trail:[]};
+function _updateGazeSmooth(rawX,rawY){
+  if(rawX===null||rawY===null){_gaze.x=null;_gaze.y=null;return;}
+  const alpha=0.35; // lower = smoother but more lag; 0.35 good balance
+  _gaze.x=(_gaze.x===null)?rawX:_gaze.x*(1-alpha)+rawX*alpha;
+  _gaze.y=(_gaze.y===null)?rawY:_gaze.y*(1-alpha)+rawY*alpha;
+  _gaze.trail.push({x:_gaze.x,y:_gaze.y});
+  if(_gaze.trail.length>10) _gaze.trail.shift();
+}
+
 function drawGazeOverlay(ctx,W,H){
   if(!WG.active||!WG.calibrated||WG.gazeX===null) return;
-  // Convert window coordinates to canvas coordinates
   const canvas=document.getElementById('gc');
   if(!canvas) return;
   const rect=canvas.getBoundingClientRect();
-  const cx=(WG.gazeX-rect.left)*(W/rect.width);
-  const cy=(WG.gazeY-rect.top)*(H/rect.height);
-  if(cx<0||cy<0||cx>W||cy>H) return; // out of canvas
-  // Gaze dot
+  if(rect.width===0||rect.height===0) return;
+  // Map window gaze coords → canvas coords
+  const rawCx=(WG.gazeX-rect.left)*(W/rect.width);
+  const rawCy=(WG.gazeY-rect.top)*(H/rect.height);
+  _updateGazeSmooth(rawCx,rawCy);
+  const cx=_gaze.x, cy=_gaze.y;
+  if(cx===null||cx<-40||cy<-40||cx>W+40||cy>H+40) return;
   ctx.save();
-  ctx.globalAlpha=0.7;
+  // Trail — faint dots showing recent path
+  _gaze.trail.forEach((p,i)=>{
+    const a=(i/_gaze.trail.length)*0.35;
+    ctx.globalAlpha=a;
+    ctx.fillStyle='rgba(255,80,80,.8)';
+    ctx.beginPath();ctx.arc(p.x,p.y,3+(i/_gaze.trail.length)*2,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=0.85;
+  // Outer ring
   ctx.strokeStyle='rgba(255,80,80,.9)';ctx.lineWidth=2;
-  ctx.beginPath();ctx.arc(cx,cy,10,0,Math.PI*2);ctx.stroke();
-  ctx.strokeStyle='rgba(255,80,80,.5)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(cx-16,cy);ctx.lineTo(cx+16,cy);ctx.moveTo(cx,cy-16);ctx.lineTo(cx,cy+16);ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,13,0,Math.PI*2);ctx.stroke();
+  // Inner dot
+  ctx.fillStyle='rgba(255,80,80,.7)';
+  ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);ctx.fill();
+  // Crosshair lines
+  ctx.strokeStyle='rgba(255,80,80,.55)';ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(cx-20,cy);ctx.lineTo(cx-14,cy);
+  ctx.moveTo(cx+14,cy);ctx.lineTo(cx+20,cy);
+  ctx.moveTo(cx,cy-20);ctx.lineTo(cx,cy-14);
+  ctx.moveTo(cx,cy+14);ctx.lineTo(cx,cy+20);
+  ctx.stroke();
   ctx.globalAlpha=1;
   ctx.restore();
 }
 
-// Record gaze lag vs target on each beat (pursuits only)
 function recordGazeLag(targetX,canvasW){
-  if(!WG.active||!WG.calibrated||WG.gazeX===null) return;
-  const canvas=document.getElementById('gc');
-  if(!canvas) return;
-  const rect=canvas.getBoundingClientRect();
-  const gazeCanvasX=(WG.gazeX-rect.left)*(canvasW/rect.width);
-  const lagPx=gazeCanvasX-targetX;
+  if(!WG.active||!WG.calibrated||_gaze.x===null) return;
+  // Use smoothed position for lag measurement
+  const lagPx=_gaze.x-targetX;
   WG.gazeLag.push({beatIdx:G.lastBeatIdx,lagPx:Math.round(lagPx)});
 }
 
