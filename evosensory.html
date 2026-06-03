@@ -3906,6 +3906,7 @@ function schedTick(){
       return;
     }
   }
+  const iv=60/G.bpm,now=G.audioCtx.currentTime;
   while(G.beats.length<G.total&&G.nextBeat<now+.18){
     const idx=G.beats.length,when=G.nextBeat;
     playBeat(when,idx);G.beats.push(when);G.nextBeat+=iv;
