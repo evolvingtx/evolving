@@ -1,4 +1,5 @@
 [build]
+  command   = "npm install terser && node build-obfuscate.js"
   functions = "netlify/functions"
 
 [[headers]]
