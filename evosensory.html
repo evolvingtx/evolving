@@ -662,6 +662,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   </div>
   <div class="tog-row"><div><div class="tog-label">👀 Visuals</div></div><label class="tog"><input type="checkbox" id="tog-vis" checked onchange="S.visualOn=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">🗣 Speech (Vocab/Math)</div><div class="tog-sub">Speaks letters, words, and numbers aloud</div></div><label class="tog"><input type="checkbox" id="tog-speech" checked onchange="S.speechOn=this.checked"/><span class="tog-tk"></span></label></div>
+  <div class="tog-row"><div><div class="tog-label">🎯 Track Accuracy (Vocab)</div><div class="tog-sub">Off = listen-only mode, no tap required · On = tap each letter on the beat</div></div><label class="tog"><input type="checkbox" id="tog-vocab-acc" checked onchange="S.vocabTrackAcc=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">🕶 Blind Training</div><div class="tog-sub">Visuals fade after 10s</div></div><label class="tog"><input type="checkbox" id="tog-bld" onchange="S.blindMode=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">👩‍⚕️ Therapist View</div><div class="tog-sub">ms deviation + clinical notes</div></div><label class="tog"><input type="checkbox" id="tog-th" onchange="S.therapistMode=this.checked"/><span class="tog-tk"></span></label></div>
   <div class="tog-row"><div><div class="tog-label">✅ Session Setup Prompt</div><div class="tog-sub">Ask about headphones & haptics before each session</div></div><label class="tog"><input type="checkbox" id="tog-hwcheck" checked onchange="S.hwCheckOn=this.checked"/><span class="tog-tk"></span></label></div>
@@ -1229,7 +1230,7 @@ const GM_DESC={
 const S={soundMode:'count',audioOn:true,metroOn:true,hapticOn:true,rumbleOn:true,rumbleMode:'hit',
   hwCheckOn:true,  // show hardware confirmation before each session
   mathOp:'count',  // math mode operation default
-  visualOn:true,speechOn:true,blindMode:false,therapistMode:false,hapticIntensity:.8};
+  visualOn:true,speechOn:true,vocabTrackAcc:true,blindMode:false,therapistMode:false,hapticIntensity:.8};
 
 /* ═══ GAME STATE ════════════════════════════════════ */
 const G={
@@ -2363,46 +2364,57 @@ function buildVocabSeq(){
   const raw=document.getElementById('word-list')?.value||'cat\ndog\nrun';
   const entries=raw.split('\n').map(w=>w.trim().toUpperCase()).filter(w=>w.length>0&&w.replace(/-/g,'').length<=14);
   const seq=[];
-  // Estimate beats per minute at current BPM; insert a long break every ~60s worth of beats
   const bpm=G.bpm||56;
   const beatsPerMinute=bpm;
   let beatCount=0;
   let breakInserted=false;
 
-  entries.forEach((rawWord,wordIdx)=>{
+  // Sequence per word — 2 loops:
+  // Loop 0: announce (says full word) → GO! → letter beats → pause → whole word
+  // Loop 1: GO! → letter beats → pause → whole word  (no announce — already heard it)
+  // Then 2 rest beats → next word
+  entries.forEach((rawWord)=>{
     const syllables=rawWord.includes('-')?rawWord.split('-').map(s=>s.trim()).filter(Boolean):autoSyllables(rawWord);
     const word=rawWord.replace(/-/g,'');
     const letters=word.split('');
-    const isMultiSyl=syllables.length>1;
-    for(let loop=0;loop<3;loop++){
+
+    for(let loop=0;loop<2;loop++){
+      // Announce on first loop only
+      if(loop===0){
+        seq.push({type:'announce',letter:'',word,syllables,loop,spoken:word});
+        beatCount++;
+      }
+      // GO! beat
+      seq.push({type:'go',letter:'',word,syllables,loop,spoken:'go'});
+      beatCount++;
+      // Letter beats
       letters.forEach((letter,li)=>{
         seq.push({type:'letter',letter,word,syllables,loop,letterIdx:li,totalLetters:letters.length});
         beatCount++;
       });
-      if(loop===0&&isMultiSyl){
-        syllables.forEach((syl,si)=>{
-          seq.push({type:'syllable',letter:syl,word,syllables,loop,sylIdx:si,totalSyls:syllables.length});
-          beatCount++;
-        });
-      }
+      // Pause beat
+      seq.push({type:'pause',letter:'',word,loop});
+      beatCount++;
+      // Whole word beat
       seq.push({type:'word',letter:word,word,syllables,loop});
       beatCount++;
-      const restCount=loop===2?2:1;
+      // 1 rest after loop 0, 2 rests after loop 1 (final)
+      const restCount=loop===1?2:1;
       for(let r=0;r<restCount;r++){seq.push({type:'rest',letter:'',word,loop});beatCount++;}
     }
+    // Wordbreak between words
     seq.push({type:'wordbreak',letter:'',word,loop:0});
     beatCount++;
 
-    // Insert a 30-second rest break (~beatsPerMinute/2 silent beats) every ~60s
-    // Only between words, and only once per minute
+    // Long break every ~60 seconds
     if(!breakInserted&&beatCount>=beatsPerMinute){
-      breakInserted=true;  // prevent double-fire this minute
-      beatCount=0;         // reset counter for next minute
-      const breakBeats=Math.round(bpm*0.5); // ~30 seconds of silence
+      breakInserted=true;
+      beatCount=0;
+      const breakBeats=Math.round(bpm*0.5);
       for(let b=0;b<breakBeats;b++){
         seq.push({type:'longBreak',letter:'',word:'',loop:0,breakIdx:b,breakTotal:breakBeats});
       }
-      breakInserted=false; // allow next break after another full minute
+      breakInserted=false;
     }
   });
   return seq;
@@ -2998,16 +3010,23 @@ function drawVocab(ctx,W,H,an){
   // Beat pulse ring behind main display
   const beatAgo=an-(G.beats[G.beats.length-1]||0);
   const pulse=Math.max(0,1-beatAgo/.28);
-  if(pulse>0&&cur?.type!=='rest'&&cur?.type!=='wordbreak'){
+  const isActiveType=cur?.type!=='rest'&&cur?.type!=='wordbreak'&&cur?.type!=='pause';
+  if(pulse>0&&isActiveType){
     ctx.strokeStyle=`rgba(92,68,144,${pulse*.35})`;ctx.lineWidth=pulse*20;
     ctx.beginPath();ctx.arc(W/2,H*.52,H*.19,0,Math.PI*2);ctx.stroke();
   }
   // Loop indicator dots top right
   ctx.font=`${Math.floor(W*.04)}px Jost,sans-serif`;ctx.textAlign='right';ctx.textBaseline='top';
-  [0,1,2].forEach(i=>{
-    ctx.fillStyle=i<=loop?'#5C4490':'rgba(92,68,144,.18)';
-    ctx.beginPath();ctx.arc(W*.94-i*W*.055,H*.06,W*.018,0,Math.PI*2);ctx.fill();
+  [0,1].forEach(i=>{
+    ctx.fillStyle=i<=(cur?.loop??0)?'#5C4490':'rgba(92,68,144,.18)';
+    ctx.beginPath();ctx.arc(W*.94-i*W*.065,H*.06,W*.018,0,Math.PI*2);ctx.fill();
   });
+  // Listen-only badge
+  if(!S.vocabTrackAcc){
+    ctx.fillStyle='rgba(74,140,111,.8)';ctx.beginPath();ctx.roundRect(W*.5-50,H*.87,100,18,8);ctx.fill();
+    ctx.fillStyle='white';ctx.font=`500 ${Math.floor(W*.027)}px Jost,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('👂 Listen only',W/2,H*.879);
+  }
   // Letter tiles above — show all letters, highlight current
   if(cur?.type==='letter'||cur?.type==='syllable'||cur?.type==='word'){
     const letters=word.split('');
@@ -3015,10 +3034,8 @@ function drawVocab(ctx,W,H,an){
     const totalW=letters.length*gap, startX=W/2-totalW/2+gap/2;
     letters.forEach((l,i)=>{
       const tx=startX+i*gap, ty=H*.16;
-      // Filled tile for already-spoken letters
       const isActive=cur?.type==='letter'&&cur.letterIdx===i;
       const isDone=cur?.type==='letter'?i<cur.letterIdx:true;
-      const isFuture=cur?.type==='letter'&&i>cur.letterIdx;
       ctx.fillStyle=isActive?'#5C4490':isDone?'#9B88C4':'rgba(92,68,144,.12)';
       ctx.beginPath();ctx.roundRect(tx-tileW/2,ty-tileW/2,tileW,tileW,5);ctx.fill();
       ctx.fillStyle=isActive||isDone?'white':'rgba(92,68,144,.4)';
@@ -3029,22 +3046,33 @@ function drawVocab(ctx,W,H,an){
   }
   // Main display — large center text
   ctx.textAlign='center';ctx.textBaseline='middle';
-  if(cur?.type==='letter'){
-    // Big single letter
+  if(cur?.type==='announce'){
+    // Full word shown large — patient hears it, prepares to spell
+    ctx.fillStyle='rgba(92,68,144,.25)';
+    ctx.font=`${Math.floor(W*.032)}px Jost,sans-serif`;ctx.fillText('get ready…',W/2,H*.3);
+    ctx.fillStyle='#3E2D6E';
+    ctx.font=`bold ${Math.floor(H*.19)}px Cormorant Garamond,serif`;
+    ctx.fillText(word,W/2,H*.52);
+  } else if(cur?.type==='go'){
+    // GO! — bright signal
+    ctx.fillStyle='#4A8C6F';
+    ctx.font=`bold ${Math.floor(H*.26)}px Jost,sans-serif`;
+    ctx.fillText('GO!',W/2,H*.52);
+    ctx.fillStyle='rgba(74,140,111,.5)';
+    ctx.font=`${Math.floor(W*.032)}px Jost,sans-serif`;
+    ctx.fillText('spell it on the beat',W/2,H*.76);
+  } else if(cur?.type==='letter'){
     ctx.fillStyle='#5C4490';
     ctx.font=`bold ${Math.floor(H*.32)}px Jost,sans-serif`;
     ctx.fillText(cur.letter,W/2,H*.52);
-    // Label
     ctx.fillStyle='rgba(92,68,144,.45)';
     ctx.font=`${Math.floor(W*.032)}px Jost,sans-serif`;
     ctx.fillText('spell it',W/2,H*.78);
   } else if(cur?.type==='syllable'){
-    // Syllable shown with dots for others
     const totalSyls=cur.totalSyls||sylArr.length;
     ctx.fillStyle='#3E2D6E';
     ctx.font=`bold ${Math.floor(H*.22)}px Cormorant Garamond,serif`;
     ctx.fillText(cur.letter,W/2,H*.48);
-    // Syllable pips
     const pipR=W*.024, pipGap=pipR*2.8, pipStart=W/2-(totalSyls-1)*pipGap/2;
     for(let i=0;i<totalSyls;i++){
       ctx.fillStyle=i===cur.sylIdx?'#5C4490':'rgba(92,68,144,.22)';
@@ -3053,13 +3081,18 @@ function drawVocab(ctx,W,H,an){
     ctx.fillStyle='rgba(92,68,144,.45)';
     ctx.font=`${Math.floor(W*.032)}px Jost,sans-serif`;
     ctx.fillText('syllables',W/2,H*.82);
+  } else if(cur?.type==='pause'){
+    // Silent pause before word
+    ctx.fillStyle='rgba(92,68,144,.22)';
+    ctx.font=`${Math.floor(H*.08)}px Jost,sans-serif`;
+    ctx.fillText('…',W/2,H*.52);
   } else if(cur?.type==='word'){
     ctx.fillStyle='#3E2D6E';
     ctx.font=`bold ${Math.floor(H*.19)}px Cormorant Garamond,serif`;
     ctx.fillText(cur.word,W/2,H*.5);
     ctx.fillStyle='rgba(92,68,144,.5)';
     ctx.font=`500 ${Math.floor(W*.034)}px Jost,sans-serif`;
-    ctx.fillText(loop===0?'say it!':loop===1?'say it again!':'one more time!',W/2,H*.72);
+    ctx.fillText((cur?.loop??0)===0?'say it!':'again!',W/2,H*.72);
   } else if(cur?.type==='rest'||cur?.type==='wordbreak'){
     ctx.fillStyle='rgba(92,68,144,.18)';
     ctx.font=`${Math.floor(H*.06)}px Jost,sans-serif`;
@@ -3863,7 +3896,16 @@ function schedTick(){
       document.getElementById('screen-game')?.appendChild(overlay);
     }
   }
-  const iv=60/G.bpm,fd=FB*iv,now=G.audioCtx.currentTime;
+  // Open-ended modes: auto-end after 2 minutes of active play
+  const openEndedModes=['oculomotor','motion','activegames'];
+  if(!G.restPrompted&&openEndedModes.includes(G.gameMode)){
+    const elapsed=(Date.now()-G.sessionStart)/1000/60;
+    if(elapsed>=2){
+      G.restPrompted=true; // prevent repeat fire
+      setTimeout(endGame,400);
+      return;
+    }
+  }
   while(G.beats.length<G.total&&G.nextBeat<now+.18){
     const idx=G.beats.length,when=G.nextBeat;
     playBeat(when,idx);G.beats.push(when);G.nextBeat+=iv;
@@ -3879,12 +3921,13 @@ function schedTick(){
       // Speak current item — speech IS the beat in vocab/math modes
       if(G.gameMode==='vocab'){
         const cur=G.vocabSeq[Math.min(idx,G.vocabSeq.length-1)];
-        if(cur?.type==='letter') speak(cur.letter, .7);
+        if(cur?.type==='announce') speak(cur.word, 1.0);          // say the word before letters start
+        else if(cur?.type==='go')  speak('go', 0.9);              // GO! signal
+        else if(cur?.type==='letter') speak(cur.letter, .7);
         else if(cur?.type==='syllable') speak(cur.letter, .82);
-        else if(cur?.type==='word') speak(cur.word, .9);
-        else if(cur?.type==='rest'||cur?.type==='wordbreak') {/* silence */}
+        else if(cur?.type==='word') speak(cur.word, .9);          // say whole word after letters
+        else if(cur?.type==='pause'||cur?.type==='rest'||cur?.type==='wordbreak') {/* silence */}
         else if(cur?.type==='longBreak'){
-          // First beat of the break — show overlay, mute metronome for break duration
           if(cur.breakIdx===0){
             G.vocabOnBreak=true;
             const ov=document.getElementById('vocab-break-overlay');
@@ -3896,11 +3939,9 @@ function schedTick(){
               document.getElementById('screen-game')?.appendChild(el);
             }
           }
-          // Animate break bar
           const pct=Math.round((cur.breakIdx/cur.breakTotal)*100);
           const fill=document.getElementById('vocab-break-fill');
           if(fill) fill.style.width=pct+'%';
-          // Last beat of break — remove overlay
           if(cur.breakIdx>=cur.breakTotal-1){
             G.vocabOnBreak=false;
             setTimeout(()=>{document.getElementById('vocab-break-overlay')?.remove();},400);
@@ -3914,7 +3955,10 @@ function schedTick(){
         else if(cur?.type==='problem'&&cur.spoken) speak(cur.spoken, .82);
       }
       updateHUD();
-      if(idx+1>=G.total)setTimeout(endGame,2400);
+      // Only auto-end for fixed-beat modes (Classic, Vocab, Math)
+      // Oculomotor/Motion/ActiveGames are open-ended — exit manually or via session timer
+      const isOpenEnded=G.gameMode==='oculomotor'||G.gameMode==='motion'||G.gameMode==='activegames';
+      if(!isOpenEnded&&idx+1>=G.total)setTimeout(endGame,2400);
     },ms);
   }
 }
@@ -3994,9 +4038,10 @@ function handleTap(side){
   const W=canvas?.width||380,H=canvas?.height||260;
   const isEduMode=G.gameMode==='vocab'||G.gameMode==='math';
   const isOcu=G.gameMode==='oculomotor';
+  const isWMTap=isOcu&&G.ocuMode==='saccades2';
   const isMotion=G.gameMode==='motion';
   const isAG=G.gameMode==='activegames';
-  const isSingle=isLvSingle(G.lvId)||isEduMode||G.gameMode==='hurdle'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||isOcu||isMotion||isAG;
+  const isSingle=isLvSingle(G.lvId)||isEduMode||G.gameMode==='hurdle'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||(isOcu&&!isWMTap)||isMotion||isAG;
   const tapSide=isSingle?'C':side;
 
   // Simultaneous bilateral — dispatch to both L and R
@@ -4010,12 +4055,16 @@ function handleTap(side){
 
   // Edu modes: tap = register timing against spoken beat (NOT oculomotor)
   if(isEduMode&&!isOcu){
+    // Vocab listen-only mode — no accuracy tracking
+    if(G.gameMode==='vocab'&&!S.vocabTrackAcc) return;
     if(!G.beats.length)return;
     // Check if current beat is a rest — silently ignore taps during rests
     const curSeq=G.gameMode==='vocab'?G.vocabSeq:G.mathSeq;
     const curIdx=G.gameMode==='vocab'?G.vocabIdx:G.mathIdx;
     const curBeat=curSeq?.[curIdx];
-    if(curBeat?.type==='rest'||curBeat?.type==='wordbreak'||curBeat?.type==='longBreak') return;
+    // Don't score taps on announce, go, pause, rest, or break beats
+    if(curBeat?.type==='rest'||curBeat?.type==='wordbreak'||curBeat?.type==='longBreak'||
+       curBeat?.type==='announce'||curBeat?.type==='go'||curBeat?.type==='pause') return;
     const nearest=G.beats.reduce((b,t)=>{return Math.abs(t-tapTime)<Math.abs(b-tapTime)?t:b;},G.beats[0]);
     const rawDev=Math.round((tapTime-nearest)*1000);
     const dev=rawDev-G.calibOff;
@@ -4033,9 +4082,9 @@ function handleTap(side){
     return;
   }
 
-  // Whack-a-Mole — intercept before standard item tap logic
-  if(G.gameMode==='oculomotor'&&G.ocuMode==='saccades2'){
-    handleWMTap(tapSide==='C'?'L':tapSide); // default to L if center tap
+  // Whack-a-Mole — intercept with real L/R side
+  if(isWMTap){
+    handleWMTap(side==='L'||side==='R'?side:'L');
     return;
   }
 
@@ -4156,6 +4205,11 @@ function startCountdown(){
     const seq=G.gameMode==='vocab'?G.vocabSeq:G.mathSeq;
     pattern=seq.map((_,i)=>i%2===0?'L':'R');// just for beat count
     G.total=seq.length;
+  } else if(G.gameMode==='oculomotor'||G.gameMode==='motion'||G.gameMode==='activegames'){
+    // Open-ended modes — no fixed beat count, endGame fires manually or via session timer
+    // Use a large number so schedTick never stops the beat
+    G.total=999;
+    pattern=Array(999).fill('B');
   } else {
     pattern=PATS[lv.id];G.total=pattern.length;
   }
@@ -4177,12 +4231,28 @@ function startCountdown(){
       }
     });
   }
-  // Build tap buttons — single for Level 1, edu, bubblegum, target range, oculomotor, motion
+  // Build tap buttons
+  // saccades2 (Whack-a-Mole) gets dedicated L/R buttons
+  const isWM=G.gameMode==='oculomotor'&&G.ocuMode==='saccades2';
   const tb=document.getElementById('tap-btns');
   const isAGMode=G.gameMode==='activegames';
-  const isSingle=isLvSingle(lv.id)||isEduMode||G.gameMode==='hurdle'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||G.gameMode==='oculomotor'||G.gameMode==='motion'||isAGMode;
+  const isSingle=isLvSingle(lv.id)||isEduMode||G.gameMode==='hurdle'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||(G.gameMode==='oculomotor'&&!isWM)||G.gameMode==='motion'||isAGMode;
   const isSimul=isLvSimul(lv.id);
-  if(isSingle&&!isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">any key · tap anywhere</div></button>';}
+  if(isWM){
+    // Whack-a-Mole: big L and R tap buttons, no metronome, reaction-based
+    tb.style.gridTemplateColumns='1fr 1fr';
+    const wbL=document.createElement('button');
+    wbL.className='tap-btn L';wbL.style.cssText='font-size:21px;padding:22px 0;';
+    wbL.innerHTML='<span style="display:block;">← LEFT</span><div style="font-size:11px;opacity:.65;margin-top:4px;">f · z · ←</div>';
+    wbL.ontouchstart=function(e){e.preventDefault();handleTap('L');};
+    wbL.onmousedown=function(e){e.preventDefault();handleTap('L');};
+    const wbR=document.createElement('button');
+    wbR.className='tap-btn R';wbR.style.cssText='font-size:21px;padding:22px 0;';
+    wbR.innerHTML='<span style="display:block;">RIGHT →</span><div style="font-size:11px;opacity:.65;margin-top:4px;">j · / · →</div>';
+    wbR.ontouchstart=function(e){e.preventDefault();handleTap('R');};
+    wbR.onmousedown=function(e){e.preventDefault();handleTap('R');};
+    tb.innerHTML='';tb.appendChild(wbL);tb.appendChild(wbR);
+  } else if(isSingle&&!isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">any key · tap anywhere</div></button>';}
   else if(isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" style="background:linear-gradient(135deg,#B85450,#5C4490);" ontouchstart="ev=event;ev.preventDefault();handleTap(\'S\')" onmousedown="event.preventDefault();handleTap(\'S\')">BOTH HANDS<div style="font-size:8px;opacity:.75;margin-top:3px;">tap with both · any key</div></button>';}
   else{tb.style.gridTemplateColumns='1fr 1fr';tb.innerHTML='<button class="tap-btn L" ontouchstart="ev=event;ev.preventDefault();handleTap(\'L\')" onmousedown="event.preventDefault();handleTap(\'L\')">LEFT<div style="font-size:8px;opacity:.65;margin-top:2px;">f ← z Shift</div></button><button class="tap-btn R" ontouchstart="ev=event;ev.preventDefault();handleTap(\'R\')" onmousedown="event.preventDefault();handleTap(\'R\')">RIGHT<div style="font-size:8px;opacity:.65;margin-top:2px;">j → / Ctrl</div></button>';}
   document.getElementById('g-lv-lbl').textContent=lv.icon+' '+lv.name+' · '+G.bpm+' BPM · '+G.gameMode;
@@ -4195,10 +4265,11 @@ function startCountdown(){
       ?' · Letters spoken aloud — tap each one · 3 loops per word'
       :' · Numbers spoken aloud — tap each one')
     :G.gameMode==='oculomotor'
-      ?({pursuits:' · Follow target · Tap at turnaround',
-         saccades:' · Follow dot · Tap when it jumps',
-         depth:   ' · Watch it grow · Tap when it fills the screen',
-         gaze:    ' · Keep eyes on center · Tap every beat'}[G.ocuMode]||'')
+      ?({pursuits:  ' · Follow target · Tap at turnaround',
+         pursuits2: ' · Follow target with your eyes — no tapping',
+         saccades:  ' · Follow dot · Tap when it jumps',
+         saccades2: ' · Tap LEFT or RIGHT — match the mole\'s side!',
+         attention: ' · Stare at the dot — hold your gaze'}[G.ocuMode]||'')
       :'';
   const beatDesc=isEduMode?'Speech IS the beat — no click sound':smLbl[S.soundMode];
   document.getElementById('cd-sub').textContent=lv.name+' · '+G.bpm+' BPM · '+beatDesc+edNote;
