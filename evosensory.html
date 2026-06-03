@@ -4217,8 +4217,9 @@ function startCountdown(){
   G.nextBeat=firstBeat;
   // Store spawn data for beginGame to use confirmed AudioContext time
   G._spawnData={isEduMode,lv,iv,fd};
-  // Pre-spawn items optimistically — beginGame will re-spawn with fresh timestamps
-  if(!isEduMode){
+  // Pre-spawn items for Classic modes — beginGame re-spawns with fresh AudioContext time
+  const isOpenEnded=G.gameMode==='oculomotor'||G.gameMode==='motion'||G.gameMode==='activegames';
+  if(!isEduMode&&!isOpenEnded){
     G.items=[];
     PATS[lv.id].forEach((side,idx)=>{
       if(side==null)return;
@@ -4299,6 +4300,7 @@ function beginGame(){
   // This fixes iOS where currentTime may not advance during suspension
   if(G._spawnData){
     const {isEduMode,lv,iv,fd}=G._spawnData;
+    const isOpenEnded=G.gameMode==='oculomotor'||G.gameMode==='motion'||G.gameMode==='activegames';
     const firstBeat=G.audioCtx.currentTime+1.5; // 1.5s from game screen appearing
     G.nextBeat=firstBeat;
     // Schedule 3 count-in beats at BPM tempo before the first scored beat
@@ -4315,7 +4317,7 @@ function beginGame(){
         cio.start(ciWhen);cio.stop(ciWhen+.12);
       }
     }
-    if(!isEduMode){
+    if(!isEduMode&&!isOpenEnded){
       G.items=[];
       PATS[lv.id].forEach((side,idx)=>{
         if(side==null)return;
@@ -6254,10 +6256,17 @@ document.addEventListener('keydown',e=>{
 });
 document.getElementById('gc').addEventListener('pointerdown',e=>{
   e.preventDefault();
+  if(!G.playing) return; // ignore canvas taps when not in game
   const r=e.currentTarget.getBoundingClientRect();
   const isEduMode=G.gameMode==='vocab'||G.gameMode==='math';
-  const isSingle=G.lvId===1||isEduMode;
-  handleTap(isSingle?'C':e.clientX-r.left<r.width/2?'L':'R');
+  const isOcu=G.gameMode==='oculomotor';
+  const isWMTap=isOcu&&G.ocuMode==='saccades2';
+  // Match the isSingle logic in handleTap exactly
+  const isSingle=isLvSingle(G.lvId)||isEduMode||
+    G.gameMode==='hurdle'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||
+    (isOcu&&!isWMTap)||G.gameMode==='motion'||G.gameMode==='activegames';
+  const side=isSingle?'C':e.clientX-r.left<r.width/2?'L':'R';
+  handleTap(side);
 },{passive:false});
 
 /* ═══ INIT ═══════════════════════════════════════════ */
