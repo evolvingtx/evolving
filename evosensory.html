@@ -19,38 +19,46 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" media="print" onload="this.media='all';this.onload=null;" onerror="this.remove()"/>
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap"/></noscript>
 <script>
-// Must be first — catches errors from all subsequent scripts including CDN
+// Must be FIRST — suppresses CDN/CSP errors that show as "Script error." in Claude sandbox
 window.onerror = function(msg, src, line, col, err){
-  // Suppress ALL cross-origin and CDN errors — these fire in Claude's artifact
-  // sandbox where external scripts are blocked by CSP and reported as "Script error."
   if(!msg) return true;
   const m=String(msg);
-  if(m==='Script error.'||m==='Script error'||m==='') return true;
-  if(!src||src==='') return true; // cross-origin suppressed
-  const s=String(src||'');
-  if(s.includes('webgazer')||s.includes('mediapipe')||
-     s.includes('jsdelivr')||s.includes('unpkg')||
-     s.includes('googleapis')||s.includes('gstatic')||
-     s.includes('chart')) return true;
-  // Suppress any error that looks like a network/CSP block
-  if(m.includes('Script error')||m.includes('Network')||
-     m.includes('CSP')||m.includes('blocked')||
-     m.includes('Loading')||m.includes('fetch')||
-     m.includes('CORS')||m.includes('cross-origin')) return true;
-  console.warn('EvoSensory:', m, s, line);
-  return false; // let genuine app errors through to console only
+  // Always suppress the generic cross-origin error message
+  if(m==='Script error.'||m==='Script error'||m===''||m==='undefined') return true;
+  // No src = cross-origin suppressed by browser security — not a real app error
+  if(!src||src===''||src==='null') return true;
+  const s=String(src);
+  // Suppress all CDN / external script errors
+  if(s.includes('webgazer')||s.includes('mediapipe')||s.includes('jsdelivr')||
+     s.includes('unpkg')||s.includes('googleapis')||s.includes('gstatic')||
+     s.includes('chart')||s.includes('cdn.')||s.includes('cdnjs.')) return true;
+  // Suppress network/CSP/sandbox error patterns
+  if(m.includes('Script error')||m.includes('Network')||m.includes('CSP')||
+     m.includes('blocked')||m.includes('Loading')||m.includes('fetch')||
+     m.includes('CORS')||m.includes('cross-origin')||m.includes('Failed to')|| 
+     m.includes('net::')||m.includes('ERR_')||m.includes('SecurityError')) return true;
+  // Only let through errors from our own app code at a real URL
+  console.warn('EvoSensory app error:', m, s, line);
+  return false;
 };
 window.addEventListener('unhandledrejection', function(e){
-  const msg=String(e?.reason?.message||e?.reason||'');
+  if(!e||!e.reason) { e.preventDefault(); return; }
+  const msg=String(e.reason?.message||e.reason||'');
   if(!msg||msg.includes('webgazer')||msg.includes('mediapipe')||
-     msg.includes('Script error')||msg.includes('Loading')||
-     msg.includes('Network')||msg.includes('fetch')||
-     msg.includes('CORS')||msg.includes('CSP')||
-     msg.includes('Failed to load')||msg.includes('net::')) {
+     msg.includes('Script error')||msg.includes('Loading')||msg.includes('Network')||
+     msg.includes('fetch')||msg.includes('CORS')||msg.includes('CSP')||
+     msg.includes('Failed to')||msg.includes('net::')||msg.includes('ERR_')) {
     e.preventDefault();
-    return;
   }
 });
+// Also suppress addEventListener errors thrown by blocked resources
+window.addEventListener('error', function(e){
+  if(e&&e.target&&e.target!==window){
+    // Resource load error (img, script, link) — not a JS error
+    e.stopPropagation();
+    return false;
+  }
+}, true); // capture phase catches resource errors before they bubble
 </script>
 <!-- chart.js loaded async — degrades gracefully if blocked by sandbox/offline -->
 <script>
@@ -961,7 +969,8 @@ here</textarea>
   </div>
 </div>
 
-<!-- STATS -->
+<!-- STATS — rendered but showScreen('stats') currently unreachable from UI;
+         kept as future feature hook; renderStats() is called by showScreen dispatcher -->
 <div id="screen-stats" class="screen">
   <button class="btn-sm" style="align-self:flex-start;" onclick="showScreen('module')">← Back</button>
   <div class="mx" style="display:flex;align-items:center;justify-content:space-between;">
@@ -1225,14 +1234,14 @@ const S={soundMode:'count',audioOn:true,metroOn:true,hapticOn:true,rumbleOn:true
 /* ═══ GAME STATE ════════════════════════════════════ */
 const G={
   lvId:1,bpm:56,customBpm:false,gameMode:'standard',
-  calibOff:0,hitWin:115,sessions:[],acc:{},
+  calibOff:0,hitWin:115,sessions:[], // REMOVED: acc:{} — duplicate of recentAcc, 0 reads
   playing:false,score:0,streak:0,maxStreak:0,beatsDone:0,total:0,
   items:[],beats:[],nextBeat:0,hits:[],particles:[],popups:[],
   consecMiss:0,recentDev:[],recentAcc:[],moneyTotal:0,_spawnData:null,
   sessionStart:0,restPrompted:false,  // session timer for rest-break prompt
   audioCtx:null,schedTimer:null,motionTimer:null,animFr:null,
   blindStart:null,cvOpacity:1,crossGlow:0,
-  bubble:{size:0,max:68,burstParts:[],mood:'idle'},
+  // REMOVED: bubble:{...} — Bubble Blast removed in Build 5; all G.bubble.* had 0 uses
   // Vocab/math
   vocabSeq:[],vocabIdx:0,mathSeq:[],mathIdx:0,vocabFlash:0,
   mathOp:'count',mathParam:2,
@@ -1975,6 +1984,7 @@ function setGM(m){
   const agsub=document.getElementById('ag-submode');
   if(agsub) agsub.style.display=m==='activegames'?'block':'none';
   if(m==='oculomotor'){
+    // KEPT: depth/gaze fallback — handles old saved session data from Build 2 gracefully
     setOcuMode(G.ocuMode==='depth'||G.ocuMode==='gaze'?'pursuits':(G.ocuMode||'pursuits'));
   } else if(m==='motion'){
     setMotMode(M.motMode||'clap');
@@ -3587,6 +3597,14 @@ function drawWhackAMole(ctx,W,H,an){
   }
   ctx.textBaseline='alphabetic';
 }
+
+/* ── SMOOTH PURSUITS 2 — GAZE TRACKING ───────────────
+   Same target path as Pursuits. Camera watches where
+   the patient's eyes go — no tapping required.
+   WebGazer gaze overlay visible to therapist.
+   Chrome desktop + WebGazer calibration required.
+───────────────────────────────────────────────────── */
+function drawPursuits2(ctx,W,H,an){
   const iv=60/G.bpm;
   const elapsed=G.lastBeatTime>0?(an-G.lastBeatTime):0;
   const phase=Math.min(elapsed/iv,1.0);
@@ -4204,7 +4222,7 @@ function beginGame(){
     G.audioCtx.resume().then(()=>setTimeout(beginGame,80)).catch(()=>setTimeout(beginGame,80));
     return;
   }
-  G.playing=true;G.goTime=G.audioCtx.currentTime+1.2;
+  G.playing=true; // REMOVED: G.goTime write — was set but never read back anywhere
   if(S.blindMode)G.blindStart=Date.now();
   // Re-spawn items with confirmed post-resume AudioContext time
   // This fixes iOS where currentTime may not advance during suspension
@@ -4699,7 +4717,7 @@ const M={
   landmarks:null,
   clapFlash:0,
   tapCooldown:0,
-  prevAnkleY:null,
+  // REMOVED: prevAnkleY:null — declared but never read; leftover from earlier jump detection approach
   jumpBaseline:null,
   beatCount:0,
   useFallback:false,
@@ -5992,13 +6010,9 @@ function startAfterWGCalib(){
 }
 
 // Called from startCountdown when oculomotor + WG.active + !WG.calibrated
-function checkAndOpenWGSetup(){
-  if(WG.active&&!WG.calibrated){
-    openWGSetup();
-    return true; // intercepted
-  }
-  return false;
-}
+// REMOVED: checkAndOpenWGSetup() — was declared but never called anywhere.
+// Its logic (check WG.active && !WG.calibrated → openWGSetup()) is duplicated
+// inline at every call site that needs it. Dead code since Build 2.
 
 // Overlay gaze dot during oculomotor game draw
 // Smoothed gaze position — exponential moving average to reduce jitter
