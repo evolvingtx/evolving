@@ -214,7 +214,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
     <div class="step-num">3</div>
     <div class="step-body">
       <div class="step-title">Choose a module and level</div>
-      <div class="step-desc">Select <strong>Classic → Level 1</strong> to start. Classic is the evidence-based core — start every patient here. Adjust BPM with the + / − buttons. See the <a href="evosensory-modules.html" style="color:var(--p);">Module Guide</a> for when to add other modules.</div>
+      <div class="step-desc">Select <strong>Classic → Level 0 or Level 1</strong> to start. Level 0 (First Beat 🌱) uses one-sided tapping at 48 BPM — ideal for very young children, lower-function patients, or anyone new to the app. Level 1 is the standard bilateral starting point at 56 BPM. Classic is the evidence-based core — start every patient here. Adjust BPM with the + / − buttons. See the <a href="evosensory-modules.html" style="color:var(--p);">Module Guide</a> for when to add other modules.</div>
     </div>
   </div>
   <div class="step">
@@ -235,9 +235,44 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
     <div class="step-num">6</div>
     <div class="step-body">
       <div class="step-title">Review results and generate a SOAP note</div>
-      <div class="step-desc">When the session ends, results appear automatically. Tap <strong>Generate SOAP Note</strong> to get a pre-populated draft. Copy to clipboard or print. Edit before pasting into your EMR.</div>
+      <div class="step-desc">When the session ends, results appear automatically. Tap <strong>Generate SOAP Note</strong> to get a pre-populated draft. Copy to clipboard, print, or tap ✉️ Email to send to your saved address. Edit before pasting into your EMR.</div>
     </div>
   </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- LEVEL PROGRESSION -->
+<section id="levels">
+  <div class="section-label">Classic Module</div>
+  <h2>Level Progression</h2>
+  <p>Classic has eight levels. Advance when the patient reaches 85%+ accuracy across two consecutive sessions at the current BPM. Increase BPM by 4–8 before advancing level when accuracy is consistently high.</p>
+
+  <table>
+    <thead><tr><th>Level</th><th>Name</th><th>Default BPM</th><th>Pattern</th><th>Visual Game</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>🌱 First Beat</td><td>48</td><td>One side only (unilateral)</td><td>Falling Notes</td></tr>
+      <tr><td>1</td><td>🎵 Warm Up</td><td>56</td><td>Single button, every beat</td><td>Falling Notes</td></tr>
+      <tr><td>1b</td><td>🤝 Both Hands</td><td>56</td><td>Both sides simultaneously every beat</td><td>Falling Notes</td></tr>
+      <tr><td>2</td><td>🎈 Finding It</td><td>66</td><td>Alternating L/R</td><td>Falling Notes</td></tr>
+      <tr><td>3</td><td>🎯 In the Groove</td><td>76</td><td>Alternating L/R with rests</td><td>Falling Notes</td></tr>
+      <tr><td>4</td><td>🚗 Steady Beat</td><td>88</td><td>Complex sequences</td><td>Falling Notes</td></tr>
+      <tr><td>5</td><td>⚽ Beat Master</td><td>100</td><td>Irregular patterns</td><td>Falling Notes</td></tr>
+      <tr><td>6</td><td>🦶 Foot Tap</td><td>60</td><td>Bilateral foot tap</td><td>Falling Notes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Visual Games (Classic)</h3>
+  <p>All Classic levels can use any of four visual game modes, selectable before each session:</p>
+  <table>
+    <thead><tr><th>Game</th><th>Description</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>🎵 Falling Notes</td><td>Items fall from the top. Tap when they cross the catch line.</td><td>All levels — standard mode</td></tr>
+      <tr><td>🏇 Hurdle Jump</td><td>Horse gallops and jumps hurdles on the beat. Visual TAP! ring cues timing.</td><td>Engagement, motivation, children</td></tr>
+      <tr><td>🎯 Target Range</td><td>Animals cross the scene in time with the beat. Tap when inside the crosshair.</td><td>Variety, visual attention</td></tr>
+      <tr><td>💰 Money Catcher</td><td>Stars fall from the sky — catch them with your hands. Perfect = $100 bill.</td><td>Reward-driven patients, motivation</td></tr>
+    </tbody>
+  </table>
 </section>
 
 <hr class="divider"/>
@@ -351,7 +386,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
 <section id="soap">
   <div class="section-label">Documentation</div>
   <h2>SOAP Note Guide</h2>
-  <p>After every session, tap <strong>Generate SOAP Note</strong> on the results screen or from the stats screen (last session). The note is pre-populated with all session data. It includes a "how to read this note" footnote at the bottom for reviewers unfamiliar with the tool.</p>
+  <p>After every session, tap <strong>Generate SOAP Note</strong> on the results screen. The note is pre-populated with all session data. Actions: <strong>📋 Copy</strong> to clipboard · <strong>🖨️ Print</strong> · <strong>✉️ Email</strong> (pre-fills your saved address — set once in ⚙️ Settings → Therapist Email). The note includes a "how to read this note" footnote for reviewers unfamiliar with the tool.</p>
 
   <h3>What's in Each Section</h3>
   <table>
@@ -391,6 +426,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
       <tr><td>Therapist View</td><td>Shows ms deviation and clinical notes in real time on screen during the session</td></tr>
       <tr><td>Session Setup Prompt</td><td>Shows hardware confirmation before each session. Turn off once your workflow is established — or use "Don't show again" in the prompt itself.</td></tr>
       <tr><td>Speech (Cognitive)</td><td>Enables spoken vocabulary and math for the Cognitive module</td></tr>
+      <tr><td>Track Accuracy (Vocab)</td><td>On: patient taps each letter on the beat — scored for timing. Off: listen-only mode — patient says letters aloud, no tapping required. Useful for patients who can verbalize but not tap simultaneously.</td></tr>
       <tr><td>Haptic Intensity</td><td>Slider for device vibration strength (mobile only)</td></tr>
     </tbody>
   </table>
@@ -404,7 +440,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
   <h2>Calibration</h2>
 
   <h3>Eye Tracking Calibration (WebGazer)</h3>
-  <p>Eye tracking is available in <strong>Smooth Pursuits 2</strong> and <strong>Attention Hold</strong> sub-modes. When turned on, it uses your front camera to estimate where the patient's eyes are pointing. It is a screening-level tool — not clinical-grade eye movement recording. Chrome desktop + WebGazer required.</p>
+  <p>Eye tracking (WebGazer) is available in two Oculomotor sub-modes. <strong>Smooth Pursuits 2</strong>: camera estimates gaze position as the patient follows a moving target — no tapping required. <strong>Attention Hold</strong>: camera confirms whether the patient is looking at the fixation dot during holds. Both are screening-level tools — not clinical-grade eye movement recording. Chrome desktop + WebGazer calibration required for Pursuits 2.</p>
   <p><strong>Requirements:</strong> Chrome on a Windows, Mac, or Android computer. Not supported on iPhone, iPad, or Safari.</p>
   <p><strong>How to calibrate:</strong> Enable the toggle, then tap Play. A 9-point calibration grid appears. Look at each numbered dot and tap or click it. Once all 9 are calibrated, tap Start Session. The gaze crosshair appears on the canvas during the session.</p>
   <div class="callout callout-purple">
