@@ -2700,7 +2700,7 @@ function drawStandard(ctx,W,H,an){
   G.items=alive;
   lanes.forEach(lane=>{
     let glow=0;G.items.forEach(item=>{if(item.status!=='falling')return;if(lane.side!=='B'&&item.side!==lane.side)return;const t=item.audioBeat-an;if(t>=0&&t<=.45)glow=Math.max(glow,1-t/.45);});
-    drawCatchLine(ctx,lane.cx,CY,lane.w,glow,THEMES[G.lvId]['col'+lane.side]||'#5C4490');
+    drawCatchLine(ctx,lane.cx,CY,lane.w,glow,THEMES[G.lvId]?.['col'+lane.side]||'#5C4490');
   });
   ctx.textBaseline='alphabetic';
   // ── Patient deviation needle (research-aligned real-time feedback) ──
@@ -3967,7 +3967,26 @@ let _drawFn=null;
 let _drawErrCount=0;
 function gameDraw(){
   const canvas=document.getElementById('gc');if(!canvas)return;
-  const ctx=canvas.getContext('2d');const W=canvas.width,H=canvas.height;if(!W||!H)return;
+  const ctx=canvas.getContext('2d');
+  if(!ctx){
+    // Canvas context not ready — try resizing then re-queue
+    const cw=document.getElementById('cw');
+    const w=cw?.offsetWidth||window.innerWidth||380;
+    const h=cw?.offsetHeight||260;
+    if(w>0&&h>0){canvas.width=w;canvas.height=h;}
+    if(G.playing)G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
+    return;
+  }
+  const W=canvas.width,H=canvas.height;
+  if(!W||!H){
+    // Canvas has no dimensions yet — force size and retry
+    const cw=document.getElementById('cw');
+    const w=cw?.offsetWidth||window.innerWidth||380;
+    const h=cw?.offsetHeight||260;
+    canvas.width=w;canvas.height=h;
+    if(G.playing)G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
+    return;
+  }
   const an=G.audioCtx?G.audioCtx.currentTime:0;
   try{
     if(S.blindMode&&G.blindStart){const el=(Date.now()-G.blindStart)/1000;const t=el>13?0:el>10?1-(el-10)/3:1;G.cvOpacity+=(t-G.cvOpacity)*.05;canvas.style.opacity=G.cvOpacity;}
@@ -4338,12 +4357,18 @@ function beginGame(){
   const cw=document.getElementById('cw'),gc=document.getElementById('gc');
   const sz=()=>{
     const w=cw.offsetWidth||window.innerWidth||380;
-    const h=cw.offsetHeight||(window.innerHeight*.55)||260;
+    const h=cw.offsetHeight||Math.round(window.innerHeight*.55)||260;
     if(w>0&&h>0){gc.width=w;gc.height=h;}
   };
-  sz();
+  sz(); // immediate — may be 0 on iOS before reflow
+  // Force minimum size right now so canvas is never 0x0 when rAF fires
+  if(!gc.width||!gc.height){
+    gc.width=window.innerWidth||380;
+    gc.height=Math.round((window.innerHeight||600)*.55)||300;
+  }
   requestAnimationFrame(()=>{ sz(); });
-  setTimeout(()=>{ sz(); },100);
+  setTimeout(()=>{ sz(); },50);
+  setTimeout(()=>{ sz(); },200); // belt-and-suspenders for slow iOS layout
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}}
   G._resizeObs=new ResizeObserver(sz);
   G._resizeObs.observe(cw);
@@ -4352,7 +4377,14 @@ function beginGame(){
   if(G.gameMode==='motion'||G.gameMode==='activegames'){
     G.motionTimer=setInterval(()=>{if(G.playing)motionDetectLoop();},80);
   }
-  G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());updateHUD();
+  // Delay rAF by one frame — gives iOS time to reflow canvas before first draw
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      sz(); // re-measure after two frames
+      G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
+    });
+  });
+  updateHUD();
 }
 
 function exitGameEarly(){
