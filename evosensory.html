@@ -3967,26 +3967,9 @@ let _drawFn=null;
 let _drawErrCount=0;
 function gameDraw(){
   const canvas=document.getElementById('gc');if(!canvas)return;
-  const ctx=canvas.getContext('2d');
-  if(!ctx){
-    // Canvas context not ready — try resizing then re-queue
-    const cw=document.getElementById('cw');
-    const w=cw?.offsetWidth||window.innerWidth||380;
-    const h=cw?.offsetHeight||260;
-    if(w>0&&h>0){canvas.width=w;canvas.height=h;}
-    if(G.playing)G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
-    return;
-  }
+  const ctx=canvas.getContext('2d');if(!ctx)return; // not ready yet — rAF already queued by beginGame
   const W=canvas.width,H=canvas.height;
-  if(!W||!H){
-    // Canvas has no dimensions yet — force size and retry
-    const cw=document.getElementById('cw');
-    const w=cw?.offsetWidth||window.innerWidth||380;
-    const h=cw?.offsetHeight||260;
-    canvas.width=w;canvas.height=h;
-    if(G.playing)G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
-    return;
-  }
+  if(!W||!H)return; // canvas not sized yet — rAF still queued
   const an=G.audioCtx?G.audioCtx.currentTime:0;
   try{
     if(S.blindMode&&G.blindStart){const el=(Date.now()-G.blindStart)/1000;const t=el>13?0:el>10?1-(el-10)/3:1;G.cvOpacity+=(t-G.cvOpacity)*.05;canvas.style.opacity=G.cvOpacity;}
@@ -4355,35 +4338,37 @@ function beginGame(){
   showScreen('game');
   applyDesktopGameLayout();
   const cw=document.getElementById('cw'),gc=document.getElementById('gc');
+
+  // Only set canvas dimensions when they genuinely change.
+  // Assigning canvas.width/height ALWAYS clears the canvas — so we must
+  // guard against redundant assignments that would wipe a frame mid-draw.
   const sz=()=>{
-    const w=cw.offsetWidth||window.innerWidth||380;
-    const h=cw.offsetHeight||Math.round(window.innerHeight*.55)||260;
-    if(w>0&&h>0){gc.width=w;gc.height=h;}
+    const w=Math.round(cw.offsetWidth||window.innerWidth||380);
+    const h=Math.round(cw.offsetHeight||260);
+    if(w>10&&h>10&&(gc.width!==w||gc.height!==h)){
+      gc.width=w;
+      gc.height=h;
+    }
   };
-  sz(); // immediate — may be 0 on iOS before reflow
-  // Force minimum size right now so canvas is never 0x0 when rAF fires
-  if(!gc.width||!gc.height){
-    gc.width=window.innerWidth||380;
-    gc.height=Math.round((window.innerHeight||600)*.55)||300;
-  }
-  requestAnimationFrame(()=>{ sz(); });
-  setTimeout(()=>{ sz(); },50);
-  setTimeout(()=>{ sz(); },200); // belt-and-suspenders for slow iOS layout
+
+  // Set size immediately — use window dimensions as a guaranteed fallback
+  // so canvas is never 0×0 when the first draw frame fires
+  const initW=Math.round(cw.offsetWidth||window.innerWidth||380);
+  const initH=Math.round(cw.offsetHeight||260);
+  gc.width  = initW > 10 ? initW : Math.min(window.innerWidth||380, 400);
+  gc.height = initH > 10 ? initH : 260;
+
+  // One resize-observer pass — fires if layout changes after game screen appears
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}}
   G._resizeObs=new ResizeObserver(sz);
   G._resizeObs.observe(cw);
   G.schedTimer=setInterval(schedTick,50);schedTick();
-  // Motion detection on its own 80ms interval — separate from rAF to avoid mobile freeze
+  // Motion detection on its own 80ms interval — separate from rAF
   if(G.gameMode==='motion'||G.gameMode==='activegames'){
     G.motionTimer=setInterval(()=>{if(G.playing)motionDetectLoop();},80);
   }
-  // Delay rAF by one frame — gives iOS time to reflow canvas before first draw
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      sz(); // re-measure after two frames
-      G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
-    });
-  });
+  // Start draw loop immediately — canvas is already sized above
+  G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
   updateHUD();
 }
 
