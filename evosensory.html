@@ -437,7 +437,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
       </div>
       <div style="background:var(--pp);border-radius:10px;padding:9px;">
         <div style="font-size:13px;font-weight:500;color:var(--p);">👁️ Oculomotor</div>
-        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Pursuits, saccades, depth pulse, and gaze hold — all synced to the beat. Optional camera eye tracking on Chrome.</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Pursuits, saccades, gaze tracking, and attention hold — synced to the beat. Optional camera eye tracking on Chrome.</div>
       </div>
       <div style="background:var(--pp);border-radius:10px;padding:9px;">
         <div style="font-size:13px;font-weight:500;color:var(--p);">🧠 Cognitive</div>
@@ -518,7 +518,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
       <div class="mod-pick-icon">👁️</div>
       <div class="mod-pick-body">
         <div class="mod-pick-name">EvoSensory Oculomotor</div>
-        <div class="mod-pick-desc">Visual tracking synced to the beat. Pursuits, saccades, depth, gaze hold.</div>
+        <div class="mod-pick-desc">Visual tracking synced to the beat. Pursuits, saccades, gaze tracking, attention hold.</div>
       </div>
       <div class="mod-pick-arrow">›</div>
     </div>
@@ -775,8 +775,8 @@ here</textarea>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
         <button class="pill-btn active" id="ocu-btn-pursuits" onclick="setOcuMode('pursuits')"><span class="pi" style="font-size:13px;">↔️</span>Smooth Pursuits</button>
         <button class="pill-btn" id="ocu-btn-saccades" onclick="setOcuMode('saccades')"><span class="pi" style="font-size:13px;">⚡</span>Saccadic Jumps</button>
-        <button class="pill-btn" id="ocu-btn-depth" onclick="setOcuMode('depth')"><span class="pi" style="font-size:13px;">🔮</span>Depth Pulse</button>
-        <button class="pill-btn" id="ocu-btn-gaze" onclick="setOcuMode('gaze')"><span class="pi" style="font-size:13px;">🎯</span>Gaze Hold</button>
+        <button class="pill-btn" id="ocu-btn-gazetrack" onclick="setOcuMode('gazetrack')"><span class="pi" style="font-size:13px;">👁️</span>Gaze Tracking</button>
+        <button class="pill-btn" id="ocu-btn-attention" onclick="setOcuMode('attention')" style="grid-column:span 2;"><span class="pi" style="font-size:13px;">✨</span>Attention Hold — Magic Eyes</button>
       </div>
       <div id="ocu-clinical-note" style="font-size:10px;color:var(--gn);background:var(--gp);border-radius:7px;padding:6px 9px;margin-top:7px;line-height:1.65;"></div>
       <!-- WebGazer eye tracking toggle — oculomotor only -->
@@ -1212,7 +1212,7 @@ const GM_DESC={
   moneycatch: 'EvoSensory Classic — Stars fall from the sky. Catch them with your hands. The more accurate your timing, the higher the bill — $100 for perfect!',
   vocab:      'EvoSensory Cognitive — App SPEAKS each letter as the beat. Tap it. Then syllables. Then the whole word. 3 loops per word. Speech IS the beat.',
   math:       'EvoSensory Cognitive — App SPEAKS each number as the beat. Tap it. Addition and multiplication problems spoken aloud. Speech IS the beat.',
-  oculomotor: 'EvoSensory Oculomotor — Visual tracking synced to the metronome. Follow the target with your eyes. Tap when it reaches the turnaround or jumps.',
+  oculomotor: 'EvoSensory Oculomotor — Visual tracking synced to the metronome. Follow the target with your eyes. Tap at turnarounds (Pursuits/Saccades) or just follow with your eyes (Gaze Tracking/Attention Hold).',
 };
 
 /* ═══ SETTINGS ══════════════════════════════════════ */
@@ -1229,7 +1229,7 @@ const G={
   items:[],beats:[],nextBeat:0,hits:[],particles:[],popups:[],
   consecMiss:0,recentDev:[],recentAcc:[],moneyTotal:0,_spawnData:null,
   sessionStart:0,restPrompted:false,  // session timer for rest-break prompt
-  audioCtx:null,schedTimer:null,animFr:null,
+  audioCtx:null,schedTimer:null,motionTimer:null,animFr:null,
   blindStart:null,cvOpacity:1,crossGlow:0,
   bubble:{size:0,max:68,burstParts:[],mood:'idle'},
   // Vocab/math
@@ -1614,8 +1614,8 @@ function buildModSettings(){
       const ocuModes=[
         ['pursuits','↔️','Smooth Pursuits','Target sweeps left and right. Tap at each turnaround. Targets smooth visual tracking and bilateral timing.'],
         ['saccades','⚡','Saccadic Jumps','Target jumps between two positions on the beat. Tap at each appearance. Targets saccadic initiation speed.'],
-        ['depth',   '🔮','Depth Pulse',    'Circle expands from center on each beat. Tap at maximum expansion. Targets visual convergence and accommodation.'],
-        ['gaze',    '🎯','Gaze Hold',      'Stationary target — hold gaze and tap the beat. Targets sustained visual attention and dual-task timing.'],
+        ['gazetrack','👁️','Gaze Tracking','Follow the moving target with your eyes. Camera tracks your gaze — no tapping. Chrome desktop + WebGazer required.'],
+        ['attention','✨','Attention Hold — Magic Eyes','Stare at the dot without looking away. Hold your gaze until the magic explodes! 5–15 second holds. Camera confirms fixation. No tapping.'],
       ];
       subCards.innerHTML=ocuModes.map(([id,ic,nm,ds])=>
         makeSubCard(id,ic,nm,ds,G.ocuMode===id,`setOcuMode('${id}');buildModSettings()`)
@@ -1973,7 +1973,7 @@ function setGM(m){
   const agsub=document.getElementById('ag-submode');
   if(agsub) agsub.style.display=m==='activegames'?'block':'none';
   if(m==='oculomotor'){
-    setOcuMode(G.ocuMode||'pursuits');
+    setOcuMode(G.ocuMode==='depth'||G.ocuMode==='gaze'?'pursuits':(G.ocuMode||'pursuits'));
   } else if(m==='motion'){
     setMotMode(M.motMode||'clap');
     const d=document.getElementById('gm-desc');if(d) d.textContent='';
@@ -1988,18 +1988,18 @@ function setGM(m){
     const cn=document.getElementById('ocu-clinical-note');if(cn)cn.textContent='';
   }
 }
-const OCU_MODES = ['pursuits','saccades','depth','gaze'];
+const OCU_MODES = ['pursuits','saccades','gazetrack','attention'];
 const OCU_DESC = {
-  pursuits: 'Smooth Pursuits — Follow the glowing target as it sweeps left and right at constant speed. Tap precisely when it hits each turnaround point.',
-  saccades: 'Saccadic Jumps — Two target boxes left and right. The dot JUMPS on the beat. Tap the moment it appears in its new position. Return gaze to center cross between jumps.',
-  depth:    'Depth Pulse — A target expands from a tiny point to fill the screen on each beat — simulating an object flying toward your face. Tap when it reaches full size. Trains convergence and accommodation.',
-  gaze:     'Gaze Hold — A stationary fixation ring in the center. Content flashes inside on every beat. Keep your eyes locked on the center while tapping the rhythm. Trains sustained fixation + dual-tasking.',
+  pursuits:   'Smooth Pursuits — Follow the glowing target as it sweeps left and right. Tap precisely when it hits each turnaround point.',
+  saccades:   'Saccadic Jumps — Dot jumps between two positions on the beat. Tap the moment it appears in the new position. Return gaze to center cross between jumps.',
+  gazetrack:  'Gaze Tracking — Follow the moving target with your eyes. Camera watches where you look. No tapping required. Chrome desktop + WebGazer required.',
+  attention:  'Attention Hold — Magic Eyes — Stare at the glowing dot without looking away. Hold as long as you can. When the magic explodes — you did it! No tapping, just eyes.',
 };
 const OCU_CLINICAL = {
-  pursuits: '🏥 Targets extraocular muscle control and smooth pursuit eye movement. Difficulty can be increased by raising BPM.',
-  saccades: '🏥 Targets saccadic initiation speed and accuracy. Fixation cross trains return fixation — the full saccade cycle.',
-  depth:    '🏥 Targets convergence (eyes turning in), accommodation (focus change), and accommodative facility. Simulates near-far depth shift on every beat.',
-  gaze:     '🏥 Targets sustained visual fixation and dual-task visual attention. Appropriate for ADHD, TBI, and nystagmus. Content inside circle adds cognitive load without breaking fixation demand.',
+  pursuits:   '🏥 Targets extraocular muscle control and smooth pursuit eye movement. Difficulty increases with BPM.',
+  saccades:   '🏥 Targets saccadic initiation speed and accuracy. Fixation cross trains return fixation — the full saccade cycle.',
+  gazetrack:  '🏥 Targets smooth pursuit accuracy via camera gaze estimation. Tracks whether eyes follow the target path. Evidence-informed extension — WebGazer is screening-level, not clinical-grade eye tracking.',
+  attention:  '🏥 Targets sustained visual attention and fixation endurance. Variable hold durations (5–15s) prevent habituation. Camera confirms gaze on target. No motor response required — purely visual. Appropriate for ADHD, autism, TBI.',
 };
 function setOcuMode(m){
   G.ocuMode=m;
@@ -2380,14 +2380,15 @@ function buildVocabSeq(){
     beatCount++;
 
     // Insert a 30-second rest break (~beatsPerMinute/2 silent beats) every ~60s
-    // Only between words, not mid-word, and only once per minute
+    // Only between words, and only once per minute
     if(!breakInserted&&beatCount>=beatsPerMinute){
-      breakInserted=false; // reset for next minute
-      beatCount=0;
+      breakInserted=true;  // prevent double-fire this minute
+      beatCount=0;         // reset counter for next minute
       const breakBeats=Math.round(bpm*0.5); // ~30 seconds of silence
       for(let b=0;b<breakBeats;b++){
         seq.push({type:'longBreak',letter:'',word:'',loop:0,breakIdx:b,breakTotal:breakBeats});
       }
+      breakInserted=false; // allow next break after another full minute
     }
   });
   return seq;
@@ -2704,8 +2705,12 @@ function drawStandard(ctx,W,H,an){
 
 /* ── HURDLE JUMP ── */
 // G.hurdle = { jumpState:0, jumpT:0, hurdleX:1.1, rating:null, ratingAge:0, streakFlash:0 }
-function initHurdle(){G.hurdle={jumpState:0,jumpT:0,hurdleX:1.1,rating:null,ratingAge:0,streakFlash:0,burstParts:[]};}
+function initHurdle(){
+  G.hurdle={jumpState:0,jumpT:0,rating:null,ratingAge:0,streakFlash:0,burstParts:[]};
+  return G.hurdle;
+}
 function updateHurdle(rating){
+  if(!G.hurdle) initHurdle();
   const H=G.hurdle;
   H.rating=rating; H.ratingAge=0;
   if(rating==='perfect')H.jumpState=1;       // clean arc
@@ -2724,136 +2729,200 @@ function updateHurdle(rating){
   }
 }
 function drawHurdle(ctx,W,H,an){
-  const HR=G.hurdle||(G.hurdle=initHurdle()||G.hurdle);
+  const HR=G.hurdle||(initHurdle());
+
   // Sky gradient
-  const sky=ctx.createLinearGradient(0,0,0,H*.6);
+  const sky=ctx.createLinearGradient(0,0,0,H*.62);
   sky.addColorStop(0,'#87CEEB');sky.addColorStop(1,'#C8E8FF');
-  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H*.6);
+  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H*.62);
   // Ground
-  ctx.fillStyle='#5A8A30';ctx.fillRect(0,H*.6,W,H*.4);
-  ctx.fillStyle='#4A7A22';ctx.fillRect(0,H*.6,W,H*.035);
-  // Grass tufts
-  const gSeed=7;for(let i=0;i<8;i++){const gx=(i/8)*W+gSeed*i%30;ctx.strokeStyle='#3A6A18';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(gx,H*.6);ctx.lineTo(gx-3,H*.57);ctx.stroke();ctx.beginPath();ctx.moveTo(gx+4,H*.6);ctx.lineTo(gx+7,H*.565);ctx.stroke();}
-  // Clouds
-  [[W*.15,H*.1,.9],[W*.65,H*.08,1.1],[W*.42,H*.16,.7]].forEach(([cx,cy,s])=>{
+  ctx.fillStyle='#5A8A30';ctx.fillRect(0,H*.62,W,H*.38);
+  ctx.fillStyle='#4A7A22';ctx.fillRect(0,H*.62,W,H*.04);
+  // Scrolling ground stripe — gives motion feel
+  const stripe=(an*G.bpm*0.6)%1;
+  ctx.fillStyle='rgba(60,100,20,.18)';
+  for(let i=0;i<6;i++){const sx=((i/6+stripe)%1)*W;ctx.fillRect(sx,H*.62,W/8,H*.38);}
+  // Clouds drifting slowly
+  const cloudOff=(an*0.012)%1;
+  [[.15+cloudOff*.3,.1,.9],[.65+cloudOff*.2,.08,1.1],[.42+cloudOff*.25,.16,.7]].forEach(([cx,cy,s])=>{
+    const x=((cx)%1)*W;
     ctx.fillStyle='rgba(255,255,255,.82)';
-    [0,1,-1].forEach(d=>{ctx.beginPath();ctx.arc(cx+d*W*.05*s,cy+Math.abs(d)*H*.015,W*.045*s,0,Math.PI*2);ctx.fill();});
+    [0,1,-1].forEach(d=>{ctx.beginPath();ctx.arc(x+d*W*.05*s,cy*H+Math.abs(d)*H*.015,W*.045*s,0,Math.PI*2);ctx.fill();});
   });
 
-  // ── Hurdle position ──
-  // Each beat a new hurdle spawns from right, horse is at fixed x=0.28W
   const beatDur=60/G.bpm;
-  const horseX=W*.28, groundY=H*.6;
-  const hurdleW=W*.05, hurdleH=H*.13;
+  const horseX=W*.3;
+  const groundY=H*.62;
+  const hurdleW=Math.max(W*.08,40);
+  const hurdleH=H*.15;
 
-  // Advance hurdle position based on audio time since last beat
-  const lastBeat=G.beats[G.beats.length-1]||an;
-  const nextBeat=lastBeat+beatDur;
-  // Hurdle travels from x=0.85 to x=0.15 over one beat period
-  const beatProg=Math.min(1,Math.max(0,(an-lastBeat)/beatDur));
-  const hx=W*(0.85-beatProg*0.7); // travels right to left
+  // ── Beat progress 0→1 within current beat ──
+  const lastBeatTime=G.lastBeatTime||an;
+  const beatProg=Math.min(1,Math.max(0,(an-lastBeatTime)/beatDur));
 
-  // ── Horse ──
-  const legAnim=Math.sin(an*G.bpm*.18)*0.5+0.5; // 0-1 gallop cycle
+  // Hurdle travels right→left. It should be AT horseX exactly at beatProg=0.
+  // So at beatProg=0 it's at horseX, at beatProg=1 it's far left (offscreen).
+  // It spawns from the RIGHT one full beat before — so at beatProg=0 of the PREVIOUS beat
+  // it was at x=W*.9, and arrives at horse at the next beat.
+  // horseX = W*.3, arrival at beat. Spawn at W*.92.
+  // Position: hx = W*.92 - beatProg*(W*.92-horseX) ... that puts it AT horseX when beatProg=1
+  // But we want it to arrive at beatProg=0 of NEXT beat = beatProg=1 of current.
+  // So: hx = W*.92 - beatProg*(W*.92-horseX+W*.25)  — exits left after crossing
+  const hxFull=W*.92-beatProg*(W*.92+W*.25);
+  // Only show the hurdle approaching (right of horse) and briefly after crossing
+  const hx=hxFull;
 
-  // Jump arc — when jumpState is set
+  // ── Anticipatory timing cue ──
+  // How close is the next hurdle arrival to the horse?
+  // Arrival is at end of beat (beatProg=1 → next beat fires)
+  const timeToArrival=beatDur*(1-beatProg); // seconds until next beat
+  const proximityToArrival=Math.max(0,1-timeToArrival/beatDur); // 0→1 as beat approaches
+
+  // Jump zone marker at horse position — always visible
+  const jzR=hurdleH*.55;
+  // Pulse: gets brighter as beat approaches
+  const jzAlpha=0.12+proximityToArrival*0.55;
+  const jzColor=proximityToArrival>0.7?'rgba(255,200,50,':'rgba(92,68,144,';
+  ctx.strokeStyle=jzColor+jzAlpha+')';
+  ctx.lineWidth=2+proximityToArrival*3;
+  ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.moveTo(horseX,groundY-hurdleH*1.1);ctx.lineTo(horseX,groundY+H*.02);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── TAP NOW ring — fires in the 0.25 beats before arrival ──
+  if(proximityToArrival>0.7){
+    const ringProg=(proximityToArrival-0.7)/0.3; // 0→1 in final 30% of beat
+    const ringR=jzR*(0.6+ringProg*.6);
+    ctx.strokeStyle=`rgba(255,200,50,${0.4+ringProg*.6})`;
+    ctx.lineWidth=2+ringProg*4;
+    ctx.beginPath();ctx.arc(horseX,groundY-hurdleH*.5,ringR,0,Math.PI*2);ctx.stroke();
+    // TAP label
+    if(ringProg>0.6){
+      ctx.fillStyle=`rgba(255,220,50,${(ringProg-0.6)/0.4})`;
+      ctx.font=`bold ${Math.floor(W*.038)}px Jost,sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('TAP!',horseX,groundY-hurdleH*1.25);
+    }
+  }
+
+  // ── Gallop animation ──
+  const legAnim=(Math.sin(an*G.bpm*.28)*0.5+0.5);
+
+  // ── Jump arc ──
   let horseOffY=0;
   if(HR.jumpState&&HR.jumpState<4){
-    HR.jumpT=Math.min(1,HR.jumpT+(1/(beatDur*60)));
+    HR.jumpT=Math.min(1,HR.jumpT+(1/(beatDur*55)));
     const t=HR.jumpT;
-    // Parabolic arc — height scales with rating quality
-    const maxH=HR.jumpState===1?H*.22:HR.jumpState===2?H*.15:H*.08;
+    const maxH=HR.jumpState===1?H*.26:HR.jumpState===2?H*.17:H*.09;
     horseOffY=-(4*maxH*t*(1-t));
     if(HR.jumpT>=1)HR.jumpState=0;
   } else if(HR.jumpState===4){
-    HR.jumpT=Math.min(1,HR.jumpT+(1/(beatDur*60)));
+    // Miss — horse stumbles (small vertical shake)
+    HR.jumpT=Math.min(1,HR.jumpT+(1/(beatDur*40)));
+    horseOffY=Math.sin(HR.jumpT*Math.PI*4)*H*.015*(1-HR.jumpT);
     if(HR.jumpT>=1)HR.jumpState=0;
+  }
+
+  // Shadow under horse
+  const shadowAlpha=0.18-Math.abs(horseOffY)/H*.3;
+  if(shadowAlpha>0){
+    ctx.fillStyle=`rgba(0,0,0,${shadowAlpha})`;
+    ctx.beginPath();ctx.ellipse(horseX,groundY+H*.01,Math.min(W,H)*.09*(1-Math.abs(horseOffY/H)*.5),H*.018,0,0,Math.PI*2);ctx.fill();
   }
 
   function drawHorse(x,y,offY){
     const hy=y+offY;
     const sz=Math.min(W,H)*.09;
     ctx.save();ctx.translate(x,hy);
+    // Shadow ellipse under horse for depth
     // Body
-    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.ellipse(0,-sz*.3,sz*.7,sz*.38,.05,0,Math.PI*2);ctx.fill();
-    // Neck
-    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.moveTo(sz*.3,-sz*.45);ctx.lineTo(sz*.55,-sz*.9);ctx.lineTo(sz*.72,-sz*.82);ctx.lineTo(sz*.48,-sz*.38);ctx.fill();
-    // Head
-    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.ellipse(sz*.65,-sz*.95,sz*.22,sz*.15,.3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#7A4E2A';ctx.beginPath();ctx.ellipse(0,-sz*.3,sz*.72,sz*.38,.05,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.ellipse(-sz*.05,-sz*.32,sz*.68,sz*.35,.05,0,Math.PI*2);ctx.fill();
+    // Neck+head
+    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.moveTo(sz*.28,-sz*.48);ctx.lineTo(sz*.52,-sz*.92);ctx.lineTo(sz*.7,-sz*.84);ctx.lineTo(sz*.46,-sz*.4);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.ellipse(sz*.62,-sz*.95,sz*.22,sz*.15,.28,0,Math.PI*2);ctx.fill();
     // Mane
-    ctx.fillStyle='#3D2010';ctx.beginPath();ctx.moveTo(sz*.32,-sz*.48);ctx.quadraticCurveTo(sz*.2,-sz*.75,sz*.48,-sz*.88);ctx.lineWidth=sz*.12;ctx.strokeStyle='#3D2010';ctx.stroke();
+    ctx.lineWidth=sz*.13;ctx.strokeStyle='#2A1005';ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(sz*.3,-sz*.5);ctx.quadraticCurveTo(sz*.14,-sz*.78,sz*.46,-sz*.9);ctx.stroke();
     // Eye
-    ctx.fillStyle='#1A0A00';ctx.beginPath();ctx.arc(sz*.74,-sz*1.0,sz*.04,0,Math.PI*2);ctx.fill();
-    // Nostril
-    ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(sz*.82,-sz*.9,sz*.03,sz*.02,.3,0,Math.PI*2);ctx.fill();
-    // Legs (4) — animated gallop
+    ctx.fillStyle='#1A0A00';ctx.beginPath();ctx.arc(sz*.72,-sz*.99,sz*.045,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.arc(sz*.7,-sz*1.02,sz*.015,0,Math.PI*2);ctx.fill();
+    // Legs — gallop animation with IK-style bend
     const legY=sz*.1;
-    const legPairs=[
-      [-.35,legAnim],[-.1,1-legAnim],[.1,legAnim],[.35,1-legAnim]
-    ];
-    legPairs.forEach(([lx,phase])=>{
-      const stretch=phase*.35;
-      ctx.strokeStyle='#6B4020';ctx.lineWidth=sz*.15;ctx.lineCap='round';
-      ctx.beginPath();ctx.moveTo(lx*sz,legY);ctx.lineTo(lx*sz+stretch*sz,legY+sz*.45);ctx.stroke();
-      // Hoof
-      ctx.fillStyle='#2A1008';ctx.beginPath();ctx.ellipse(lx*sz+stretch*sz,legY+sz*.52,sz*.08,sz*.055,0,0,Math.PI*2);ctx.fill();
+    [[-.38,legAnim],[-.12,1-legAnim],[.12,legAnim],[.36,1-legAnim]].forEach(([lx,phase])=>{
+      const bendX=lx*sz+phase*.22*sz;
+      const kneeY=legY+sz*.22;
+      const hoofX=lx*sz+phase*.34*sz;
+      const hoofY=legY+sz*.46;
+      ctx.strokeStyle='#6B4020';ctx.lineWidth=sz*.14;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(lx*sz,legY);ctx.lineTo(bendX,kneeY);ctx.lineTo(hoofX,hoofY);ctx.stroke();
+      ctx.fillStyle='#1A0800';ctx.beginPath();ctx.ellipse(hoofX,hoofY+sz*.04,sz*.08,sz*.05,0,0,Math.PI*2);ctx.fill();
     });
     // Tail
-    ctx.strokeStyle='#3D2010';ctx.lineWidth=sz*.11;ctx.lineCap='round';
-    const tailWag=Math.sin(an*G.bpm*.18)*sz*.15;
-    ctx.beginPath();ctx.moveTo(-sz*.65,-sz*.25);ctx.quadraticCurveTo(-sz*.95,-sz*.1+tailWag,-sz*.8,sz*.2+tailWag);ctx.stroke();
+    const tailWag=Math.sin(an*G.bpm*.28)*sz*.18;
+    ctx.lineWidth=sz*.12;ctx.strokeStyle='#2A1005';ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(-sz*.68,-sz*.22);ctx.quadraticCurveTo(-sz*.96,-sz*.08+tailWag,-sz*.82,sz*.22+tailWag*.5);ctx.stroke();
     ctx.restore();
   }
 
-  // ── Hurdle ──
-  function drawHurdleObj(x,y,tilt,topTap,fallen){
+  // ── Hurdle object ──
+  function drawHurdleObj(x,y,tiltRad,topGlow,fallen){
     ctx.save();ctx.translate(x,y);
-    if(tilt)ctx.rotate(tilt*.4);
-    if(fallen){ctx.rotate(Math.PI/2);ctx.translate(0,-hurdleH);}
+    if(fallen){
+      // Fallen — rotate to lie flat on ground
+      const fallProg=Math.min(1,(HR.ratingAge||0)/20);
+      ctx.rotate(fallProg*Math.PI/2);
+    } else if(tiltRad){
+      ctx.rotate(tiltRad);
+    }
+    const postW=Math.max(6,hurdleW*.13);
     // Posts
-    ctx.fillStyle='#8B4513';
-    ctx.beginPath();ctx.roundRect(-hurdleW/2-4,-hurdleH,8,hurdleH,3);ctx.fill();
-    ctx.beginPath();ctx.roundRect(hurdleW/2-4,-hurdleH,8,hurdleH,3);ctx.fill();
+    ctx.fillStyle='#6B3010';
+    ctx.beginPath();ctx.roundRect(-hurdleW/2-postW/2,-hurdleH,postW,hurdleH,3);ctx.fill();
+    ctx.beginPath();ctx.roundRect(hurdleW/2-postW/2,-hurdleH,postW,hurdleH,3);ctx.fill();
     // Rail — red/white stripes
-    const railH=hurdleH*.18;
-    const stripeW=hurdleW/4;
-    ctx.save();ctx.beginPath();ctx.rect(-hurdleW/2,-hurdleH*.55,hurdleW,railH);ctx.clip();
-    for(let s=0;s<5;s++){
-      ctx.fillStyle=s%2===0?'#CC2020':'#F0F0F0';
-      ctx.fillRect(-hurdleW/2+s*stripeW,-hurdleH*.55,stripeW,railH);
+    const railH=Math.max(8,hurdleH*.18);
+    const railY=-hurdleH*.56;
+    const stripeCt=5;
+    ctx.save();
+    ctx.beginPath();ctx.roundRect(-hurdleW/2,railY,hurdleW,railH,3);ctx.clip();
+    for(let s=0;s<stripeCt;s++){
+      ctx.fillStyle=s%2===0?'#CC1818':'#F8F8F8';
+      ctx.fillRect(-hurdleW/2+s*(hurdleW/stripeCt),railY,hurdleW/stripeCt,railH);
     }
     ctx.restore();
-    // Rail outline
-    ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=1;
-    ctx.strokeRect(-hurdleW/2,-hurdleH*.55,hurdleW,railH);
-    // Top tap effect
-    if(topTap){
-      ctx.fillStyle='rgba(255,200,50,.6)';
-      ctx.beginPath();ctx.roundRect(-hurdleW/2,-hurdleH*.55,hurdleW,railH,3);ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.3)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(-hurdleW/2,railY,hurdleW,railH,3);ctx.stroke();
+    if(topGlow){
+      ctx.fillStyle='rgba(255,210,50,.65)';
+      ctx.beginPath();ctx.roundRect(-hurdleW/2,railY,hurdleW,railH,3);ctx.fill();
     }
     ctx.restore();
   }
 
-  // Draw based on last rating
-  const ratingAge=(HR.ratingAge||0);
-  HR.ratingAge=(ratingAge||0)+1;
-  const tiltAmt=HR.rating==='close'?Math.min(ratingAge/8,1):0;
-  const fallen=HR.rating==='miss'&&ratingAge<45;
-  const topTap=HR.rating==='good'&&ratingAge<20;
+  const ratingAge=HR.ratingAge||0;
+  HR.ratingAge=(ratingAge)+1;
+  const tiltAmt=HR.rating==='close'?Math.min(ratingAge/10,1)*0.45:0;
+  const fallen=HR.rating==='miss';
+  const topGlow=HR.rating==='good'&&ratingAge<22;
 
-  drawHurdleObj(hx,groundY,tiltAmt,topTap,fallen);
+  // Draw hurdle only when visible on screen
+  if(hx>-hurdleW&&hx<W+hurdleW){
+    drawHurdleObj(hx,groundY,tiltAmt,topGlow,fallen);
+  }
   drawHorse(horseX,groundY,horseOffY);
 
-  // Rating label
-  if(HR.rating&&ratingAge<40){
+  // ── Rating label ──
+  if(HR.rating&&ratingAge<45){
     const cols={perfect:'#4A8C6F',good:'#C4922A',close:'#9B88C4',miss:'#B85450'};
     const labels={perfect:'🌟 Perfect!',good:'👍 Good',close:'↔ Close',miss:'✗ Miss'};
-    const alpha=Math.max(0,1-ratingAge/40);
+    const alpha=Math.max(0,1-ratingAge/42);
+    const floatY=H*.22-ratingAge*0.8;
     ctx.globalAlpha=alpha;
     ctx.fillStyle=cols[HR.rating]||'#5C4490';
-    ctx.font=`bold ${Math.floor(W*.052)}px Jost,sans-serif`;
+    ctx.font=`bold ${Math.floor(W*.054)}px Jost,sans-serif`;
     ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(labels[HR.rating]||'',W/2,H*.18);
+    ctx.fillText(labels[HR.rating]||'',W/2,floatY);
     ctx.globalAlpha=1;
   }
 
@@ -2862,15 +2931,14 @@ function drawHurdle(ctx,W,H,an){
   HR.burstParts.forEach(p=>{ctx.globalAlpha=p.life/40;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
   ctx.globalAlpha=1;
 
-  // Beat pulse ring on horse
-  const bAgo=an-(G.beats[G.beats.length-1]||an);
-  if(bAgo<.15){const r=bAgo/.15;ctx.strokeStyle=`rgba(92,68,144,${(1-r)*.4})`;ctx.lineWidth=2;ctx.beginPath();ctx.arc(horseX,groundY+horseOffY-Math.min(W,H)*.045,Math.min(W,H)*.12*(0.9+r*.4),0,Math.PI*2);ctx.stroke();}
-
-  // Catch line indicator
-  drawCatchLine(ctx,horseX,groundY,W*.2,.5+.5*Math.sin(an*G.bpm*Math.PI),'#5C4490');
+  // Progress bar
+  const prog=G.total>0?(G.beatsDone/G.total)*100:0;
+  if(prog>0){
+    ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.roundRect(W*.08,H*.9,W*.84,5,3);ctx.fill();
+    ctx.fillStyle='rgba(92,68,144,.5)';ctx.beginPath();ctx.roundRect(W*.08,H*.9,W*.84*(prog/100),5,3);ctx.fill();
+  }
   ctx.textBaseline='alphabetic';
 }
-
 /* ── TARGET RANGE ── */
 function drawBird(ctx,x,y,sz){ctx.save();ctx.translate(x,y);ctx.fillStyle='#8B4513';ctx.beginPath();ctx.ellipse(0,0,sz*.55,sz*.28,.15,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(sz*.44,-sz*.05,sz*.2,0,Math.PI*2);ctx.fill();ctx.fillStyle='#A0522D';ctx.beginPath();ctx.moveTo(-sz*.2,-sz*.1);ctx.quadraticCurveTo(0,-sz*.5,sz*.3,-sz*.15);ctx.quadraticCurveTo(sz*.1,0,-sz*.2,-sz*.1);ctx.fill();ctx.fillStyle='#FFA500';ctx.beginPath();ctx.moveTo(sz*.62,-sz*.04);ctx.lineTo(sz*.82,-sz*.01);ctx.lineTo(sz*.62,sz*.07);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(sz*.5,-sz*.1,sz*.07,0,Math.PI*2);ctx.fill();ctx.fillStyle='#000';ctx.beginPath();ctx.arc(sz*.52,-sz*.1,sz*.04,0,Math.PI*2);ctx.fill();ctx.restore();}
 function drawDeer(ctx,x,y,sz){ctx.save();ctx.translate(x,y);ctx.fillStyle='#8B6914';ctx.beginPath();ctx.ellipse(0,sz*.1,sz*.45,sz*.28,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(sz*.42,-sz*.08,sz*.2,sz*.16,-.2,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#8B6914';ctx.lineWidth=sz*.13;ctx.beginPath();ctx.moveTo(sz*.28,sz*.02);ctx.lineTo(sz*.42,-sz*.08);ctx.stroke();ctx.strokeStyle='#6B4F10';ctx.lineWidth=sz*.07;[[-0.28,.27],[-.1,.37],[.1,.3],[.24,.37]].forEach(([dx,b])=>{ctx.beginPath();ctx.moveTo(dx*sz,sz*.27);ctx.lineTo(dx*sz+sz*.03,sz*(b+.18));ctx.stroke();});ctx.strokeStyle='#5D4037';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sz*.36,-sz*.22);ctx.lineTo(sz*.3,-sz*.42);ctx.lineTo(sz*.22,-sz*.36);ctx.stroke();ctx.beginPath();ctx.moveTo(sz*.36,-sz*.22);ctx.lineTo(sz*.44,-sz*.42);ctx.lineTo(sz*.52,-sz*.34);ctx.stroke();ctx.fillStyle='#000';ctx.beginPath();ctx.arc(sz*.52,-sz*.1,sz*.04,0,Math.PI*2);ctx.fill();ctx.restore();}
@@ -3359,215 +3427,249 @@ function drawSaccades(ctx,W,H,an){
    Tap at maximum expansion (target fills screen).
    Clinical: convergence, accommodation, accommodative facility.
 ───────────────────────────────────────────────────── */
-function drawDepthPulse(ctx,W,H,an){
-  const iv=60/G.bpm;
-  const elapsed=G.lastBeatTime>0?(an-G.lastBeatTime):0;
-  const phase=Math.min(elapsed/iv,1.0);
-  const cx=W/2, cy=H*.47;
-  const maxR=Math.sqrt(cx*cx+cy*cy)*1.12; // slightly beyond corners
-
-  // Deep dark background — clinical: max contrast for depth illusion
-  ctx.fillStyle='#040410';ctx.fillRect(0,0,W,H);
-
-  // Green flash on hit
-  if(G.ocuFlash>0){
-    ctx.fillStyle=`rgba(74,200,120,${G.ocuFlash*.4})`;
-    ctx.fillRect(0,0,W,H);
-    G.ocuFlash=Math.max(0,G.ocuFlash-.05);
-  }
-
-  // Concentric reference rings at fixed spatial intervals
-  // These stay still — give the brain distance reference cues
-  const refRings=[.12,.28,.46,.65,.82];
-  refRings.forEach((pct,i)=>{
-    const r=maxR*pct;
-    const alpha=.04+i*.016;
-    ctx.strokeStyle=`rgba(92,68,144,${alpha})`;
-    ctx.lineWidth=1;
-    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
-  });
-
-  // Main expanding target
-  // Phase 0: white flash + tiny (radius 8)
-  // Phase 0→0.88: grows linearly to maxR
-  // Phase 0.88→1.0: holds at max, tap zone
-  const tapZone=phase>=0.82;
-  let targetR, targetAlpha;
-  if(phase<0.06){
-    // Flash white at reset
-    const flashAmt=1-phase/.06;
-    ctx.fillStyle=`rgba(255,255,255,${flashAmt*.6})`;
-    ctx.fillRect(0,0,W,H);
-    targetR=8+(phase/.06)*18;
-    targetAlpha=0.4+phase/.06*.5;
-  } else {
-    targetR=8+(maxR-8)*Math.min(phase/.88,1);
-    targetAlpha=0.65+Math.min(phase/.88,1)*.3;
-  }
-
-  // Color: cool purple at small → warm red-orange at full
-  // Mimics natural depth color shift
-  const colorPhase=Math.min(phase/.88,1);
-  const r=Math.round(92+colorPhase*(255-92));
-  const g2=Math.round(68+colorPhase*(60-68));
-  const b=Math.round(144+colorPhase*(0-144));
-
-  // Outer glow
-  if(targetR>20){
-    const grd=ctx.createRadialGradient(cx,cy,targetR*.7,cx,cy,targetR*1.08);
-    grd.addColorStop(0,`rgba(${r},${g2},${b},${targetAlpha*.45})`);
-    grd.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cy,targetR*1.08,0,Math.PI*2);ctx.fill();
-  }
-
-  // Ring (not filled — so you see through it = more convincing depth)
-  ctx.strokeStyle=`rgba(${r},${g2},${b},${targetAlpha})`;
-  ctx.lineWidth=Math.max(1.5, 3.5-colorPhase*2);
-  ctx.beginPath();ctx.arc(cx,cy,targetR,0,Math.PI*2);ctx.stroke();
-
-  // Center crosshair — fixed point to converge on
-  ctx.strokeStyle=`rgba(255,255,255,.5)`;ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(cx-8,cy);ctx.lineTo(cx+8,cy);ctx.moveTo(cx,cy-8);ctx.lineTo(cx,cy+8);ctx.stroke();
-
-  // TAP NOW indicator when target is at max
-  if(tapZone){
-    const pulse=0.5+Math.sin(Date.now()*.018)*.5;
-    ctx.strokeStyle=`rgba(100,255,150,${pulse*.9})`;ctx.lineWidth=3;
-    ctx.beginPath();ctx.arc(cx,cy,targetR+6,0,Math.PI*2);ctx.stroke();
-    ctx.fillStyle=`rgba(100,255,150,${pulse*.8})`;
-    ctx.font=`bold ${Math.floor(W*.042)}px Jost,sans-serif`;
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('TAP!',cx,H*.88);
-  }
-
-  // Last hit feedback
-  if(G.hits.length>0){
-    const last=G.hits[G.hits.length-1];
-    const col=last.rating==='perfect'?'#4AFF88':last.rating==='good'?'#FFDD44':'#FF6666';
-    ctx.fillStyle=col;ctx.font=`500 ${Math.floor(W*.033)}px Jost,sans-serif`;
-    ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText(last.rating==='perfect'?'⭐ Perfect':last.rating==='good'?'Good':'Miss',W/2,H*.06);
-    if(S.therapistMode&&last.dev!==undefined){
-      ctx.fillStyle='rgba(155,136,196,.7)';ctx.font=`${Math.floor(W*.027)}px Jost,sans-serif`;
-      ctx.fillText((last.dev>0?'+':'')+last.dev+'ms',W/2,H*.12);
-    }
-  } else {
-    ctx.fillStyle='rgba(155,136,196,.55)';ctx.font=`${Math.floor(W*.033)}px Jost,sans-serif`;
-    ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('Watch it grow — tap when it fills the screen',W/2,H*.07);
-  }
-
-  // Progress bar
-  const prog=G.total>0?(G.beatsDone/G.total)*100:0;
-  ctx.fillStyle='rgba(92,68,144,.12)';ctx.beginPath();ctx.roundRect(W*.08,H*.91,W*.84,6,3);ctx.fill();
-  if(prog>0){ctx.fillStyle=`rgba(${r},${g2},${b},.45)`;ctx.beginPath();ctx.roundRect(W*.08,H*.91,W*.84*(prog/100),6,3);ctx.fill();}
-  drawGazeOverlay(ctx,W,H);
-  ctx.textBaseline='alphabetic';
-}
-
-/* ── GAZE HOLD ───────────────────────────────────────
-   Large stationary fixation ring in center.
-   Content (beat count, letters, numbers) flashes INSIDE
-   the ring on every beat.
-   Patient must keep eyes locked on center WHILE tapping.
-   Clinical: sustained fixation, dual-task attention,
-   ADHD, TBI, nystagmus.
+/* ── GAZE TRACKING ───────────────────────────────────
+   Camera tracks where the patient looks using WebGazer.
+   Target moves — gaze overlay shows how closely they
+   follow it. No tapping. Score = gaze accuracy.
+   Requires Chrome desktop + WebGazer calibration.
 ───────────────────────────────────────────────────── */
-function drawGazeHold(ctx,W,H,an){
+function drawGazeTrack(ctx,W,H,an){
   const iv=60/G.bpm;
   const elapsed=G.lastBeatTime>0?(an-G.lastBeatTime):0;
   const phase=Math.min(elapsed/iv,1.0);
-  const cx=W/2, cy=H*.46;
-  const ringR=Math.min(W,H)*.28;
 
-  // Soft background — light for high contrast at center
-  ctx.fillStyle='#F8F4FF';ctx.fillRect(0,0,W,H);
+  // Dark background — high contrast for gaze visibility
+  ctx.fillStyle='#08061A';ctx.fillRect(0,0,W,H);
 
-  // Green flash on hit
-  if(G.ocuFlash>0){
-    ctx.fillStyle=`rgba(74,200,120,${G.ocuFlash*.2})`;
-    ctx.fillRect(0,0,W,H);
-    G.ocuFlash=Math.max(0,G.ocuFlash-.05);
-  }
+  const trackY=H*.46, trackL=W*.1, trackR=W*.9;
 
-  // Subtle background radiating rings — don't move, give spatial anchor
-  [0.55,0.72,0.9,1.08].forEach(mult=>{
-    ctx.strokeStyle='rgba(92,68,144,.05)';ctx.lineWidth=1;
-    ctx.beginPath();ctx.arc(cx,cy,ringR*mult,0,Math.PI*2);ctx.stroke();
+  // Track line
+  ctx.strokeStyle='rgba(155,136,196,.2)';ctx.lineWidth=1.5;
+  ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(trackL,trackY);ctx.lineTo(trackR,trackY);ctx.stroke();ctx.setLineDash([]);
+
+  // Target sweeps left and right — same as pursuits
+  const goingRight=G.lastBeatIdx%2===0;
+  const rawX=goingRight?trackL+(trackR-trackL)*phase:trackR-(trackR-trackL)*phase;
+
+  // Target glow trail
+  if(!G.ocuTrail)G.ocuTrail=[];
+  G.ocuTrail.push({x:rawX,y:trackY});
+  if(G.ocuTrail.length>12)G.ocuTrail.shift();
+  G.ocuTrail.forEach((p,i)=>{
+    ctx.globalAlpha=(i/G.ocuTrail.length)*.2;
+    ctx.fillStyle='#AA88FF';
+    ctx.beginPath();ctx.arc(p.x,p.y,4+(i/G.ocuTrail.length)*8,0,Math.PI*2);ctx.fill();
   });
-
-  // Beat pulse on the fixation ring border — ring brightens on beat, fades between
-  const borderPulse=Math.max(0,1-phase/.3);
-  ctx.strokeStyle=`rgba(92,68,144,${.25+borderPulse*.55})`;
-  ctx.lineWidth=2.5+borderPulse*3;
-  ctx.beginPath();ctx.arc(cx,cy,ringR,0,Math.PI*2);ctx.stroke();
-
-  // Inner ring
-  ctx.strokeStyle=`rgba(155,136,196,${.15+borderPulse*.35})`;
-  ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.arc(cx,cy,ringR*.72,0,Math.PI*2);ctx.stroke();
-
-  // Content flashing inside ring — driven by beat
-  const beatN=G.beatsDone;
-  // Alternate between beat number and + fixation cross
-  // On vocab mode: show current letter; on math: show current number
-  let mainText='', subText='', mainColor='#5C4490', mainSize=Math.floor(H*.25);
-  const contentFade=Math.max(0,1-phase/.18); // fade in on beat
-
-  if(G.gameMode==='oculomotor'){ // standalone gaze hold
-    // Alternate: even beats show number, odd beats show + 
-    if(beatN%2===0){
-      mainText=String(beatN||1);
-      subText='COUNT';
-      mainSize=Math.floor(H*.28);
-    } else {
-      mainText='+';
-      subText='HOLD';
-      mainSize=Math.floor(H*.24);
-      mainColor='#3E2D6E';
-    }
-  }
-
-  // Main content — large, inside ring
-  ctx.fillStyle=mainColor;
-  ctx.font=`bold ${mainSize}px Jost,sans-serif`;
-  ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.globalAlpha=0.3+contentFade*.7;
-  ctx.fillText(mainText,cx,cy);
   ctx.globalAlpha=1;
 
-  // Sub label
-  ctx.fillStyle='rgba(92,68,144,.38)';
-  ctx.font=`500 ${Math.floor(W*.032)}px Jost,sans-serif`;
-  ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText(subText,cx,cy+ringR*.55);
+  // Target
+  const grd=ctx.createRadialGradient(rawX,trackY,0,rawX,trackY,28);
+  grd.addColorStop(0,'rgba(200,160,255,.95)');grd.addColorStop(.5,'rgba(130,80,255,.6)');grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(rawX,trackY,28,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#CCA0FF';ctx.beginPath();ctx.arc(rawX,trackY,10,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='white';ctx.beginPath();ctx.arc(rawX-3,trackY-3,3.5,0,Math.PI*2);ctx.fill();
 
-  // "KEEP EYES HERE" outer label — small, peripheral
-  ctx.fillStyle='rgba(155,136,196,.35)';
-  ctx.font=`${Math.floor(W*.028)}px Jost,sans-serif`;
-  ctx.textBaseline='bottom';
-  ctx.fillText('keep eyes on center',cx,H*.85);
+  // Direction arrow
+  ctx.fillStyle='rgba(200,160,255,.55)';
+  ctx.font=`bold ${Math.floor(W*.042)}px sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(goingRight?'→':'←',rawX,trackY-28);
 
-  // Last hit feedback
-  if(G.hits.length>0){
-    const last=G.hits[G.hits.length-1];
-    const col=last.rating==='perfect'?'#4A8C6F':last.rating==='good'?'#C4922A':'#B85450';
-    ctx.fillStyle=col;ctx.font=`500 ${Math.floor(W*.033)}px Jost,sans-serif`;
+  // WebGazer badge
+  const wgOk=WG.active&&WG.calibrated;
+  ctx.fillStyle=wgOk?'rgba(74,200,120,.18)':'rgba(184,84,80,.18)';
+  ctx.beginPath();ctx.roundRect(W*.5-70,H*.86,140,24,10);ctx.fill();
+  ctx.fillStyle=wgOk?'#4AC878':'#FF8888';
+  ctx.font=`${Math.floor(W*.03)}px Jost,sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(wgOk?'👁️ Eye tracking active':'👁️ Enable eye tracking in Settings',W/2,H*.873);
+
+  // Instruction
+  if(!G.hits.length){
+    ctx.fillStyle='rgba(200,160,255,.55)';ctx.font=`${Math.floor(W*.033)}px Jost,sans-serif`;
     ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText(last.rating==='perfect'?'⭐ Perfect':last.rating==='good'?'Good':'Miss',W/2,H*.06);
-    if(S.therapistMode&&last.dev!==undefined){
-      ctx.fillStyle='rgba(92,68,144,.6)';ctx.font=`${Math.floor(W*.027)}px Jost,sans-serif`;
-      ctx.fillText((last.dev>0?'+':'')+last.dev+'ms',W/2,H*.12);
-    }
+    ctx.fillText('Follow the target with your eyes — no tapping',W/2,H*.07);
   }
+
+  // Record gaze lag if WG active
+  recordGazeLag(rawX,W);
+  drawGazeOverlay(ctx,W,H);
 
   // Progress bar
   const prog=G.total>0?(G.beatsDone/G.total)*100:0;
-  ctx.fillStyle='rgba(92,68,144,.1)';ctx.beginPath();ctx.roundRect(W*.08,H*.9,W*.84,6,3);ctx.fill();
-  if(prog>0){ctx.fillStyle='rgba(92,68,144,.38)';ctx.beginPath();ctx.roundRect(W*.08,H*.9,W*.84*(prog/100),6,3);ctx.fill();}
+  ctx.fillStyle='rgba(92,68,144,.15)';ctx.beginPath();ctx.roundRect(W*.08,H*.92,W*.84,5,3);ctx.fill();
+  if(prog>0){ctx.fillStyle='rgba(170,136,255,.5)';ctx.beginPath();ctx.roundRect(W*.08,H*.92,W*.84*(prog/100),5,3);ctx.fill();}
+  ctx.textBaseline='alphabetic';
+}
+
+/* ── ATTENTION HOLD — MAGIC EYES ─────────────────────
+   Stationary glowing target. Patient stares without
+   looking away. Hold duration randomizes 5–15 seconds.
+   On successful hold: full-screen magic explosion.
+   Camera shows the therapist gaze quality via WebGazer.
+   No tapping, no motor response — purely visual.
+   Clinical: sustained visual attention, fixation
+   endurance, ADHD/TBI/autism.
+───────────────────────────────────────────────────── */
+const AH={
+  holdDur:8,        // current hold target in seconds (randomized 5–15)
+  holdStart:null,   // Date.now() when current hold began
+  phase:'waiting',  // 'waiting' | 'holding' | 'exploding' | 'cooldown'
+  explodeT:0,       // animation progress 0→1
+  particles:[],     // burst particles
+  holdCount:0,      // successful holds this session
+};
+function _ahNewHold(){
+  AH.holdDur=5+Math.floor(Math.random()*11); // 5–15 seconds
+  AH.holdStart=null;
+  AH.phase='waiting';
+}
+function drawAttentionHold(ctx,W,H,an){
+  if(!AH.holdStart&&AH.phase==='waiting'){
+    // Start hold timer when game is running
+    if(G.playing) AH.holdStart=Date.now();
+  }
+
+  const cx=W/2, cy=H*.45;
+
+  // ── Background ──
+  // Gradually deepen color during hold
+  const holdProg=AH.holdStart?Math.min(1,(Date.now()-AH.holdStart)/1000/AH.holdDur):0;
+  const bgR=Math.floor(4+holdProg*12), bgG=Math.floor(3+holdProg*8), bgB=Math.floor(20+holdProg*40);
+  ctx.fillStyle=`rgb(${bgR},${bgG},${bgB})`;ctx.fillRect(0,0,W,H);
+
+  if(AH.phase==='exploding'){
+    // ── EXPLOSION ──
+    AH.explodeT=Math.min(1,AH.explodeT+0.025);
+    const t=AH.explodeT;
+
+    // Screen flash
+    ctx.globalAlpha=Math.max(0,(1-t)*0.9);
+    ctx.fillStyle='white';ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=1;
+
+    // Shockwave rings
+    [0,.15,.3].forEach(offset=>{
+      const rt=Math.max(0,t-offset);
+      if(rt<=0)return;
+      const r=rt*(Math.max(W,H)*0.9);
+      const a=Math.max(0,(1-rt)*.7);
+      ctx.strokeStyle=`rgba(255,220,80,${a})`;ctx.lineWidth=3+rt*8;
+      ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+    });
+
+    // Burst particles
+    if(t<0.08&&!AH._burst){
+      AH._burst=true;
+      const cols=['#FFD700','#FF88CC','#88FFEE','#FF8844','#CCAAFF','white'];
+      AH.particles=Array.from({length:80},(_,i)=>{
+        const a=(i/80)*Math.PI*2+Math.random()*.4;
+        const sp=(3+Math.random()*9)*(Math.min(W,H)/300);
+        return{x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2,
+               color:cols[i%cols.length],size:2+Math.random()*7,life:60+Math.random()*40};
+      });
+    }
+    AH.particles=AH.particles.map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+.18,life:p.life-1})).filter(p=>p.life>0);
+    AH.particles.forEach(p=>{
+      ctx.globalAlpha=Math.min(1,p.life/40);
+      ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
+    });
+    ctx.globalAlpha=1;
+
+    // ★ DID IT text
+    if(t>0.15){
+      const ta=Math.min(1,(t-0.15)/0.2);
+      ctx.globalAlpha=ta;
+      ctx.fillStyle='#FFD700';
+      ctx.font=`bold ${Math.floor(W*.1)}px Jost,sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('✨ Magic!',cx,cy-H*.12);
+      ctx.font=`${Math.floor(W*.042)}px Jost,sans-serif`;
+      ctx.fillStyle='rgba(255,255,255,.85)';
+      ctx.fillText('Hold #'+AH.holdCount+' complete!',cx,cy+H*.06);
+      ctx.globalAlpha=1;
+    }
+
+    if(t>=1){
+      AH.phase='cooldown';AH._burst=false;AH.particles=[];
+      setTimeout(()=>{_ahNewHold();},1200);
+    }
+    return;
+  }
+
+  if(AH.phase==='cooldown') return;
+
+  // ── HOLD PHASE ──
+  const ringR=Math.min(W,H)*.18;
+
+  // Outer slow-pulse ring — gets brighter as hold progresses
+  const pulseAmt=0.5+0.5*Math.sin(Date.now()*.003);
+  const ringAlpha=0.15+holdProg*0.5+pulseAmt*0.12;
+  const ringCol=holdProg>0.8?`rgba(255,200,50,${ringAlpha})`:`rgba(130,100,255,${ringAlpha})`;
+  ctx.strokeStyle=ringCol;ctx.lineWidth=2+holdProg*4;
+  ctx.beginPath();ctx.arc(cx,cy,ringR+6+pulseAmt*4,0,Math.PI*2);ctx.stroke();
+
+  // Secondary ring pulses outward continuously during hold
+  if(AH.holdStart){
+    const t2=((Date.now()-AH.holdStart)/1200)%1;
+    ctx.strokeStyle=`rgba(180,140,255,${(1-t2)*.35})`;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(cx,cy,ringR+t2*ringR*.6,0,Math.PI*2);ctx.stroke();
+  }
+
+  // Target dot
+  const dotGrad=ctx.createRadialGradient(cx,cy,0,cx,cy,ringR);
+  dotGrad.addColorStop(0,holdProg>0.8?'rgba(255,230,80,.95)':'rgba(200,160,255,.9)');
+  dotGrad.addColorStop(.35,holdProg>0.8?'rgba(255,180,0,.7)':'rgba(130,80,255,.55)');
+  dotGrad.addColorStop(1,'transparent');
+  ctx.fillStyle=dotGrad;ctx.beginPath();ctx.arc(cx,cy,ringR,0,Math.PI*2);ctx.fill();
+  // Center dot
+  ctx.fillStyle=holdProg>0.8?'#FFD700':'#CCA0FF';
+  ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.8)';ctx.beginPath();ctx.arc(cx-4,cy-4,5,0,Math.PI*2);ctx.fill();
+
+  // ── Hold progress arc ──
+  if(AH.holdStart&&holdProg>0.02){
+    ctx.strokeStyle=holdProg>0.8?'rgba(255,200,50,.8)':'rgba(180,140,255,.6)';
+    ctx.lineWidth=4;ctx.lineCap='round';
+    ctx.beginPath();ctx.arc(cx,cy,ringR+18,-Math.PI/2,-Math.PI/2+holdProg*Math.PI*2);ctx.stroke();
+  }
+
+  // ── Check for hold completion ──
+  if(AH.holdStart&&holdProg>=1){
+    AH.holdCount++;
+    AH.phase='exploding';AH.explodeT=0;
+    // Give feedback
+    playMile();
+    return;
+  }
+
+  // ── Instructions + therapist note ──
+  ctx.fillStyle='rgba(180,160,220,.6)';
+  ctx.font=`${Math.floor(W*.034)}px Jost,sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='top';
+  if(!AH.holdStart){
+    ctx.fillText('👁️ Look at the dot — hold your gaze',cx,H*.08);
+  } else if(holdProg<0.5){
+    ctx.fillText('Hold it… don\'t look away ✨',cx,H*.08);
+  } else if(holdProg<0.8){
+    ctx.fillText('Keep going… almost there…',cx,H*.08);
+  } else {
+    ctx.fillStyle='rgba(255,210,50,.8)';
+    ctx.font=`bold ${Math.floor(W*.038)}px Jost,sans-serif`;
+    ctx.fillText('The magic is building… 🌟',cx,H*.08);
+  }
+
+  // Hold count + target duration (therapist info)
+  ctx.fillStyle='rgba(155,136,196,.4)';
+  ctx.font=`${Math.floor(W*.026)}px Jost,sans-serif`;
+  ctx.textBaseline='bottom';
+  ctx.fillText(`Hold ${AH.holdCount+1} · ${AH.holdDur}s target`,cx,H*.96);
+
+  // WebGazer gaze overlay so therapist can see gaze quality
   drawGazeOverlay(ctx,W,H);
   ctx.textBaseline='alphabetic';
 }
+
 
 /* ═══ MAIN GAME LOOP ═══════════════════════════════ */
 function schedTick(){
@@ -3647,34 +3749,42 @@ function schedTick(){
 }
 
 let _drawFn=null;
+let _drawErrCount=0;
 function gameDraw(){
   const canvas=document.getElementById('gc');if(!canvas)return;
   const ctx=canvas.getContext('2d');const W=canvas.width,H=canvas.height;if(!W||!H)return;
   const an=G.audioCtx?G.audioCtx.currentTime:0;
-  if(S.blindMode&&G.blindStart){const el=(Date.now()-G.blindStart)/1000;const t=el>13?0:el>10?1-(el-10)/3:1;G.cvOpacity+=(t-G.cvOpacity)*.05;canvas.style.opacity=G.cvOpacity;}
-  else if(G.cvOpacity<1){G.cvOpacity=1;canvas.style.opacity=1;}
-  if(!S.visualOn){ctx.fillStyle='#1A1030';ctx.fillRect(0,0,W,H);if(G.playing)G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());return;}
-  if(G.gameMode==='hurdle')drawHurdle(ctx,W,H,an);
-  else if(G.gameMode==='moneycatch')drawMoneyCatch(ctx,W,H,an);
-  else if(G.gameMode==='targetrange')drawTargetRange(ctx,W,H,an);
-  else if(G.gameMode==='vocab')drawVocab(ctx,W,H,an);
-  else if(G.gameMode==='math')drawMath(ctx,W,H,an);
-  else if(G.gameMode==='oculomotor'){
-    if(G.ocuMode==='saccades')      drawSaccades(ctx,W,H,an);
-    else if(G.ocuMode==='depth')    drawDepthPulse(ctx,W,H,an);
-    else if(G.ocuMode==='gaze')     drawGazeHold(ctx,W,H,an);
-    else                            drawPursuits(ctx,W,H,an);
+  try{
+    if(S.blindMode&&G.blindStart){const el=(Date.now()-G.blindStart)/1000;const t=el>13?0:el>10?1-(el-10)/3:1;G.cvOpacity+=(t-G.cvOpacity)*.05;canvas.style.opacity=G.cvOpacity;}
+    else if(G.cvOpacity<1){G.cvOpacity=1;canvas.style.opacity=1;}
+    if(!S.visualOn){ctx.fillStyle='#1A1030';ctx.fillRect(0,0,W,H);}
+    else if(G.gameMode==='hurdle')drawHurdle(ctx,W,H,an);
+    else if(G.gameMode==='moneycatch')drawMoneyCatch(ctx,W,H,an);
+    else if(G.gameMode==='targetrange')drawTargetRange(ctx,W,H,an);
+    else if(G.gameMode==='vocab')drawVocab(ctx,W,H,an);
+    else if(G.gameMode==='math')drawMath(ctx,W,H,an);
+    else if(G.gameMode==='oculomotor'){
+      if(G.ocuMode==='saccades')       drawSaccades(ctx,W,H,an);
+      else if(G.ocuMode==='gazetrack') drawGazeTrack(ctx,W,H,an);
+      else if(G.ocuMode==='attention') drawAttentionHold(ctx,W,H,an);
+      else                             drawPursuits(ctx,W,H,an);
+    }
+    else if(G.gameMode==='motion')       drawMotionGame(ctx,W,H,an);
+    else if(G.gameMode==='activegames')  drawActiveGame(ctx,W,H,an);
+    else drawStandard(ctx,W,H,an);
+    // Shared particles + popups
+    G.particles=G.particles.map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+.33,vx:p.vx*.96,life:p.life-1})).filter(p=>p.life>0);
+    G.particles.forEach(p=>{ctx.globalAlpha=Math.min(1,p.life/34);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;
+    G.popups=G.popups.map(p=>({...p,y:p.y-2,life:p.life-1})).filter(p=>p.life>0);
+    G.popups.forEach(p=>{ctx.globalAlpha=Math.min(1,p.life/16);ctx.fillStyle=p.color;ctx.font=`bold ${p.sz||16}px Jost,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.text,p.x,p.y);});ctx.globalAlpha=1;
+    pollGP();
+    _drawErrCount=0;
+  }catch(e){
+    _drawErrCount++;
+    console.warn('gameDraw error:',e.message);
+    ctx.fillStyle='#1A1030';ctx.fillRect(0,0,W,H); // black frame, keep loop alive
   }
-  else if(G.gameMode==='motion')       drawMotionGame(ctx,W,H,an);
-  else if(G.gameMode==='activegames')  drawActiveGame(ctx,W,H,an);
-  else drawStandard(ctx,W,H,an);
-  // Shared particles
-  G.particles=G.particles.map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+.33,vx:p.vx*.96,life:p.life-1})).filter(p=>p.life>0);
-  G.particles.forEach(p=>{ctx.globalAlpha=Math.min(1,p.life/34);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;
-  G.popups=G.popups.map(p=>({...p,y:p.y-2,life:p.life-1})).filter(p=>p.life>0);
-  G.popups.forEach(p=>{ctx.globalAlpha=Math.min(1,p.life/16);ctx.fillStyle=p.color;ctx.font=`bold ${p.sz||16}px Jost,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.text,p.x,p.y);});ctx.globalAlpha=1;
-  // Poll gamepad every frame
-  pollGP();
+  // Always re-queue — never let an error kill the animation loop
   if(G.playing)G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
 }
 _drawFn=gameDraw;
@@ -3848,9 +3958,11 @@ function startCountdown(){
   G.items=[];G.particles=[];G.popups=[];G.beats=[];G.hits=[];
   G.score=0;G.streak=0;G.maxStreak=0;G.beatsDone=0;G.consecMiss=0;G.moneyTotal=0;
   G.sessionStart=Date.now();G.restPrompted=false;
-  G.hurdle={jumpState:0,jumpT:0,hurdleX:1.1,rating:null,ratingAge:0,streakFlash:0,burstParts:[]};
+  G.hurdle={jumpState:0,jumpT:0,rating:null,ratingAge:0,streakFlash:0,burstParts:[]};
+  G.RC={nextSide:'L',catchFlash:0,catchSide:null,items:[],_lastSpawnBeat:-1};
+  AH.holdStart=null;AH.phase='waiting';AH.explodeT=0;AH.particles=[];AH._burst=false;
+  AH.holdCount=0;AH.holdDur=5+Math.floor(Math.random()*11);
   G.recentDev=[];G.recentAcc=[];G.blindStart=null;G.cvOpacity=1;G.crossGlow=0;
-  G.bubble={size:0,max:68,burstParts:[],mood:'idle'};
   G.vocabIdx=0;G.mathIdx=0;G.vocabFlash=0;
   G.ocuTrail=[];G.ocuFlash=0;G.lastBeatTime=0;G.lastBeatIdx=0;
   if(G.gameMode!=='motion') M.active=false; // keep active if motion mode
@@ -3984,6 +4096,10 @@ function beginGame(){
   G._resizeObs=new ResizeObserver(sz);
   G._resizeObs.observe(cw);
   G.schedTimer=setInterval(schedTick,50);schedTick();
+  // Motion detection on its own 80ms interval — separate from rAF to avoid mobile freeze
+  if(G.gameMode==='motion'||G.gameMode==='activegames'){
+    G.motionTimer=setInterval(()=>{if(G.playing)motionDetectLoop();},80);
+  }
   G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());updateHUD();
 }
 
@@ -3991,10 +4107,13 @@ function exitGameEarly(){
   if(!G.playing) return;
   G.playing=false;
   clearInterval(G.schedTimer);
+  clearInterval(G.motionTimer);G.motionTimer=null;
   cancelAnimationFrame(G.animFr);
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}G._resizeObs=null;}
   if(G.gameMode==='motion'||G.gameMode==='activegames') stopMotionCamera();
   if(window.speechSynthesis) window.speechSynthesis.cancel();
+  AH.holdStart=null;AH.phase='waiting';AH.particles=[];AH._burst=false;
+  if(G.RC){G.RC.items=[];G.RC.catchFlash=0;}
   // Enough data → results screen; otherwise back to module picker
   if(G.hits.length>=2) endGame();
   else showScreen('modsettings');
@@ -4003,9 +4122,13 @@ function exitGameEarly(){
 function endGame(){
   G.playing=false;
   clearInterval(G.schedTimer);
+  clearInterval(G.motionTimer);G.motionTimer=null;
   cancelAnimationFrame(G.animFr);
   if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){} G._resizeObs=null;}
   if(G.gameMode==='motion') stopMotionCamera();
+  // Clean up attention hold and reach state
+  AH.holdStart=null;AH.phase='waiting';AH.particles=[];AH._burst=false;
+  if(G.RC){G.RC.items=[];G.RC.catchFlash=0;}
   saveAdaptiveWindow(); // persist tightened window cross-session
   const hits=G.hits,total=G.total,lv=LVS.find(l=>l.id===G.lvId);
   const counts={perfect:0,good:0,close:0,miss:0};hits.forEach(h=>{if(counts[h.rating]!==undefined)counts[h.rating]++;});
@@ -4854,7 +4977,7 @@ function detectReach(){
 
   // Wrist extension: wrist crosses past shoulder on either side
   // In MediaPipe, x=0 is left of frame (patient's right due to mirror)
-  const RC=G.RC||(G.RC={nextSide:'L',catchFlash:0,catchSide:null});
+  const RC=G.RC||(G.RC={nextSide:'L',catchFlash:0,catchSide:null,items:[]});
   const targetSide=RC.nextSide; // which side has the falling object
 
   let reached=false;
@@ -5062,7 +5185,7 @@ function drawMotionGame(ctx,W,H,an){
   ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(0,H-5,W,5);
   if(prog>0){ctx.fillStyle='rgba(74,200,120,.8)';ctx.fillRect(0,H-5,W*(prog/100),5);}
   ctx.textBaseline='alphabetic';
-  motionDetectLoop();
+  // motionDetectLoop is driven by its own setInterval in beginGame — NOT called here
 }
 
 
