@@ -4218,23 +4218,10 @@ function startCountdown(){
   }
   const firstBeat=G.audioCtx.currentTime+5.2; // 3s countdown + ~2s buffer
   G.nextBeat=firstBeat;
-  // Store spawn data for beginGame to use confirmed AudioContext time
+  // Store spawn data for beginGame
   G._spawnData={isEduMode,lv,iv,fd};
-  // Pre-spawn items for Classic modes — beginGame re-spawns with fresh AudioContext time
-  const isOpenEnded=G.gameMode==='oculomotor'||G.gameMode==='motion'||G.gameMode==='activegames';
-  if(!isEduMode&&!isOpenEnded){
-    G.items=[];
-    PATS[lv.id].forEach((side,idx)=>{
-      if(side==null)return;
-      const bt=firstBeat+idx*iv;
-      const itemSide=G.gameMode==='moneycatch'?'B':side;
-      if(itemSide==='S'){
-        ['L','R'].forEach(s=>G.items.push({id:idx+'_'+s+'_'+Math.random(),side:s,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:s==='L'?'bird':'deer'}));
-      } else {
-        G.items.push({id:idx+'_'+Math.random(),side:itemSide,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'});
-      }
-    });
-  }
+  // Note: actual items are spawned in beginGame() after AudioContext is confirmed running,
+  // so timestamps are accurate. No pre-spawn here.
   // Build tap buttons
   // saccades2 (Whack-a-Mole) gets dedicated L/R buttons
   const isWM=G.gameMode==='oculomotor'&&G.ocuMode==='saccades2';
@@ -4292,83 +4279,95 @@ function startCountdown(){
 }
 
 function beginGame(){
-  // Ensure AudioContext is running — iOS/Safari suspends it aggressively
-  if(G.audioCtx&&G.audioCtx.state==='suspended'){
-    G.audioCtx.resume().then(()=>setTimeout(beginGame,80)).catch(()=>setTimeout(beginGame,80));
+  // Resume AudioContext if suspended (iOS/Android requires user gesture)
+  if(!G.audioCtx) initAudio();
+  if(G.audioCtx.state==='suspended'){
+    G.audioCtx.resume().then(beginGame).catch(beginGame);
     return;
   }
-  G.playing=true; // REMOVED: G.goTime write — was set but never read back anywhere
-  if(S.blindMode)G.blindStart=Date.now();
-  // Re-spawn items with confirmed post-resume AudioContext time
-  // This fixes iOS where currentTime may not advance during suspension
+
+  G.playing=true;
+  if(S.blindMode) G.blindStart=Date.now();
+
+  // Use spawnData set by startCountdown, but recalculate firstBeat
+  // now that AudioContext is definitely running
   if(G._spawnData){
     const {isEduMode,lv,iv,fd}=G._spawnData;
     const isOpenEnded=G.gameMode==='oculomotor'||G.gameMode==='motion'||G.gameMode==='activegames';
-    const firstBeat=G.audioCtx.currentTime+1.5; // 1.5s from game screen appearing
+    const firstBeat=G.audioCtx.currentTime+1.8;
     G.nextBeat=firstBeat;
-    // Schedule 3 count-in beats at BPM tempo before the first scored beat
-    // These play during the game screen fade-in so the user hears the rhythm first
+
+    // Count-in clicks (up to 3 beats before firstBeat)
     for(let ci=0;ci<3;ci++){
       const ciWhen=firstBeat-(3-ci)*iv;
-      if(ciWhen>G.audioCtx.currentTime+0.02){
-        const cio=G.audioCtx.createOscillator(),cig=G.audioCtx.createGain();
-        cio.connect(cig);cig.connect(G.audioCtx.destination);
-        cio.type='triangle';
-        cio.frequency.value=ci===2?1100:700; // higher pitch on beat 3 = "go!"
-        cig.gain.setValueAtTime(ci===2?.5:.3,ciWhen);
-        cig.gain.exponentialRampToValueAtTime(.001,ciWhen+.09);
-        cio.start(ciWhen);cio.stop(ciWhen+.12);
+      if(ciWhen>G.audioCtx.currentTime+0.05){
+        const o=G.audioCtx.createOscillator(),g=G.audioCtx.createGain();
+        o.connect(g);g.connect(G.audioCtx.destination);
+        o.type='triangle';
+        o.frequency.value=ci===2?1100:700;
+        g.gain.setValueAtTime(ci===2?.5:.3,ciWhen);
+        g.gain.exponentialRampToValueAtTime(.001,ciWhen+.09);
+        o.start(ciWhen);o.stop(ciWhen+.12);
       }
     }
+
+    // Spawn items for Classic modes
     if(!isEduMode&&!isOpenEnded){
       G.items=[];
       PATS[lv.id].forEach((side,idx)=>{
-        if(side==null)return;
+        if(side==null) return;
         const bt=firstBeat+idx*iv;
         const itemSide=G.gameMode==='moneycatch'?'B':side;
         if(itemSide==='S'){
-          // Simultaneous bilateral — spawn both L and R at the same beat
-          ['L','R'].forEach(s=>G.items.push({id:idx+'_'+s+'_'+Math.random(),side:s,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:s==='L'?'bird':'deer'}));
+          ['L','R'].forEach(s=>G.items.push({
+            id:idx+'_'+s+'_'+Math.random(),side:s,
+            audioStart:bt-fd,audioBeat:bt,fallDur:fd,
+            status:'falling',caughtAt:null,animalType:s==='L'?'bird':'deer'
+          }));
         } else {
-          G.items.push({id:idx+'_'+Math.random(),side:itemSide,audioStart:bt-fd,audioBeat:bt,fallDur:fd,status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'});
+          G.items.push({
+            id:idx+'_'+Math.random(),side:itemSide,
+            audioStart:bt-fd,audioBeat:bt,fallDur:fd,
+            status:'falling',caughtAt:null,animalType:idx%2===0?'bird':'deer'
+          });
         }
       });
     }
     G._spawnData=null;
   }
+
+  // Show game screen
   showScreen('game');
   applyDesktopGameLayout();
-  const cw=document.getElementById('cw'),gc=document.getElementById('gc');
 
-  // Only set canvas dimensions when they genuinely change.
-  // Assigning canvas.width/height ALWAYS clears the canvas — so we must
-  // guard against redundant assignments that would wipe a frame mid-draw.
-  const sz=()=>{
-    const w=Math.round(cw.offsetWidth||window.innerWidth||380);
-    const h=Math.round(cw.offsetHeight||260);
-    if(w>10&&h>10&&(gc.width!==w||gc.height!==h)){
-      gc.width=w;
-      gc.height=h;
-    }
-  };
+  // Size the canvas — only assign when different to avoid wiping mid-draw
+  const cw=document.getElementById('cw');
+  const gc=document.getElementById('gc');
+  if(cw&&gc){
+    const w=cw.offsetWidth||window.innerWidth||380;
+    const h=cw.offsetHeight||260;
+    const gw=Math.round(w>10?w:380);
+    const gh=Math.round(h>10?h:260);
+    if(gc.width!==gw) gc.width=gw;
+    if(gc.height!==gh) gc.height=gh;
+    // Watch for genuine resize (rotation, etc.)
+    if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}}
+    G._resizeObs=new ResizeObserver(()=>{
+      const nw=Math.round(cw.offsetWidth||380);
+      const nh=Math.round(cw.offsetHeight||260);
+      if(nw>10&&nh>10&&(gc.width!==nw||gc.height!==nh)){
+        gc.width=nw; gc.height=nh;
+      }
+    });
+    G._resizeObs.observe(cw);
+  }
 
-  // Set size immediately — use window dimensions as a guaranteed fallback
-  // so canvas is never 0×0 when the first draw frame fires
-  const initW=Math.round(cw.offsetWidth||window.innerWidth||380);
-  const initH=Math.round(cw.offsetHeight||260);
-  gc.width  = initW > 10 ? initW : Math.min(window.innerWidth||380, 400);
-  gc.height = initH > 10 ? initH : 260;
-
-  // One resize-observer pass — fires if layout changes after game screen appears
-  if(G._resizeObs){try{G._resizeObs.disconnect();}catch(e){}}
-  G._resizeObs=new ResizeObserver(sz);
-  G._resizeObs.observe(cw);
-  G.schedTimer=setInterval(schedTick,50);schedTick();
-  // Motion detection on its own 80ms interval — separate from rAF
+  // Start game loops
+  G.schedTimer=setInterval(schedTick,50);
+  schedTick(); // fire immediately so first beats are scheduled right away
   if(G.gameMode==='motion'||G.gameMode==='activegames'){
     G.motionTimer=setInterval(()=>{if(G.playing)motionDetectLoop();},80);
   }
-  // Start draw loop immediately — canvas is already sized above
   G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());
   updateHUD();
 }
