@@ -90,7 +90,6 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
   <a href="#research" class="jump-link">Why It Works</a>
   <a href="#quickstart" class="jump-link">Quick Start</a>
   <a href="#profiles" class="jump-link">Patient Profiles</a>
-  <a href="#levels" class="jump-link">Level Progression</a>
   <a href="#results" class="jump-link">Reading Results</a>
   <a href="#scales" class="jump-link">Interpretation Scale</a>
   <a href="#soap" class="jump-link">SOAP Note</a>
@@ -215,7 +214,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
     <div class="step-num">3</div>
     <div class="step-body">
       <div class="step-title">Choose a module and level</div>
-      <div class="step-desc">Select <strong>Classic → Level 0</strong> (First Beat) for patients new to the tool, or <strong>Level 1</strong> (Warm Up) for patients with some prior rhythm experience. Classic is the evidence-based core — start every patient here. Adjust BPM with the + / − buttons. See the <a href="evosensory-modules.html" style="color:var(--p);">Module Guide</a> for when to add other modules.</div>
+      <div class="step-desc">Select <strong>Classic → Level 1</strong> to start. Classic is the evidence-based core — start every patient here. Adjust BPM with the + / − buttons. See the <a href="evosensory-modules.html" style="color:var(--p);">Module Guide</a> for when to add other modules.</div>
     </div>
   </div>
   <div class="step">
@@ -269,33 +268,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
 
 <hr class="divider"/>
 
-<!-- CLASSIC LEVELS -->
-<section id="levels">
-  <div class="section-label">Classic Module</div>
-  <h2>Level Progression</h2>
-  <p>Classic has eight levels. The first three (0, 1, 1b) build the foundation before bilateral alternation begins. Always start new patients at Level 0 or Level 1 depending on their motor baseline.</p>
-
-  <table>
-    <thead><tr><th>Level</th><th>Name</th><th>BPM</th><th>Pattern</th><th>Clinical Target</th><th>Advance When</th></tr></thead>
-    <tbody>
-      <tr><td>🌱 0</td><td>First Beat</td><td>48</td><td>Single hand, same side every beat</td><td>Establishing a consistent internal rhythm before bilateral complexity</td><td>85%+ accuracy, 2 sessions</td></tr>
-      <tr><td>🎵 1</td><td>Warm Up</td><td>56</td><td>One button, any key, every beat</td><td>Beat detection and basic motor synchronization — no side required</td><td>85%+ accuracy, 2 sessions</td></tr>
-      <tr><td>🤝 1b</td><td>Both Hands</td><td>56</td><td>Both sides simultaneously every beat</td><td>Bilateral synchronization — both sides coordinated at the same moment</td><td>85%+ accuracy, 2 sessions</td></tr>
-      <tr><td>🎈 2</td><td>Finding It</td><td>66</td><td>Alternating L/R</td><td>Bilateral alternation — process which hand AND when</td><td>85%+ accuracy, 2 sessions</td></tr>
-      <tr><td>🎯 3</td><td>In the Groove</td><td>76</td><td>Alternating with rests</td><td>Response inhibition — hold back on silent beats</td><td>80%+ accuracy, stable trend</td></tr>
-      <tr><td>🚗 4</td><td>Steady Beat</td><td>88</td><td>Complex sequences + longer rests</td><td>Sequencing under load — hold pattern while tracking position</td><td>80%+ accuracy, &lt;50ms deviation</td></tr>
-      <tr><td>⚽ 5</td><td>Beat Master</td><td>100</td><td>Irregular patterns, multiple rests</td><td>Anticipatory timing and internal clock independence</td><td>80%+ accuracy, consistent timing</td></tr>
-      <tr><td>🦶 6</td><td>Foot Tap</td><td>60</td><td>Bilateral foot patterns</td><td>Lower body timing — designed for foot pedal switches</td><td>Clinical ceiling — maintain for consolidation</td></tr>
-    </tbody>
-  </table>
-
-  <div class="callout callout-purple">
-    <strong>BPM progression rule</strong>
-    <p>Increase tempo by 4–8 BPM at a time. Accuracy at a slow, steady tempo is the foundation for everything else. If accuracy drops below 50%, reduce BPM before changing the level. The app tightens the hit window automatically as the patient improves across sessions.</p>
-  </div>
-</section>
-
-<hr class="divider"/>
+<!-- READING RESULTS -->
 <section id="results">
   <div class="section-label">Data</div>
   <h2>Reading the Results</h2>
@@ -431,7 +404,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
   <h2>Calibration</h2>
 
   <h3>Eye Tracking Calibration (WebGazer)</h3>
-  <p>Eye tracking is an optional toggle in the Oculomotor module panel. When turned on, it uses your front camera to estimate where the patient's eyes are pointing during pursuits and saccades. It is a screening-level tool — not clinical-grade eye movement recording.</p>
+  <p>Eye tracking is available in <strong>Smooth Pursuits 2</strong> and <strong>Attention Hold</strong> sub-modes. When turned on, it uses your front camera to estimate where the patient's eyes are pointing. It is a screening-level tool — not clinical-grade eye movement recording. Chrome desktop + WebGazer required.</p>
   <p><strong>Requirements:</strong> Chrome on a Windows, Mac, or Android computer. Not supported on iPhone, iPad, or Safari.</p>
   <p><strong>How to calibrate:</strong> Enable the toggle, then tap Play. A 9-point calibration grid appears. Look at each numbered dot and tap or click it. Once all 9 are calibrated, tap Start Session. The gaze crosshair appears on the canvas during the session.</p>
   <div class="callout callout-purple">

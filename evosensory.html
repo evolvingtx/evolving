@@ -437,7 +437,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
       </div>
       <div style="background:var(--pp);border-radius:10px;padding:9px;">
         <div style="font-size:13px;font-weight:500;color:var(--p);">👁️ Oculomotor</div>
-        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Pursuits, saccades, gaze tracking, and attention hold — synced to the beat. Optional camera eye tracking on Chrome.</div>
+        <div style="font-size:10px;color:var(--tl);margin-top:3px;line-height:1.6;">Pursuits, Pursuits 2 (camera), Saccadic Jumps, Whack-a-Mole, and Attention Hold. Optional eye tracking on Chrome.</div>
       </div>
       <div style="background:var(--pp);border-radius:10px;padding:9px;">
         <div style="font-size:13px;font-weight:500;color:var(--p);">🧠 Cognitive</div>
@@ -518,7 +518,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
       <div class="mod-pick-icon">👁️</div>
       <div class="mod-pick-body">
         <div class="mod-pick-name">EvoSensory Oculomotor</div>
-        <div class="mod-pick-desc">Visual tracking synced to the beat. Pursuits, saccades, gaze tracking, attention hold.</div>
+        <div class="mod-pick-desc">Visual tracking synced to the beat. Pursuits, Pursuits 2, Saccadic Jumps, Whack-a-Mole, Attention Hold.</div>
       </div>
       <div class="mod-pick-arrow">›</div>
     </div>
@@ -773,9 +773,10 @@ here</textarea>
     <div id="ocu-submode" style="display:none;margin-top:8px;">
       <div class="label" style="margin-bottom:5px;">Vision Training Type</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-        <button class="pill-btn active" id="ocu-btn-pursuits" onclick="setOcuMode('pursuits')"><span class="pi" style="font-size:13px;">↔️</span>Smooth Pursuits</button>
-        <button class="pill-btn" id="ocu-btn-saccades" onclick="setOcuMode('saccades')"><span class="pi" style="font-size:13px;">⚡</span>Saccadic Jumps</button>
-        <button class="pill-btn" id="ocu-btn-gazetrack" onclick="setOcuMode('gazetrack')"><span class="pi" style="font-size:13px;">👁️</span>Gaze Tracking</button>
+        <button class="pill-btn active" id="ocu-btn-pursuits"  onclick="setOcuMode('pursuits')"><span class="pi" style="font-size:13px;">↔️</span>Smooth Pursuits</button>
+        <button class="pill-btn" id="ocu-btn-pursuits2" onclick="setOcuMode('pursuits2')"><span class="pi" style="font-size:13px;">👁️</span>Smooth Pursuits 2</button>
+        <button class="pill-btn" id="ocu-btn-saccades"  onclick="setOcuMode('saccades')"><span class="pi" style="font-size:13px;">⚡</span>Saccadic Jumps</button>
+        <button class="pill-btn" id="ocu-btn-saccades2" onclick="setOcuMode('saccades2')"><span class="pi" style="font-size:13px;">🦡</span>Whack-a-Mole</button>
         <button class="pill-btn" id="ocu-btn-attention" onclick="setOcuMode('attention')" style="grid-column:span 2;"><span class="pi" style="font-size:13px;">✨</span>Attention Hold — Magic Eyes</button>
       </div>
       <div id="ocu-clinical-note" style="font-size:10px;color:var(--gn);background:var(--gp);border-radius:7px;padding:6px 9px;margin-top:7px;line-height:1.65;"></div>
@@ -1212,7 +1213,7 @@ const GM_DESC={
   moneycatch: 'EvoSensory Classic — Stars fall from the sky. Catch them with your hands. The more accurate your timing, the higher the bill — $100 for perfect!',
   vocab:      'EvoSensory Cognitive — App SPEAKS each letter as the beat. Tap it. Then syllables. Then the whole word. 3 loops per word. Speech IS the beat.',
   math:       'EvoSensory Cognitive — App SPEAKS each number as the beat. Tap it. Addition and multiplication problems spoken aloud. Speech IS the beat.',
-  oculomotor: 'EvoSensory Oculomotor — Visual tracking synced to the metronome. Follow the target with your eyes. Tap at turnarounds (Pursuits/Saccades) or just follow with your eyes (Gaze Tracking/Attention Hold).',
+  oculomotor: 'EvoSensory Oculomotor — Pursuits: follow and tap at turnarounds. Pursuits 2: follow with eyes only (camera). Saccadic Jumps: tap on jump. Whack-a-Mole: tap left/right on reaction. Attention Hold: hold gaze until magic explosion.',
 };
 
 /* ═══ SETTINGS ══════════════════════════════════════ */
@@ -1612,10 +1613,11 @@ function buildModSettings(){
     } else if(meta.hasSub==='ocu'){
       if(subLabel) subLabel.textContent='Choose a Training Type';
       const ocuModes=[
-        ['pursuits','↔️','Smooth Pursuits','Target sweeps left and right. Tap at each turnaround. Targets smooth visual tracking and bilateral timing.'],
-        ['saccades','⚡','Saccadic Jumps','Target jumps between two positions on the beat. Tap at each appearance. Targets saccadic initiation speed.'],
-        ['gazetrack','👁️','Gaze Tracking','Follow the moving target with your eyes. Camera tracks your gaze — no tapping. Chrome desktop + WebGazer required.'],
-        ['attention','✨','Attention Hold — Magic Eyes','Stare at the dot without looking away. Hold your gaze until the magic explodes! 5–15 second holds. Camera confirms fixation. No tapping.'],
+        ['pursuits', '↔️','Smooth Pursuits',   'Target sweeps left and right. Tap at each turnaround. Targets smooth visual tracking and bilateral timing.'],
+        ['pursuits2','👁️','Smooth Pursuits 2',  'Same moving target — camera watches your eyes instead of tapping. No motor response. Chrome desktop + WebGazer required.'],
+        ['saccades', '⚡','Saccadic Jumps',     'Target jumps between two positions on the beat. Tap at each appearance. Targets saccadic initiation speed.'],
+        ['saccades2','🦡','Whack-a-Mole',       'Moles pop up left or right. Tap the matching side as fast as possible. No metronome — pure visual reaction time.'],
+        ['attention','✨','Attention Hold',      'Stare at the dot without looking away. Hold until the magic explodes! 5–15 second holds. Camera confirms fixation. No tapping.'],
       ];
       subCards.innerHTML=ocuModes.map(([id,ic,nm,ds])=>
         makeSubCard(id,ic,nm,ds,G.ocuMode===id,`setOcuMode('${id}');buildModSettings()`)
@@ -1988,17 +1990,19 @@ function setGM(m){
     const cn=document.getElementById('ocu-clinical-note');if(cn)cn.textContent='';
   }
 }
-const OCU_MODES = ['pursuits','saccades','gazetrack','attention'];
+const OCU_MODES = ['pursuits','pursuits2','saccades','saccades2','attention'];
 const OCU_DESC = {
   pursuits:   'Smooth Pursuits — Follow the glowing target as it sweeps left and right. Tap precisely when it hits each turnaround point.',
   saccades:   'Saccadic Jumps — Dot jumps between two positions on the beat. Tap the moment it appears in the new position. Return gaze to center cross between jumps.',
-  gazetrack:  'Gaze Tracking — Follow the moving target with your eyes. Camera watches where you look. No tapping required. Chrome desktop + WebGazer required.',
+  pursuits2:  'Smooth Pursuits 2 — Same target path as Pursuits. Camera watches your eyes instead of tapping. Chrome desktop + WebGazer required.',
+  saccades2:  'Whack-a-Mole Saccades — Moles pop up on the left or right. Tap the matching side as fast as you can. No metronome — your reaction time is the measure.',
   attention:  'Attention Hold — Magic Eyes — Stare at the glowing dot without looking away. Hold as long as you can. When the magic explodes — you did it! No tapping, just eyes.',
 };
 const OCU_CLINICAL = {
   pursuits:   '🏥 Targets extraocular muscle control and smooth pursuit eye movement. Difficulty increases with BPM.',
   saccades:   '🏥 Targets saccadic initiation speed and accuracy. Fixation cross trains return fixation — the full saccade cycle.',
-  gazetrack:  '🏥 Targets smooth pursuit accuracy via camera gaze estimation. Tracks whether eyes follow the target path. Evidence-informed extension — WebGazer is screening-level, not clinical-grade eye tracking.',
+  pursuits2:  '🏥 Targets smooth pursuit accuracy via camera gaze estimation. Tracks whether eyes follow the target path. No motor response required — purely visual. Evidence-informed extension.',
+  saccades2:  '🏥 Targets visual reaction time, saccadic initiation speed, and left/right discrimination. No metronome — variable timing trains genuine reactive saccades rather than anticipatory ones. Appropriate for ADHD, TBI, processing speed goals.',
   attention:  '🏥 Targets sustained visual attention and fixation endurance. Variable hold durations (5–15s) prevent habituation. Camera confirms gaze on target. No motor response required — purely visual. Appropriate for ADHD, autism, TBI.',
 };
 function setOcuMode(m){
@@ -3420,20 +3424,169 @@ function drawSaccades(ctx,W,H,an){
   ctx.textBaseline='alphabetic';
 }
 
-/* ── DEPTH PULSE ─────────────────────────────────────
-   Target expands from tiny center point to fill screen.
-   Simulates object flying directly at face — forces eyes
-   to converge as it grows, relax as it resets.
-   Tap at maximum expansion (target fills screen).
-   Clinical: convergence, accommodation, accommodative facility.
+/* ── WHACK-A-MOLE SACCADES ───────────────────────────
+   Moles pop up randomly on LEFT or RIGHT side.
+   Patient taps the matching button as fast as possible.
+   No metronome — variable timing trains reactive
+   saccades rather than anticipatory ones.
+   Center dividing line helps L/R discrimination.
+   Clinical: saccadic initiation, reaction time,
+   L/R discrimination, processing speed, ADHD/TBI.
 ───────────────────────────────────────────────────── */
-/* ── GAZE TRACKING ───────────────────────────────────
-   Camera tracks where the patient looks using WebGazer.
-   Target moves — gaze overlay shows how closely they
-   follow it. No tapping. Score = gaze accuracy.
-   Requires Chrome desktop + WebGazer calibration.
-───────────────────────────────────────────────────── */
-function drawGazeTrack(ctx,W,H,an){
+const WM={
+  mole:null,          // current mole {side, x, y, spawnTime, state}
+  holes:[],           // fixed hole positions L and R
+  hits:0, misses:0,
+  lastReaction:null,  // ms
+  reactions:[],       // rolling last 8 reaction times
+  nextDelay:0,        // ms until next mole spawns
+  _timer:null,
+};
+function _wmSpawn(){
+  if(!G.playing||G.gameMode!=='oculomotor'||G.ocuMode!=='saccades2') return;
+  const side=Math.random()<0.5?'L':'R';
+  const canvas=document.getElementById('gc');
+  const W=canvas?.width||380, H=canvas?.height||260;
+  // Holes at fixed positions left/right of center
+  const hx=side==='L'?W*.28:W*.72;
+  const hy=H*.38+Math.random()*H*.18; // slight vertical variation
+  WM.mole={side,x:hx,y:hy,spawnTime:Date.now(),state:'up',riseT:0};
+  // Auto-dismiss after 2.5s if not tapped
+  WM._autoMiss=setTimeout(()=>{
+    if(WM.mole&&WM.mole.state==='up'){
+      WM.misses++;WM.mole.state='down';
+      setTimeout(_wmNextMole,400);
+    }
+  },2500);
+}
+function _wmNextMole(){
+  if(!G.playing) return;
+  // Variable delay 600–1800ms — prevents anticipation
+  const delay=600+Math.floor(Math.random()*1200);
+  WM._timer=setTimeout(_wmSpawn,delay);
+}
+function handleWMTap(side){
+  if(!WM.mole||WM.mole.state!=='up') return false;
+  clearTimeout(WM._autoMiss);
+  const rt=Date.now()-WM.mole.spawnTime;
+  if(WM.mole.side===side){
+    WM.hits++;WM.lastReaction=rt;
+    WM.reactions.push(rt);if(WM.reactions.length>8)WM.reactions.shift();
+    WM.mole.state='hit';
+    // Register as a scored tap for the session
+    const dev=0,rating=rt<350?'perfect':rt<600?'good':rt<900?'close':'miss';
+    G.hits.push({dev,rating,rt});
+    playFeedback(0,rating);haptic(rating==='perfect'?'perfect':'good',0);
+    G.score+=RM[rating]?.pts||0;G.streak++;if(G.streak>G.maxStreak)G.maxStreak=G.streak;
+    G.beatsDone++;updateHUD();
+    showRat(rating,0);
+  } else {
+    // Wrong side
+    WM.mole.state='wrong';WM.misses++;G.streak=0;
+    playFeedback(0,'wrong');
+  }
+  setTimeout(_wmNextMole,500);
+  return true;
+}
+function drawWhackAMole(ctx,W,H,an){
+  // Init state if needed
+  if(!WM._started||!G.playing){
+    WM._started=true;WM.mole=null;WM.hits=0;WM.misses=0;WM.reactions=[];WM.lastReaction=null;
+    clearTimeout(WM._timer);clearTimeout(WM._autoMiss);
+    _wmNextMole();
+  }
+
+  // Background — soft grassy field
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#B8E8B0');bg.addColorStop(.55,'#8DC87A');bg.addColorStop(.55,'#6BA050');bg.addColorStop(1,'#5A8A40');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+  // Sky strip
+  ctx.fillStyle='#87CEEB';ctx.fillRect(0,0,W,H*.18);
+
+  // ── Center dividing line ──
+  ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=2.5;ctx.setLineDash([10,7]);
+  ctx.beginPath();ctx.moveTo(W/2,H*.08);ctx.lineTo(W/2,H*.96);ctx.stroke();ctx.setLineDash([]);
+  // L / R labels
+  ctx.font=`bold ${Math.floor(W*.055)}px Jost,sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(255,255,255,.55)';
+  ctx.fillText('L',W*.12,H*.88);
+  ctx.fillText('R',W*.88,H*.88);
+
+  // ── Draw holes (2 fixed positions) ──
+  const holePositions=[
+    {side:'L', x:W*.28, y:H*.45},
+    {side:'R', x:W*.72, y:H*.45},
+  ];
+  holePositions.forEach(hp=>{
+    // Dirt mound
+    ctx.fillStyle='#6B4A20';ctx.beginPath();ctx.ellipse(hp.x,hp.y+8,W*.09,H*.035,0,0,Math.PI*2);ctx.fill();
+    // Hole
+    ctx.fillStyle='#1A0A00';ctx.beginPath();ctx.ellipse(hp.x,hp.y,W*.075,H*.028,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(80,40,0,.4)';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(hp.x,hp.y,W*.075,H*.028,0,0,Math.PI*2);ctx.stroke();
+  });
+
+  // ── Draw mole ──
+  const m=WM.mole;
+  if(m){
+    // Rise/fall animation
+    if(m.state==='up')   m.riseT=Math.min(1,(Date.now()-m.spawnTime)/200);
+    if(m.state==='hit'||m.state==='down'||m.state==='wrong') m.riseT=Math.max(0,m.riseT-0.12);
+
+    if(m.riseT>0){
+      const clipH=m.riseT;
+      const sz=Math.min(W,H)*.1;
+      const mx=m.x, my=m.y-sz*0.7*clipH;
+
+      ctx.save();
+      // Clip so mole rises from hole
+      ctx.beginPath();ctx.ellipse(mx,m.y,W*.075,H*.028,0,0,Math.PI*2);
+      ctx.rect(mx-sz,m.y-sz*2,sz*2,sz*2);ctx.clip();
+
+      // Mole body
+      const bodyCol=m.state==='hit'?'#FFD700':m.state==='wrong'?'#FF6666':'#7B4F2E';
+      ctx.fillStyle=bodyCol;ctx.beginPath();ctx.ellipse(mx,my,sz*.52,sz*.58,0,0,Math.PI*2);ctx.fill();
+      // Face
+      ctx.fillStyle='#C4926A';ctx.beginPath();ctx.ellipse(mx,my+sz*.1,sz*.32,sz*.28,0,0,Math.PI*2);ctx.fill();
+      // Eyes
+      ctx.fillStyle='#1A0A00';[-.18,.18].forEach(dx=>{ctx.beginPath();ctx.arc(mx+dx*sz,my-sz*.08,sz*.07,0,Math.PI*2);ctx.fill();});
+      // Shine
+      [-.18,.18].forEach(dx=>{ctx.fillStyle='white';ctx.beginPath();ctx.arc(mx+dx*sz-sz*.02,my-sz*.1,sz*.025,0,Math.PI*2);ctx.fill();});
+      // Nose
+      ctx.fillStyle='#FF8C6A';ctx.beginPath();ctx.ellipse(mx,my+sz*.1,sz*.08,sz*.06,0,0,Math.PI*2);ctx.fill();
+      // Expression on hit/miss
+      if(m.state==='hit'){
+        ctx.strokeStyle='#1A0A00';ctx.lineWidth=2;ctx.lineCap='round';
+        ctx.beginPath();ctx.arc(mx,my+sz*.2,sz*.12,0.1,Math.PI-.1);ctx.stroke(); // smile
+        // Stars
+        ctx.fillStyle='#FFD700';ctx.font=`${Math.floor(sz*.6)}px sans-serif`;
+        ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('⭐',mx,my-sz*.7);
+      } else if(m.state==='wrong'){
+        ctx.strokeStyle='#FF4444';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(mx-sz*.12,my+sz*.22);ctx.lineTo(mx+sz*.12,my+sz*.22);ctx.stroke(); // flat
+      }
+      ctx.restore();
+    }
+  }
+
+  // ── Stats bar ──
+  const avgRT=WM.reactions.length?Math.round(WM.reactions.reduce((a,b)=>a+b,0)/WM.reactions.length):null;
+  ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(0,0,W,H*.12);
+  ctx.fillStyle='white';ctx.font=`${Math.floor(W*.032)}px Jost,sans-serif`;
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(`Hits: ${WM.hits}  Misses: ${WM.misses}`,W*.04,H*.06);
+  if(avgRT){ctx.textAlign='right';ctx.fillText(`Avg RT: ${avgRT}ms`,W*.96,H*.06);}
+  ctx.textAlign='center';
+
+  // Last reaction time floating label
+  if(WM.lastReaction){
+    const rtCol=WM.lastReaction<350?'#4AFF88':WM.lastReaction<600?'#FFD700':'#FF8888';
+    ctx.fillStyle=rtCol;ctx.font=`bold ${Math.floor(W*.038)}px Jost,sans-serif`;
+    ctx.fillText(WM.lastReaction+'ms',W/2,H*.2);
+  }
+  ctx.textBaseline='alphabetic';
+}
   const iv=60/G.bpm;
   const elapsed=G.lastBeatTime>0?(an-G.lastBeatTime):0;
   const phase=Math.min(elapsed/iv,1.0);
@@ -3765,7 +3918,8 @@ function gameDraw(){
     else if(G.gameMode==='math')drawMath(ctx,W,H,an);
     else if(G.gameMode==='oculomotor'){
       if(G.ocuMode==='saccades')       drawSaccades(ctx,W,H,an);
-      else if(G.ocuMode==='gazetrack') drawGazeTrack(ctx,W,H,an);
+      else if(G.ocuMode==='saccades2') drawWhackAMole(ctx,W,H,an);
+      else if(G.ocuMode==='pursuits2') drawPursuits2(ctx,W,H,an);
       else if(G.ocuMode==='attention') drawAttentionHold(ctx,W,H,an);
       else                             drawPursuits(ctx,W,H,an);
     }
@@ -3858,6 +4012,12 @@ function handleTap(side){
     if(G.gameMode==='vocab'&&(rating==='perfect'||rating==='good')) G.vocabFlash=1.0;
     if(earned>0)G.popups.push({text:`+${earned}${m>1?` ×${m}`:''}`,x:W/2,y:CY-26,color:rating==='perfect'?'#C4922A':'#fff',sz:rating==='perfect'?19:14,life:42});
     G.hits.push({dev,rating});showRat(rating,dev);updateHUD();
+    return;
+  }
+
+  // Whack-a-Mole — intercept before standard item tap logic
+  if(G.gameMode==='oculomotor'&&G.ocuMode==='saccades2'){
+    handleWMTap(tapSide==='C'?'L':tapSide); // default to L if center tap
     return;
   }
 
@@ -3962,6 +4122,7 @@ function startCountdown(){
   G.RC={nextSide:'L',catchFlash:0,catchSide:null,items:[],_lastSpawnBeat:-1};
   AH.holdStart=null;AH.phase='waiting';AH.explodeT=0;AH.particles=[];AH._burst=false;
   AH.holdCount=0;AH.holdDur=5+Math.floor(Math.random()*11);
+  WM._started=false;clearTimeout(WM._timer);clearTimeout(WM._autoMiss);WM.mole=null;
   G.recentDev=[];G.recentAcc=[];G.blindStart=null;G.cvOpacity=1;G.crossGlow=0;
   G.vocabIdx=0;G.mathIdx=0;G.vocabFlash=0;
   G.ocuTrail=[];G.ocuFlash=0;G.lastBeatTime=0;G.lastBeatIdx=0;
@@ -4113,6 +4274,7 @@ function exitGameEarly(){
   if(G.gameMode==='motion'||G.gameMode==='activegames') stopMotionCamera();
   if(window.speechSynthesis) window.speechSynthesis.cancel();
   AH.holdStart=null;AH.phase='waiting';AH.particles=[];AH._burst=false;
+  clearTimeout(WM._timer);clearTimeout(WM._autoMiss);WM._started=false;WM.mole=null;
   if(G.RC){G.RC.items=[];G.RC.catchFlash=0;}
   // Enough data → results screen; otherwise back to module picker
   if(G.hits.length>=2) endGame();
@@ -4128,6 +4290,7 @@ function endGame(){
   if(G.gameMode==='motion') stopMotionCamera();
   // Clean up attention hold and reach state
   AH.holdStart=null;AH.phase='waiting';AH.particles=[];AH._burst=false;
+  clearTimeout(WM._timer);clearTimeout(WM._autoMiss);WM._started=false;WM.mole=null;
   if(G.RC){G.RC.items=[];G.RC.catchFlash=0;}
   saveAdaptiveWindow(); // persist tightened window cross-session
   const hits=G.hits,total=G.total,lv=LVS.find(l=>l.id===G.lvId);
@@ -4165,7 +4328,7 @@ function renderRes(){
 
   // Meta line
   const u2=getActiveUser();
-  const modeLabel=G.gameMode==='oculomotor'?'Oculomotor · '+({pursuits:'Pursuits',saccades:'Saccades',depth:'Depth Pulse',gaze:'Gaze Hold'}[G.ocuMode]||G.ocuMode):G.gameMode;
+  const modeLabel=G.gameMode==='oculomotor'?'Oculomotor · '+({pursuits:'Pursuits',pursuits2:'Pursuits 2',saccades:'Saccades',saccades2:'Whack-a-Mole',attention:'Attention Hold'}[G.ocuMode]||G.ocuMode):G.gameMode;
   document.getElementById('res-meta').textContent=(u2?u2.name+' · ':'')+G.bpm+' BPM · '+lv.name+' · '+modeLabel;
 
   // Accuracy

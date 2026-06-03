@@ -214,12 +214,12 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
     <a href="evosensory-modules.html#classic" class="module-card" style="border:2px solid var(--p);">
       <div class="module-icon">🎮</div>
       <div class="module-name">Classic <span class="badge">Evidence-Based Core</span></div>
-      <div class="module-desc">Core timing engine with direct research grounding. Six progressive levels. Spatial audio, haptic feedback, XAC integration. Start here with every patient.</div>
+      <div class="module-desc">Core timing engine with direct research grounding. Eight progressive levels (0, 1, 1b, 2–6). Four visual modes: Falling Notes, Hurdle Jump, Target Range, Money Catcher. Spatial audio, haptic feedback, XAC integration, adaptive hit window. Start here with every patient.</div>
     </a>
     <a href="evosensory-modules.html#oculomotor" class="module-card">
       <div class="module-icon">👁️</div>
       <div class="module-name">Oculomotor <span class="badge">Evidence-Informed</span></div>
-      <div class="module-desc">Pursuits, saccades, depth pulse, gaze hold — all synced to the beat. Complements Classic when visual-motor timing is a treatment goal.</div>
+      <div class="module-desc">Five sub-modes: Smooth Pursuits (tap), Smooth Pursuits 2 (camera gaze tracking, no tap), Saccadic Jumps (tap on beat), Whack-a-Mole (reaction tap L/R), Attention Hold — Magic Eyes (hold gaze until magic explosion). Complements Classic for visual-motor timing goals.</div>
     </a>
     <a href="evosensory-modules.html#cognitive" class="module-card">
       <div class="module-icon">🧠</div>
@@ -229,7 +229,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
     <a href="evosensory-modules.html#motion" class="module-card">
       <div class="module-icon">📷</div>
       <div class="module-name">Motion <span class="beta-b">Evidence-Informed · Beta</span></div>
-      <div class="module-desc">Camera detects clapping, knee taps, marching, and jumps timed to the beat. Applies RAS principles to whole-body movement. Chrome on a computer required.</div>
+      <div class="module-desc">Camera detects clapping, knee taps with midline crossing, marching, jumps, and Reach &amp; Catch (trunk rotation, standing balance, visual-motor). Applies RAS principles to whole-body movement. Chrome on a computer required.</div>
     </a>
     <a href="evosensory-modules.html#activegames" class="module-card" style="background:linear-gradient(135deg,var(--ww),var(--gp));">
       <div class="module-icon">🎯</div>
@@ -289,8 +289,27 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
   <h2 class="section-title">Updates</h2>
   <p class="section-body" style="margin-bottom:20px;">Significant updates are posted here so you don't have to wait for an email. Refresh this page to see what's changed.</p>
 
+  <div class="update-item" style="border-color:var(--gn);background:var(--gp);border-radius:0 10px 10px 0;padding-right:14px;">
+    <div class="update-date" style="color:var(--gn);">June 2026 — Beta Build 5</div>
+    <div class="update-title">Major Clinical Expansion — Games, Levels, Stability</div>
+    <div class="update-body">
+      <ul>
+        <li><strong>8-level Classic progression</strong> — added Level 0 (First Beat 🌱, unilateral, 48 BPM) and Level 1b (Both Hands 🤝, simultaneous bilateral, 56 BPM) before the existing alternating levels. Clearer entry point for all patients.</li>
+        <li><strong>Hurdle Jump</strong> replaces Bubble Blast — horse gallops and jumps hurdles timed to the beat. Perfect = clean arc over the hurdle, Good = taps the rail top, Close = hurdle tilts, Miss = hurdle falls but horse keeps running. Visual "TAP!" ring cues the beat timing.</li>
+        <li><strong>Oculomotor redesigned</strong> — Depth Pulse and Gaze Hold removed (clinically problematic on a flat screen). Replaced with: Smooth Pursuits 2 (camera gaze tracking, no tap), Whack-a-Mole (moles pop left/right — reactive saccades, no metronome), and Attention Hold — Magic Eyes (hold gaze until explosion, 5–15s variable duration, camera confirms fixation).</li>
+        <li><strong>Reach &amp; Catch</strong> added to Motion module — patient stands centered, feet fixed, reaches left or right to catch falling objects. Targets trunk rotation, standing balance, visual-motor integration, and dual-task cognition. Add balance cushion for proprioceptive challenge.</li>
+        <li><strong>Graded audio feedback</strong> — error tone volume and duration now scale with error magnitude. A 15ms error is a soft whisper; a 180ms error is unmistakably loud. Pan (left ear = early, right ear = late) was already graded; volume and duration now match.</li>
+        <li><strong>Vocab 1-minute breaks</strong> — Cognitive mode inserts a 30-second rest after every ~60 seconds of active word sequences. Break overlay shows a progress bar; word list resumes automatically.</li>
+        <li><strong>Vocab speech fixed on iPhone/iPad</strong> — iOS was silencing queued speech due to a WebKit bug. Letter names and words now play correctly on mobile.</li>
+        <li><strong>Cross-session adaptive hit window</strong> — when a patient's window tightens during a session, that tighter window persists to the next session for the same profile instead of resetting.</li>
+        <li><strong>12-minute rest prompt</strong> — after 12 minutes of active Classic tapping, an overlay suggests a 2-minute break (consistent with research protocol recommendations for timing training sessions).</li>
+        <li><strong>Game freeze fix</strong> — motion modules were calling pose detection on every animation frame (~60fps), backing up the mobile task queue. Motion detection is now on its own 80ms interval separate from the rendering loop. A try/catch also prevents any draw error from killing the animation loop permanently.</li>
+        <li><strong>Auto-tap bug fixed</strong> — a variable scoping error was causing the game engine to register phantom taps on every beat. All Classic and Money Catcher games were affected.</li>
+      </ul>
+    </div>
+  </div>
+
   <div class="update-item">
-    <div class="update-date">May 2026 — Beta Build 4</div>
     <div class="update-title">New Module Flow, Smarter Profiles, Better Documentation</div>
     <div class="update-body">
       <ul>
@@ -328,7 +347,7 @@ footer strong{color:white;display:block;font-size:13px;margin-bottom:4px;}
     <div class="update-body">
       <ul>
         <li><strong>Motion module</strong> upgraded to MediaPipe Pose — detects clapping, knee taps with midline crossing, marching, and jumps. Live skeleton overlay and auto-start when body is detected</li>
-        <li><strong>Oculomotor</strong> expanded to four sub-modes: Smooth Pursuits, Saccadic Jumps, Depth Pulse, Gaze Hold</li>
+        <li><strong>Oculomotor</strong> expanded — Smooth Pursuits, Saccadic Jumps added. (Depth Pulse and Gaze Hold later replaced — see Build 5)</li>
         <li><strong>Eye tracking Phase 2</strong> — optional camera-based gaze estimation during oculomotor sessions (Chrome desktop only)</li>
         <li><strong>Multi-user profiles</strong> with session history, progress charts, and CSV export</li>
         <li><strong>SOAP note generator</strong> added to results and stats screens</li>
