@@ -738,7 +738,7 @@ here</textarea>
     <div class="label">Module</div>
     <div class="pill-row" style="grid-template-columns:repeat(3,1fr);gap:5px;" id="gm-pills">
       <button class="pill-btn active" data-gm="standard" onclick="setGM('standard')"><span class="pi">🎵</span>Classic</button>
-      <button class="pill-btn" data-gm="bubblegum" onclick="setGM('bubblegum')"><span class="pi">🫧</span>Bubble</button>
+      <button class="pill-btn" data-gm="hurdle" onclick="setGM('hurdle')"><span class="pi">🐴</span>Hurdle</button>
       <button class="pill-btn" data-gm="targetrange" onclick="setGM('targetrange')"><span class="pi">🎯</span>Target</button>
       <button class="pill-btn" data-gm="vocab" onclick="setGM('vocab')"><span class="pi">📖</span>Cognitive: Words</button>
       <button class="pill-btn" data-gm="math" onclick="setGM('math')"><span class="pi">🔢</span>Cognitive: Math</button>
@@ -754,6 +754,7 @@ here</textarea>
         <button class="pill-btn" id="mot-btn-knee" onclick="setMotMode('knee')"><span class="pi" style="font-size:13px;">🤸</span>Knee Taps / Midline</button>
         <button class="pill-btn" id="mot-btn-march" onclick="setMotMode('march')"><span class="pi" style="font-size:13px;">🦵</span>Marching</button>
         <button class="pill-btn" id="mot-btn-jump" onclick="setMotMode('jump')"><span class="pi" style="font-size:13px;">⬆️</span>Jumps</button>
+        <button class="pill-btn" id="mot-btn-reach" onclick="setMotMode('reach')" style="grid-column:span 2;"><span class="pi" style="font-size:13px;">🤲</span>Reach &amp; Catch — Trunk Rotation</button>
       </div>
       <div id="mot-clinical-note" style="font-size:10px;color:var(--gn);background:var(--gp);border-radius:7px;padding:6px 9px;margin-top:7px;line-height:1.65;"></div>
     </div>
@@ -1206,7 +1207,7 @@ const RM={
 };
 const GM_DESC={
   standard:   'EvoSensory Classic — Items fall from the top. Tap the matching button when each item crosses the catch line.',
-  bubblegum:  'EvoSensory Classic — Tap every beat to grow your bubble. Hit 10 in a row and it BURSTS! Miss and it pops.',
+  hurdle:      'EvoSensory Classic — A horse gallops and jumps hurdles on the beat. Perfect = clean jump, Good = taps the top, Close = hurdle tilts, Miss = hurdle falls but horse keeps going.',
   targetrange:'EvoSensory Classic — Animals cross the scene in time with the beat. Tap when the animal is inside the crosshair.',
   moneycatch: 'EvoSensory Classic — Stars fall from the sky. Catch them with your hands. The more accurate your timing, the higher the bill — $100 for perfect!',
   vocab:      'EvoSensory Cognitive — App SPEAKS each letter as the beat. Tap it. Then syllables. Then the whole word. 3 loops per word. Speech IS the beat.',
@@ -1627,6 +1628,7 @@ function buildModSettings(){
         ['knee',  '🤸','Knee Taps / Midline',        'Right hand to left knee, left hand to right knee, alternating. Midline crossing and bilateral integration.'],
         ['march', '🦵','Marching',                   'Alternating knee raises above hip height. Full body required. Bilateral lower extremity coordination.'],
         ['jump',  '⬆️','Jumps',                      'Both feet leave the ground on the beat. Full body + clearance required. Vestibular processing and motor planning.'],
+        ['reach', '🤲','Reach & Catch — Trunk Rotation', 'Standing. Feet fixed. Objects fall to left and right — reach and twist to catch them. Targets trunk rotation, reaching, standing balance, VM integration, and cognition. Add balance cushion for proprioceptive challenge.'],
       ];
       subCards.innerHTML=motModes.map(([id,ic,nm,ds])=>
         makeSubCard(id,ic,nm,ds,M.motMode===id,`setMotMode('${id}');buildModSettings()`)
@@ -1658,7 +1660,7 @@ function buildModSettings(){
   if(_pickedModuleGroup==='classic'){
     const vmodes=[
       ['standard',    '🎵','Falling Notes',  'Notes fall from the top. Tap when they reach the catch line. Clean, clear, best default.'],
-      ['bubblegum',   '🫧','Bubble Blast',   'Tap every beat to grow your bubble. 10 in a row and it bursts! Good for engagement and motivation.'],
+      ['hurdle',     '🐴','Hurdle Jump',    'Horse gallops and jumps hurdles timed to the beat. Perfect = clean jump over, Good = taps hurdle top, Close = hurdle tilts, Miss = hurdle falls. Horse keeps going. Best for motivation and engagement.'],
       ['targetrange', '🎯','Target Range',   'Animals cross the scene to the beat. Tap when inside the crosshair. Less visual clutter — good for sensory-sensitive patients.'],
       ['moneycatch',  '💰','Money Catcher',  'Stars fall from the sky — catch them with your hands! Perfect timing = $100 bill. Great for motivation and reward.'],
     ];
@@ -1862,7 +1864,7 @@ function modsStartSession(){
   // Set game mode — preserve sub-mode selection for classic and cognitive
   if(_pickedModuleGroup==='classic'){
     // Keep whichever visual mode the user picked; fall back to default only if none selected
-    const classicModes=['standard','bubblegum','targetrange','moneycatch'];
+    const classicModes=['standard','hurdle','targetrange','moneycatch'];
     if(!classicModes.includes(G.gameMode)) setGM(meta.defaultMode);
     // else G.gameMode is already correct — don't override it
   } else if(_pickedModuleGroup==='cognitive'){
@@ -2289,9 +2291,9 @@ document.addEventListener('keydown',_warmSpeech,{once:true});
 function speak(text,rate=0.9){
   if(!S.speechOn||!window.speechSynthesis) return;
   const ss=window.speechSynthesis;
-  // Only cancel if there are queued utterances backing up — NOT based on ss.speaking
-  // which stays true on iOS even when nothing is audible (known WebKit bug)
-  if(ss.pending) ss.cancel();
+  // On mobile (iOS/Android) cancelling pending speech silences the queue — don't cancel.
+  // On desktop, cancel if queue is backing up to prevent lag.
+  if(!IS_MOBILE&&ss.pending) ss.cancel();
   const u=new SpeechSynthesisUtterance(text);
   u.rate=rate; u.pitch=1.1; u.volume=0.9;
   const v=_getVoice(); if(v) u.voice=v;
@@ -2347,30 +2349,46 @@ function buildVocabSeq(){
   const raw=document.getElementById('word-list')?.value||'cat\ndog\nrun';
   const entries=raw.split('\n').map(w=>w.trim().toUpperCase()).filter(w=>w.length>0&&w.replace(/-/g,'').length<=14);
   const seq=[];
-  entries.forEach(rawWord=>{
+  // Estimate beats per minute at current BPM; insert a long break every ~60s worth of beats
+  const bpm=G.bpm||56;
+  const beatsPerMinute=bpm;
+  let beatCount=0;
+  let breakInserted=false;
+
+  entries.forEach((rawWord,wordIdx)=>{
     const syllables=rawWord.includes('-')?rawWord.split('-').map(s=>s.trim()).filter(Boolean):autoSyllables(rawWord);
     const word=rawWord.replace(/-/g,'');
     const letters=word.split('');
     const isMultiSyl=syllables.length>1;
     for(let loop=0;loop<3;loop++){
-      // Spell it — one beat per letter
       letters.forEach((letter,li)=>{
         seq.push({type:'letter',letter,word,syllables,loop,letterIdx:li,totalLetters:letters.length});
+        beatCount++;
       });
-      // Syllables — only loop 0, only if multi-syllable
       if(loop===0&&isMultiSyl){
         syllables.forEach((syl,si)=>{
           seq.push({type:'syllable',letter:syl,word,syllables,loop,sylIdx:si,totalSyls:syllables.length});
+          beatCount++;
         });
       }
-      // Say the whole word
       seq.push({type:'word',letter:word,word,syllables,loop});
-      // Short rest between loops; longer after loop 2
+      beatCount++;
       const restCount=loop===2?2:1;
-      for(let r=0;r<restCount;r++) seq.push({type:'rest',letter:'',word,loop});
+      for(let r=0;r<restCount;r++){seq.push({type:'rest',letter:'',word,loop});beatCount++;}
     }
-    // Extra pause between words
     seq.push({type:'wordbreak',letter:'',word,loop:0});
+    beatCount++;
+
+    // Insert a 30-second rest break (~beatsPerMinute/2 silent beats) every ~60s
+    // Only between words, not mid-word, and only once per minute
+    if(!breakInserted&&beatCount>=beatsPerMinute){
+      breakInserted=false; // reset for next minute
+      beatCount=0;
+      const breakBeats=Math.round(bpm*0.5); // ~30 seconds of silence
+      for(let b=0;b<breakBeats;b++){
+        seq.push({type:'longBreak',letter:'',word:'',loop:0,breakIdx:b,breakTotal:breakBeats});
+      }
+    }
   });
   return seq;
 }
@@ -2683,46 +2701,174 @@ function drawStandard(ctx,W,H,an){
 }
 
 /* ── END STANDARD ── */
-function drawBubblegum(ctx,W,H,an){
-  const B=G.bubble;
-  ctx.fillStyle='#FFF0F8';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='rgba(255,182,193,.15)';for(let gx=20;gx<W;gx+=30)for(let gy=20;gy<H;gy+=30){ctx.beginPath();ctx.arc(gx,gy,2.5,0,Math.PI*2);ctx.fill();}
-  const charX=W/2,charY=H*.68,charR=Math.min(W,H)*.1;
-  const beatAgo=an-(G.beats[G.beats.length-1]||0);
-  if(beatAgo<.18){const ring=beatAgo/.18;ctx.strokeStyle='rgba(255,105,180,'+(1-ring)*.35+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(charX,charY,charR*(1.1+ring*.6),0,Math.PI*2);ctx.stroke();}
-  if(B.size>1){
-    const bx=charX,by=charY-charR*.4-B.size*.65;
-    const grad=ctx.createRadialGradient(bx-B.size*.2,by-B.size*.2,0,bx,by,B.size);
-    grad.addColorStop(0,'rgba(255,240,248,.9)');grad.addColorStop(.6,'rgba(255,150,200,.72)');grad.addColorStop(.9,'rgba(220,80,150,.5)');grad.addColorStop(1,'rgba(180,40,120,.3)');
-    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(bx,by,B.size,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='rgba(200,60,130,.35)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(bx,by,B.size,0,Math.PI*2);ctx.stroke();
-    ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.ellipse(bx-B.size*.28,by-B.size*.28,B.size*.2,B.size*.13,-.4,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='rgba(220,100,160,.45)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(charX,charY-charR*.35);ctx.lineTo(bx,by+B.size);ctx.stroke();
+
+/* ── HURDLE JUMP ── */
+// G.hurdle = { jumpState:0, jumpT:0, hurdleX:1.1, rating:null, ratingAge:0, streakFlash:0 }
+function initHurdle(){G.hurdle={jumpState:0,jumpT:0,hurdleX:1.1,rating:null,ratingAge:0,streakFlash:0,burstParts:[]};}
+function updateHurdle(rating){
+  const H=G.hurdle;
+  H.rating=rating; H.ratingAge=0;
+  if(rating==='perfect')H.jumpState=1;       // clean arc
+  else if(rating==='good')H.jumpState=2;     // taps top
+  else if(rating==='close')H.jumpState=3;    // tilts hurdle
+  else H.jumpState=4;                        // knocks hurdle
+  H.jumpT=0;
+  if(rating==='perfect'&&(G.streak===5||G.streak===10||G.streak===20)){
+    H.streakFlash=1;
+    const W=document.getElementById('gc')?.width||380;
+    const horseX=W*.28,horseY=(document.getElementById('gc')?.height||260)*.7;
+    H.burstParts.push(...Array.from({length:30},(_,i)=>{
+      const a=(i/30)*Math.PI*2,sp=2+Math.random()*5;
+      return{x:horseX,y:horseY,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-3,color:['#C4922A','#FFD700','#FFF8E8','#4A8C6F'][i%4],size:3+Math.random()*5,life:35+Math.random()*15};
+    }));
   }
-  B.burstParts=B.burstParts.map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+.25,vx:p.vx*.96,life:p.life-1})).filter(p=>p.life>0);
-  B.burstParts.forEach(p=>{ctx.globalAlpha=Math.min(1,p.life/28);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;
-  ctx.fillStyle='#FFD1DC';ctx.beginPath();ctx.arc(charX,charY,charR,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(255,150,180,.45)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(charX,charY,charR,0,Math.PI*2);ctx.stroke();
-  ctx.fillStyle='rgba(255,130,150,.22)';ctx.beginPath();ctx.ellipse(charX-charR*.44,charY+charR*.1,charR*.24,charR*.17,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(charX+charR*.44,charY+charR*.1,charR*.24,charR*.17,0,0,Math.PI*2);ctx.fill();
-  const mood=B.mood;
-  if(mood==='burst'){ctx.strokeStyle='#444';ctx.lineWidth=2.5;[[-1],[1]].forEach(([xs])=>{ctx.beginPath();ctx.moveTo(charX+xs*charR*.3-charR*.1,charY-charR*.12-charR*.08);ctx.lineTo(charX+xs*charR*.3+charR*.1,charY-charR*.12+charR*.08);ctx.stroke();ctx.beginPath();ctx.moveTo(charX+xs*charR*.3+charR*.1,charY-charR*.12-charR*.08);ctx.lineTo(charX+xs*charR*.3-charR*.1,charY-charR*.12+charR*.08);ctx.stroke();});}
-  else if(mood==='happy'){ctx.strokeStyle='#444';ctx.lineWidth=2.5;[-1,1].forEach(xs=>{ctx.beginPath();ctx.arc(charX+xs*charR*.3,charY-charR*.12,charR*.14,Math.PI*.08,Math.PI*.92);ctx.stroke();});}
-  else{ctx.fillStyle='#333';[[-1],[1]].forEach(([xs])=>{ctx.beginPath();ctx.arc(charX+xs*charR*.3,charY-charR*.12,charR*.1,0,Math.PI*2);ctx.fill();});}
-  ctx.fillStyle=B.size>2?'#FF69B4':'#FF99BB';ctx.beginPath();ctx.ellipse(charX,charY+charR*.28,charR*(B.size>2?.14:.09),charR*(B.size>2?.12:.07),0,0,Math.PI*2);ctx.fill();
-  // Size bar
-  const pct=B.size/B.max;ctx.fillStyle='rgba(220,100,160,.18)';ctx.beginPath();ctx.roundRect(W*.1,H*.9,W*.8,7,4);ctx.fill();if(pct>0){ctx.fillStyle='rgba(220,80,150,.5)';ctx.beginPath();ctx.roundRect(W*.1,H*.9,W*.8*pct,7,4);ctx.fill();}
-  ctx.textBaseline='alphabetic';
 }
-function updateBubble(rating){
-  const B=G.bubble,W=document.getElementById('gc')?.width||380,H=document.getElementById('gc')?.height||260;
-  const bx=W/2,by=H*.68-H*.1*.4-B.size*.65;
-  if(rating==='perfect'){B.size=Math.min(B.max,B.size+9);B.mood='happy';}
-  else if(rating==='good'){B.size=Math.min(B.max,B.size+4);B.mood='idle';}
-  else if(rating==='miss'||rating==='wrong'){B.size=Math.max(0,B.size*.2);B.mood='burst';setTimeout(()=>{B.mood='idle';},500);}
-  if(G.streak===10||G.streak===20||G.streak===30){
-    const cols=['#FF69B4','#FFB6C1','#FF1493','#FFC0CB','#FF82AB','#E0115F'];
-    B.burstParts.push(...Array.from({length:50},(_,i)=>{const a=(i/50)*Math.PI*2+Math.random()*.3,sp=3+Math.random()*7;return{x:bx,y:by,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2,color:cols[Math.floor(Math.random()*cols.length)],size:3+Math.random()*7,life:40+Math.random()*22};}));
-    B.size=0;B.mood='burst';setTimeout(()=>{B.mood='idle';},600);
+function drawHurdle(ctx,W,H,an){
+  const HR=G.hurdle||(G.hurdle=initHurdle()||G.hurdle);
+  // Sky gradient
+  const sky=ctx.createLinearGradient(0,0,0,H*.6);
+  sky.addColorStop(0,'#87CEEB');sky.addColorStop(1,'#C8E8FF');
+  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H*.6);
+  // Ground
+  ctx.fillStyle='#5A8A30';ctx.fillRect(0,H*.6,W,H*.4);
+  ctx.fillStyle='#4A7A22';ctx.fillRect(0,H*.6,W,H*.035);
+  // Grass tufts
+  const gSeed=7;for(let i=0;i<8;i++){const gx=(i/8)*W+gSeed*i%30;ctx.strokeStyle='#3A6A18';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(gx,H*.6);ctx.lineTo(gx-3,H*.57);ctx.stroke();ctx.beginPath();ctx.moveTo(gx+4,H*.6);ctx.lineTo(gx+7,H*.565);ctx.stroke();}
+  // Clouds
+  [[W*.15,H*.1,.9],[W*.65,H*.08,1.1],[W*.42,H*.16,.7]].forEach(([cx,cy,s])=>{
+    ctx.fillStyle='rgba(255,255,255,.82)';
+    [0,1,-1].forEach(d=>{ctx.beginPath();ctx.arc(cx+d*W*.05*s,cy+Math.abs(d)*H*.015,W*.045*s,0,Math.PI*2);ctx.fill();});
+  });
+
+  // ── Hurdle position ──
+  // Each beat a new hurdle spawns from right, horse is at fixed x=0.28W
+  const beatDur=60/G.bpm;
+  const horseX=W*.28, groundY=H*.6;
+  const hurdleW=W*.05, hurdleH=H*.13;
+
+  // Advance hurdle position based on audio time since last beat
+  const lastBeat=G.beats[G.beats.length-1]||an;
+  const nextBeat=lastBeat+beatDur;
+  // Hurdle travels from x=0.85 to x=0.15 over one beat period
+  const beatProg=Math.min(1,Math.max(0,(an-lastBeat)/beatDur));
+  const hx=W*(0.85-beatProg*0.7); // travels right to left
+
+  // ── Horse ──
+  const legAnim=Math.sin(an*G.bpm*.18)*0.5+0.5; // 0-1 gallop cycle
+
+  // Jump arc — when jumpState is set
+  let horseOffY=0;
+  if(HR.jumpState&&HR.jumpState<4){
+    HR.jumpT=Math.min(1,HR.jumpT+(1/(beatDur*60)));
+    const t=HR.jumpT;
+    // Parabolic arc — height scales with rating quality
+    const maxH=HR.jumpState===1?H*.22:HR.jumpState===2?H*.15:H*.08;
+    horseOffY=-(4*maxH*t*(1-t));
+    if(HR.jumpT>=1)HR.jumpState=0;
+  } else if(HR.jumpState===4){
+    HR.jumpT=Math.min(1,HR.jumpT+(1/(beatDur*60)));
+    if(HR.jumpT>=1)HR.jumpState=0;
   }
+
+  function drawHorse(x,y,offY){
+    const hy=y+offY;
+    const sz=Math.min(W,H)*.09;
+    ctx.save();ctx.translate(x,hy);
+    // Body
+    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.ellipse(0,-sz*.3,sz*.7,sz*.38,.05,0,Math.PI*2);ctx.fill();
+    // Neck
+    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.moveTo(sz*.3,-sz*.45);ctx.lineTo(sz*.55,-sz*.9);ctx.lineTo(sz*.72,-sz*.82);ctx.lineTo(sz*.48,-sz*.38);ctx.fill();
+    // Head
+    ctx.fillStyle='#8B5E3C';ctx.beginPath();ctx.ellipse(sz*.65,-sz*.95,sz*.22,sz*.15,.3,0,Math.PI*2);ctx.fill();
+    // Mane
+    ctx.fillStyle='#3D2010';ctx.beginPath();ctx.moveTo(sz*.32,-sz*.48);ctx.quadraticCurveTo(sz*.2,-sz*.75,sz*.48,-sz*.88);ctx.lineWidth=sz*.12;ctx.strokeStyle='#3D2010';ctx.stroke();
+    // Eye
+    ctx.fillStyle='#1A0A00';ctx.beginPath();ctx.arc(sz*.74,-sz*1.0,sz*.04,0,Math.PI*2);ctx.fill();
+    // Nostril
+    ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(sz*.82,-sz*.9,sz*.03,sz*.02,.3,0,Math.PI*2);ctx.fill();
+    // Legs (4) — animated gallop
+    const legY=sz*.1;
+    const legPairs=[
+      [-.35,legAnim],[-.1,1-legAnim],[.1,legAnim],[.35,1-legAnim]
+    ];
+    legPairs.forEach(([lx,phase])=>{
+      const stretch=phase*.35;
+      ctx.strokeStyle='#6B4020';ctx.lineWidth=sz*.15;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(lx*sz,legY);ctx.lineTo(lx*sz+stretch*sz,legY+sz*.45);ctx.stroke();
+      // Hoof
+      ctx.fillStyle='#2A1008';ctx.beginPath();ctx.ellipse(lx*sz+stretch*sz,legY+sz*.52,sz*.08,sz*.055,0,0,Math.PI*2);ctx.fill();
+    });
+    // Tail
+    ctx.strokeStyle='#3D2010';ctx.lineWidth=sz*.11;ctx.lineCap='round';
+    const tailWag=Math.sin(an*G.bpm*.18)*sz*.15;
+    ctx.beginPath();ctx.moveTo(-sz*.65,-sz*.25);ctx.quadraticCurveTo(-sz*.95,-sz*.1+tailWag,-sz*.8,sz*.2+tailWag);ctx.stroke();
+    ctx.restore();
+  }
+
+  // ── Hurdle ──
+  function drawHurdleObj(x,y,tilt,topTap,fallen){
+    ctx.save();ctx.translate(x,y);
+    if(tilt)ctx.rotate(tilt*.4);
+    if(fallen){ctx.rotate(Math.PI/2);ctx.translate(0,-hurdleH);}
+    // Posts
+    ctx.fillStyle='#8B4513';
+    ctx.beginPath();ctx.roundRect(-hurdleW/2-4,-hurdleH,8,hurdleH,3);ctx.fill();
+    ctx.beginPath();ctx.roundRect(hurdleW/2-4,-hurdleH,8,hurdleH,3);ctx.fill();
+    // Rail — red/white stripes
+    const railH=hurdleH*.18;
+    const stripeW=hurdleW/4;
+    ctx.save();ctx.beginPath();ctx.rect(-hurdleW/2,-hurdleH*.55,hurdleW,railH);ctx.clip();
+    for(let s=0;s<5;s++){
+      ctx.fillStyle=s%2===0?'#CC2020':'#F0F0F0';
+      ctx.fillRect(-hurdleW/2+s*stripeW,-hurdleH*.55,stripeW,railH);
+    }
+    ctx.restore();
+    // Rail outline
+    ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=1;
+    ctx.strokeRect(-hurdleW/2,-hurdleH*.55,hurdleW,railH);
+    // Top tap effect
+    if(topTap){
+      ctx.fillStyle='rgba(255,200,50,.6)';
+      ctx.beginPath();ctx.roundRect(-hurdleW/2,-hurdleH*.55,hurdleW,railH,3);ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Draw based on last rating
+  const ratingAge=(HR.ratingAge||0);
+  HR.ratingAge=(ratingAge||0)+1;
+  const tiltAmt=HR.rating==='close'?Math.min(ratingAge/8,1):0;
+  const fallen=HR.rating==='miss'&&ratingAge<45;
+  const topTap=HR.rating==='good'&&ratingAge<20;
+
+  drawHurdleObj(hx,groundY,tiltAmt,topTap,fallen);
+  drawHorse(horseX,groundY,horseOffY);
+
+  // Rating label
+  if(HR.rating&&ratingAge<40){
+    const cols={perfect:'#4A8C6F',good:'#C4922A',close:'#9B88C4',miss:'#B85450'};
+    const labels={perfect:'🌟 Perfect!',good:'👍 Good',close:'↔ Close',miss:'✗ Miss'};
+    const alpha=Math.max(0,1-ratingAge/40);
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle=cols[HR.rating]||'#5C4490';
+    ctx.font=`bold ${Math.floor(W*.052)}px Jost,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(labels[HR.rating]||'',W/2,H*.18);
+    ctx.globalAlpha=1;
+  }
+
+  // Streak burst particles
+  HR.burstParts=(HR.burstParts||[]).map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+.22,life:p.life-1})).filter(p=>p.life>0);
+  HR.burstParts.forEach(p=>{ctx.globalAlpha=p.life/40;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
+  ctx.globalAlpha=1;
+
+  // Beat pulse ring on horse
+  const bAgo=an-(G.beats[G.beats.length-1]||an);
+  if(bAgo<.15){const r=bAgo/.15;ctx.strokeStyle=`rgba(92,68,144,${(1-r)*.4})`;ctx.lineWidth=2;ctx.beginPath();ctx.arc(horseX,groundY+horseOffY-Math.min(W,H)*.045,Math.min(W,H)*.12*(0.9+r*.4),0,Math.PI*2);ctx.stroke();}
+
+  // Catch line indicator
+  drawCatchLine(ctx,horseX,groundY,W*.2,.5+.5*Math.sin(an*G.bpm*Math.PI),'#5C4490');
+  ctx.textBaseline='alphabetic';
 }
 
 /* ── TARGET RANGE ── */
@@ -3427,7 +3573,7 @@ function drawGazeHold(ctx,W,H,an){
 function schedTick(){
   if(!G.audioCtx||!G.playing)return;
   // Session timer — rest break prompt at ~12 minutes of active tapping
-  const classicModes=['standard','bubblegum','targetrange','moneycatch'];
+  const classicModes=['standard','hurdle','targetrange','moneycatch'];
   if(!G.restPrompted&&classicModes.includes(G.gameMode)){
     const elapsed=(Date.now()-G.sessionStart)/1000/60;
     if(elapsed>=12&&G.beatsDone>=20){
@@ -3464,6 +3610,29 @@ function schedTick(){
         else if(cur?.type==='syllable') speak(cur.letter, .82);
         else if(cur?.type==='word') speak(cur.word, .9);
         else if(cur?.type==='rest'||cur?.type==='wordbreak') {/* silence */}
+        else if(cur?.type==='longBreak'){
+          // First beat of the break — show overlay, mute metronome for break duration
+          if(cur.breakIdx===0){
+            G.vocabOnBreak=true;
+            const ov=document.getElementById('vocab-break-overlay');
+            if(!ov){
+              const el=document.createElement('div');
+              el.id='vocab-break-overlay';
+              el.style.cssText='position:absolute;inset:0;z-index:70;background:rgba(14,10,32,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;pointer-events:none;';
+              el.innerHTML=`<div style="font-size:26px;">😮‍💨</div><div style="font-size:15px;font-weight:600;color:white;">Rest Break</div><div style="font-size:11px;color:rgba(255,255,255,.65);">30 seconds — continuing shortly</div><div id="vocab-break-bar" style="width:160px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin-top:4px;"><div id="vocab-break-fill" style="height:100%;width:0%;background:var(--p);border-radius:3px;transition:width .5s linear;"></div></div>`;
+              document.getElementById('screen-game')?.appendChild(el);
+            }
+          }
+          // Animate break bar
+          const pct=Math.round((cur.breakIdx/cur.breakTotal)*100);
+          const fill=document.getElementById('vocab-break-fill');
+          if(fill) fill.style.width=pct+'%';
+          // Last beat of break — remove overlay
+          if(cur.breakIdx>=cur.breakTotal-1){
+            G.vocabOnBreak=false;
+            setTimeout(()=>{document.getElementById('vocab-break-overlay')?.remove();},400);
+          }
+        }
       } else if(G.gameMode==='math'){
         const cur=G.mathSeq[Math.min(idx,G.mathSeq.length-1)];
         if(cur?.type==='count'&&cur.spoken) speak(cur.spoken, .88);
@@ -3485,7 +3654,7 @@ function gameDraw(){
   if(S.blindMode&&G.blindStart){const el=(Date.now()-G.blindStart)/1000;const t=el>13?0:el>10?1-(el-10)/3:1;G.cvOpacity+=(t-G.cvOpacity)*.05;canvas.style.opacity=G.cvOpacity;}
   else if(G.cvOpacity<1){G.cvOpacity=1;canvas.style.opacity=1;}
   if(!S.visualOn){ctx.fillStyle='#1A1030';ctx.fillRect(0,0,W,H);if(G.playing)G.animFr=requestAnimationFrame(()=>_drawFn&&_drawFn());return;}
-  if(G.gameMode==='bubblegum')drawBubblegum(ctx,W,H,an);
+  if(G.gameMode==='hurdle')drawHurdle(ctx,W,H,an);
   else if(G.gameMode==='moneycatch')drawMoneyCatch(ctx,W,H,an);
   else if(G.gameMode==='targetrange')drawTargetRange(ctx,W,H,an);
   else if(G.gameMode==='vocab')drawVocab(ctx,W,H,an);
@@ -3538,25 +3707,24 @@ function pollGP(){
 
 /* ═══ TAP HANDLER ════════════════════════════════════ */
 function handleTap(side){
-  if(tapSide==='S'){
-    // Simultaneous bilateral — register as both L and R
-    handleTap('L'); handleTap('R'); return;
-  }
-  if(tapSide==='C'&&isLvSimul(G.lvId)){
-    handleTap('L'); handleTap('R'); return;
-  }
-  const tapTime=G.audioCtx.currentTime;
+  if(!G.playing||!G.audioCtx)return;
   const canvas=document.getElementById('gc');
   const W=canvas?.width||380,H=canvas?.height||260;
   const isEduMode=G.gameMode==='vocab'||G.gameMode==='math';
   const isOcu=G.gameMode==='oculomotor';
   const isMotion=G.gameMode==='motion';
   const isAG=G.gameMode==='activegames';
-  // Single-tap modes: Level 1, edu, bubblegum, target range, oculomotor, motion, activegames
-  const isSingle=isLvSingle(G.lvId)||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||isOcu||isMotion||isAG;
+  const isSingle=isLvSingle(G.lvId)||isEduMode||G.gameMode==='hurdle'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||isOcu||isMotion||isAG;
+  const tapSide=isSingle?'C':side;
+
+  // Simultaneous bilateral — dispatch to both L and R
+  if(side==='S'||(side==='C'&&isLvSimul(G.lvId))){
+    handleTap('L'); handleTap('R'); return;
+  }
+
+  const tapTime=G.audioCtx.currentTime;
   const lanes=isSingle?[{side:'B',cx:W/2}]:[{side:'L',cx:W*.02+W*.22},{side:'R',cx:W*.54+W*.22}];
   const CY=G.gameMode==='targetrange'?H*.42:H*.87;
-  const tapSide=isSingle?'C':side;
 
   // Edu modes: tap = register timing against spoken beat (NOT oculomotor)
   if(isEduMode&&!isOcu){
@@ -3565,7 +3733,7 @@ function handleTap(side){
     const curSeq=G.gameMode==='vocab'?G.vocabSeq:G.mathSeq;
     const curIdx=G.gameMode==='vocab'?G.vocabIdx:G.mathIdx;
     const curBeat=curSeq?.[curIdx];
-    if(curBeat?.type==='rest'||curBeat?.type==='wordbreak') return;
+    if(curBeat?.type==='rest'||curBeat?.type==='wordbreak'||curBeat?.type==='longBreak') return;
     const nearest=G.beats.reduce((b,t)=>{return Math.abs(t-tapTime)<Math.abs(b-tapTime)?t:b;},G.beats[0]);
     const rawDev=Math.round((tapTime-nearest)*1000);
     const dev=rawDev-G.calibOff;
@@ -3600,7 +3768,7 @@ function handleTap(side){
   playFeedback(dev,rating);
   const ht=Math.abs(dev)<=42?'perfect':dev<0?'early':'late';haptic(ht,dev);
   if(G.gameMode==='targetrange'&&(rating==='perfect'||rating==='good'))G.crossGlow=1;
-  if(G.gameMode==='bubblegum')updateBubble(rating);
+  if(G.gameMode==='hurdle')updateHurdle(rating);
   // Resolve lane early so moneycatch block can use it
   const lane=lanes.find(l=>l.side===(isSingle?'B':best.side))||lanes[0];
   const col=THEMES[G.lvId]?.['col'+(isSingle?'B':best.side)]||'#5C4490';
@@ -3680,6 +3848,7 @@ function startCountdown(){
   G.items=[];G.particles=[];G.popups=[];G.beats=[];G.hits=[];
   G.score=0;G.streak=0;G.maxStreak=0;G.beatsDone=0;G.consecMiss=0;G.moneyTotal=0;
   G.sessionStart=Date.now();G.restPrompted=false;
+  G.hurdle={jumpState:0,jumpT:0,hurdleX:1.1,rating:null,ratingAge:0,streakFlash:0,burstParts:[]};
   G.recentDev=[];G.recentAcc=[];G.blindStart=null;G.cvOpacity=1;G.crossGlow=0;
   G.bubble={size:0,max:68,burstParts:[],mood:'idle'};
   G.vocabIdx=0;G.mathIdx=0;G.vocabFlash=0;
@@ -3720,7 +3889,7 @@ function startCountdown(){
   // Build tap buttons — single for Level 1, edu, bubblegum, target range, oculomotor, motion
   const tb=document.getElementById('tap-btns');
   const isAGMode=G.gameMode==='activegames';
-  const isSingle=isLvSingle(lv.id)||isEduMode||G.gameMode==='bubblegum'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||G.gameMode==='oculomotor'||G.gameMode==='motion'||isAGMode;
+  const isSingle=isLvSingle(lv.id)||isEduMode||G.gameMode==='hurdle'||G.gameMode==='targetrange'||G.gameMode==='moneycatch'||G.gameMode==='oculomotor'||G.gameMode==='motion'||isAGMode;
   const isSimul=isLvSimul(lv.id);
   if(isSingle&&!isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">any key · tap anywhere</div></button>';}
   else if(isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" style="background:linear-gradient(135deg,#B85450,#5C4490);" ontouchstart="ev=event;ev.preventDefault();handleTap(\'S\')" onmousedown="event.preventDefault();handleTap(\'S\')">BOTH HANDS<div style="font-size:8px;opacity:.75;margin-top:3px;">tap with both · any key</div></button>';}
@@ -4074,7 +4243,7 @@ function generateSOAP(sess){
   // ── MODE CONTEXT ──────────────────────────────────────────────────────
   const modeContext={
     standard:     'EvoSensory Classic — timed bilateral tapping with visual falling notes',
-    bubblegum:    'EvoSensory Classic — Bubble Blast format (motivational visual engagement)',
+    hurdle:       'EvoSensory Classic — Hurdle Jump format (motivational engagement, beat-synchronized visual)',
     targetrange:  'EvoSensory Classic — Target Range format (visual-motor timing)',
     vocab:        'EvoSensory Cognitive — Vocabulary Mode (patient spelled and repeated words timed to a metronome beat, targeting phonological processing and auditory-motor integration)',
     math:         'EvoSensory Cognitive — Math Mode (patient counted or solved math sequences timed to a metronome beat, targeting number fluency and auditory-motor integration)',
@@ -4275,6 +4444,12 @@ const MOT_MODES={
     clinical:'Both feet leave ground simultaneously on the beat. Targets bilateral lower extremity coordination, vestibular processing, timing, and motor planning.',
     guide:'Full body with extra clearance above the head for the jump arc. 5–7 feet from screen on a non-slip surface. Clear the surrounding area. Both ankles must be visible at rest.',
     svgType:'full',svgCaption:'Full body + jump clearance above head',
+  },
+  reach:{
+    label:'Reach & Catch — Trunk Rotation',icon:'🤲',
+    clinical:'Standing with feet fixed. Objects fall to left and right sides — patient twists and reaches to catch each one. Targets trunk rotation, reaching, standing balance, visual-motor integration, and dual-task cognition. Add balance cushion for proprioceptive challenge.',
+    guide:'Full body visible from head to mid-thigh. Patient stands in center, 4–6 feet from screen, feet shoulder-width apart and fixed. Objects fall left or right — they twist and reach. Camera must see both shoulders and hips clearly.',
+    svgType:'full',svgCaption:'Full body centered — feet stay fixed',
   },
 };
 
@@ -4494,7 +4669,7 @@ function previewSkeletonLoop(){
       const status=document.getElementById('motion-status');
       const keyPts=[PL.L_SHOULDER,PL.R_SHOULDER,PL.L_HIP,PL.R_HIP];
       const bodyOk=keyPts.every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.5);
-      const fullBodyModes=['march','jump','sidestep','soccer','stars','dodge'];
+      const fullBodyModes=['march','jump','sidestep','soccer','stars','dodge','reach'];
       const needsFull=fullBodyModes.includes(M.motMode)||fullBodyModes.includes(AG.mode);
       const anklesOk=needsFull
         ?[PL.L_ANKLE,PL.R_ANKLE].every(i=>M.landmarks[i]&&M.landmarks[i].visibility>0.4)
@@ -4582,6 +4757,7 @@ function detectGesture(){
   if(M.motMode==='knee')  return detectKneeTap();
   if(M.motMode==='march') return detectMarch();
   if(M.motMode==='jump')  return detectJump();
+  if(M.motMode==='reach') return detectReach();
   return detectClap();
 }
 
@@ -4656,7 +4832,46 @@ function detectFallback(){
   return(diff/(80*60*3))>(20-M.sensitivity*1.5)?'Movement':null;
 }
 
-/* ── GAME LOOP INTEGRATION ──────────────────────────── */
+/* ── REACH & CATCH ──────────────────────────────────
+   Detects left or right shoulder/wrist reaching motion.
+   Item falls to L or R side — patient twists toward it.
+   Feet stay fixed (hip position stays centered).
+───────────────────────────────────────────────────── */
+let _reachState=false,_reachLastSide=null;
+function detectReach(){
+  const lw=lm(PL.L_WRIST),rw=lm(PL.R_WRIST);
+  const ls=lm(PL.L_SHOULDER),rs=lm(PL.R_SHOULDER);
+  const lh=lm(PL.L_HIP),rh=lm(PL.R_HIP);
+  if(!lw||!rw||!ls||!rs) return null;
+
+  // Center baseline
+  const hipCx=lh&&rh?((lh.x+rh.x)/2):.5;
+  const shoulderCx=(ls.x+rs.x)/2;
+
+  // Trunk rotation: shoulder center shifts relative to hip center
+  // Negative = rotated left (in mirrored frame = patient rotating right), Positive = left
+  const rotShift=shoulderCx-hipCx; // >0.04 = significant rotation
+
+  // Wrist extension: wrist crosses past shoulder on either side
+  // In MediaPipe, x=0 is left of frame (patient's right due to mirror)
+  const RC=G.RC||(G.RC={nextSide:'L',catchFlash:0,catchSide:null});
+  const targetSide=RC.nextSide; // which side has the falling object
+
+  let reached=false;
+  if(targetSide==='L'){
+    // Object on LEFT side — patient reaches right (their right wrist extends right in frame)
+    // In mirrored frame: rw.x < rs.x means right wrist extended to patient's right
+    if(rw.x<rs.x-0.06&&!_reachState){reached=true;}
+  } else {
+    // Object on RIGHT side — patient reaches left
+    if(lw.x>ls.x+0.06&&!_reachState){reached=true;}
+  }
+
+  if(reached){_reachState=true;_reachLastSide=targetSide;return 'Reach '+targetSide;}
+  // Reset when wrists return near body
+  if(dist2D(lw,ls)>0.18&&dist2D(rw,rs)>0.18) _reachState=false;
+  return null;
+}
 function motionDetectLoop(){
   if(!M.active||!G.playing) return;
   if(M.tapCooldown>0){M.tapCooldown--;return;}
@@ -4666,14 +4881,17 @@ function motionDetectLoop(){
   }
   const gesture=detectGesture();
   if(gesture){
-    // Fire the tap and check the resulting rating for flash
     const hitsBefore=G.hits.length;
-    handleTap('C');
+    if(M.motMode==='reach'&&gesture.startsWith('Reach ')){
+      handleTap(gesture.split(' ')[1]); // pass 'L' or 'R'
+    } else {
+      handleTap('C');
+    }
     if(G.hits.length>hitsBefore){
       const r=G.hits[G.hits.length-1]?.rating;
       if(r==='perfect'||r==='good') M.clapFlash=1.0;
     }
-    M.tapCooldown=8; // ~400ms at 20fps — allow catching every beat
+    M.tapCooldown=8;
     M.beatCount++;
   }
 }
@@ -4743,8 +4961,89 @@ function drawMotionGame(ctx,W,H,an){
     }
     ctx.globalAlpha=1;
   }
-  // Mode label bar top
-  const mo2=MOT_MODES[M.motMode];
+  // ── REACH & CATCH overlay (drawn on top of camera) ──
+  if(M.motMode==='reach'){
+    const RC=G.RC||(G.RC={nextSide:'L',catchFlash:0,catchSide:null,items:[]});
+    // Spawn items on each beat
+    const beatTime=G.lastBeatTime||0;
+    if(G.beats.length&&beatTime>0&&Math.abs(an-beatTime)<0.04&&(RC._lastSpawnBeat!==G.lastBeatIdx)){
+      RC._lastSpawnBeat=G.lastBeatIdx;
+      const side=Math.random()<0.5?'L':'R';
+      RC.nextSide=side;
+      // Random object type — fruits, shapes, icons (drawn as emoji text)
+      const icons=['🍎','🍊','🍋','🍇','🌟','⭐','🔵','🟡','🔴','🟠','🎯','🌸'];
+      RC.items.push({
+        side, x:side==='L'?W*.2:W*.8,
+        y:0, vy:H*.006+Math.random()*H*.003,
+        icon:icons[Math.floor(Math.random()*icons.length)],
+        age:0, caught:false, missed:false,
+        beatIdx:G.lastBeatIdx,
+      });
+    }
+    // Dividing line
+    ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.setLineDash([8,6]);
+    ctx.beginPath();ctx.moveTo(W/2,H*.08);ctx.lineTo(W/2,H*.92);ctx.stroke();
+    ctx.setLineDash([]);
+    // Side labels
+    ctx.font=`bold ${Math.floor(W*.038)}px Jost,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    const lAlpha=RC.nextSide==='L'?0.95:0.35;
+    const rAlpha=RC.nextSide==='R'?0.95:0.35;
+    ctx.globalAlpha=lAlpha;ctx.fillStyle='#60D0FF';ctx.fillText('← LEFT',W*.25,H*.88);
+    ctx.globalAlpha=rAlpha;ctx.fillStyle='#FF9060';ctx.fillText('RIGHT →',W*.75,H*.88);
+    ctx.globalAlpha=1;
+    // Update and draw items
+    RC.items=RC.items.filter(item=>{
+      item.y+=item.vy;item.age++;
+      if(item.caught){
+        // Caught — burst upward
+        const a=item.age-item.caughtAge;
+        if(a>25)return false;
+        ctx.globalAlpha=Math.max(0,1-a/25);
+        ctx.font=`bold ${Math.floor(W*.075)}px serif`;
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(item.icon,item.x,item.y-(a*H*.012));
+        ctx.globalAlpha=1;
+        return true;
+      }
+      if(item.y>H*.85&&!item.missed){
+        item.missed=true;
+        G.particles.push(...bPart(item.x,H*.8,'#B85450',5));
+      }
+      if(item.y>H)return false;
+      // Glow when approaching catch zone
+      const proximity=Math.max(0,(item.y-H*.5)/(H*.35));
+      ctx.globalAlpha=0.3+proximity*0.7;
+      ctx.font=`bold ${Math.floor(W*.07+proximity*W*.03)}px serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(item.icon,item.x,item.y);
+      ctx.globalAlpha=1;
+      return true;
+    });
+    // Check if wrist reaches an item (visual catch detection based on landmarks)
+    if(M.landmarks&&RC.items.length){
+      const lw4=lm(PL.L_WRIST),rw4=lm(PL.R_WRIST);
+      RC.items.forEach(item=>{
+        if(item.caught||item.missed)return;
+        const wx=item.side==='L'?(lw4?W-(lw4.x*W):null):(rw4?W-(rw4.x*W):null);
+        const wy=item.side==='L'?(lw4?lw4.y*H:null):(rw4?rw4.y*H:null);
+        if(wx===null||wy===null)return;
+        const dx=wx-item.x,dy=wy-item.y;
+        if(Math.sqrt(dx*dx+dy*dy)<W*.12){
+          item.caught=true;item.caughtAge=item.age;
+          RC.catchFlash=1.0;RC.catchSide=item.side;
+        }
+      });
+    }
+    // Catch flash
+    if(RC.catchFlash>0){
+      RC.catchFlash=Math.max(0,RC.catchFlash-.07);
+      ctx.globalAlpha=RC.catchFlash*.25;
+      ctx.fillStyle='#4AC878';
+      ctx.fillRect(RC.catchSide==='L'?0:W/2,0,W/2,H);
+      ctx.globalAlpha=1;
+    }
+  }
   if(mo2){
     ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,W,H*.1);
     ctx.fillStyle='white';ctx.font=`bold ${Math.floor(W*.034)}px Jost,sans-serif`;
