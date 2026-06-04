@@ -82,7 +82,7 @@
 
   <script>
     // Beta access codes — update these as needed
-    const VALID_CODES = ["EVOLVEOT2025","EVOSUITEBETA","ETWSTAFF","BETAUSER1","BETAUSER2","BETAUSER3"];
+    const VALID_CODES = ["EVOLVEOT2026","BETAUSER5","BETAUSER4","BETAUSER1","BETAUSER2","BETAUSER3"];
 
     function checkCode() {
       const code = document.getElementById("codeInput").value.trim().toUpperCase();
@@ -94,7 +94,7 @@
         sessionStorage.setItem("evo_code", code);
         // Redirect to the actual EMR app
         // Update this URL once the EMR is deployed to its own Netlify site
-        window.location.href = "https://evosuite-emr.netlify.app";
+        window.location.href = "https://evosuite.netlify.app";
       } else {
         error.style.display = "block";
         document.getElementById("codeInput").style.border = "1.5px solid rgba(248,113,113,0.6)";
