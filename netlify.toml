@@ -1,6 +1,6 @@
-# EvoSensory — Netlify Configuration
+# Evolving Therapy & Wellness — Netlify Configuration
+
 [build]
-  command = "npm install terser && node build-obfuscate.js"
   publish = "."
 
 [[headers]]
@@ -8,3 +8,7 @@
   [headers.values]
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
+
+[build.environment]
+  ANTHROPIC_API_KEY = ""
+  TRIAL_TOKEN_SECRET = ""
