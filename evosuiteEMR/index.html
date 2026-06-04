@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>EvoSuite EMR — Evolving Therapy & Wellness</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Jost:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(155deg, #1A0E3A 0%, #220F4E 50%, #2D1568 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Jost', sans-serif;
+      color: #fff;
+      padding: 20px;
+    }
+    .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(155,127,204,0.3);
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(20px);
+    }
+    .logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: #9B7FCC; letter-spacing: 2px; margin-bottom: 6px; }
+    .logo span { font-weight: 400; }
+    .tagline { font-size: 10px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 32px; line-height: 1.6; }
+    h1 { font-size: 22px; font-family: 'Cormorant Garamond', serif; font-weight: 600; margin-bottom: 10px; }
+    p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 28px; }
+    .code-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(155,127,204,0.3);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 3px;
+      font-family: 'Jost', monospace;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .code-input::placeholder { color: rgba(255,255,255,0.25); letter-spacing: 2px; }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #7B5EA7, #3E2270);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Jost', sans-serif;
+      margin-bottom: 14px;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .link { font-size: 12px; color: rgba(155,127,204,0.7); text-decoration: none; }
+    .link:hover { color: #9B7FCC; }
+    .error { font-size: 12px; color: #F87171; margin-bottom: 10px; }
+    .beta-badge { display: inline-block; background: rgba(123,94,167,0.3); border: 1px solid rgba(155,127,204,0.4); border-radius: 12px; padding: 3px 12px; font-size: 10px; color: #9B7FCC; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">evo<span>suite</span></div>
+    <div class="tagline">Effortless Workflows for<br/>Evolving Practices.</div>
+    <div class="beta-badge">Beta Access</div>
+    <h1>EvoSuite EMR</h1>
+    <p>Enter your beta access code to open the practice management system.</p>
+    <input type="text" class="code-input" id="codeInput" placeholder="BETA CODE" maxlength="20" oninput="this.value=this.value.toUpperCase()"/>
+    <div class="error" id="errorMsg" style="display:none">Invalid code. Contact Evolving Therapy for access.</div>
+    <button class="btn" id="enterBtn" onclick="checkCode()">Enter EvoSuite →</button>
+    <a href="/evosuite" class="link">← Back to EvoSuite overview</a>
+  </div>
+
+  <script>
+    // Beta access codes — update these as needed
+    const VALID_CODES = ["EVOLVEOT2025","EVOSUITEBETA","ETWSTAFF","BETAUSER1","BETAUSER2","BETAUSER3"];
+
+    function checkCode() {
+      const code = document.getElementById("codeInput").value.trim().toUpperCase();
+      const error = document.getElementById("errorMsg");
+
+      if (VALID_CODES.includes(code)) {
+        // Store access in session
+        sessionStorage.setItem("evo_access", "granted");
+        sessionStorage.setItem("evo_code", code);
+        // Redirect to the actual EMR app
+        // Update this URL once the EMR is deployed to its own Netlify site
+        window.location.href = "https://evosuite-emr.netlify.app";
+      } else {
+        error.style.display = "block";
+        document.getElementById("codeInput").style.border = "1.5px solid rgba(248,113,113,0.6)";
+        setTimeout(() => {
+          error.style.display = "none";
+          document.getElementById("codeInput").style.border = "1.5px solid rgba(155,127,204,0.3)";
+        }, 3000);
+      }
+    }
+
+    document.getElementById("codeInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") checkCode();
+    });
+
+    // Check if already has access
+    if (sessionStorage.getItem("evo_access") === "granted") {
+      document.querySelector("p").textContent = "Welcome back. Redirecting...";
+      setTimeout(() => window.location.href = "https://evosuite-emr.netlify.app", 800);
+    }
+  </script>
+</body>
+</html>

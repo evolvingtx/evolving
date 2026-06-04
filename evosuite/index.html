@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>EvoSuite — Effortless Workflows for Evolving Practices.</title>
+  <meta name="description" content="The complete pediatric therapy EMR built for small OT, PT, and ST practices billing MS Medicaid. Availity integrated. Built by a pediatric OTR/L."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: #1A0E3A; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1A0E3A; }
+    ::-webkit-scrollbar-thumb { background: #7B5EA7; border-radius: 3px; }
+    input, select, textarea, button { font-family: 'Jost', sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+
+// ─── COLOR TOKENS — Deep Violet (not black) ───────────────────────────────────
+const T = {
+  ink:"#1A0E3A",       // deep violet — NOT black
+  inkMid:"#220F4E",    // rich dark purple
+  inkSoft:"#2D1568",   // medium dark purple
+  violet:"#7B5EA7",
+  violetBright:"#9B7FCC",
+  violetPale:"#EDE8F5",
+  violetDeep:"#3E2270",
+  surface:"#FAFAF9",
+  card:"#FFFFFF",
+  border:"rgba(123,94,167,0.14)",
+  textPrimary:"#18151F",
+  textSecond:"#5A5270",
+  textMuted:"#8E88A3",
+  green:"#2D8A5E", greenPale:"#E6F5EE",
+  amber:"#B06B10", amberPale:"#FEF4E3",
+};
+const F = {
+  display:"'Cormorant Garamond',Georgia,serif",
+  body:"'Jost','DM Sans',system-ui,sans-serif",
+};
+
+const { useState, useEffect, useRef } = React;
+
+function EvoLogo({ size="sm", dark=false }) {
+  const sz = size==="hero"?44:size==="lg"?34:24;
+  const txt = size==="hero"?30:size==="lg"?22:16;
+  const fg = dark ? T.violet : "#fff";
+  const sub = dark ? T.textMuted : "rgba(255,255,255,0.5)";
+  return (
+    React.createElement("div", {style:{display:"flex",alignItems:"center",gap:10}},
+      React.createElement("svg", {width:sz,height:sz,viewBox:"0 0 36 36",fill:"none"},
+        React.createElement("polygon", {points:"18,2 32,10 32,26 18,34 4,26 4,10",fill:dark?"#7B5EA718":"rgba(255,255,255,0.07)",stroke:dark?T.violet:"rgba(255,255,255,0.3)",strokeWidth:"1.5"}),
+        React.createElement("polygon", {points:"18,8 27,13 27,23 18,28 9,23 9,13",fill:dark?"#9B7FCC28":"rgba(255,255,255,0.1)",stroke:dark?T.violetBright:"rgba(255,255,255,0.5)",strokeWidth:"1.2"}),
+        React.createElement("circle", {cx:"18",cy:"18",r:"4",fill:dark?T.violet:"rgba(255,255,255,0.8)"})
+      ),
+      React.createElement("div", null,
+        React.createElement("div", {style:{fontFamily:F.display,fontSize:txt,fontWeight:600,color:fg,letterSpacing:1,lineHeight:1.1}},
+          "evo", React.createElement("span", {style:{fontWeight:400}}, "suite")
+        ),
+        size==="hero" && React.createElement("div", {style:{fontFamily:F.body,fontSize:9,color:sub,letterSpacing:2,textTransform:"uppercase",marginTop:3,lineHeight:1.5}}, "Effortless Workflows for Evolving Practices.")
+      )
+    )
+  );
+}
+
+function App() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [formData, setFormData] = useState({name:"",email:"",practice:"",discipline:"OT",size:"Solo",state:"MS"});
+  const [submitted, setSubmitted] = useState(false);
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    const r = () => setIsMobile(window.innerWidth < 768);
+    const s = () => setScrolled(window.scrollY > 40);
+    r(); window.addEventListener("resize", r); window.addEventListener("scroll", s);
+    return () => { window.removeEventListener("resize", r); window.removeEventListener("scroll", s); };
+  }, []);
+
+  const set = (k,v) => setFormData(p=>({...p,[k]:v}));
+  const scrollToForm = () => formRef.current?.scrollIntoView({behavior:"smooth",block:"center"});
+
+  function handleSubmit() {
+    if (!formData.name || !formData.email) return;
+    try {
+      const existing = JSON.parse(localStorage.getItem("evo_beta") || "[]");
+      localStorage.setItem("evo_beta", JSON.stringify([...existing, {...formData, date:new Date().toISOString()}]));
+    } catch(e) {}
+    setSubmitted(true);
+  }
+
+  const FEATURES = [
+    {icon:"◈",label:"Patient Records",color:"#7B5EA7",desc:"Full demographics, ICD-10 codes, authorization tracking, insurance verification, and referring provider directory."},
+    {icon:"◷",label:"Smart Scheduling",color:"#2D8A5E",desc:"Week view calendar with auth status alerts, makeup tracking, and automated email + SMS reminders."},
+    {icon:"✎",label:"Clinical Notes",color:"#1A5FB4",desc:"SOAP notes with AI-assisted MS Medicaid Strength+Barrier framework, CPT selection, and modifier enforcement."},
+    {icon:"⊞",label:"OT · PT · ST Evals",color:"#B06B10",desc:"Structured evaluation builders for each discipline matching your real paper templates. Print-ready export."},
+    {icon:"⬡",label:"Billing & Claims",color:"#7B5EA7",desc:"837P claim generation, 13-point validation, GO/GP/GN enforcement, batch export, and ERA auto-posting."},
+    {icon:"🛡",label:"Insurance & Auths",color:"#2D8A5E",desc:"Monthly verification tracker, carrier management, auth expiration alerts, and real-time units remaining."},
+    {icon:"◷",label:"Contractor Payroll",color:"#1A5FB4",desc:"1099 contractor hours with eval vs. visit rates, monthly dashboard, and QuickBooks CSV export."},
+    {icon:"🔗",label:"Availity Connected",color:"#B06B10",desc:"Direct eligibility, automated 837P submission, real-time claim status, and ERA remittance auto-posting."},
+  ];
+
+  const ist = {
+    width:"100%", padding:"10px 13px", borderRadius:9,
+    border:"1.5px solid rgba(255,255,255,0.15)",
+    background:"rgba(255,255,255,0.08)",
+    fontSize:13, color:"#fff", outline:"none",
+    boxSizing:"border-box", fontFamily:F.body, marginBottom:11,
+  };
+  const lbl = {fontSize:10,color:"rgba(255,255,255,0.45)",textTransform:"uppercase",letterSpacing:1.1,marginBottom:4,fontFamily:F.body,fontWeight:600,display:"block"};
+
+  const heroGrad = `linear-gradient(155deg, ${T.ink} 0%, #2D1568 45%, #3E1F8A 100%)`;
+  const darkGrad = `linear-gradient(155deg, ${T.inkMid} 0%, ${T.ink} 60%, #2D1568 100%)`;
+
+  return React.createElement("div", {style:{fontFamily:F.body,background:T.surface,overflowX:"hidden"}},
+
+    /* NAV */
+    React.createElement("nav", {style:{position:"fixed",top:0,left:0,right:0,zIndex:100,background:scrolled?"rgba(26,14,58,0.96)":"transparent",backdropFilter:scrolled?"blur(12px)":"none",borderBottom:scrolled?"1px solid rgba(155,127,204,0.2)":"none",padding:"0 24px",height:60,display:"flex",alignItems:"center",justifyContent:"space-between",transition:"all .2s"}},
+      React.createElement(EvoLogo, {size:"lg"}),
+      React.createElement("div", {style:{display:"flex",gap:10,alignItems:"center"}},
+        !isMobile && React.createElement("span", {style:{fontSize:11,color:"rgba(255,255,255,0.35)",fontFamily:F.body,fontStyle:"italic"}}, "Effortless Workflows for Evolving Practices."),
+        React.createElement("button", {onClick:scrollToForm,style:{padding:"7px 18px",background:T.violet,color:"#fff",border:"none",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:F.body}}, "Request Beta Access"),
+        React.createElement("a", {href:"/evosuiteEMR",style:{padding:"7px 18px",background:"rgba(255,255,255,0.1)",color:"rgba(255,255,255,0.8)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:8,fontSize:12,fontWeight:600,textDecoration:"none",fontFamily:F.body}}, "Open EMR →")
+      )
+    ),
+
+    /* HERO */
+    React.createElement("div", {style:{background:heroGrad,minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:isMobile?"80px 20px 60px":"100px 40px 80px",textAlign:"center",position:"relative",overflow:"hidden"}},
+      React.createElement("div", {style:{position:"absolute",top:"30%",left:"50%",transform:"translateX(-50%)",width:600,height:600,background:"radial-gradient(circle,rgba(123,94,167,0.2) 0%,transparent 70%)",pointerEvents:"none"}}),
+      React.createElement("div", {style:{position:"relative",maxWidth:800}},
+        React.createElement("div", {style:{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(123,94,167,0.25)",border:"1px solid rgba(155,127,204,0.4)",borderRadius:20,padding:"5px 16px",marginBottom:28}},
+          React.createElement("span", {style:{width:6,height:6,borderRadius:"50%",background:T.violetBright,display:"inline-block"}}),
+          React.createElement("span", {style:{fontSize:10,color:T.violetBright,textTransform:"uppercase",letterSpacing:2.5,fontFamily:F.body,fontWeight:700}}, "Closed Beta — Now Accepting Applications")
+        ),
+        React.createElement(EvoLogo, {size:"hero"}),
+        React.createElement("h1", {style:{margin:"22px 0 16px",fontSize:isMobile?36:58,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",lineHeight:1.12,letterSpacing:-0.5}},
+          "Effortless Workflows", React.createElement("br"),
+          React.createElement("span", {style:{color:T.violetBright}}, "for Evolving Practices.")
+        ),
+        React.createElement("p", {style:{fontSize:isMobile?15:18,color:"rgba(255,255,255,0.6)",lineHeight:1.8,maxWidth:580,margin:"0 auto 36px",fontFamily:F.body,fontWeight:300}},
+          "The complete pediatric therapy EMR built specifically for small OT, PT, and ST practices — with MS Medicaid EPSDT documentation, Availity billing, and contractor payroll built in from day one."
+        ),
+        React.createElement("div", {style:{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:40}},
+          React.createElement("button", {onClick:scrollToForm,style:{padding:"13px 32px",background:`linear-gradient(135deg,${T.violet},${T.violetDeep})`,color:"#fff",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:F.body,boxShadow:"0 8px 32px rgba(123,94,167,0.4)"}}, "Request Beta Access →"),
+          React.createElement("a", {href:"/evosuiteEMR",style:{padding:"13px 28px",background:"rgba(255,255,255,0.08)",color:"rgba(255,255,255,0.8)",border:"1px solid rgba(255,255,255,0.18)",borderRadius:10,fontSize:14,fontWeight:500,cursor:"pointer",fontFamily:F.body,textDecoration:"none"}}, "Open EvoSuite EMR →")
+        ),
+        React.createElement("div", {style:{display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap"}},
+          ["Built by a pediatric OTR/L","MS Medicaid EPSDT ready","Availity integrated","HIPAA-conscious","Free during beta"].map(b =>
+            React.createElement("div", {key:b,style:{display:"flex",alignItems:"center",gap:5,fontSize:11,color:"rgba(255,255,255,0.3)",fontFamily:F.body}},
+              React.createElement("span", {style:{color:T.violetBright}}, "✦"), b
+            )
+          )
+        )
+      )
+    ),
+
+    /* PROBLEM */
+    React.createElement("div", {style:{background:T.inkMid,padding:isMobile?"48px 20px":"64px 40px"}},
+      React.createElement("div", {style:{maxWidth:860,margin:"0 auto",textAlign:"center"}},
+        React.createElement("div", {style:{fontSize:11,color:T.violetBright,textTransform:"uppercase",letterSpacing:2,marginBottom:12,fontFamily:F.body,fontWeight:600}}, "Sound familiar?"),
+        React.createElement("h2", {style:{fontSize:isMobile?26:40,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 16px"}}, "You're running a small practice. Your software bill doesn't know that."),
+        React.createElement("p", {style:{fontSize:15,color:"rgba(255,255,255,0.5)",fontFamily:F.body,lineHeight:1.8,maxWidth:580,margin:"0 auto 40px"}},
+          "Base subscriptions. Per-claim fees. Add-on charges for billing. Per-provider pricing. The real monthly cost of most therapy EMRs is rarely what's on the pricing page — and it hits hardest when you have a small caseload."
+        ),
+        React.createElement("div", {style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:14}},
+          [
+            {icon:"📄",text:"Practices billed per claim on top of their monthly subscription"},
+            {icon:"💸",text:"Hidden fees for eligibility checks, ERAs, and clearinghouse routing"},
+            {icon:"👥",text:"Per-provider pricing that penalizes small teams and part-time contractors"},
+            {icon:"📋",text:"Generic templates that don't speak MS Medicaid or pediatric therapy",highlight:true},
+          ].map((c,i) =>
+            React.createElement("div", {key:i,style:{background:"rgba(255,255,255,0.05)",border:c.highlight?`1px solid rgba(155,127,204,0.4)`:"1px solid rgba(255,255,255,0.07)",borderRadius:12,padding:"20px 16px",textAlign:"left"}},
+              React.createElement("div", {style:{fontSize:22,marginBottom:10}}, c.icon),
+              React.createElement("div", {style:{fontSize:13,color:c.highlight?T.violetBright:"rgba(255,255,255,0.6)",fontFamily:F.body,lineHeight:1.6}}, c.text)
+            )
+          )
+        )
+      )
+    ),
+
+    /* FEATURES */
+    React.createElement("div", {style:{padding:isMobile?"48px 20px":"72px 40px",background:T.surface}},
+      React.createElement("div", {style:{maxWidth:1040,margin:"0 auto"}},
+        React.createElement("div", {style:{textAlign:"center",marginBottom:48}},
+          React.createElement("div", {style:{fontSize:11,color:T.violet,textTransform:"uppercase",letterSpacing:2,marginBottom:10,fontFamily:F.body,fontWeight:600}}, "Everything You Need"),
+          React.createElement("h2", {style:{fontSize:isMobile?28:42,fontFamily:F.display,fontWeight:600,color:T.textPrimary,margin:0}}, "One platform. Zero workarounds."),
+          React.createElement("p", {style:{fontSize:14,color:T.textMuted,marginTop:10,fontFamily:F.body,lineHeight:1.7,maxWidth:520,margin:"10px auto 0"}}, "Every module designed for pediatric therapy — not adapted from general practice management software.")
+        ),
+        React.createElement("div", {style:{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(240px,1fr))",gap:16}},
+          FEATURES.map((f,i) =>
+            React.createElement("div", {key:i,style:{background:T.card,borderRadius:14,padding:20,border:`1px solid ${T.border}`,borderTop:`3px solid ${f.color}`}},
+              React.createElement("div", {style:{fontSize:22,marginBottom:10,color:f.color}}, f.icon),
+              React.createElement("div", {style:{fontWeight:700,fontSize:14,color:T.textPrimary,fontFamily:F.body,marginBottom:6}}, f.label),
+              React.createElement("div", {style:{fontSize:12,color:T.textMuted,fontFamily:F.body,lineHeight:1.65}}, f.desc)
+            )
+          )
+        )
+      )
+    ),
+
+    /* PRICING */
+    React.createElement("div", {style:{padding:isMobile?"48px 20px":"72px 40px",background:T.inkMid}},
+      React.createElement("div", {style:{maxWidth:600,margin:"0 auto",textAlign:"center"}},
+        React.createElement("div", {style:{fontSize:11,color:T.violetBright,textTransform:"uppercase",letterSpacing:2,marginBottom:10,fontFamily:F.body,fontWeight:600}}, "Transparent Pricing"),
+        React.createElement("h2", {style:{fontSize:isMobile?28:40,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 12px"}}, "Simple. Predictable. No surprises."),
+        React.createElement("div", {style:{background:"rgba(255,255,255,0.05)",borderRadius:18,border:"1px solid rgba(155,127,204,0.3)",overflow:"hidden",marginTop:32}},
+          React.createElement("div", {style:{background:`linear-gradient(135deg,${T.violetDeep},${T.violet})`,padding:"28px 32px",textAlign:"center"}},
+            React.createElement("div", {style:{fontSize:11,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:2,fontFamily:F.body,marginBottom:6}}, "Beta Pricing"),
+            React.createElement("div", {style:{fontSize:52,fontWeight:700,color:"#fff",fontFamily:F.display,lineHeight:1}}, "$49",
+              React.createElement("span", {style:{fontSize:16,fontWeight:400}}, "/mo")
+            ),
+            React.createElement("div", {style:{fontSize:13,color:"rgba(255,255,255,0.6)",fontFamily:F.body,marginTop:6}}, "+ $0.25 per submitted claim")
+          ),
+          React.createElement("div", {style:{padding:"22px 28px",textAlign:"left"}},
+            React.createElement("div", {style:{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:"6px 16px",marginBottom:16}},
+              ["Unlimited patients","Unlimited SOAP notes","OT · PT · ST eval builders","Email + SMS reminders","Availity billing integration","Batch 837P submission","Insurance verification","Auth management","Contractor payroll","Caregiver intake forms","EN/ES toggle","Beta priority support"].map(f =>
+                React.createElement("div", {key:f,style:{display:"flex",alignItems:"center",gap:7,fontSize:12,color:"rgba(255,255,255,0.7)",fontFamily:F.body,padding:"3px 0"}},
+                  React.createElement("span", {style:{color:"#6DD4A4",fontWeight:700}}, "✓"), f
+                )
+              )
+            ),
+            React.createElement("div", {style:{background:"rgba(123,94,167,0.2)",borderRadius:9,padding:"10px 14px",fontSize:12,color:"rgba(255,255,255,0.6)",fontFamily:F.body,lineHeight:1.6}},
+              React.createElement("strong", {style:{color:T.violetBright}}, "Example: "), "60 claims/month = $49 + $15 = ", React.createElement("strong", {style:{color:"#fff"}}, "$64 total. "), "All features included. No hidden fees."
+            )
+          )
+        )
+      )
+    ),
+
+    /* FOUNDER */
+    React.createElement("div", {style:{background:`linear-gradient(135deg,${T.inkMid},${T.ink})`,padding:isMobile?"48px 20px":"72px 40px"}},
+      React.createElement("div", {style:{maxWidth:640,margin:"0 auto",textAlign:"center"}},
+        React.createElement("div", {style:{width:64,height:64,borderRadius:"50%",background:"rgba(123,94,167,0.3)",border:"2px solid rgba(155,127,204,0.4)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",fontSize:28}}, "👩🏽‍⚕️"),
+        React.createElement("h2", {style:{fontSize:isMobile?22:32,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 16px",lineHeight:1.3}},
+          "\"I built the tool I needed because nothing out there worked the way I do.\""
+        ),
+        React.createElement("p", {style:{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.85,fontFamily:F.body,maxWidth:540,margin:"0 auto 20px"}},
+          "EvoSuite started as an internal tool for Evolving Therapy & Wellness — a small pediatric OT practice in Mississippi billing MS Medicaid. Every feature exists because a real therapist needed it."
+        ),
+        React.createElement("div", {style:{fontSize:13,color:T.violetBright,fontFamily:F.body,fontWeight:600}}, "Vanessa — OTR/L · Founder, Evolving Therapy & Wellness")
+      )
+    ),
+
+    /* BETA FORM */
+    React.createElement("div", {ref:formRef,style:{background:`linear-gradient(155deg,${T.ink} 0%,${T.inkMid} 60%,#3E1F8A 100%)`,padding:isMobile?"60px 20px":"80px 40px"}},
+      React.createElement("div", {style:{maxWidth:540,margin:"0 auto",textAlign:"center"}},
+        React.createElement("div", {style:{fontSize:11,color:T.violetBright,textTransform:"uppercase",letterSpacing:2,marginBottom:12,fontFamily:F.body,fontWeight:600}}, "Limited Beta Access"),
+        React.createElement("h2", {style:{fontSize:isMobile?28:44,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 12px"}}, "Be the first to use it."),
+        React.createElement("p", {style:{fontSize:14,color:"rgba(255,255,255,0.45)",lineHeight:1.7,fontFamily:F.body,marginBottom:28}},
+          "Accepting a small group of pediatric therapy practices for our closed beta. Free access in exchange for honest feedback."
+        ),
+        submitted
+          ? React.createElement("div", {style:{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(155,127,204,0.3)",borderRadius:14,padding:32,textAlign:"center"}},
+              React.createElement("div", {style:{fontSize:40,marginBottom:12}}, "✦"),
+              React.createElement("div", {style:{fontFamily:F.display,fontSize:22,color:"#F5F3FA",fontWeight:600,marginBottom:8}}, "You're on the list."),
+              React.createElement("div", {style:{fontFamily:F.body,fontSize:13,color:"rgba(255,255,255,0.5)",lineHeight:1.8}}, "We'll send your beta access code to ", React.createElement("strong",{style:{color:"#fff"}},formData.email), " within 24 hours.")
+            )
+          : React.createElement("div", {style:{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(155,127,204,0.2)",borderRadius:14,padding:24}},
+              React.createElement("div", {style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}},
+                React.createElement("div", null, React.createElement("label",{style:lbl},"Your Name"), React.createElement("input",{value:formData.name,onChange:e=>set("name",e.target.value),placeholder:"Jane Smith OTR/L",style:ist})),
+                React.createElement("div", null, React.createElement("label",{style:lbl},"Work Email"), React.createElement("input",{type:"email",value:formData.email,onChange:e=>set("email",e.target.value),placeholder:"you@practice.com",style:ist}))
+              ),
+              React.createElement("label",{style:lbl},"Practice Name"),
+              React.createElement("input",{value:formData.practice,onChange:e=>set("practice",e.target.value),placeholder:"Your Practice Name",style:ist}),
+              React.createElement("div", {style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}},
+                React.createElement("div", null, React.createElement("label",{style:lbl},"Discipline"), React.createElement("select",{value:formData.discipline,onChange:e=>set("discipline",e.target.value),style:ist}, ["OT","PT","ST","OT+PT","OT+ST","OT+PT+ST","Other"].map(o=>React.createElement("option",{key:o},o)))),
+                React.createElement("div", null, React.createElement("label",{style:lbl},"Practice Size"), React.createElement("select",{value:formData.size,onChange:e=>set("size",e.target.value),style:ist}, ["Solo","2-3 staff","4-8 staff","9+ staff"].map(o=>React.createElement("option",{key:o},o)))),
+                React.createElement("div", null, React.createElement("label",{style:lbl},"State"), React.createElement("select",{value:formData.state,onChange:e=>set("state",e.target.value),style:ist}, ["MS","AL","TN","LA","AR","GA","FL","TX","Other"].map(o=>React.createElement("option",{key:o},o))))
+              ),
+              React.createElement("button", {onClick:handleSubmit,disabled:!formData.name||!formData.email,style:{width:"100%",padding:12,borderRadius:10,background:(!formData.name||!formData.email)?"rgba(123,94,167,0.3)":`linear-gradient(135deg,${T.violet},${T.violetDeep})`,color:"#fff",border:"none",fontSize:14,fontWeight:700,cursor:(!formData.name||!formData.email)?"not-allowed":"pointer",fontFamily:F.body}},
+                "Request Beta Access →"
+              ),
+              React.createElement("div",{style:{fontSize:11,color:"rgba(255,255,255,0.3)",textAlign:"center",marginTop:8,fontFamily:F.body}},"Free during beta · No credit card required")
+            )
+      )
+    ),
+
+    /* FOOTER */
+    React.createElement("div", {style:{background:T.ink,borderTop:"1px solid rgba(155,127,204,0.15)",padding:"22px 32px"}},
+      React.createElement("div", {style:{maxWidth:1040,margin:"0 auto",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}},
+        React.createElement(EvoLogo, null),
+        React.createElement("div",{style:{fontSize:11,color:"rgba(255,255,255,0.15)",fontFamily:F.body,fontStyle:"italic"}},"Effortless Workflows for Evolving Practices."),
+        React.createElement("div",{style:{display:"flex",gap:16}},
+          ["Privacy","Terms","Contact"].map(l=>React.createElement("span",{key:l,style:{fontSize:11,color:"rgba(255,255,255,0.2)",cursor:"pointer",fontFamily:F.body}},l))
+        )
+      )
+    )
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(React.createElement(App));
+  </script>
+</body>
+</html>

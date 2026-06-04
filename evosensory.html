@@ -6,10 +6,10 @@
 <!-- PWA Meta Tags -->
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="EvoSensory"/>
+<meta name="apple-mobile-web-app-title" content="EvoSensory Beats"/>
 <meta name="theme-color" content="#3E2D6E"/>
-<meta name="description" content="EvoSensory — Multi-Sensory Rhythmic Timing Training by Evolving Therapy & Wellness"/>
-<title>EvoSensory | Evolving Therapy & Wellness</title>
+<meta name="description" content="EvoSensory Beats — Multi-Sensory Rhythmic Timing Training by Evolving Therapy & Wellness"/>
+<title>EvoSensory Beats | Evolving Therapy & Wellness</title>
 <!-- Favicon: purple circle with ES lettering -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%233E2D6E'/%3E%3Ccircle cx='50' cy='50' r='43' fill='none' stroke='%239B88C4' stroke-width='3'/%3E%3Ctext x='50' y='63' font-family='Georgia%2Cserif' font-size='38' font-weight='bold' fill='white' text-anchor='middle'%3EES%3C/text%3E%3C/svg%3E"/>
 <!-- Apple home screen icon (Save to Home Screen on iPhone/iPad) -->
@@ -38,7 +38,7 @@ window.onerror = function(msg, src, line, col, err){
      m.includes('CORS')||m.includes('cross-origin')||m.includes('Failed to')|| 
      m.includes('net::')||m.includes('ERR_')||m.includes('SecurityError')) return true;
   // Only let through errors from our own app code at a real URL
-  console.warn('EvoSensory app error:', m, s, line);
+  console.warn('EvoSensory Beats app error:', m, s, line);
   return false;
 };
 window.addEventListener('unhandledrejection', function(e){
@@ -365,7 +365,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
 <div id="install-banner">
   <div class="install-icon">📱</div>
   <div class="install-txt">
-    <strong>Install EvoSensory</strong> for the best experience.<br>
+    <strong>Install EvoSensory Beats</strong> for the best experience.<br>
     Tap <strong>Share → Add to Home Screen</strong> in Safari for full haptic access.
   </div>
   <button class="btn-sm" onclick="document.getElementById('install-banner').classList.remove('show');localStorage.setItem('rhythmrx_banner','0')">✕</button>
@@ -374,8 +374,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
 <!-- USER SELECT SCREEN -->
 <div id="screen-users" class="screen">
   <div class="mx" style="text-align:center;margin-top:16px;">
-    <div class="serif" style="font-size:32px;color:var(--pd);">EvoSensory</div>
-    <div style="font-size:11px;color:var(--p);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:500;">Multi-Sensory Rhythmic Timing Training</div>
+    <div class="serif" style="font-size:32px;color:var(--pd);">EvoSensory Beats</div>
+    <div style="font-size:11px;color:var(--p);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:500;">Rhythmic Timing Training · Evolving Therapy &amp; Wellness</div>
     <div style="font-size:11px;color:var(--tl);margin-top:2px;">Evolving Therapy &amp; Wellness</div>
   </div>
   <div style="font-size:13px;color:var(--tl);margin-top:4px;">Who's playing?</div>
@@ -430,8 +430,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
 <!-- WELCOME -->
 <div id="screen-welcome" class="screen">
   <div class="mx" style="text-align:center;margin-top:10px;">
-    <div class="serif" style="font-size:32px;color:var(--pd);letter-spacing:.02em;">EvoSensory</div>
-    <div style="font-size:12px;color:var(--p);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:500;">Multi-Sensory Rhythmic Timing Training</div>
+    <div class="serif" style="font-size:32px;color:var(--pd);letter-spacing:.02em;">EvoSensory Beats</div>
+    <div style="font-size:12px;color:var(--p);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:500;">Rhythmic Timing Training · Evolving Therapy &amp; Wellness</div>
     <div style="font-size:11px;color:var(--tl);margin-top:2px;">Evolving Therapy &amp; Wellness</div>
   </div>
 
@@ -488,7 +488,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   <!-- Nav -->
   <div class="nav mx">
     <div style="display:flex;align-items:center;gap:8px;">
-      <div class="serif" style="font-size:19px;color:var(--pd);">EvoSensory</div>
+      <div class="serif" style="font-size:19px;color:var(--pd);">EvoSensory Beats</div>
       <div class="active-user-chip" id="auc2-chip" onclick="showScreen('users')" title="Switch player">
         <div class="auc-dot" id="auc2-dot"></div>
         <div class="auc-name" id="auc2-name"></div>
@@ -509,7 +509,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
     <div class="mod-pick-card" onclick="pickModule('classic')">
       <div class="mod-pick-icon">🎮</div>
       <div class="mod-pick-body">
-        <div class="mod-pick-name">EvoSensory Classic</div>
+        <div class="mod-pick-name">EvoSensory Beats</div>
         <div class="mod-pick-desc">Core timing engine. Six levels. Spatial audio, haptic feedback, bilateral tapping.</div>
       </div>
       <div class="mod-pick-arrow">›</div>
@@ -525,7 +525,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
     <div class="mod-pick-card" onclick="pickModule('oculomotor')">
       <div class="mod-pick-icon">👁️</div>
       <div class="mod-pick-body">
-        <div class="mod-pick-name">EvoSensory Oculomotor</div>
+        <div class="mod-pick-name">EvoSensory Vision</div>
         <div class="mod-pick-desc">Visual tracking synced to the beat. Pursuits, Pursuits 2, Saccadic Jumps, Whack-a-Mole, Attention Hold.</div>
       </div>
       <div class="mod-pick-arrow">›</div>
@@ -743,7 +743,7 @@ here</textarea>
 <div id="screen-map" class="screen">
   <div class="nav mx">
     <div style="display:flex;align-items:center;gap:8px;">
-      <div class="serif" style="font-size:19px;color:var(--pd);">EvoSensory</div>
+      <div class="serif" style="font-size:19px;color:var(--pd);">EvoSensory Beats</div>
       <div class="active-user-chip" id="active-user-chip" onclick="showScreen('users')" title="Switch player">
         <div class="auc-dot" id="auc-dot"></div>
         <div class="auc-name" id="auc-name"></div>
@@ -759,7 +759,7 @@ here</textarea>
   <div class="card mx" style="padding:12px 14px;">
     <div class="label">Module</div>
     <div class="pill-row" style="grid-template-columns:repeat(3,1fr);gap:5px;" id="gm-pills">
-      <button class="pill-btn active" data-gm="standard" onclick="setGM('standard')"><span class="pi">🎵</span>Classic</button>
+      <button class="pill-btn active" data-gm="standard" onclick="setGM('standard')"><span class="pi">🎵</span>EvoSensory Beats</button>
       <button class="pill-btn" data-gm="hurdle" onclick="setGM('hurdle')"><span class="pi">🐴</span>Hurdle</button>
       <button class="pill-btn" data-gm="targetrange" onclick="setGM('targetrange')"><span class="pi">🎯</span>Target</button>
       <button class="pill-btn" data-gm="vocab" onclick="setGM('vocab')"><span class="pi">📖</span>Cognitive: Words</button>
@@ -1236,13 +1236,13 @@ const RM={
   ghost:  {label:'Wait…',      color:'#5A4E72',pts:0},
 };
 const GM_DESC={
-  standard:   'EvoSensory Classic — Items fall from the top. Tap the matching button when each item crosses the catch line.',
-  hurdle:      'EvoSensory Classic — A horse gallops and jumps hurdles on the beat. Perfect = clean jump, Good = taps the top, Close = hurdle tilts, Miss = hurdle falls but horse keeps going.',
-  targetrange:'EvoSensory Classic — Animals cross the scene in time with the beat. Tap when the animal is inside the crosshair.',
-  moneycatch: 'EvoSensory Classic — Stars fall from the sky. Catch them with your hands. The more accurate your timing, the higher the bill — $100 for perfect!',
+  standard:   'EvoSensory Beats — Items fall from the top. Tap the matching button when each item crosses the catch line.',
+  hurdle:      'EvoSensory Beats — A horse gallops and jumps hurdles on the beat. Perfect = clean jump, Good = taps the top, Close = hurdle tilts, Miss = hurdle falls but horse keeps going.',
+  targetrange:'EvoSensory Beats — Animals cross the scene in time with the beat. Tap when the animal is inside the crosshair.',
+  moneycatch: 'EvoSensory Beats — Stars fall from the sky. Catch them with your hands. The more accurate your timing, the higher the bill — $100 for perfect!',
   vocab:      'EvoSensory Cognitive — App SPEAKS each letter as the beat. Tap it. Then syllables. Then the whole word. 3 loops per word. Speech IS the beat.',
   math:       'EvoSensory Cognitive — App SPEAKS each number as the beat. Tap it. Addition and multiplication problems spoken aloud. Speech IS the beat.',
-  oculomotor: 'EvoSensory Oculomotor — Pursuits: follow and tap at turnarounds. Pursuits 2: follow with eyes only (camera). Saccadic Jumps: tap on jump. Whack-a-Mole: tap left/right on reaction. Attention Hold: hold gaze until magic explosion.',
+  oculomotor: 'EvoSensory Vision — Pursuits: follow and tap at turnarounds. Pursuits 2: follow with eyes only (camera). Saccadic Jumps: tap on jump. Whack-a-Mole: tap left/right on reaction. Attention Hold: hold gaze until magic explosion.',
 };
 
 /* ═══ SETTINGS ══════════════════════════════════════ */
@@ -4589,7 +4589,7 @@ function printRpt(){
   const imp=f3&&l3&&f3>0?Math.round((1-l3/f3)*100):null;
   const rows=last.map(x=>`<tr><td>${new Date(x.date).toLocaleDateString()}</td><td>Lv${x.level}</td><td>${x.bpm}</td><td>${x.accuracy}%</td><td>${x.avgDev>0?'+':''}${x.avgDev}ms</td><td>${x.score}</td><td>${x.driftTrend||'—'}</td><td style="color:#4A8C6F">${x.ocuMode||'—'}</td></tr>`).join('');
   const w=window.open('','_blank');if(!w)return;
-  w.document.write(`<!DOCTYPE html><html><head><title>EvoSensory Progress Report</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;}h1{color:#3E2D6E;font-size:20px;border-bottom:2px solid #EDE8F5;padding-bottom:8px;}h2{color:#5C4490;font-size:13px;margin-top:20px;}.meta{font-size:11px;color:#5A4E72;margin-bottom:14px;}table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#EDE8F5;color:#3E2D6E;padding:7px 5px;text-align:left;font-weight:500;}td{padding:5px;border-bottom:1px solid #EDE8F5;}tr:nth-child(even) td{background:#F7F4FB;}.stats{display:flex;gap:20px;flex-wrap:wrap;margin:10px 0;}.stat .v{font-size:20px;font-weight:700;color:#5C4490;}.stat .k{font-size:10px;color:#5A4E72;}.note{margin-top:16px;font-size:10px;color:#9B88C4;border-top:1px solid #EDE8F5;padding-top:8px;}</style></head><body><h1>EvoSensory Progress Report</h1><div class="meta">Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · www.evolve-ot.com · ${new Date().toLocaleDateString()}</div><h2>Summary</h2><div class="stats"><div class="stat"><div class="v">${s.length}</div><div class="k">Sessions</div></div><div class="stat"><div class="v">${best}ms</div><div class="k">Best Variance</div></div>${imp!=null?`<div class="stat"><div class="v">${imp>0?'+':''}${imp}%</div><div class="k">Improvement</div></div>`:''}</div><h2>Last ${last.length} Sessions</h2><table><tr><th>Date</th><th>Level</th><th>BPM</th><th>Accuracy</th><th>Avg Dev</th><th>Score</th><th>Drift</th><th>OM Mode</th></tr>${rows}</table><p class="note">EvoSensory — Multi-Sensory Rhythmic Timing Training. Modules: Classic (rhythmic timing + haptics), Oculomotor (visual tracking), Cognitive (vocabulary + math), Motion (coming soon). The Micro-Timing Drift Engine (MTDE) tracks timing trends using linear regression. Oculomotor tracking is tap-based: motor response timing to visual stimuli, providing a proxy measure of visual detection and reaction.</p><p class="note">© 2026 Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · vanessa@evolve-ot.com · www.evolve-ot.com</p>
+  w.document.write(`<!DOCTYPE html><html><head><title>EvoSensory Beats Progress Report</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;}h1{color:#3E2D6E;font-size:20px;border-bottom:2px solid #EDE8F5;padding-bottom:8px;}h2{color:#5C4490;font-size:13px;margin-top:20px;}.meta{font-size:11px;color:#5A4E72;margin-bottom:14px;}table{width:100%;border-collapse:collapse;font-size:11px;}th{background:#EDE8F5;color:#3E2D6E;padding:7px 5px;text-align:left;font-weight:500;}td{padding:5px;border-bottom:1px solid #EDE8F5;}tr:nth-child(even) td{background:#F7F4FB;}.stats{display:flex;gap:20px;flex-wrap:wrap;margin:10px 0;}.stat .v{font-size:20px;font-weight:700;color:#5C4490;}.stat .k{font-size:10px;color:#5A4E72;}.note{margin-top:16px;font-size:10px;color:#9B88C4;border-top:1px solid #EDE8F5;padding-top:8px;}</style></head><body><h1>EvoSensory Beats Progress Report</h1><div class="meta">Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · www.evolve-ot.com · ${new Date().toLocaleDateString()}</div><h2>Summary</h2><div class="stats"><div class="stat"><div class="v">${s.length}</div><div class="k">Sessions</div></div><div class="stat"><div class="v">${best}ms</div><div class="k">Best Variance</div></div>${imp!=null?`<div class="stat"><div class="v">${imp>0?'+':''}${imp}%</div><div class="k">Improvement</div></div>`:''}</div><h2>Last ${last.length} Sessions</h2><table><tr><th>Date</th><th>Level</th><th>BPM</th><th>Accuracy</th><th>Avg Dev</th><th>Score</th><th>Drift</th><th>OM Mode</th></tr>${rows}</table><p class="note">EvoSensory Beats — Multi-Sensory Rhythmic Timing Training. Modules: Classic (rhythmic timing + haptics), Oculomotor (visual tracking), Cognitive (vocabulary + math), Motion (coming soon). The Micro-Timing Drift Engine (MTDE) tracks timing trends using linear regression. Oculomotor tracking is tap-based: motor response timing to visual stimuli, providing a proxy measure of visual detection and reaction.</p><p class="note">© 2026 Evolving Therapy &amp; Wellness · Vanessa Dorado Walker, MS, OTR/L · vanessa@evolve-ot.com · www.evolve-ot.com</p>
 
 </body></html>`);
   w.document.close();setTimeout(()=>w.print(),400);
@@ -4664,12 +4664,12 @@ function generateSOAP(sess){
 
   // ── MODE CONTEXT ──────────────────────────────────────────────────────
   const modeContext={
-    standard:     'EvoSensory Classic — timed bilateral tapping with visual falling notes',
-    hurdle:       'EvoSensory Classic — Hurdle Jump format (motivational engagement, beat-synchronized visual)',
-    targetrange:  'EvoSensory Classic — Target Range format (visual-motor timing)',
+    standard:     'EvoSensory Beats — timed bilateral tapping with visual falling notes',
+    hurdle:       'EvoSensory Beats — Hurdle Jump format (motivational engagement, beat-synchronized visual)',
+    targetrange:  'EvoSensory Beats — Target Range format (visual-motor timing)',
     vocab:        'EvoSensory Cognitive — Vocabulary Mode (patient spelled and repeated words timed to a metronome beat, targeting phonological processing and auditory-motor integration)',
     math:         'EvoSensory Cognitive — Math Mode (patient counted or solved math sequences timed to a metronome beat, targeting number fluency and auditory-motor integration)',
-    oculomotor:   `EvoSensory Oculomotor — ${({
+    oculomotor:   `EvoSensory Vision — ${({
       pursuits:'Smooth Pursuits (patient tracked a moving visual target and tapped in time with the beat; targets visual tracking and bilateral motor timing)',
       saccades:'Saccadic Jumps (patient tracked a jumping dot between targets and tapped on each appearance; targets saccadic reaction time and timing)',
       depth:   'Depth Pulse (expanding visual target timed to beat; targets visual convergence, accommodation, and timing)',
@@ -4791,7 +4791,7 @@ Session trend: did timing errors get larger or smaller as the session went on?
   Drifting early = responses became progressively earlier → impulsivity or inhibition concern
   Drifting late = responses became progressively later → attention fatigue or processing slowdown`;
 
-  return `SOAP NOTE — EvoSensory Rhythmic Timing Training\nDate: ${date}\nPatient: ${name} | ${ageCatLabel} | ${modalityLabel}\nTherapist: Vanessa Dorado Walker, MS, OTR/L\n\n${S2}\n\n${O}\n\n${A}\n\n${P}\n\n---\nGenerated by EvoSensory · Evolving Therapy & Wellness · www.evolve-ot.com\nThis is a draft note. Review and edit before including in any clinical record.\n${FOOTNOTE}`;
+  return `SOAP NOTE — EvoSensory Beats\nDate: ${date}\nPatient: ${name} | ${ageCatLabel} | ${modalityLabel}\nTherapist: Vanessa Dorado Walker, MS, OTR/L\n\n${S2}\n\n${O}\n\n${A}\n\n${P}\n\n---\nGenerated by EvoSensory Beats · Evolving Therapy & Wellness · www.evolve-ot.com\nThis is a draft note. Review and edit before including in any clinical record.\n${FOOTNOTE}`;
 }
 
 function openSOAP(result, sess){
@@ -4814,16 +4814,16 @@ function copySOAP(){
   else{document.execCommand('copy');showSoapCopied();}
 }
 function showSoapCopied(){const el=document.getElementById('soap-copied');el.style.display='block';setTimeout(()=>el.style.display='none',2500);}
-function printSOAP(){const t=document.getElementById('soap-text').value;const w=window.open('','_blank');if(!w)return;w.document.write(`<!DOCTYPE html><html><head><title>SOAP Note</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;white-space:pre-wrap;font-size:12px;line-height:1.8;}h1{font-size:16px;color:#3E2D6E;margin-bottom:20px;}</style></head><body><h1>EvoSensory SOAP Note Draft</h1>${t.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</body></html>`);w.document.close();setTimeout(()=>w.print(),400);}
+function printSOAP(){const t=document.getElementById('soap-text').value;const w=window.open('','_blank');if(!w)return;w.document.write(`<!DOCTYPE html><html><head><title>SOAP Note</title><style>body{font-family:Arial,sans-serif;margin:40px;color:#1E1830;max-width:700px;white-space:pre-wrap;font-size:12px;line-height:1.8;}h1{font-size:16px;color:#3E2D6E;margin-bottom:20px;}</style></head><body><h1>EvoSensory Beats SOAP Note Draft</h1>${t.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</body></html>`);w.document.close();setTimeout(()=>w.print(),400);}
 function emailSOAP(){
   const t=document.getElementById('soap-text')?.value||'';
   const u=getActiveUser();
   const patName=u?.name||'Patient';
   const sess=G.sessions[G.sessions.length-1];
   const dateStr=sess?new Date(sess.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Session';
-  const subject=`EvoSensory SOAP Note — ${patName} — ${dateStr}`;
-  const fullBody=`EvoSensory SOAP Note Draft\nGenerated by EvoSensory — Evolving Therapy & Wellness\n\n`+t+
-    `\n\n---\nDraft SOAP note. Review and edit before use in official documentation.\nEvoSensory by Vanessa Dorado Walker, MS, OTR/L | evolve-ot.com`;
+  const subject=`EvoSensory Beats SOAP Note — ${patName} — ${dateStr}`;
+  const fullBody=`EvoSensory Beats SOAP Note Draft\nGenerated by EvoSensory — Evolving Therapy & Wellness\n\n`+t+
+    `\n\n---\nDraft SOAP note. Review and edit before use in official documentation.\nEvoSensory Beats by Vanessa Dorado Walker, MS, OTR/L | evolve-ot.com`;
 
   let to=S.therapistEmail||'';
   if(!to){
