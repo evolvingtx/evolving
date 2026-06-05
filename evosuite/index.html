@@ -63,7 +63,7 @@ function EvoLogo({ size="sm", dark=false }) {
       ),
       React.createElement("div", null,
         React.createElement("div", {style:{fontFamily:F.display,fontSize:txt,fontWeight:600,color:fg,letterSpacing:1,lineHeight:1.1}},
-          "evo", React.createElement("span", {style:{fontWeight:400}}, "suite")
+          "Evo", React.createElement("span", {style:{fontWeight:400}}, "Suite")
         ),
         size==="hero" && React.createElement("div", {style:{fontFamily:F.body,fontSize:9,color:sub,letterSpacing:2,textTransform:"uppercase",marginTop:3,lineHeight:1.5}}, "Effortless Workflows for Evolving Practices.")
       )
@@ -105,7 +105,7 @@ function App() {
     {icon:"⬡",label:"Billing & Claims",color:"#7B5EA7",desc:"837P claim generation, 13-point validation, GO/GP/GN enforcement, batch export, and ERA auto-posting."},
     {icon:"🛡",label:"Insurance & Auths",color:"#2D8A5E",desc:"Monthly verification tracker, carrier management, auth expiration alerts, and real-time units remaining."},
     {icon:"◷",label:"Contractor Payroll",color:"#1A5FB4",desc:"1099 contractor hours with eval vs. visit rates, monthly dashboard, and QuickBooks CSV export."},
-    {icon:"🔗",label:"Availity Connected",color:"#B06B10",desc:"Direct eligibility, automated 837P submission, real-time claim status, and ERA remittance auto-posting."},
+    {icon:"🔗",label:"Claim.MD Billing",color:"#B06B10",desc:"EvoSuite submits your 837P claims and retrieves ERA payments directly through your own Claim.MD account. Each practice pays Claim.MD directly based on their volume — so your EvoSuite cost stays the same as you grow."},
   ];
 
   const ist = {
@@ -135,7 +135,7 @@ function App() {
     /* HERO */
     React.createElement("div", {style:{background:heroGrad,minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:isMobile?"80px 20px 60px":"100px 40px 80px",textAlign:"center",position:"relative",overflow:"hidden"}},
       React.createElement("div", {style:{position:"absolute",top:"30%",left:"50%",transform:"translateX(-50%)",width:600,height:600,background:"radial-gradient(circle,rgba(123,94,167,0.2) 0%,transparent 70%)",pointerEvents:"none"}}),
-      React.createElement("div", {style:{position:"relative",maxWidth:800}},
+      React.createElement("div", {style:{position:"relative",maxWidth:800,margin:"0 auto",width:"100%"}},
         React.createElement("div", {style:{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(123,94,167,0.25)",border:"1px solid rgba(155,127,204,0.4)",borderRadius:20,padding:"5px 16px",marginBottom:28}},
           React.createElement("span", {style:{width:6,height:6,borderRadius:"50%",background:T.violetBright,display:"inline-block"}}),
           React.createElement("span", {style:{fontSize:10,color:T.violetBright,textTransform:"uppercase",letterSpacing:2.5,fontFamily:F.body,fontWeight:700}}, "Closed Beta — Now Accepting Applications")
@@ -146,14 +146,14 @@ function App() {
           React.createElement("span", {style:{color:T.violetBright}}, "for Evolving Practices.")
         ),
         React.createElement("p", {style:{fontSize:isMobile?15:18,color:"rgba(255,255,255,0.6)",lineHeight:1.8,maxWidth:580,margin:"0 auto 36px",fontFamily:F.body,fontWeight:300}},
-          "The complete pediatric therapy EMR built specifically for small OT, PT, and ST practices — with MS Medicaid EPSDT documentation, Availity billing, and contractor payroll built in from day one."
+          "The complete pediatric therapy EMR built specifically for Evolving OT, PT, and ST practices — with MS Medicaid EPSDT documentation, Claim.MD billing, and contractor payroll built in from day one."
         ),
         React.createElement("div", {style:{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:40}},
           React.createElement("button", {onClick:scrollToForm,style:{padding:"13px 32px",background:`linear-gradient(135deg,${T.violet},${T.violetDeep})`,color:"#fff",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:F.body,boxShadow:"0 8px 32px rgba(123,94,167,0.4)"}}, "Request Beta Access →"),
           React.createElement("a", {href:"/evosuiteEMR",style:{padding:"13px 28px",background:"rgba(255,255,255,0.08)",color:"rgba(255,255,255,0.8)",border:"1px solid rgba(255,255,255,0.18)",borderRadius:10,fontSize:14,fontWeight:500,cursor:"pointer",fontFamily:F.body,textDecoration:"none"}}, "Open EvoSuite EMR →")
         ),
         React.createElement("div", {style:{display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap"}},
-          ["Built by a pediatric OTR/L","MS Medicaid EPSDT ready","Availity integrated","HIPAA-conscious","Free during beta"].map(b =>
+          ["Built by a pediatric OTR/L","MS Medicaid EPSDT ready","Claim.MD integrated","HIPAA-conscious","Free during beta"].map(b =>
             React.createElement("div", {key:b,style:{display:"flex",alignItems:"center",gap:5,fontSize:11,color:"rgba(255,255,255,0.3)",fontFamily:F.body}},
               React.createElement("span", {style:{color:T.violetBright}}, "✦"), b
             )
@@ -168,7 +168,7 @@ function App() {
         React.createElement("div", {style:{fontSize:11,color:T.violetBright,textTransform:"uppercase",letterSpacing:2,marginBottom:12,fontFamily:F.body,fontWeight:600}}, "Sound familiar?"),
         React.createElement("h2", {style:{fontSize:isMobile?26:40,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 16px"}}, "You're running a small practice. Your software bill doesn't know that."),
         React.createElement("p", {style:{fontSize:15,color:"rgba(255,255,255,0.5)",fontFamily:F.body,lineHeight:1.8,maxWidth:580,margin:"0 auto 40px"}},
-          "Base subscriptions. Per-claim fees. Add-on charges for billing. Per-provider pricing. The real monthly cost of most therapy EMRs is rarely what's on the pricing page — and it hits hardest when you have a small caseload."
+          "Base subscriptions. Per-claim fees. Add-on charges for everything. No part-time provider pricing. The real monthly cost of most therapy EMRs is rarely what's on the pricing page — and it hits hardest when you have a new and \"evolving\" caseload."
         ),
         React.createElement("div", {style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:14}},
           [
@@ -207,30 +207,90 @@ function App() {
     ),
 
     /* PRICING */
-    React.createElement("div", {style:{padding:isMobile?"48px 20px":"72px 40px",background:T.inkMid}},
-      React.createElement("div", {style:{maxWidth:600,margin:"0 auto",textAlign:"center"}},
-        React.createElement("div", {style:{fontSize:11,color:T.violetBright,textTransform:"uppercase",letterSpacing:2,marginBottom:10,fontFamily:F.body,fontWeight:600}}, "Transparent Pricing"),
-        React.createElement("h2", {style:{fontSize:isMobile?28:40,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 12px"}}, "Simple. Predictable. No surprises."),
-        React.createElement("div", {style:{background:"rgba(255,255,255,0.05)",borderRadius:18,border:"1px solid rgba(155,127,204,0.3)",overflow:"hidden",marginTop:32}},
-          React.createElement("div", {style:{background:`linear-gradient(135deg,${T.violetDeep},${T.violet})`,padding:"28px 32px",textAlign:"center"}},
-            React.createElement("div", {style:{fontSize:11,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:2,fontFamily:F.body,marginBottom:6}}, "Beta Pricing"),
-            React.createElement("div", {style:{fontSize:52,fontWeight:700,color:"#fff",fontFamily:F.display,lineHeight:1}}, "$49",
-              React.createElement("span", {style:{fontSize:16,fontWeight:400}}, "/mo")
+    React.createElement("div", {style:{padding:isMobile?"48px 20px":"80px 40px",background:T.inkMid}},
+      React.createElement("div", {style:{maxWidth:860,margin:"0 auto"}},
+        React.createElement("div", {style:{textAlign:"center",marginBottom:40}},
+          React.createElement("div", {style:{fontSize:11,color:T.violetBright,textTransform:"uppercase",letterSpacing:2,marginBottom:10,fontFamily:F.body,fontWeight:600}}, "Transparent Pricing"),
+          React.createElement("h2", {style:{fontSize:isMobile?28:40,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 12px"}}, "Priced for practices that are still growing."),
+          React.createElement("p", {style:{fontSize:14,color:"rgba(255,255,255,0.5)",fontFamily:F.body,lineHeight:1.7,maxWidth:560,margin:"0 auto"}},
+            "Flat monthly rate. No per-claim fees. No surprise add-ons. You handle your own Claim.MD account — we handle everything else."
+          )
+        ),
+
+        /* Two plan cards */
+        React.createElement("div", {style:{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:16,marginBottom:24}},
+
+          /* Solo card */
+          React.createElement("div", {style:{background:"rgba(255,255,255,0.05)",borderRadius:16,border:"1px solid rgba(155,127,204,0.3)",overflow:"hidden"}},
+            React.createElement("div", {style:{background:`linear-gradient(135deg,${T.violetDeep},${T.violet})`,padding:"22px 24px"}},
+              React.createElement("div", {style:{fontSize:11,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:2,marginBottom:6,fontFamily:F.body}},"Solo Practice"),
+              React.createElement("div", {style:{display:"flex",alignItems:"baseline",gap:6}},
+                React.createElement("div", {style:{fontSize:46,fontWeight:700,color:"#fff",fontFamily:F.display,lineHeight:1}}, "$49"),
+                React.createElement("span", {style:{fontSize:14,color:"rgba(255,255,255,0.6)"}}, "/mo")
+              ),
+              React.createElement("div", {style:{fontSize:12,color:"rgba(255,255,255,0.55)",marginTop:6,fontFamily:F.body}}, "1 practitioner · All features included")
             ),
-            React.createElement("div", {style:{fontSize:13,color:"rgba(255,255,255,0.6)",fontFamily:F.body,marginTop:6}}, "+ $0.25 per submitted claim")
-          ),
-          React.createElement("div", {style:{padding:"22px 28px",textAlign:"left"}},
-            React.createElement("div", {style:{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:"6px 16px",marginBottom:16}},
-              ["Unlimited patients","Unlimited SOAP notes","OT · PT · ST eval builders","Email + SMS reminders","Availity billing integration","Batch 837P submission","Insurance verification","Auth management","Contractor payroll","Caregiver intake forms","EN/ES toggle","Beta priority support"].map(f =>
-                React.createElement("div", {key:f,style:{display:"flex",alignItems:"center",gap:7,fontSize:12,color:"rgba(255,255,255,0.7)",fontFamily:F.body,padding:"3px 0"}},
-                  React.createElement("span", {style:{color:"#6DD4A4",fontWeight:700}}, "✓"), f
+            React.createElement("div", {style:{padding:"18px 22px"}},
+              React.createElement("div", {style:{display:"flex",flexDirection:"column",gap:5,marginBottom:14}},
+                ["Unlimited patients","All SOAP + eval builders","MS Medicaid EPSDT framework","Calendar + email & SMS reminders","Insurance & auth tracking","Claim.MD ready (you set up your account)","Contractor payroll tracking","MS Medicaid CPT library"].map(f=>
+                  React.createElement("div", {key:f,style:{display:"flex",gap:7,fontSize:12,color:"rgba(255,255,255,0.65)",fontFamily:F.body,alignItems:"center"}},
+                    React.createElement("span", {style:{color:"#6DD4A4",fontWeight:700,flexShrink:0}}, "✓"), f
+                  )
                 )
+              ),
+              React.createElement("div", {style:{background:"rgba(109,212,164,0.1)",borderRadius:8,padding:"10px 13px",fontSize:12,color:"rgba(255,255,255,0.65)",fontFamily:F.body,lineHeight:1.65,border:"1px solid rgba(109,212,164,0.25)"}},
+                React.createElement("strong", {style:{color:"#6DD4A4"}}, "Real cost example: "),
+                "EvoSuite $49 + Claim.MD Basic $30 = ",
+                React.createElement("strong", {style:{color:"#fff"}}, "$79/month total"),
+                " — full EMR + billing for one practitioner."
               )
+            )
+          ),
+
+          /* Group card */
+          React.createElement("div", {style:{background:"rgba(255,255,255,0.05)",borderRadius:16,border:"1px solid rgba(155,127,204,0.5)",overflow:"hidden",position:"relative"}},
+            React.createElement("div", {style:{position:"absolute",top:14,right:14,background:T.violetBright,color:"#fff",borderRadius:20,padding:"2px 10px",fontSize:9,fontWeight:700,textTransform:"uppercase",letterSpacing:1.5}},"Most Popular"),
+            React.createElement("div", {style:{background:`linear-gradient(135deg,#4A2D8C,#7B5EA7)`,padding:"22px 24px"}},
+              React.createElement("div", {style:{fontSize:11,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:2,marginBottom:6,fontFamily:F.body}},"Group Practice"),
+              React.createElement("div", {style:{display:"flex",alignItems:"baseline",gap:6}},
+                React.createElement("div", {style:{fontSize:46,fontWeight:700,color:"#fff",fontFamily:F.display,lineHeight:1}}, "$79"),
+                React.createElement("span", {style:{fontSize:14,color:"rgba(255,255,255,0.6)"}}, "/mo")
+              ),
+              React.createElement("div", {style:{fontSize:12,color:"rgba(255,255,255,0.55)",marginTop:6,fontFamily:F.body}}, "2 practitioners included · Scale as you hire")
             ),
-            React.createElement("div", {style:{background:"rgba(123,94,167,0.2)",borderRadius:9,padding:"10px 14px",fontSize:12,color:"rgba(255,255,255,0.6)",fontFamily:F.body,lineHeight:1.6}},
-              React.createElement("strong", {style:{color:T.violetBright}}, "Example: "), "60 claims/month = $49 + $15 = ", React.createElement("strong", {style:{color:"#fff"}}, "$64 total. "), "All features included. No hidden fees."
+            React.createElement("div", {style:{padding:"18px 22px"}},
+              React.createElement("div", {style:{display:"flex",flexDirection:"column",gap:5,marginBottom:14}},
+                ["Everything in Solo","2 practitioners included","Role-based access control","Multi-therapist scheduling","Batch billing across all therapists","Staff management & permissions"].map(f=>
+                  React.createElement("div", {key:f,style:{display:"flex",gap:7,fontSize:12,color:"rgba(255,255,255,0.65)",fontFamily:F.body,alignItems:"center"}},
+                    React.createElement("span", {style:{color:"#6DD4A4",fontWeight:700,flexShrink:0}}, "✓"), f
+                  )
+                )
+              ),
+              React.createElement("div", {style:{background:"rgba(155,127,204,0.12)",borderRadius:8,padding:"10px 13px",fontSize:11,color:"rgba(255,255,255,0.6)",fontFamily:F.body,lineHeight:1.7,border:"1px solid rgba(155,127,204,0.2)"}},
+                React.createElement("div", {style:{fontWeight:700,color:T.violetBright,marginBottom:5,fontSize:12}},"Additional Therapists"),
+                React.createElement("div", null, "+ $5/mo — Part-time (under 15 hrs/wk)"),
+                React.createElement("div", null, "+ $10/mo — Mid-time (15–30 hrs/wk)"),
+                React.createElement("div", null, "+ $15/mo — Full-time (30+ hrs/wk)")
+              )
             )
           )
+        ),
+
+        /* Claim.MD callout */
+        React.createElement("div", {style:{background:"rgba(45,138,94,0.1)",borderRadius:12,padding:"18px 22px",border:"1px solid rgba(45,138,94,0.3)",marginBottom:16}},
+          React.createElement("div", {style:{display:"flex",gap:12,alignItems:"flex-start",flexWrap:"wrap"}},
+            React.createElement("div", {style:{fontSize:22}},"💳"),
+            React.createElement("div", null,
+              React.createElement("div", {style:{fontWeight:700,fontSize:13,color:"#6DD4A4",marginBottom:4,fontFamily:F.body}},"Claim.MD is separate — and that's intentional."),
+              React.createElement("p", {style:{fontSize:12,color:"rgba(255,255,255,0.55)",fontFamily:F.body,lineHeight:1.7,margin:0}}),
+              "EvoSuite submits your 837P claims and retrieves ERA payments directly through your own Claim.MD account. Each practice pays Claim.MD directly based on their own volume — Basic $30/mo, Small Volume $60/mo, or Unlimited $120/mo. This means your EvoSuite price never changes based on how many claims you submit. As your practice grows, you upgrade Claim.MD. We stay the same price."
+            )
+          )
+        ),
+
+        /* Compare */
+        React.createElement("div", {style:{textAlign:"center",fontSize:12,color:"rgba(255,255,255,0.3)",fontFamily:F.body,fontStyle:"italic"}},
+          "SimplePractice raised prices 69% in 2025. Their Starter is $49/mo with limited features — no group appointments, no MS Medicaid framework, add-ons required for billing. EvoSuite's $49 includes everything."
         )
       )
     ),
@@ -239,13 +299,13 @@ function App() {
     React.createElement("div", {style:{background:`linear-gradient(135deg,${T.inkMid},${T.ink})`,padding:isMobile?"48px 20px":"72px 40px"}},
       React.createElement("div", {style:{maxWidth:640,margin:"0 auto",textAlign:"center"}},
         React.createElement("div", {style:{width:64,height:64,borderRadius:"50%",background:"rgba(123,94,167,0.3)",border:"2px solid rgba(155,127,204,0.4)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",fontSize:28}}, "👩🏽‍⚕️"),
-        React.createElement("h2", {style:{fontSize:isMobile?22:32,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 16px",lineHeight:1.3}},
-          "\"I built the tool I needed because nothing out there worked the way I do.\""
+        React.createElement("h2", {style:{fontSize:isMobile?22:30,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 16px",lineHeight:1.4}},
+          "\"Small practices trying to grow deserve the same tools as the big clinics — without the enterprise price tag built for someone ten times their size.\""
         ),
-        React.createElement("p", {style:{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.85,fontFamily:F.body,maxWidth:540,margin:"0 auto 20px"}},
-          "EvoSuite started as an internal tool for Evolving Therapy & Wellness — a small pediatric OT practice in Mississippi billing MS Medicaid. Every feature exists because a real therapist needed it."
+        React.createElement("p", {style:{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.85,fontFamily:F.body,maxWidth:520,margin:"0 auto 20px"}},
+          "I built EvoSuite because small and growing practices deserve affordable, efficient tools. I lived this problem as a pediatric OTR/L in Mississippi — paying too much for software that didn't understand how I work, who I serve, or how MS Medicaid documentation actually needs to flow. So I built the solution I wished I had."
         ),
-        React.createElement("div", {style:{fontSize:13,color:T.violetBright,fontFamily:F.body,fontWeight:600}}, "Vanessa — OTR/L · Founder, Evolving Therapy & Wellness")
+        React.createElement("div", {style:{fontSize:13,color:T.violetBright,fontFamily:F.body,fontWeight:600}}, "Vanessa — OTR/L · Founder, Evolving Therapy & Wellness · Jackson, MS")
       )
     ),
 
