@@ -98,15 +98,19 @@ function App() {
   }
 
   const FEATURES = [
-    {icon:"◈",label:"Patient Records",color:"#7B5EA7",desc:"Full demographics, ICD-10 codes, authorization tracking, insurance verification, and referring provider directory."},
-    {icon:"◷",label:"Smart Scheduling",color:"#2D8A5E",desc:"Week view calendar with auth status alerts, makeup tracking, and automated email + SMS reminders."},
-    {icon:"✎",label:"Clinical Notes",color:"#1A5FB4",desc:"SOAP notes with AI-assisted MS Medicaid Strength+Barrier framework, CPT selection, and modifier enforcement."},
-    {icon:"⊞",label:"OT · PT · ST Evals",color:"#B06B10",desc:"Structured evaluation builders for each discipline matching your real paper templates. Print-ready export."},
-    {icon:"⬡",label:"Billing & Claims",color:"#7B5EA7",desc:"837P claim generation, 13-point validation, GO/GP/GN enforcement, batch export, and ERA auto-posting."},
-    {icon:"🛡",label:"Insurance & Auths",color:"#2D8A5E",desc:"Monthly verification tracker, carrier management, auth expiration alerts, and real-time units remaining."},
-    {icon:"◷",label:"Contractor Payroll",color:"#1A5FB4",desc:"1099 contractor hours with eval vs. visit rates, monthly dashboard, and QuickBooks CSV export."},
-    {icon:"🔗",label:"Claim.MD Billing",color:"#B06B10",desc:"EvoSuite submits your 837P claims and retrieves ERA payments through your own Claim.MD account. Each practice pays Claim.MD directly — your EvoSuite cost never changes as you grow."},
-    {icon:"🏫",label:"School Therapist Module",color:"#1A7A7A",desc:"IEP minutes tracking (mandated vs. provided vs. makeup owed), school session notes, consultation logs, and quarterly progress reports with print-ready export — for therapists ready to get organized."},
+    {icon:"◈",label:"Patient Records",color:"#7B5EA7",desc:"Full demographics, ICD-10 codes, caregiver contacts, payer type, sliding scale rates, and two-file PHI workflow for safe HIPAA handling."},
+    {icon:"◷",label:"Smart Scheduling",color:"#2D8A5E",desc:"10 appointment types (visits, evaluations, re-evals, drive/travel, group sessions, makeup, telehealth, and more). Color-code by appointment type or by school. Birthday badges on calendar. .ics one-tap calendar invites with reminders."},
+    {icon:"✎",label:"SOAP Notes",color:"#1A5FB4",desc:"AI-assisted documentation using the MS Medicaid Strength+Barrier=Skilled Need framework. CPT codes with automatic 8-minute rule, GO/GP/GN modifiers, and LOA tracking. Rates hidden from therapists — billing is admin-only."},
+    {icon:"⊞",label:"OT Evaluation Builder",color:"#B06B10",desc:"17-section evaluation matching your actual OT template. Checkbox-based clinical findings, AI-generated summaries per section, collapsible sections, pronoun selector, standardized assessments table, and milestone tracker. Print only what you expand."},
+    {icon:"🔔",label:"Daily Briefing Alerts",color:"#9B1C1C",desc:"On login, a smart popup flags everything urgent: auths expiring within 3 days, IEP annual reviews due this week, re-eval dates coming up, and patient and staff birthdays. Shown once per day — dismissed with one tap."},
+    {icon:"📋",label:"Clinical Documents",color:"#6B21A8",desc:"Progress Report / Re-Auth pulls from your last signed eval (no eval CPT code generated). Superbills for out-of-network reimbursement. Good Faith Estimates required for cash-pay patients (No Surprises Act). Discharge summaries. All print-ready."},
+    {icon:"⬡",label:"Billing & Claims",color:"#7B5EA7",desc:"One chargemaster rate per CPT code. 837P claim generation with 13-point validation. Billing and dollar amounts are invisible to therapists — they see codes, units, and modifiers only."},
+    {icon:"🛡",label:"Insurance & Auths",color:"#2D8A5E",desc:"Monthly verification tracker, carrier management, real-time units remaining, and auth expiration alerts that fire in the daily briefing 3 days before cutoff."},
+    {icon:"🚗",label:"Mileage Tracker",color:"#B06B10",desc:"Log drive entries in the calendar between appointments — start location, destination, miles. Opens Google Maps with the exact route in one tap. Editable per-mile rate (IRS standard or your employer's rate). Monthly mileage report with deductible totals and CSV export."},
+    {icon:"📱",label:"Appointment Confirmations",color:"#1A5FB4",desc:"Click any appointment to generate a pre-written SMS confirmation. Tap 'Open in Messages' to send from your phone. No backend, no Twilio account needed."},
+    {icon:"◷",label:"Contractor Payroll",color:"#1A5FB4",desc:"1099 contractor hours and visits with eval vs. regular rates, monthly dashboard, and QuickBooks-compatible CSV export mapped to Contract Labor."},
+    {icon:"🔗",label:"Claim.MD Billing",color:"#B06B10",desc:"EvoSuite submits your 837P claims and retrieves ERA payments through your own Claim.MD account. Your EvoSuite price never changes as you grow — you upgrade Claim.MD when you need to."},
+    {icon:"🏫",label:"School Therapist Module",color:"#1A7A7A",desc:"IEP minutes tracking (mandated vs. provided vs. makeup owed), treatment notes, consultation logs, quarterly progress reports with print-ready export, and IEP review alerts. Color-code calendar students by school."},
   ];
 
   const ist = {
@@ -148,15 +152,15 @@ function App() {
           "Effortless Workflows", React.createElement("br"),
           React.createElement("span", {style:{color:T.violetBright}}, "for Evolving Practices.")
         ),
-        React.createElement("p", {style:{fontSize:isMobile?15:18,color:"rgba(255,255,255,0.6)",lineHeight:1.8,maxWidth:580,margin:"0 auto 36px",fontFamily:F.body,fontWeight:300}},
-          "The complete pediatric therapy EMR built specifically for Evolving OT, PT, and ST practices — with MS Medicaid EPSDT documentation, Claim.MD billing, and contractor payroll built in from day one."
+        React.createElement("p", {style:{fontSize:isMobile?15:18,color:"rgba(255,255,255,0.6)",lineHeight:1.8,maxWidth:600,margin:"0 auto 36px",fontFamily:F.body,fontWeight:300}},
+          "The complete pediatric therapy EMR built for OT, PT, and ST practices billing MS Medicaid EPSDT — with AI-assisted documentation, smart daily alerts, mileage tracking, superbills, IEP tools, and Claim.MD billing built in from day one."
         ),
         React.createElement("div", {style:{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:40}},
           React.createElement("button", {onClick:scrollToForm,style:{padding:"13px 32px",background:`linear-gradient(135deg,${T.violet},${T.violetDeep})`,color:"#fff",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:F.body,boxShadow:"0 8px 32px rgba(123,94,167,0.4)"}}, "Request Beta Access →"),
           React.createElement("a", {href:"/evosuiteEMR",style:{padding:"13px 28px",background:"rgba(255,255,255,0.08)",color:"rgba(255,255,255,0.8)",border:"1px solid rgba(255,255,255,0.18)",borderRadius:10,fontSize:14,fontWeight:500,cursor:"pointer",fontFamily:F.body,textDecoration:"none"}}, "Open EvoSuite EMR →")
         ),
         React.createElement("div", {style:{display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap"}},
-          ["Built by a pediatric OTR/L","MS Medicaid EPSDT ready","School therapist ready","Claim.MD integrated","Free during beta"].map(b =>
+          ["Built by a pediatric OTR/L","MS Medicaid EPSDT ready","School therapist ready","AI-assisted notes & evals","Mileage & payroll tracking","Firebase cloud sync","Free during beta"].map(b =>
             React.createElement("div", {key:b,style:{display:"flex",alignItems:"center",gap:5,fontSize:11,color:"rgba(255,255,255,0.3)",fontFamily:F.body}},
               React.createElement("span", {style:{color:T.violetBright}}, "✦"), b
             )
@@ -183,6 +187,27 @@ function App() {
               React.createElement("div", {style:{fontSize:22,marginBottom:10}}, c.icon),
               React.createElement("div", {style:{fontSize:13,color:c.highlight?T.violetBright:"rgba(255,255,255,0.6)",fontFamily:F.body,lineHeight:1.6}}, c.text)
             )
+          )
+        )
+      )
+    ),
+
+    /* HIGHLIGHTS STRIP */
+    React.createElement("div", {style:{background:T.ink,borderTop:"1px solid rgba(155,127,204,0.12)",borderBottom:"1px solid rgba(155,127,204,0.12)",padding:isMobile?"24px 20px":"20px 40px",overflowX:"hidden"}},
+      React.createElement("div", {style:{maxWidth:1040,margin:"0 auto",display:"flex",gap:isMobile?16:32,justifyContent:"center",flexWrap:"wrap",alignItems:"center"}},
+        [
+          {icon:"🔔",text:"Daily briefing alerts on login"},
+          {icon:"🎂",text:"Patient & staff birthday reminders"},
+          {icon:"🚗",text:"Mileage tracker + Google Maps"},
+          {icon:"📱",text:"One-tap SMS confirmations"},
+          {icon:"📋",text:"Superbills + Good Faith Estimates"},
+          {icon:"🏫",text:"School IEP module + calendar by school"},
+          {icon:"📅",text:"10 appointment types"},
+          {icon:"🔒",text:"Firebase cloud sync + HIPAA-eligible"},
+        ].map(({icon,text})=>
+          React.createElement("div", {key:text,style:{display:"flex",alignItems:"center",gap:7,fontSize:12,color:"rgba(255,255,255,0.4)",fontFamily:F.body,whiteSpace:"nowrap"}},
+            React.createElement("span", {style:{fontSize:16}}, icon),
+            text
           )
         )
       )
@@ -215,12 +240,12 @@ function App() {
           React.createElement("div", {style:{fontSize:11,color:T.violetBright,textTransform:"uppercase",letterSpacing:2,marginBottom:10,fontFamily:F.body,fontWeight:600}}, "Transparent Pricing"),
           React.createElement("h2", {style:{fontSize:isMobile?28:40,fontFamily:F.display,fontWeight:600,color:"#F5F3FA",margin:"0 0 12px"}}, "Priced for practices that are still growing."),
           React.createElement("p", {style:{fontSize:14,color:"rgba(255,255,255,0.5)",fontFamily:F.body,lineHeight:1.7,maxWidth:560,margin:"0 auto"}},
-            "Flat monthly rate. No per-claim fees. No surprise add-ons. You handle your own Claim.MD account — we handle everything else."
+            "Flat monthly rate. No per-claim fees. No per-therapist surprises. You keep your own Claim.MD account — we stay the same price no matter how you grow."
           )
         ),
 
-        /* Two plan cards */
-        React.createElement("div", {style:{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:16,marginBottom:24}},
+        /* Three plan cards */
+        React.createElement("div", {style:{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr 1fr",gap:16,marginBottom:24}},
 
           /* Solo card */
           React.createElement("div", {style:{background:"rgba(255,255,255,0.05)",borderRadius:16,border:"1px solid rgba(155,127,204,0.3)",overflow:"hidden"}},
@@ -230,15 +255,32 @@ function App() {
                 React.createElement("div", {style:{fontSize:46,fontWeight:700,color:"#fff",fontFamily:F.display,lineHeight:1}}, "$49"),
                 React.createElement("span", {style:{fontSize:14,color:"rgba(255,255,255,0.6)"}}, "/mo")
               ),
-              React.createElement("div", {style:{fontSize:12,color:"rgba(255,255,255,0.55)",marginTop:6,fontFamily:F.body}}, "1 practitioner · All features included")
+              React.createElement("div", {style:{fontSize:12,color:"rgba(255,255,255,0.55)",marginTop:6,fontFamily:F.body}}, "1 practitioner · Everything included")
             ),
             React.createElement("div", {style:{padding:"18px 22px"}},
-              React.createElement("div", {style:{display:"flex",flexDirection:"column",gap:5,marginBottom:8}},
-                ["Unlimited patients","All SOAP + eval builders","MS Medicaid EPSDT framework","Calendar + email & SMS reminders","Insurance & auth tracking","Claim.MD ready (you set up your account)","Contractor payroll tracking","MS Medicaid CPT library","🏫 School therapist module included"].map(f=>
+              React.createElement("div", {style:{display:"flex",flexDirection:"column",gap:5,marginBottom:14}},
+                [
+                  "Unlimited patients",
+                  "SOAP notes + OT eval builder",
+                  "MS Medicaid EPSDT framework + AI",
+                  "14 appointment types + calendar",
+                  "Daily briefing alerts",
+                  "Superbills + Good Faith Estimates",
+                  "Insurance & auth tracking",
+                  "Mileage tracker + Google Maps",
+                  "Appointment confirmations (SMS)",
+                  "Contractor payroll + QuickBooks export",
+                  "Claim.MD ready",
+                  "🏫 School module included",
+                ].map(f=>
                   React.createElement("div", {key:f,style:{display:"flex",gap:7,fontSize:12,color:"rgba(255,255,255,0.65)",fontFamily:F.body,alignItems:"center"}},
                     React.createElement("span", {style:{color:"#6DD4A4",fontWeight:700,flexShrink:0}}, "✓"), f
                   )
                 )
+              ),
+              React.createElement("div", {style:{marginTop:4,display:"flex",flexDirection:"column",gap:8}},
+                React.createElement("div", {style:{display:"block",textAlign:"center",padding:"12px 0",background:"rgba(245,197,67,.15)",borderRadius:9,fontFamily:F.body,fontWeight:700,fontSize:13,color:"rgba(245,197,67,.7)",border:"1px dashed rgba(245,197,67,.3)"}}, "Subscriptions opening soon — $49/mo"),
+                React.createElement("div", {style:{fontSize:10,color:"rgba(255,255,255,.3)",textAlign:"center",fontFamily:F.body}}, "Join the beta waitlist below for early access")
               )
             )
           ),
@@ -268,6 +310,42 @@ function App() {
                 React.createElement("div", null, "+ $10/mo — Mid-time (15–30 hrs/wk)"),
                 React.createElement("div", null, "+ $15/mo — Full-time (30+ hrs/wk)")
               )
+            )
+          ),
+
+          /* School Therapist card */
+          React.createElement("div", {style:{background:"rgba(26,122,122,0.08)",borderRadius:16,border:"1px solid rgba(26,122,122,0.4)",overflow:"hidden"}},
+            React.createElement("div", {style:{background:"linear-gradient(135deg,#0F4444,#1A7A7A)",padding:"22px 24px"}},
+              React.createElement("div", {style:{fontSize:11,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:2,marginBottom:6,fontFamily:F.body}},"School Therapist"),
+              React.createElement("div", {style:{display:"flex",alignItems:"baseline",gap:6}},
+                React.createElement("div", {style:{fontSize:46,fontWeight:700,color:"#fff",fontFamily:F.display,lineHeight:1}}, "$24.99"),
+                React.createElement("span", {style:{fontSize:13,color:"rgba(255,255,255,0.6)"}},"/mo")
+              ),
+              React.createElement("div", {style:{fontSize:12,color:"rgba(255,255,255,.55)",marginTop:6,fontFamily:F.body}}, "School OT · PT · ST · No billing module needed")
+            ),
+            React.createElement("div", {style:{padding:"18px 22px"}},
+              React.createElement("div", {style:{display:"flex",flexDirection:"column",gap:5,marginBottom:14}},
+                [
+                  "Student caseload roster",
+                  "IEP minutes (mandated vs. provided)",
+                  "Makeup minutes owed alerts",
+                  "Treatment notes + consultation logs",
+                  "Quarterly progress reports",
+                  "OT eval builder",
+                  "Goal bank",
+                  "Calendar color-coded by school",
+                  "Daily briefing: IEP reviews + birthdays",
+                  "Mileage tracker",
+                ].map(f=>
+                  React.createElement("div", {key:f,style:{display:"flex",gap:7,fontSize:12,color:"rgba(255,255,255,0.65)",fontFamily:F.body,alignItems:"center"}},
+                    React.createElement("span", {style:{color:"#6DD4A4",fontWeight:700,flexShrink:0}}, "✓"), f
+                  )
+                )
+              ),
+              React.createElement("div", {style:{background:"rgba(26,122,122,.15)",borderRadius:7,padding:"8px 11px",fontSize:11,color:"rgba(255,255,255,.4)",fontFamily:F.body,border:"1px solid rgba(26,122,122,.3)"}},
+                "Billing, CPT library, payroll & insurance modules not included — school therapists don't need them."
+              ),
+              React.createElement("div", {style:{marginTop:10,textAlign:"center",fontSize:11,color:"rgba(255,255,255,.3)",fontFamily:F.body,fontStyle:"italic"}},"Subscriptions opening soon")
             )
           )
         ),
@@ -303,7 +381,7 @@ function App() {
 
         /* Compare */
         React.createElement("div", {style:{textAlign:"center",fontSize:12,color:"rgba(255,255,255,0.3)",fontFamily:F.body,fontStyle:"italic"}},
-          "SimplePractice raised prices 69% in 2025. Their Starter is $49/mo with limited features — no group appointments, no MS Medicaid framework, add-ons required for billing. EvoSuite's $49 includes everything."
+          "SimplePractice raised prices 69% in 2025. Their Starter plan is $49/mo with limited features — no group appointments, no MS Medicaid framework, no mileage tracking, add-ons required for billing. EvoSuite $49 includes all of it."
         )
       )
     ),
