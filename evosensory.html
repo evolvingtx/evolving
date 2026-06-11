@@ -393,10 +393,19 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
 
     <!-- Age category -->
     <div style="font-size:11px;color:var(--tl);margin-bottom:5px;font-weight:500;">Age Category</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:12px;" id="age-cat-row">
-      <button class="pill-btn active" data-ac="peds" onclick="pickAgeCat('peds')" style="font-size:10px;padding:6px 4px;">🧒 Pediatric<br><span style="font-size:9px;color:var(--tl);">0–17</span></button>
-      <button class="pill-btn" data-ac="adult" onclick="pickAgeCat('adult')" style="font-size:10px;padding:6px 4px;">🧑 Adult<br><span style="font-size:9px;color:var(--tl);">18–64</span></button>
-      <button class="pill-btn" data-ac="older" onclick="pickAgeCat('older')" style="font-size:10px;padding:6px 4px;">🧓 Older Adult<br><span style="font-size:9px;color:var(--tl);">65+</span></button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;" id="age-cat-row">
+      <button class="pill-btn active" data-ac="peds-early" onclick="pickAgeCat('peds-early')" style="font-size:10px;padding:6px 4px;">🧒 Early Childhood<br><span style="font-size:9px;color:var(--tl);">Ages 3–7</span></button>
+      <button class="pill-btn" data-ac="peds-school" onclick="pickAgeCat('peds-school')" style="font-size:10px;padding:6px 4px;">🧒 School Age<br><span style="font-size:9px;color:var(--tl);">Ages 8–17</span></button>
+      <button class="pill-btn" data-ac="adult" onclick="pickAgeCat('adult')" style="font-size:10px;padding:6px 4px;">🧑 Adult<br><span style="font-size:9px;color:var(--tl);">Ages 18–64</span></button>
+      <button class="pill-btn" data-ac="older" onclick="pickAgeCat('older')" style="font-size:10px;padding:6px 4px;">🧓 Older Adult<br><span style="font-size:9px;color:var(--tl);">Ages 65+</span></button>
+    </div>
+    <!-- Developmental delay modifier -->
+    <div style="display:flex;align-items:center;gap:8px;background:var(--pp);border-radius:8px;padding:7px 10px;margin-bottom:10px;">
+      <label class="tog" style="flex-shrink:0;"><input type="checkbox" id="tog-dd" onchange="pendingDD=this.checked;updateBPMHint();"/><span class="tog-tk"></span></label>
+      <div>
+        <div style="font-size:11px;font-weight:500;color:var(--tx);">Developmental delay / lower baseline</div>
+        <div style="font-size:9px;color:var(--tl);line-height:1.5;">Drops starting BPM by 8 · Widens hit window · Recommended for DD, autism (non-verbal/low-motor), significant motor impairment, or any patient who needs more time</div>
+      </div>
     </div>
 
     <!-- Modality -->
@@ -1178,9 +1187,6 @@ here</textarea>
 const SK='rhythmrx_v1';
 const FB=2.8;
 const LVS=[
-  {id:0,name:'First Beat',    bpm:48,  icon:'🌱',
-   desc:'Single hand, same side every beat. Build a steady internal clock before adding complexity.',
-   xac:'Cushion on "Correct tap" mode — every hit reinforces the timing foundation. Great entry point for any patient.'},
   {id:1,name:'Warm Up',      bpm:56,  icon:'🎵',
    desc:'One button, any key. Tap every beat. Start here — no wrong side.',
    xac:'Cushion vibrates on every correct tap — great intro for sensory-seeking kids. Set to "Correct tap" mode in Settings.'},
@@ -1204,7 +1210,6 @@ const LVS=[
    xac:'Foot pedals plug into XAC 3.5mm jacks. Cushion can sit under the feet or behind the patient — try both.'},
 ];
 const PATS={
-  0:['B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'],    // Level 0: unilateral, same hand every beat
   '1b':['S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S'], // Level 1b: simultaneous bilateral (S = both)
   1:['B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'],
   2:['L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R','L','R'],
@@ -1214,7 +1219,6 @@ const PATS={
   6:['L','R','L','R',null,'L','R','L','R',null,'L',null,'R','L','R',null,'L','R',null,'L','R','L',null,'R'],
 };
 const THEMES={
-  0:{bg:'#F0F8F0',colL:'#4A8C6F',colR:'#4A8C6F',colB:'#4A8C6F'},   // Level 0: calm green — unilateral
   1:{bg:'#F8F4FF',colL:'#C4922A',colR:'#C4922A',colB:'#C4922A'},
   '1b':{bg:'#F4F0FF',colL:'#5C4490',colR:'#5C4490',colB:'#5C4490'}, // Level 1b: purple — bilateral together
   2:{bg:'#FDF0FF',colL:'#E04848',colR:'#4878D8',colB:'#C4922A'},
@@ -1384,30 +1388,48 @@ function selectUser(uid){
 
 /* ─── New user modal ───────────────────────────── */
 let pendingColorIdx = 0;
-let pendingAgeCat   = 'peds';   // peds | adult | older
-let pendingModality = 'hands-bi'; // hands-bi | hands-r | hands-l | feet-bi | feet-r | feet-l
+let pendingAgeCat   = 'peds-early'; // peds-early | peds-school | adult | older
+let pendingModality = 'hands-bi';   // hands-bi | hands-r | hands-l | feet-bi | feet-r | feet-l
+let pendingDD       = false;        // developmental delay modifier
 
 // BPM defaults by category + modality
 const BPM_DEFAULTS = {
-  // [startBPM, label description]
-  'peds-hands-bi':  [60, 'Pediatric · Bilateral hands · Start 60 BPM'],
-  'peds-hands-r':   [60, 'Pediatric · Right hand · Start 60 BPM'],
-  'peds-hands-l':   [60, 'Pediatric · Left hand · Start 60 BPM'],
-  'peds-feet-bi':   [52, 'Pediatric · Bilateral feet · Start 52 BPM (motor loop longer for feet)'],
-  'peds-feet-r':    [52, 'Pediatric · Right foot · Start 52 BPM'],
-  'peds-feet-l':    [52, 'Pediatric · Left foot · Start 52 BPM'],
-  'adult-hands-bi': [66, 'Adult · Bilateral hands · Start 66 BPM'],
-  'adult-hands-r':  [66, 'Adult · Right hand · Start 66 BPM'],
-  'adult-hands-l':  [66, 'Adult · Left hand · Start 66 BPM'],
-  'adult-feet-bi':  [56, 'Adult · Bilateral feet · Start 56 BPM'],
-  'adult-feet-r':   [56, 'Adult · Right foot · Start 56 BPM'],
-  'adult-feet-l':   [56, 'Adult · Left foot · Start 56 BPM'],
-  'older-hands-bi': [52, 'Older Adult · Bilateral hands · Start 52 BPM · Wider hit window applied'],
-  'older-hands-r':  [52, 'Older Adult · Right hand · Start 52 BPM · Wider hit window applied'],
-  'older-hands-l':  [52, 'Older Adult · Left hand · Start 52 BPM · Wider hit window applied'],
-  'older-feet-bi':  [44, 'Older Adult · Bilateral feet · Start 44 BPM · Floor switch recommended'],
-  'older-feet-r':   [44, 'Older Adult · Right foot · Start 44 BPM · Floor switch recommended'],
-  'older-feet-l':   [44, 'Older Adult · Left foot · Start 44 BPM · Floor switch recommended'],
+  // [startBPM, label, hitWindow]
+  // Early Childhood (3–7): slower tempo, wider window, lower cognitive demand
+  'peds-early-hands-bi': [52, 'Early Childhood · Bilateral hands · Start 52 BPM', 150],
+  'peds-early-hands-r':  [52, 'Early Childhood · Right hand · Start 52 BPM', 150],
+  'peds-early-hands-l':  [52, 'Early Childhood · Left hand · Start 52 BPM', 150],
+  'peds-early-feet-bi':  [44, 'Early Childhood · Bilateral feet · Start 44 BPM', 150],
+  'peds-early-feet-r':   [44, 'Early Childhood · Right foot · Start 44 BPM', 150],
+  'peds-early-feet-l':   [44, 'Early Childhood · Left foot · Start 44 BPM', 150],
+  // School Age (8–17): standard pediatric baseline
+  'peds-school-hands-bi':[60, 'School Age · Bilateral hands · Start 60 BPM', 120],
+  'peds-school-hands-r': [60, 'School Age · Right hand · Start 60 BPM', 120],
+  'peds-school-hands-l': [60, 'School Age · Left hand · Start 60 BPM', 120],
+  'peds-school-feet-bi': [52, 'School Age · Bilateral feet · Start 52 BPM', 120],
+  'peds-school-feet-r':  [52, 'School Age · Right foot · Start 52 BPM', 120],
+  'peds-school-feet-l':  [52, 'School Age · Left foot · Start 52 BPM', 120],
+  // Adult (18–64)
+  'adult-hands-bi': [66, 'Adult · Bilateral hands · Start 66 BPM', 120],
+  'adult-hands-r':  [66, 'Adult · Right hand · Start 66 BPM', 120],
+  'adult-hands-l':  [66, 'Adult · Left hand · Start 66 BPM', 120],
+  'adult-feet-bi':  [56, 'Adult · Bilateral feet · Start 56 BPM', 120],
+  'adult-feet-r':   [56, 'Adult · Right foot · Start 56 BPM', 120],
+  'adult-feet-l':   [56, 'Adult · Left foot · Start 56 BPM', 120],
+  // Older Adult (65+): wider hit window to capture pattern, not penalize latency
+  'older-hands-bi': [52, 'Older Adult · Bilateral hands · Start 52 BPM · Wider hit window applied', 160],
+  'older-hands-r':  [52, 'Older Adult · Right hand · Start 52 BPM · Wider hit window applied', 160],
+  'older-hands-l':  [52, 'Older Adult · Left hand · Start 52 BPM · Wider hit window applied', 160],
+  'older-feet-bi':  [44, 'Older Adult · Bilateral feet · Start 44 BPM · Floor switch recommended', 160],
+  'older-feet-r':   [44, 'Older Adult · Right foot · Start 44 BPM · Floor switch recommended', 160],
+  'older-feet-l':   [44, 'Older Adult · Left foot · Start 44 BPM · Floor switch recommended', 160],
+  // Legacy key — maps old peds profiles to school age defaults
+  'peds-hands-bi': [60, 'School Age · Bilateral hands · Start 60 BPM', 120],
+  'peds-hands-r':  [60, 'School Age · Right hand · Start 60 BPM', 120],
+  'peds-hands-l':  [60, 'School Age · Left hand · Start 60 BPM', 120],
+  'peds-feet-bi':  [52, 'School Age · Bilateral feet · Start 52 BPM', 120],
+  'peds-feet-r':   [52, 'School Age · Right foot · Start 52 BPM', 120],
+  'peds-feet-l':   [52, 'School Age · Left foot · Start 52 BPM', 120],
 };
 
 function updateBPMHint(){
@@ -1418,7 +1440,16 @@ function updateBPMHint(){
   if(def){
     const isFeet=pendingModality.startsWith('feet');
     const isOlder=pendingAgeCat==='older';
-    hint.innerHTML=`<strong style="color:var(--gn);">📊 Suggested starting BPM: ${def[0]}</strong><br>${def[1]}${isFeet?'<br>💡 Foot taps start 8–10 BPM slower than hand taps — longer motor loop from hip to floor contact.':''}${isOlder?'<br>⚡ Hit window starts wider for older adults to capture timing pattern, not penalize latency.':''}`;
+    const isEarly=pendingAgeCat==='peds-early';
+    const isDD=!!pendingDD;
+    const bpm=isDD?Math.max(30,def[0]-8):def[0];
+    const hw=isDD?def[2]+20:def[2];
+    let msg=`<strong style="color:var(--gn);">📊 Suggested starting BPM: ${bpm}</strong> · Hit window: ${hw}ms<br>${def[1]}`;
+    if(isDD) msg+=`<br>🧩 <strong>DD modifier active</strong> — BPM reduced by 8 · Hit window widened by 20ms`;
+    if(isFeet) msg+=`<br>💡 Foot taps start 8–10 BPM slower than hands — longer motor loop from hip to floor.`;
+    if(isOlder) msg+=`<br>⚡ Wider hit window captures timing pattern without penalizing natural latency.`;
+    if(isEarly) msg+=`<br>🌱 Early Childhood baseline — shorter attention span, developing gross motor control.`;
+    hint.innerHTML=msg;
   }
 }
 
@@ -1436,8 +1467,9 @@ function pickModality(mod){
 
 function openNewUser(){
   pendingColorIdx = USERS.length % AVATAR_COLORS.length;
-  pendingAgeCat   = 'peds';
+  pendingAgeCat   = 'peds-early';
   pendingModality = 'hands-bi';
+  pendingDD       = false;
   // Build color picker
   const picker = document.getElementById('avatar-picker');
   if(picker){
@@ -1446,8 +1478,9 @@ function openNewUser(){
     ).join('');
   }
   // Reset pickers
-  document.querySelectorAll('#age-cat-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.ac==='peds'));
+  document.querySelectorAll('#age-cat-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.ac==='peds-early'));
   document.querySelectorAll('#modality-row .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.mod==='hands-bi'));
+  const ddToggle=document.getElementById('tog-dd');if(ddToggle) ddToggle.checked=false;
   document.getElementById('new-user-name').value = '';
   updateBPMHint();
   // Mobile note is shown in the module settings screen (mods-modality-note)
@@ -1469,14 +1502,17 @@ function saveNewUser(){
   const id = 'u_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
   const color = AVATAR_COLORS[pendingColorIdx];
   const key=`${pendingAgeCat}-${pendingModality}`;
-  const bpmDefault=BPM_DEFAULTS[key]?.[0]||60;
-  const hitWindowBase=pendingAgeCat==='older'?160:120; // wider for older adults
+  const defEntry=BPM_DEFAULTS[key]||BPM_DEFAULTS['peds-school-hands-bi'];
+  const ddActive=!!pendingDD;
+  const bpmDefault=ddActive?Math.max(30,defEntry[0]-8):defEntry[0];
+  const hitWindowBase=ddActive?defEntry[2]+20:defEntry[2];
   USERS.push({
     id, name, color, colorIdx:pendingColorIdx,
     ageCat:pendingAgeCat,
     modality:pendingModality,
     bpmDefault,
     hitWindowBase,
+    dd:ddActive,
   });
   saveUsers();
   closeNewUser();
@@ -1803,8 +1839,8 @@ function buildModSettings(){
     lvWrap.style.display='block';
     lvPills.innerHTML=LVS.map(lv=>{
       const idJson=JSON.stringify(lv.id);
-      const label=lv.id===0?'Lvl 0':lv.id==='1b'?'1b':('Lvl '+lv.id);
-      const sublabel=lv.id==='1b'?'Both Hands':lv.id===0?'Unilateral':lv.name.split('—')[0].trim();
+      const label=lv.id==='1b'?'1b':('Lvl '+lv.id);
+      const sublabel=lv.id==='1b'?'Both Hands':lv.name.split('—')[0].trim();
       return `<button class="pill-btn${G.lvId===lv.id?' active':''}" onclick="modsSelectLevel(${idJson})" style="font-size:10px;padding:7px 4px;">
         <span style="display:block;font-size:12px;font-weight:700;">${label}</span>
         <span style="font-size:8.5px;color:var(--tl);line-height:1.3;">${sublabel}</span>
@@ -2106,7 +2142,7 @@ try{
 }catch(e){}
 
 /* ═══ MAP ════════════════════════════════════════════ */
-const MN=[{id:0,x:55,y:228},{id:1,x:55,y:185},{id:'1b',x:140,y:218},{id:2,x:170,y:148},{id:3,x:265,y:100},{id:4,x:145,y:50},{id:5,x:265,y:10},{id:6,x:50,y:50}];
+const MN=[{id:1,x:55,y:185},{id:'1b',x:140,y:218},{id:2,x:170,y:148},{id:3,x:265,y:100},{id:4,x:145,y:50},{id:5,x:265,y:10},{id:6,x:50,y:50}];
 function renderMap(){
   const svg=document.getElementById('map-svg');if(!svg)return;let h='';
   const pts=MN.slice(0,5);
@@ -4515,7 +4551,7 @@ function renderRes(){
 
   // Next level prompt
   const nl=document.getElementById('next-lv');
-  const lvOrder=[0,1,'1b',2,3,4,5,6];
+  const lvOrder=[1,'1b',2,3,4,5,6];
   const curLvIdx=lvOrder.indexOf(G.lvId);
   const nextLvId=curLvIdx>=0&&curLvIdx<lvOrder.length-1?lvOrder[curLvIdx+1]:null;
   const nextLv=nextLvId!=null?LVS.find(l=>l.id===nextLvId):null;
