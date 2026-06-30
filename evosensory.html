@@ -704,8 +704,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--p);outline-offs
   </div>
 
   <div style="margin-top:11px;"><div class="label">Haptic Intensity</div>
-  <input type="range" min="0" max="100" value="80" id="hi-sl" oninput="S.hapticIntensity=this.value/100;document.getElementById('hi-v').textContent=this.value+'%'" style="width:100%;accent-color:var(--go);"/>
-  <div style="font-size:10px;color:var(--tl);text-align:right;margin-top:2px;" id="hi-v">80%</div></div>
+  <input type="range" min="0" max="100" value="100" id="hi-sl" oninput="S.hapticIntensity=this.value/100;document.getElementById('hi-v').textContent=this.value+'%'" style="width:100%;accent-color:var(--go);"/>
+  <div style="font-size:10px;color:var(--tl);text-align:right;margin-top:2px;" id="hi-v">100%</div></div>
 
   <!-- Vocabulary word list -->
   <div style="margin-top:14px;">
@@ -1007,6 +1007,8 @@ here</textarea>
   <div class="card mx"><div id="stats-sum" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;text-align:center;"></div></div>
   <!-- Oculomotor score panel — shown only when OM sessions exist -->
   <div class="card mx" id="om-stats" style="display:none;padding:13px;background:var(--pp);border:1px solid var(--pl);"></div>
+  <!-- Mastery / progression panel — therapist-facing -->
+  <div class="card mx" id="mastery-panel" style="display:none;padding:13px;background:var(--gp);border:1px solid var(--gn);"></div>
   <div class="card mx" style="padding:13px;">
     <div class="label">Progress Over Time</div>
     <div style="height:175px;position:relative;margin-top:7px;">
@@ -1133,6 +1135,9 @@ here</textarea>
     <button class="btn" style="width:100%;" onclick="startAfterWGCalib()">Start Session ▶</button>
   </div>
 </div>
+<!-- Video dock: keeps camera video rendered (not display:none) during gameplay so mobile browsers don't pause it -->
+<div id="motion-video-dock" style="position:fixed;bottom:0;right:0;width:2px;height:2px;opacity:.01;overflow:hidden;pointer-events:none;z-index:0;"></div>
+
 <div id="motion-setup" style="display:none;position:fixed;inset:0;z-index:250;background:rgba(10,8,24,.92);align-items:center;justify-content:center;overflow-y:auto;">
   <!-- X close button -->
   <button onclick="closeMotionSetup()" style="position:absolute;top:18px;right:18px;background:rgba(255,255,255,.12);border:none;color:white;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer;z-index:10;">✕</button>
@@ -1153,7 +1158,7 @@ here</textarea>
     </div>
 
     <!-- Camera preview -->
-    <div style="position:relative;width:100%;aspect-ratio:4/3;background:#111;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+    <div id="motion-video-wrap" style="position:relative;width:100%;aspect-ratio:4/3;background:#111;border-radius:12px;overflow:hidden;margin-bottom:12px;">
       <video id="motion-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);transition:transform .15s;"></video>
       <canvas id="motion-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
       <!-- Skeleton overlay for MediaPipe -->
@@ -1253,7 +1258,7 @@ const GM_DESC={
 const S={soundMode:'count',audioOn:true,metroOn:true,hapticOn:true,rumbleOn:true,rumbleMode:'hit',
   hwCheckOn:true,  // show hardware confirmation before each session
   mathOp:'count',  // math mode operation default
-  visualOn:true,speechOn:true,vocabTrackAcc:true,blindMode:false,therapistMode:false,hapticIntensity:.8,
+  visualOn:true,speechOn:true,vocabTrackAcc:true,blindMode:false,therapistMode:false,hapticIntensity:1.0,
   therapistEmail:localStorage.getItem('evo_therapist_email')||''};
 
 /* ═══ GAME STATE ════════════════════════════════════ */
@@ -1325,6 +1330,144 @@ function saveSess(){
 }
 
 function getActiveUser(){ return USERS.find(u=>u.id===activeUserId)||null; }
+
+/* ═══ THERAPIST PIN GATE ════════════════════════════════
+   A 4-digit PIN protects setup actions (new patient, DD toggle, BPM
+   changes, level unlocks) so patients — especially older kids — can't
+   see or change clinical settings. Stored hashed-ish in localStorage.
+   This is a client-side convenience lock, NOT real security; true
+   access control lives in the Firebase therapist login (server-side). */
+const PIN_KEY='evo_therapist_pin';
+function hasTherapistPin(){ return !!localStorage.getItem(PIN_KEY); }
+function _hashPin(p){ // light obfuscation so the PIN isn't plain-text in storage
+  let h=0; for(let i=0;i<p.length;i++){ h=((h<<5)-h+p.charCodeAt(i))|0; }
+  return 'p'+h;
+}
+function setTherapistPin(pin){ localStorage.setItem(PIN_KEY,_hashPin(pin)); }
+function checkPin(pin){ return localStorage.getItem(PIN_KEY)===_hashPin(pin); }
+
+// Returns a Promise<boolean> — resolves true if PIN correct or no PIN set yet.
+// If no PIN exists, prompts to create one first.
+function requireTherapist(actionLabel){
+  return new Promise(resolve=>{
+    if(!hasTherapistPin()){
+      // First-time setup — create a PIN
+      _showPinModal('create',actionLabel,resolve);
+    } else {
+      _showPinModal('verify',actionLabel,resolve);
+    }
+  });
+}
+
+function _showPinModal(mode,actionLabel,resolve){
+  let ov=document.getElementById('pin-modal');
+  if(ov) ov.remove();
+  ov=document.createElement('div');
+  ov.id='pin-modal';
+  ov.style.cssText='position:fixed;inset:0;z-index:400;background:rgba(14,10,32,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:28px;text-align:center;';
+  const title=mode==='create'?'Set Therapist PIN':'Therapist PIN';
+  const sub=mode==='create'
+    ?'Create a 4-digit PIN. You\'ll use it to set up patients, change beats, and approve level progress. Patients won\'t be able to change settings without it.'
+    :`Enter your PIN to ${actionLabel||'continue'}.`;
+  ov.innerHTML=`
+    <div style="font-size:38px;">🔒</div>
+    <div style="font-size:19px;font-weight:600;color:white;font-family:Jost,sans-serif;">${title}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.7);max-width:300px;line-height:1.6;">${sub}</div>
+    <input id="pin-input" type="password" inputmode="numeric" maxlength="4" autocomplete="off"
+      style="font-size:30px;letter-spacing:14px;text-align:center;width:170px;padding:12px;border:2px solid var(--p);border-radius:12px;background:rgba(255,255,255,.95);color:var(--pd);font-family:monospace;"
+      placeholder="••••"/>
+    ${mode==='create'?'<input id="pin-input2" type="password" inputmode="numeric" maxlength="4" autocomplete="off" style="font-size:30px;letter-spacing:14px;text-align:center;width:170px;padding:12px;border:2px solid var(--br);border-radius:12px;background:rgba(255,255,255,.95);color:var(--pd);font-family:monospace;" placeholder="confirm"/>':''}
+    <div id="pin-err" style="font-size:12px;color:#FF8A80;min-height:16px;"></div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button id="pin-cancel" style="padding:11px 22px;background:none;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.25);border-radius:11px;font:500 13px Jost,sans-serif;cursor:pointer;">Cancel</button>
+      <button id="pin-ok" style="padding:11px 30px;background:var(--p);color:white;border:none;border-radius:11px;font:600 14px Jost,sans-serif;cursor:pointer;">${mode==='create'?'Set PIN':'Unlock'}</button>
+    </div>
+    ${mode==='verify'?'<button id="pin-forgot" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:10px;text-decoration:underline;cursor:pointer;margin-top:4px;">Forgot PIN? Reset (clears it)</button>':''}`;
+  document.body.appendChild(ov);
+  const input=document.getElementById('pin-input');
+  setTimeout(()=>input?.focus(),100);
+  const done=(result)=>{ ov.remove(); resolve(result); };
+  document.getElementById('pin-cancel').onclick=()=>done(false);
+  document.getElementById('pin-ok').onclick=()=>{
+    const v=input.value.trim();
+    const err=document.getElementById('pin-err');
+    if(!/^\d{4}$/.test(v)){ err.textContent='Enter exactly 4 digits.'; return; }
+    if(mode==='create'){
+      const v2=document.getElementById('pin-input2').value.trim();
+      if(v!==v2){ err.textContent='PINs don\'t match.'; return; }
+      setTherapistPin(v);
+      done(true);
+    } else {
+      if(checkPin(v)){ done(true); }
+      else { err.textContent='Incorrect PIN.'; input.value=''; input.focus(); }
+    }
+  };
+  // Enter submits
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('pin-ok').click(); });
+  const forgot=document.getElementById('pin-forgot');
+  if(forgot) forgot.onclick=()=>{
+    if(confirm('Reset your therapist PIN? This clears the current PIN and you\'ll set a new one next time. Patient data is not affected.')){
+      localStorage.removeItem(PIN_KEY);
+      done(false);
+    }
+  };
+}
+
+/* ═══ MASTERY-GATED PROGRESSION ═════════════════════════
+   A level is "unlocked" for a user only when the therapist has approved
+   it, OR the patient has achieved mastery (85%+ accuracy) across 10
+   SESSIONS (not games) at the current level. Approval is stored per
+   user. Levels above the highest unlocked level are locked. */
+const MASTERY_ACC=85;       // accuracy threshold counting toward mastery
+const MASTERY_SESSIONS=10;  // consistent sessions needed to auto-unlock next
+
+function getUnlockedLevel(u){
+  // Returns the highest level id the user may play.
+  // Therapist-approved level takes precedence; otherwise auto-computed.
+  if(!u) return 1;
+  if(typeof u.approvedLevel!=='undefined') return u.approvedLevel;
+  // Legacy user (created before progression system): grant their highest played level
+  // so they aren't suddenly locked out of levels they were already using.
+  const played=(G.sessions||[]).map(s=>s.level).filter(l=>lvOrder.indexOf(l)>=0);
+  if(played.length){
+    let highest=1, hiIdx=0;
+    played.forEach(l=>{ const i=lvOrder.indexOf(l); if(i>hiIdx){hiIdx=i;highest=l;} });
+    u.approvedLevel=highest; saveUsers();
+    return highest;
+  }
+  return 1; // default: only Level 1 until therapist approves or mastery earned
+}
+
+function setApprovedLevel(u,lvId){
+  if(!u) return;
+  u.approvedLevel=lvId;
+  saveUsers();
+}
+
+// Count how many sessions at a given level reached mastery accuracy
+function masterySessionCount(lvId){
+  return (G.sessions||[]).filter(s=>s.level===lvId && s.accuracy>=MASTERY_ACC).length;
+}
+
+// Has the user earned auto-unlock for the NEXT level after lvId?
+function hasEarnedNextLevel(lvId){
+  return masterySessionCount(lvId)>=MASTERY_SESSIONS;
+}
+
+// Is a given level playable for the active user?
+function isLevelUnlocked(lvId){
+  const u=getActiveUser();
+  if(!u) return lvId===1; // no profile → only level 1
+  const order=lvOrder; // [1,'1b',2,3,4,5,6]
+  const approvedIdx=order.indexOf(getUnlockedLevel(u));
+  const thisIdx=order.indexOf(lvId);
+  if(thisIdx<0) return false;
+  if(thisIdx<=approvedIdx) return true;
+  // Allow the immediate next level if mastery was earned at the approved level
+  if(thisIdx===approvedIdx+1 && hasEarnedNextLevel(order[approvedIdx])) return true;
+  return false;
+}
+
 
 function setActiveUser(uid){
   activeUserId = uid;
@@ -1466,6 +1609,13 @@ function pickModality(mod){
 }
 
 function openNewUser(){
+  // Require therapist PIN — patients shouldn't set up profiles or see the DD toggle
+  requireTherapist('add a new patient').then(ok=>{
+    if(!ok) return;
+    _doOpenNewUser();
+  });
+}
+function _doOpenNewUser(){
   pendingColorIdx = USERS.length % AVATAR_COLORS.length;
   pendingAgeCat   = 'peds-early';
   pendingModality = 'hands-bi';
@@ -1513,6 +1663,7 @@ function saveNewUser(){
     bpmDefault,
     hitWindowBase,
     dd:ddActive,
+    approvedLevel:1, // therapist approves higher levels as patient progresses
   });
   saveUsers();
   closeNewUser();
@@ -2033,6 +2184,8 @@ function setGM(m){
   if(G.gameMode==='motion'&&m!=='motion') stopMotionCamera();
   if(G.gameMode==='activegames'&&m!=='activegames') stopMotionCamera();
   G.gameMode=m;
+  // Warm-load the pose engine early — by the time the camera overlay opens it's ready
+  if((m==='motion'||m==='activegames')&&!M.poseLoaded) loadMediaPipePose();
   document.querySelectorAll('#gm-pills .pill-btn').forEach(b=>b.classList.toggle('active',b.dataset.gm===m));
   const sub=document.getElementById('ocu-submode');
   if(sub) sub.style.display=m==='oculomotor'?'block':'none';
@@ -2152,11 +2305,12 @@ function renderMap(){
   MN.forEach(node=>{
     const lv=LVS.find(l=>l.id===node.id);if(!lv)return;
     const isSel=node.id===G.lvId,r=isSel?21:16;
+    const locked=!isLevelUnlocked(node.id);
     const idJson=JSON.stringify(node.id);
-    h+=`<circle cx="${node.x}" cy="${node.y}" r="${r}" fill="${isSel?'#5C4490':'#9B88C4'}" opacity=".95" onclick="selLv(${idJson})" style="cursor:pointer"/>`;
-    h+=`<circle cx="${node.x}" cy="${node.y}" r="${r-5}" fill="white" opacity=".9"/>`;
-    h+=`<text x="${node.x}" y="${node.y+4}" text-anchor="middle" font-size="13" fill="${isSel?'#5C4490':'#3E2D6E'}" onclick="selLv(${idJson})" style="cursor:pointer">${lv.icon}</text>`;
-    h+=`<text x="${node.x}" y="${node.y+30}" text-anchor="middle" font-size="9" fill="#5A4E72">${lv.name}</text>`;
+    h+=`<circle cx="${node.x}" cy="${node.y}" r="${r}" fill="${isSel?'#5C4490':locked?'#C4BBD8':'#9B88C4'}" opacity=".95" onclick="selLv(${idJson})" style="cursor:pointer"/>`;
+    h+=`<circle cx="${node.x}" cy="${node.y}" r="${r-5}" fill="white" opacity="${locked?'.7':'.9'}"/>`;
+    h+=`<text x="${node.x}" y="${node.y+4}" text-anchor="middle" font-size="13" fill="${isSel?'#5C4490':locked?'#A99BC4':'#3E2D6E'}" onclick="selLv(${idJson})" style="cursor:pointer">${locked?'🔒':lv.icon}</text>`;
+    h+=`<text x="${node.x}" y="${node.y+30}" text-anchor="middle" font-size="9" fill="${locked?'#A99BC4':'#5A4E72'}">${lv.name}</text>`;
   });
   svg.innerHTML=h;
   const cur=MN.find(n=>n.id===G.lvId)||MN[0];
@@ -2175,7 +2329,25 @@ function renderMap(){
   document.getElementById('bpm-rst').style.display=G.customBpm?'block':'none';
   const gd=document.getElementById('gm-desc');if(gd)gd.textContent=GM_DESC[G.gameMode]||'';
 }
-function selLv(id){G.lvId=id;if(!G.customBpm){G.bpm=LVS.find(l=>l.id===id).bpm;}renderMap();}
+function selLv(id){
+  // Locked level? Require therapist PIN to approve progression.
+  if(!isLevelUnlocked(id)){
+    const u=getActiveUser();
+    const earned=u&&hasEarnedNextLevel(getUnlockedLevel(u));
+    const msg=earned
+      ? 'This patient has earned this level through mastery. Approve it?'
+      : 'This level is locked. The patient hasn\'t reached mastery yet (85%+ across 10 sessions). Approve early?';
+    requireTherapist('approve this level').then(ok=>{
+      if(!ok) return;
+      if(confirm(msg)){
+        setApprovedLevel(getActiveUser(),id);
+        G.lvId=id;if(!G.customBpm){G.bpm=LVS.find(l=>l.id===id).bpm;}renderMap();
+      }
+    });
+    return;
+  }
+  G.lvId=id;if(!G.customBpm){G.bpm=LVS.find(l=>l.id===id).bpm;}renderMap();
+}
 function chBpm(d){setBpm(Math.max(30,Math.min(160,G.bpm+d)));}
 function setBpm(v){G.bpm=v;G.customBpm=true;document.getElementById('bpm-disp').textContent=v;document.getElementById('bpm-slider').value=v;document.getElementById('bpm-rst').style.display='block';}
 function resetBpm(){G.customBpm=false;G.bpm=LVS.find(l=>l.id===G.lvId).bpm;renderMap();}
@@ -2183,16 +2355,25 @@ function resetBpm(){G.customBpm=false;G.bpm=LVS.find(l=>l.id===G.lvId).bpm;rende
 /* ═══ AUDIO ══════════════════════════════════════════ */
 function initAudio(){if(!G.audioCtx)G.audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(G.audioCtx.state==='suspended')G.audioCtx.resume();}
 
-function playBeat(when,idx){
+function playBeat(when,idx,side){
   // In vocab and math modes, spoken content replaces the beat sound entirely
   if(G.gameMode==='vocab'||G.gameMode==='math') return;
   if(!S.metroOn||!G.audioCtx) return;
   const ctx=G.audioCtx, acc=idx%2===0, m=S.soundMode;
+  // Stereo pan: L beats from left speaker, R from right (matches headphone spatial audio)
+  // Only pans on Classic L/R levels; 'B' = center
+  let dest=ctx.destination, pan=null;
+  if(side&&(side==='L'||side==='R')&&ctx.createStereoPanner){
+    pan=ctx.createStereoPanner();
+    pan.pan.value=side==='L'?-0.85:0.85;
+    pan.connect(ctx.destination);
+    dest=pan;
+  }
 
   if(m==='click'){
     // Single beat — one clean click per beat, louder accent on beat 1
     const o=ctx.createOscillator(),g=ctx.createGain();
-    o.connect(g);g.connect(ctx.destination);
+    o.connect(g);g.connect(dest);
     o.frequency.value=acc?1050:1050; // same pitch both beats — single pattern
     g.gain.setValueAtTime(acc?.32:.32,when);
     g.gain.exponentialRampToValueAtTime(.001,when+.04);
@@ -2201,7 +2382,7 @@ function playBeat(when,idx){
   } else if(m==='count'){
     // Double beat — high tone beat 1, low tone beat 2
     const o=ctx.createOscillator(),g=ctx.createGain();
-    o.connect(g);g.connect(ctx.destination);
+    o.connect(g);g.connect(dest);
     o.type='triangle';
     o.frequency.value=acc?900:500;
     g.gain.setValueAtTime(acc?.30:.20,when);
@@ -2212,7 +2393,7 @@ function playBeat(when,idx){
     // 1-2 Spoken — tone + speech. Says "one" on beat 1, "two" on beat 2.
     // Tone still fires so there's immediate auditory feedback before speech latency
     const o=ctx.createOscillator(),g=ctx.createGain();
-    o.connect(g);g.connect(ctx.destination);
+    o.connect(g);g.connect(dest);
     o.type='sine';
     o.frequency.value=acc?660:440;
     g.gain.setValueAtTime(acc?.18:.12,when);
@@ -3583,8 +3764,9 @@ function handleWMTap(side){
     WM.hits++;WM.lastReaction=rt;
     WM.reactions.push(rt);if(WM.reactions.length>20)WM.reactions.shift();
     WM.mole.state='hit';
-    // Rating by RT: <400ms=perfect, <700ms=good, <1000ms=close, else miss
-    const rating=rt<400?'perfect':rt<700?'good':rt<1000?'close':'miss';
+    // Rating by reaction time. Widened for pediatric saccade+motor latency:
+    // a typical child correct response lands 400–900ms. <550 perfect / <850 good / <1300 close.
+    const rating=rt<550?'perfect':rt<850?'good':rt<1300?'close':'miss';
     // dev=0 for WM — deviation is meaningless without a fixed beat
     G.hits.push({dev:0,rating,rt,isWM:true});
     G.score+=RM[rating]?.pts||0;
@@ -3973,7 +4155,13 @@ function schedTick(){
   const iv=60/G.bpm,now=G.audioCtx.currentTime;
   while(G.beats.length<G.total&&G.nextBeat<now+.18){
     const idx=G.beats.length,when=G.nextBeat;
-    playBeat(when,idx);G.beats.push(when);G.nextBeat+=iv;
+    // Determine expected side for stereo cue (Classic L/R levels only)
+    let beatSide='B';
+    if(!isLvSingle(G.lvId)&&!isLvSimul(G.lvId)&&PATS[G.lvId]){
+      const ps=PATS[G.lvId][idx%PATS[G.lvId].length];
+      if(ps==='L'||ps==='R') beatSide=ps;
+    }
+    playBeat(when,idx,beatSide);G.beats.push(when);G.nextBeat+=iv;
     const ms=Math.max(0,(when-now)*1000);
     setTimeout(()=>{
       if(!G.playing)return;
@@ -4223,7 +4411,88 @@ function saveAdaptiveWindow(){
 function missAdapt(){G.consecMiss++;G.recentAcc.push(0);if(G.recentAcc.length>10)G.recentAcc.shift();if(G.consecMiss>=3){G.hitWin=Math.min(200,G.hitWin+20);G.consecMiss=0;if(S.blindMode){G.blindStart=null;G.cvOpacity=1;}}}
 
 /* ═══ GAME START / END ════════════════════════════ */
+function showSoundCheck(){
+  initAudio();
+  // Build overlay
+  let ov=document.getElementById('sound-check-overlay');
+  if(ov) ov.remove();
+  ov=document.createElement('div');
+  ov.id='sound-check-overlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(14,10,32,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;text-align:center;';
+  const isStereo=!isLvSingle(G.lvId)&&!isLvSimul(G.lvId)&&G.gameMode!=='oculomotor'&&G.gameMode!=='motion'&&G.gameMode!=='activegames'&&G.gameMode!=='vocab'&&G.gameMode!=='math';
+  ov.innerHTML=`
+    <div style="font-size:40px;">🔊</div>
+    <div style="font-size:20px;font-weight:600;color:white;font-family:Jost,sans-serif;">Sound Check</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.75);max-width:300px;line-height:1.7;">
+      You'll hear the beat playing now. ${isStereo?'Left beats play from the <strong>left</strong> speaker, right beats from the <strong>right</strong>.':'Make sure you can hear it clearly.'}
+      <br><br>Adjust your volume, then tap Start when ready.
+    </div>
+    <div id="sc-pulse" style="width:56px;height:56px;border-radius:50%;background:var(--p);opacity:.3;transition:opacity .1s,transform .1s;"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
+      <button onclick="stopSoundCheck();" style="padding:11px 22px;background:none;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.25);border-radius:11px;font:500 13px Jost,sans-serif;cursor:pointer;">Cancel</button>
+      <button onclick="confirmSoundCheck();" style="padding:11px 30px;background:var(--gn);color:white;border:none;border-radius:11px;font:600 15px Jost,sans-serif;cursor:pointer;">▶ Start Session</button>
+    </div>
+    <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:4px;">Beats are playing — no scoring yet</div>`;
+  document.body.appendChild(ov);
+  // Play a looping sample beat at the session BPM
+  G._scActive=true;
+  G._scBeatIdx=0;
+  const iv=60/G.bpm;
+  function scBeat(){
+    if(!G._scActive) return;
+    const side=isStereo?(G._scBeatIdx%2===0?'L':'R'):'B';
+    playSampleBeat(side,G._scBeatIdx);
+    // pulse animation
+    const pulse=document.getElementById('sc-pulse');
+    if(pulse){
+      pulse.style.opacity='1';pulse.style.transform='scale(1.2)';
+      if(side==='L') pulse.style.marginRight='80px',pulse.style.marginLeft='0';
+      else if(side==='R') pulse.style.marginLeft='80px',pulse.style.marginRight='0';
+      else pulse.style.margin='0';
+      setTimeout(()=>{if(pulse){pulse.style.opacity='.3';pulse.style.transform='scale(1)';}},150);
+    }
+    G._scBeatIdx++;
+    G._scTimer=setTimeout(scBeat,iv*1000);
+  }
+  scBeat();
+}
+function playSampleBeat(side,idx){
+  if(!G.audioCtx) return;
+  const ctx=G.audioCtx;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  let dest=ctx.destination,pan=null;
+  if(ctx.createStereoPanner){pan=ctx.createStereoPanner();pan.connect(ctx.destination);dest=pan;}
+  if(pan) pan.pan.value=side==='L'?-0.9:side==='R'?0.9:0;
+  o.connect(g);g.connect(dest);
+  o.type='triangle';
+  o.frequency.value=idx%2===0?900:600;
+  const when=ctx.currentTime;
+  g.gain.setValueAtTime(.3,when);
+  g.gain.exponentialRampToValueAtTime(.001,when+.1);
+  o.start(when);o.stop(when+.12);
+}
+function stopSoundCheck(){
+  G._scActive=false;
+  clearTimeout(G._scTimer);
+  const ov=document.getElementById('sound-check-overlay');
+  if(ov) ov.remove();
+  // Return to mod settings — don't proceed
+  G._soundChecked=false;
+}
+function confirmSoundCheck(){
+  G._scActive=false;
+  clearTimeout(G._scTimer);
+  const ov=document.getElementById('sound-check-overlay');
+  if(ov) ov.remove();
+  G._soundChecked=true;
+  startCountdown(); // re-enter — now passes the sound check gate
+}
+
 function startCountdown(){
+  // Clear stale motion state when not in a camera mode — prevents false "camera open" check
+  if(G.gameMode!=='motion'&&G.gameMode!=='activegames'){
+    if(M.active&&!M.stream){ M.active=false; } // active flag without stream = stale
+  }
   // Hardware check: show session setup overlay first (unless disabled or skipped)
   const skipAlways=localStorage.getItem(HW_SKIP_KEY)==='1';
   if(S.hwCheckOn&&!skipAlways&&!SESSION_HW.checked){
@@ -4296,18 +4565,18 @@ function startCountdown(){
     tb.style.gridTemplateColumns='1fr 1fr';
     const wbL=document.createElement('button');
     wbL.className='tap-btn L';wbL.style.cssText='font-size:21px;padding:22px 0;';
-    wbL.innerHTML='<span style="display:block;">← LEFT</span><div style="font-size:11px;opacity:.65;margin-top:4px;">f · z · ←</div>';
+    wbL.innerHTML='<span style="display:block;">← LEFT</span><div style="font-size:11px;opacity:.65;margin-top:4px;">Space</div>';
     wbL.ontouchstart=function(e){e.preventDefault();handleTap('L');};
     wbL.onmousedown=function(e){e.preventDefault();handleTap('L');};
     const wbR=document.createElement('button');
     wbR.className='tap-btn R';wbR.style.cssText='font-size:21px;padding:22px 0;';
-    wbR.innerHTML='<span style="display:block;">RIGHT →</span><div style="font-size:11px;opacity:.65;margin-top:4px;">j · / · →</div>';
+    wbR.innerHTML='<span style="display:block;">RIGHT →</span><div style="font-size:11px;opacity:.65;margin-top:4px;">Enter</div>';
     wbR.ontouchstart=function(e){e.preventDefault();handleTap('R');};
     wbR.onmousedown=function(e){e.preventDefault();handleTap('R');};
     tb.innerHTML='';tb.appendChild(wbL);tb.appendChild(wbR);
-  } else if(isSingle&&!isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">any key · tap anywhere</div></button>';}
-  else if(isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" style="background:linear-gradient(135deg,#B85450,#5C4490);" ontouchstart="ev=event;ev.preventDefault();handleTap(\'S\')" onmousedown="event.preventDefault();handleTap(\'S\')">BOTH HANDS<div style="font-size:8px;opacity:.75;margin-top:3px;">tap with both · any key</div></button>';}
-  else{tb.style.gridTemplateColumns='1fr 1fr';tb.innerHTML='<button class="tap-btn L" ontouchstart="ev=event;ev.preventDefault();handleTap(\'L\')" onmousedown="event.preventDefault();handleTap(\'L\')">LEFT<div style="font-size:8px;opacity:.65;margin-top:2px;">f ← z Shift</div></button><button class="tap-btn R" ontouchstart="ev=event;ev.preventDefault();handleTap(\'R\')" onmousedown="event.preventDefault();handleTap(\'R\')">RIGHT<div style="font-size:8px;opacity:.65;margin-top:2px;">j → / Ctrl</div></button>';}
+  } else if(isSingle&&!isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" ontouchstart="ev=event;ev.preventDefault();handleTap(\'C\')" onmousedown="event.preventDefault();handleTap(\'C\')">TAP<div style="font-size:8px;opacity:.6;margin-top:3px;">Space / Enter · tap anywhere</div></button>';}
+  else if(isSimul){tb.style.gridTemplateColumns='1fr';tb.innerHTML='<button class="tap-btn C" style="background:linear-gradient(135deg,#B85450,#5C4490);" ontouchstart="ev=event;ev.preventDefault();handleTap(\'S\')" onmousedown="event.preventDefault();handleTap(\'S\')">BOTH HANDS<div style="font-size:8px;opacity:.75;margin-top:3px;">tap with both · Space</div></button>';}
+  else{tb.style.gridTemplateColumns='1fr 1fr';tb.innerHTML='<button class="tap-btn L" ontouchstart="ev=event;ev.preventDefault();handleTap(\'L\')" onmousedown="event.preventDefault();handleTap(\'L\')">LEFT<div style="font-size:8px;opacity:.65;margin-top:2px;">Space</div></button><button class="tap-btn R" ontouchstart="ev=event;ev.preventDefault();handleTap(\'R\')" onmousedown="event.preventDefault();handleTap(\'R\')">RIGHT<div style="font-size:8px;opacity:.65;margin-top:2px;">Enter</div></button>';}
   document.getElementById('g-lv-lbl').textContent=lv.icon+' '+lv.name+' · '+G.bpm+' BPM · '+G.gameMode;
   document.getElementById('rat-lbl').textContent='Tap the beat!';document.getElementById('rat-lbl').style.color='var(--tl)';
   document.getElementById('dev-lbl').textContent='';document.getElementById('g-beats').textContent='0/'+G.total;document.getElementById('g-score').textContent='0';
@@ -4327,6 +4596,12 @@ function startCountdown(){
   const beatDesc=isEduMode?'Speech IS the beat — no click sound':smLbl[S.soundMode];
   document.getElementById('cd-sub').textContent=lv.name+' · '+G.bpm+' BPM · '+beatDesc+edNote;
   document.getElementById('screen-countdown').style.background=THEMES[G.lvId]?.bg||'#F8F4FF';
+  // ── SOUND CHECK GATE — play sample beats, confirm audible, THEN countdown ──
+  // Prevents losing the first 2-3 beats while the patient gets oriented.
+  if(!G._soundChecked){
+    showSoundCheck();
+    return;
+  }
   showScreen('countdown');
   let n=3;const cdi=setInterval(()=>{
     n--;
@@ -4437,6 +4712,7 @@ function beginGame(){
 function exitGameEarly(){
   if(!G.playing) return;
   G.playing=false;
+  G._soundChecked=false;
   clearInterval(G.schedTimer);
   clearInterval(G.motionTimer);G.motionTimer=null;
   cancelAnimationFrame(G.animFr);
@@ -4453,6 +4729,7 @@ function exitGameEarly(){
 
 function endGame(){
   G.playing=false;
+  G._soundChecked=false; // require sound check again next session
   clearInterval(G.schedTimer);
   clearInterval(G.motionTimer);G.motionTimer=null;
   cancelAnimationFrame(G.animFr);
@@ -4463,9 +4740,16 @@ function endGame(){
   clearTimeout(WM._timer);clearTimeout(WM._autoMiss);WM._started=false;WM.mole=null;
   if(G.RC){G.RC.items=[];G.RC.catchFlash=0;}
   saveAdaptiveWindow(); // persist tightened window cross-session
-  const hits=G.hits,total=G.total,lv=LVS.find(l=>l.id===G.lvId);
-  const counts={perfect:0,good:0,close:0,miss:0};hits.forEach(h=>{if(counts[h.rating]!==undefined)counts[h.rating]++;});
-  counts.miss+=Math.max(0,total-hits.length);
+  const hits=G.hits,lv=LVS.find(l=>l.id===G.lvId);
+  // For Whack-a-Mole (saccades2), the denominator is the number of moles actually
+  // presented (= number of recorded taps/misses), NOT the BPM-based beat total.
+  // Otherwise phantom misses are added for moles that never appeared.
+  const isWMSession=G.gameMode==='oculomotor'&&G.ocuMode==='saccades2';
+  const total=isWMSession?hits.length:G.total;
+  const counts={perfect:0,good:0,close:0,miss:0,wrong:0};
+  hits.forEach(h=>{if(counts[h.rating]!==undefined)counts[h.rating]++;});
+  if(!isWMSession) counts.miss+=Math.max(0,total-hits.length); // only pad misses for fixed-beat modes
+  // Accuracy: perfect+good over total presented. Wrong-side counts against.
   const acc=total?Math.round(((counts.perfect+counts.good)/total)*100):0;
   const real=hits.filter(h=>h.dev!==undefined&&Math.abs(h.dev)<500);
   const avgDev=real.length?Math.round(real.reduce((s,h)=>s+h.dev,0)/real.length):0;
@@ -4612,7 +4896,58 @@ function renderStats(){
     try{chartInst=new Chart(cc,{type:'line',data:{labels:last.map(x=>new Date(x.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})),datasets:[{label:'Dev (ms)',data:last.map(x=>Math.abs(x.avgDev)),borderColor:'#5C4490',backgroundColor:'rgba(92,68,144,.1)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#5C4490'},{label:'Accuracy',data:last.map(x=>x.accuracy),borderColor:'#4A8C6F',backgroundColor:'rgba(74,140,111,.07)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#4A8C6F',yAxisID:'y2'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#5A4E72'}}},scales:{y:{min:0,grid:{color:'rgba(92,68,144,.1)'},ticks:{font:{size:9},color:'#5A4E72'}},y2:{position:'right',min:0,max:100,grid:{display:false},ticks:{font:{size:9},color:'#4A8C6F'}},x:{grid:{color:'rgba(92,68,144,.1)'},ticks:{font:{size:9},color:'#5A4E72'}}}}});}catch(e){console.warn('chart',e);}
   }
   const last10=s.slice(-10).reverse();
-  document.getElementById('sess-tbl').innerHTML='<thead><tr>'+['Date','Lv','BPM','Acc','Dev','Mode','OM'].map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+last10.map(x=>`<tr><td>${new Date(x.date).toLocaleDateString()}</td><td>${x.level}</td><td>${x.bpm}</td><td style="color:${x.accuracy>=70?'#4A8C6F':x.accuracy>=40?'#C4922A':'#B85450'};font-weight:500;">${x.accuracy}%</td><td style="color:#5A4E72;">${x.avgDev>0?'+':''}${x.avgDev}ms</td><td>${x.gameMode||'—'}</td><td style="color:var(--gn)">${x.ocuMode||'—'}</td></tr>`).join('')+'</tbody>';
+  document.getElementById('sess-tbl').innerHTML='<thead><tr>'+['Date','Lv','BPM','Acc','Dev','Mode','OM',''].map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+last10.map(x=>`<tr><td>${new Date(x.date).toLocaleDateString()}</td><td>${x.level}</td><td>${x.bpm}</td><td style="color:${x.accuracy>=70?'#4A8C6F':x.accuracy>=40?'#C4922A':'#B85450'};font-weight:500;">${x.accuracy}%</td><td style="color:#5A4E72;">${x.avgDev>0?'+':''}${x.avgDev}ms</td><td>${x.gameMode||'—'}</td><td style="color:var(--gn)">${x.ocuMode||'—'}</td><td><button onclick="deleteSession('${x.date}')" title="Delete this session (false start / glitch)" style="background:none;border:none;color:#B85450;cursor:pointer;font-size:13px;padding:2px 6px;">🗑️</button></td></tr>`).join('')+'</tbody>';
+  renderMasteryPanel();
+}
+
+function renderMasteryPanel(){
+  const el=document.getElementById('mastery-panel');
+  if(!el) return;
+  const u=getActiveUser();
+  if(!u){ el.style.display='none'; return; }
+  el.style.display='block';
+  const approved=getUnlockedLevel(u);
+  const approvedLabel=approved==='1b'?'Level 1b':('Level '+approved);
+  const masteryCount=masterySessionCount(approved);
+  const nextIdx=lvOrder.indexOf(approved)+1;
+  const nextLv=nextIdx<lvOrder.length?lvOrder[nextIdx]:null;
+  const nextLabel=nextLv?(nextLv==='1b'?'Level 1b':('Level '+nextLv)):null;
+  const earned=masteryCount>=MASTERY_SESSIONS;
+  let html=`<div class="label" style="margin-bottom:6px;">🎯 Progression — ${u.name}</div>`;
+  html+=`<div style="font-size:12px;color:var(--tx);margin-bottom:4px;">Current approved level: <strong>${approvedLabel}</strong></div>`;
+  if(nextLv){
+    html+=`<div style="font-size:11px;color:var(--tl);line-height:1.6;margin-bottom:8px;">Mastery progress toward ${nextLabel}: <strong style="color:${earned?'var(--gn)':'var(--p)'}">${masteryCount}/${MASTERY_SESSIONS}</strong> sessions at ${MASTERY_ACC}%+ accuracy${earned?' ✓ earned!':''}</div>`;
+    html+=`<div style="height:6px;background:var(--br);border-radius:3px;overflow:hidden;margin-bottom:10px;"><div style="height:100%;width:${Math.min(100,masteryCount/MASTERY_SESSIONS*100)}%;background:${earned?'var(--gn)':'var(--p)'};border-radius:3px;"></div></div>`;
+    html+=`<button onclick="therapistApproveNext()" style="width:100%;padding:9px;background:${earned?'var(--gn)':'var(--gp)'};color:${earned?'white':'var(--gn)'};border:1px solid var(--gn);border-radius:9px;font:600 12px Jost,sans-serif;cursor:pointer;">${earned?'✓ Approve '+nextLabel:'Approve '+nextLabel+' early (therapist PIN)'}</button>`;
+  } else {
+    html+=`<div style="font-size:11px;color:var(--tl);">Highest level reached. 🏆</div>`;
+  }
+  el.innerHTML=html;
+}
+
+function therapistApproveNext(){
+  const u=getActiveUser();
+  if(!u) return;
+  const nextIdx=lvOrder.indexOf(getUnlockedLevel(u))+1;
+  if(nextIdx>=lvOrder.length) return;
+  const nextLv=lvOrder[nextIdx];
+  requireTherapist('approve the next level').then(ok=>{
+    if(!ok) return;
+    setApprovedLevel(u,nextLv);
+    renderMasteryPanel();
+    alert('Approved! '+(nextLv==='1b'?'Level 1b':'Level '+nextLv)+' is now unlocked for '+u.name+'.');
+  });
+}
+
+function deleteSession(dateISO){
+  const idx=G.sessions.findIndex(x=>x.date===dateISO);
+  if(idx<0) return;
+  const sess=G.sessions[idx];
+  const when=new Date(sess.date).toLocaleString();
+  if(!confirm(`Delete this session?\n\n${when} · ${sess.accuracy}% · ${sess.avgDev>0?'+':''}${sess.avgDev}ms\n\nUse this to remove false starts or glitched sessions so they don't count against the patient. This cannot be undone.`)) return;
+  G.sessions.splice(idx,1);
+  saveSess();
+  renderStats(); // refresh the view
 }
 
 function expCSV(){if(!G.sessions.length){alert('No sessions yet.');return;}const rows=[['Date','Level','BPM','Accuracy','AvgDevMs','Score','MaxStreak','Tendency','DriftTrend','Mode','OcuMode'],...G.sessions.map(s=>[new Date(s.date).toLocaleDateString(),s.level,s.bpm,s.accuracy,s.avgDev,s.score,s.maxStreak,s.tendency||'',s.driftTrend||'',s.gameMode||'',s.ocuMode||''])];const a=Object.assign(document.createElement('a'),{href:'data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n')),download:'evosensory_'+new Date().toISOString().slice(0,10)+'.csv'});document.body.appendChild(a);a.click();a.remove();}
@@ -4962,8 +5297,9 @@ function openMotionSetup(){
   drawPositioningSVG(mo.svgType,mo.svgCaption);
   applyCamZoom(100);
   document.getElementById('motion-setup').style.display='flex';
+  _undockMotionVideo(); // return video to the visible preview
   startMotionCamera();
-  loadMediaPipePose();
+  // loadMediaPipePose called inside startMotionCamera after camera confirms open
 }
 
 function drawPositioningSVG(type,caption){
@@ -4991,13 +5327,37 @@ function drawPositioningSVG(type,caption){
 
 function closeMotionSetup(){
   _cancelAutoStart();
-  stopMotionCamera();
+  // Stop the preview stream but don't kill M.stream if it's actively being used
+  if(!M.active){
+    stopMotionCamera(); // only full-stop if game hasn't started yet
+  } else {
+    _dockMotionVideo(); // keep video rendered so mobile doesn't pause it
+  }
   document.getElementById('motion-setup').style.display='none';
-  setGM('standard');
+  // Don't call setGM('standard') — that would reset the game mode the therapist chose
 }
 
+function _dockMotionVideo(){
+  // Move video into the always-rendered dock BEFORE hiding the overlay.
+  // display:none ancestors pause <video> on mobile — this keeps camera frames flowing.
+  const vid=document.getElementById('motion-video');
+  const dock=document.getElementById('motion-video-dock');
+  if(vid&&dock&&vid.parentElement!==dock){
+    dock.appendChild(vid);
+    vid.play().catch(()=>{}); // re-parenting pauses video — resume it
+  }
+}
+function _undockMotionVideo(){
+  const vid=document.getElementById('motion-video');
+  const wrap=document.getElementById('motion-video-wrap');
+  if(vid&&wrap&&vid.parentElement!==wrap){
+    wrap.insertBefore(vid,wrap.firstChild);
+    vid.play().catch(()=>{});
+  }
+}
 function startCountdownFromMotion(){
   _cancelAutoStart();
+  _dockMotionVideo();
   document.getElementById('motion-setup').style.display='none';
   M.active=true;
   M.jumpBaseline=null;
@@ -5020,6 +5380,9 @@ async function startMotionCamera(){
     M.offCtx=M.offCanvas.getContext('2d');M.prevFrame=null;
     if(status) status.textContent=M.poseLoaded?'✓ Ready — position patient':'Loading pose engine…';
     if(M.poseLoaded&&startBtn) startBtn.disabled=false;
+    // Load MediaPipe pose engine now that camera is confirmed open
+    // This was missing — pose engine never loaded without this call
+    if(!M.poseLoaded) loadMediaPipePose();
     previewSkeletonLoop();
   }catch(err){
     if(status) status.textContent='Camera denied. Check Chrome settings (lock icon → Camera → Allow).';
@@ -5047,7 +5410,7 @@ async function loadMediaPipePose(){
       catch(e){await loadScript(`https://unpkg.com/@mediapipe/pose@${MP_VER}/drawing_utils.js`);}
     }
     M.pose=new window.Pose({locateFile:(f)=>`${MP_CDN}/${f}`});
-    M.pose.setOptions({modelComplexity:1,smoothLandmarks:true,enableSegmentation:false,
+    M.pose.setOptions({modelComplexity:0,smoothLandmarks:true,enableSegmentation:false,
       minDetectionConfidence:0.55,minTrackingConfidence:0.55});
     M.pose.onResults((results)=>{
       M.landmarks=results.poseLandmarks||null;
@@ -5359,7 +5722,8 @@ function motionDetectLoop(){
   if(!M.active||!G.playing) return;
   if(M.tapCooldown>0){M.tapCooldown--;return;}
   const vid=document.getElementById('motion-video');
-  if(M.pose&&vid&&vid.readyState>=2&&!M.useFallback){
+  if(vid&&vid.paused&&M.stream) vid.play().catch(()=>{}); // mobile pauses hidden/re-parented video
+  if(M.pose&&vid&&vid.readyState>=2&&!vid.paused&&!M.useFallback){
     M.pose.send({image:vid}).catch(()=>{});
   }
   const gesture=detectGesture();
@@ -5621,6 +5985,7 @@ function openAGSetup(){
   const startBtn=document.getElementById('motion-start-btn');
   if(startBtn){
     startBtn.onclick=()=>{
+      _dockMotionVideo();
       document.getElementById('motion-setup').style.display='none';
       M.active=true;AG.objects=[];AG.score=0;AG.catches=0;AG.misses=0;AG.spawnTimer=0;
       startBtn.onclick=startCountdownFromMotion; // restore
@@ -5628,8 +5993,8 @@ function openAGSetup(){
     };
   }
   document.getElementById('motion-setup').style.display='flex';
-  startMotionCamera();
-  loadMediaPipePose();
+  _undockMotionVideo();
+  startMotionCamera(); // calls loadMediaPipePose after camera confirms open
 }
 
 /* ── PLAYER BODY TRACKING ─────────────────────────── */
@@ -6368,6 +6733,27 @@ document.addEventListener('keydown',e=>{
   if(NK.has(e.key)||e.metaKey||e.ctrlKey||e.altKey)return;
   const sc=document.querySelector('.screen.active');if(!sc||sc.id==='screen-calibrate')return;
   e.preventDefault();
+  // ── Switch / keyboard mapping (for when a physical switch isn't available) ──
+  // L/R levels:  Space = LEFT · Enter = RIGHT
+  // Single-button levels:  Space OR Enter = TAP
+  // Both-hands (simul) levels:  Space = both hands
+  // A two-switch interface mapping switch1→Space, switch2→Enter works automatically.
+  if(e.code==='Space'||e.code==='Enter'||e.code==='NumpadEnter'){
+    if(!G.playing){
+      // Not playing — let Space/Enter fall through to legacy handling below
+    } else if(G.gameMode==='oculomotor'&&G.ocuMode==='saccades2'){
+      return handleTap(e.code==='Space'?'L':'R');  // Whack-a-Mole: Space=L, Enter=R
+    } else if(isLvSimul(G.lvId)){
+      return handleTap('S');                 // both-hands level
+    } else if(isLvSingle(G.lvId)){
+      return handleTap('C');                 // single-button level — either key taps
+    } else if(e.code==='Space'){
+      return handleTap('L');                 // L/R level — Space = left
+    } else {
+      return handleTap('R');                 // L/R level — Enter = right
+    }
+  }
+  // Fallback: keep legacy key sets working too
   if(LK.has(e.code))handleTap('L');else if(RK.has(e.code))handleTap('R');else handleTap('C');
 });
 document.getElementById('gc').addEventListener('pointerdown',e=>{
